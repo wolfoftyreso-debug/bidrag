@@ -1,0 +1,23 @@
+{
+  "name": "bidrag-se",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Bidrag.se — funding discovery, eligibility, application and case-management platform",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "npm run build -w packages/core -w apps/api -w apps/web",
+    "test": "npm run test -w packages/core -w apps/api",
+    "typecheck": "npm run typecheck -w packages/core -w apps/api -w apps/web",
+    "lint": "npm run lint -w packages/core -w apps/api",
+    "dev:api": "npm run dev -w apps/api",
+    "dev:web": "npm run dev -w apps/web",
+    "db:migrate": "npm run db:migrate -w apps/api",
+    "db:seed": "npm run db:seed -w apps/api"
+  }
+}
