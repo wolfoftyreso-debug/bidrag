@@ -11,6 +11,23 @@ Profil → Intention → Stödutbud → Behörighet → Matchning → Finansieri
       → Ansökningsarbetsyta → Inlämning → Ärende → Svar → Redovisning
 ```
 
+## Status (honest, qualified)
+
+> **Produktionsarkitektur med verifierad end-to-end-kärna och tydligt
+> isolerade integrationsgränser** — inte "produktionsfärdig i stor skala"
+> utan kvalificering.
+
+| Dimension | Läge |
+|---|---|
+| Teknisk kärna | ~85 % byggd, deterministisk och testad |
+| Production hardening | pågående — metrics, GDPR-självservice och runbook finns; verklig klusterdrift, backup-övning och lasttest återstår |
+| Kunskapstäckning | 28 kurerade stöd från 16 finansiärer — bevisar motorn, inte nationell täckning |
+| Integrationsmognad | låg per design — assisterad inlämning tills avtalade adaptrar finns |
+| Produktarkitektur | stark; skala/härda/befolka, inte bygga om |
+
+Nästa fas är **Production Hardening + Knowledge Expansion** (se
+`docs/OPERATIONS.md` och `docs/LIMITATIONS.md`), inte fler UI-funktioner.
+
 ## Repository layout
 
 | Path | What |

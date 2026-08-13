@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db } from '../db/client.ts';
 import {
   fundingOpportunities,
@@ -135,6 +135,10 @@ export async function adminRoutes(app: FastifyInstance) {
 
   // ── Review queue (§65) ─────────────────────────────────────────────────────
 
+  /**
+   * Review queue enriched with the opportunities each change affects, so the
+   * curator sees "källa ändrad → påverkade stöd" in one view (§65).
+   */
   app.get('/v1/admin/review-queue', { schema: { tags: ['admin'] } }, async () => {
     const rows = await db
       .select()
@@ -142,8 +146,101 @@ export async function adminRoutes(app: FastifyInstance) {
       .where(eq(reviewItems.status, 'pending'))
       .orderBy(reviewItems.createdAt)
       .limit(100);
-    return { items: rows };
+
+    const sourceIds = [
+      ...new Set(
+        rows
+          .map((r) => (r.payload as { sourceId?: string }).sourceId)
+          .filter((x): x is string => Boolean(x)),
+      ),
+    ];
+    const affected = sourceIds.length
+      ? await db
+          .select({
+            id: fundingOpportunities.id,
+            slug: fundingOpportunities.slug,
+            title: fundingOpportunities.title,
+            sourceId: fundingOpportunities.sourceId,
+            lastVerifiedAt: fundingOpportunities.lastVerifiedAt,
+          })
+          .from(fundingOpportunities)
+          .where(inArray(fundingOpportunities.sourceId, sourceIds))
+      : [];
+    const bySource = new Map<string, typeof affected>();
+    for (const opp of affected) {
+      if (!opp.sourceId) continue;
+      const list = bySource.get(opp.sourceId) ?? [];
+      list.push(opp);
+      bySource.set(opp.sourceId, list);
+    }
+
+    return {
+      items: rows.map((r) => ({
+        ...r,
+        affectedOpportunities: bySource.get((r.payload as { sourceId?: string }).sourceId ?? '') ?? [],
+      })),
+    };
   });
+
+  /**
+   * Curator list of published opportunities ordered by review urgency, with a
+   * one-click verification action below.
+   */
+  app.get('/v1/admin/opportunities', { schema: { tags: ['admin'] } }, async () => {
+    const rows = await db
+      .select({
+        id: fundingOpportunities.id,
+        slug: fundingOpportunities.slug,
+        title: fundingOpportunities.title,
+        status: fundingOpportunities.status,
+        verificationStatus: fundingOpportunities.verificationStatus,
+        lastVerifiedAt: fundingOpportunities.lastVerifiedAt,
+        nextReviewAt: fundingOpportunities.nextReviewAt,
+        sourceUrl: fundingOpportunities.sourceUrl,
+        closesAt: fundingOpportunities.closesAt,
+      })
+      .from(fundingOpportunities)
+      .orderBy(sql`${fundingOpportunities.nextReviewAt} ASC NULLS FIRST`)
+      .limit(500);
+    return { opportunities: rows };
+  });
+
+  /**
+   * One-click "verified against source today": curator confirms the published
+   * rules still match the source; bumps freshness without a new rule version.
+   */
+  app.post(
+    '/v1/admin/opportunities/:id/verify',
+    {
+      schema: {
+        tags: ['admin'],
+        params: { type: 'object', properties: { id: { type: 'string', format: 'uuid' } }, required: ['id'] },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      const now = new Date();
+      const rows = await db
+        .update(fundingOpportunities)
+        .set({
+          verificationStatus: 'human_verified',
+          lastVerifiedAt: now,
+          nextReviewAt: new Date(now.getTime() + 30 * 86_400_000),
+          updatedAt: now,
+        })
+        .where(eq(fundingOpportunities.id, id))
+        .returning({ id: fundingOpportunities.id, lastVerifiedAt: fundingOpportunities.lastVerifiedAt });
+      if (rows.length === 0) return reply.code(404).send({ error: 'not_found' });
+      await audit({
+        actorType: 'user',
+        actorUserId: request.auth!.userId,
+        action: 'opportunity.verified_against_source',
+        entityType: 'funding_opportunity',
+        entityId: id,
+      });
+      return { opportunity: rows[0] };
+    },
+  );
 
   app.post(
     '/v1/admin/review-queue/:id/resolve',

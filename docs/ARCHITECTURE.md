@@ -87,13 +87,34 @@ pg-boss (Postgres-backed, no extra infrastructure): all jobs idempotent, retry
 with backoff, failed jobs retained. Queues: `source-fetch` (6-hourly),
 `deadline-scan` (daily), `stale-match-recalc` (15-min).
 
+**Redis is deliberately not used.** It exists in some base environments but
+nothing in this system depends on it — Postgres is the single stateful
+dependency, and an architectural test (`test/invariants.test.ts`) fails the
+build if a Redis reference is introduced. Fewer moving parts.
+
+## Domain invariants enforced by tests
+
+Two guarantees are treated as architecture, not convention, and are enforced
+by dedicated tests:
+
+1. **Tenant isolation** — every tenant-owned query filters on `tenant_id`
+   (`test/tenantIsolation.test.ts`).
+2. **Case state is owned by the domain service** — only
+   `services/applications.ts` may write `application_cases.state`; routes,
+   jobs and future integrations go through `transitionCase()` with its guards
+   (`test/invariants.test.ts`). UI, API handlers and adapters never decide
+   status on their own.
+
 ## Observability (§44)
 
 - Structured JSON logs (pino) with request IDs, redacted auth headers.
 - `/healthz` (liveness) and `/readyz` (DB-checked readiness) probes.
-- Operational metrics surfaced in the admin console: source health, last
-  fetch/success/error per source, pending review count, stale match count.
-- Prometheus metrics endpoint is a known gap — see LIMITATIONS.md.
+- `/metrics` — Prometheus text format: HTTP counters/durations, process and
+  pg-pool gauges, and domain health gauges (published opportunities, overdue
+  reviews, stale matches, review-queue depth, failing sources). Recommended
+  alert rules in OPERATIONS.md.
+- Operational views in the admin console: source health, review queue with
+  affected opportunities, verification urgency list with one-click re-verify.
 
 ## Scaling path
 

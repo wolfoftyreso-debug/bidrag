@@ -71,25 +71,31 @@ Documents live on a PVC (`UPLOAD_DIR`). Fine for a single cluster; for AWS
 production move to S3 — call sites are isolated in `routes/documents.ts` /
 `services/uploads.ts`.
 
-## 7. GDPR self-service endpoints incomplete
+## 7. GDPR self-service — largely closed
 
-Cascading deletes and API export exist; a one-click user-facing
-export/erasure flow, retention scheduler, and the operator's DPIA are open
-items that must be completed before public launch (see PRIVACY.md).
+`GET /v1/tenant/export` (full JSON bundle, owner role) and `DELETE
+/v1/tenant` (typed confirmation, file deletion + database cascade, tenant-less
+audit proof) now exist and are integration-tested. Remaining: a retention
+scheduler for time-based purging, UI surface for the endpoints, and the
+operator's DPIA before public launch (see PRIVACY.md, OPERATIONS.md).
 
-## 8. Coverage is wave-1
+## 8. Coverage is wave-1 (expanded)
 
-Seven curated opportunities across six authorities exercise the different
-data patterns (recurring deadline, rolling, upcoming round, EU programme with
-OID requirements, applicant-type gates). Regions, municipalities, foundations
-(Global Grant's universe) and the remaining EU programmes are data work on
-the existing model — no schema changes required.
+28 curated opportunities across 16 financiers (state agencies, foundations,
+sports federation, EU programmes) exercise the data patterns: recurring and
+rolling deadlines, upcoming rounds, OID/Quality Label requirements,
+applicant-type gates, co-financing shares, prefinancing requirements. This
+proves the engine — it is not national coverage. Scaling to hundreds of
+opportunities is data work on the existing model plus curator throughput
+(the curator console now shows affected opportunities per source change and
+offers one-click re-verification). No schema changes required.
 
-## 9. Observability gaps
+## 9. Observability — partially closed
 
-Structured logs, probes and admin health views exist; a Prometheus `/metrics`
-endpoint, dashboards and alert rules are still to be added to the cluster's
-stack.
+Structured logs, probes, admin health views and a Prometheus `/metrics`
+endpoint (HTTP, process, pool and domain gauges) now exist, with recommended
+alert rules in OPERATIONS.md. Remaining: dashboards and alert wiring in the
+cluster's monitoring stack, plus a rehearsed on-call path.
 
 ## 10. Payments/billing not built
 

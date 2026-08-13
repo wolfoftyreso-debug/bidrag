@@ -23,11 +23,22 @@ interface ReviewItem {
   kind: string;
   payload: { sourceName?: string; url?: string };
   createdAt: string;
+  affectedOpportunities: { id: string; slug: string; title: string }[];
+}
+interface OppRow {
+  id: string;
+  title: string;
+  verificationStatus: string;
+  lastVerifiedAt: string | null;
+  nextReviewAt: string | null;
+  sourceUrl: string;
+  closesAt: string | null;
 }
 
 export default function AdminPage() {
   const [sources, setSources] = useState<SourceRow[]>([]);
   const [review, setReview] = useState<ReviewItem[]>([]);
+  const [opportunities, setOpportunities] = useState<OppRow[]>([]);
   const [staleMatches, setStaleMatches] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -35,6 +46,7 @@ export default function AdminPage() {
   const load = useCallback(() => {
     get<{ sources: SourceRow[] }>('/v1/admin/sources').then(({ sources }) => setSources(sources)).catch((e) => setError(e instanceof ApiError ? e.message : 'Kunde inte hämta källor.'));
     get<{ items: ReviewItem[] }>('/v1/admin/review-queue').then(({ items }) => setReview(items)).catch(() => {});
+    get<{ opportunities: OppRow[] }>('/v1/admin/opportunities').then(({ opportunities }) => setOpportunities(opportunities)).catch(() => {});
     get<{ staleMatches: number }>('/v1/admin/stale-matches').then((d) => setStaleMatches(d.staleMatches)).catch(() => {});
   }, []);
   useEffect(load, [load]);
@@ -114,12 +126,52 @@ export default function AdminPage() {
           <div key={item.id} style={{ padding: '0.6rem 0', borderBottom: '1px solid var(--border)' }}>
             <strong>{item.kind === 'source_change' ? 'Källändring' : item.kind}</strong> — {item.payload.sourceName ?? ''}{' '}
             <span className="meta-line">{formatDate(item.createdAt)}</span>
+            {item.affectedOpportunities.length > 0 && (
+              <div className="meta-line">
+                Påverkar: {item.affectedOpportunities.map((o) => o.title).join(' · ')}
+              </div>
+            )}
             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.35rem' }}>
               <button className="secondary" onClick={() => resolve(item.id, 'approved')}>Godkänn</button>
               <button className="subtle" onClick={() => resolve(item.id, 'rejected')}>Avvisa</button>
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="card">
+        <h2>Stöd efter granskningsbehov ({opportunities.length})</h2>
+        <p className="guidance">
+          Sorterat efter nästa granskningsdatum. ”Verifiera” bekräftar att publicerade regler fortfarande stämmer mot källan
+          och flyttar fram granskningsdatumet 30 dagar.
+        </p>
+        <table className="data">
+          <thead>
+            <tr><th>Stöd</th><th>Status</th><th>Senast verifierad</th><th>Nästa granskning</th><th /></tr>
+          </thead>
+          <tbody>
+            {opportunities.map((o) => {
+              const overdue = !o.nextReviewAt || new Date(o.nextReviewAt) < new Date();
+              return (
+                <tr key={o.id}>
+                  <td><a href={o.sourceUrl} target="_blank" rel="noreferrer">{o.title}</a></td>
+                  <td>
+                    <span className={`badge ${o.verificationStatus === 'human_verified' ? 'success' : ''}`}>
+                      {o.verificationStatus === 'human_verified' ? 'verifierad' : o.verificationStatus === 'human_curated' ? 'kurerad' : o.verificationStatus}
+                    </span>
+                  </td>
+                  <td>{formatDate(o.lastVerifiedAt)}</td>
+                  <td>{overdue ? <span className="badge warning">förfallen</span> : formatDate(o.nextReviewAt)}</td>
+                  <td>
+                    <button className="secondary" onClick={() => post(`/v1/admin/opportunities/${o.id}/verify`).then(load)}>
+                      Verifiera
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );

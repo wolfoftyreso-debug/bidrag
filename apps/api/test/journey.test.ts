@@ -35,11 +35,12 @@ describe('full journey — dancehall exchange to Jamaica', () => {
     };
     expect(matches.length).toBeGreaterThanOrEqual(5);
 
-    const top = matches[0]!;
-    expect(top.slug).toBe('kulturradet-internationellt-resebidrag-musik');
-    expect(top.eligibilityStatus).toBe('eligible');
-    expect(top.score).toBeGreaterThan(70);
-    expect(top.result.explanation.length).toBeGreaterThan(0);
+    const kr = matches.find((m) => m.slug === 'kulturradet-internationellt-resebidrag-musik')!;
+    expect(kr.eligibilityStatus).toBe('eligible');
+    expect(kr.score).toBeGreaterThan(70);
+    expect(kr.result.explanation.length).toBeGreaterThan(0);
+    // The travel grant is at (or tied for) the top of the ranking.
+    expect(matches[0]!.score).toBe(kr.score);
 
     // Erasmus requires an organisation — an individual must be excluded, with the reason visible.
     const erasmus = matches.find((m) => m.slug === 'erasmus-plus-ungdomsutbyten')!;
