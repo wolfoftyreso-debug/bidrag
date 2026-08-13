@@ -51,6 +51,20 @@ interface Submission {
   state: string;
   startedAt: string;
 }
+interface Decision {
+  id: string;
+  outcome: 'awarded' | 'partially_awarded' | 'rejected';
+  amountMinor: number | null;
+  reference: string;
+  decidedAt: string;
+  note: string;
+}
+interface ReportingRequirement {
+  id: string;
+  title: string;
+  dueAt: string | null;
+  status: 'pending' | 'submitted' | 'accepted';
+}
 interface CaseData {
   application: {
     id: string;
@@ -65,6 +79,8 @@ interface CaseData {
   budgetLines: BudgetLine[];
   documents: CaseDoc[];
   submissions: Submission[];
+  decisions: Decision[];
+  reportingRequirements: ReportingRequirement[];
   validation: Validation;
 }
 
@@ -385,6 +401,60 @@ export default function ApplicationPage() {
         )}
         <FinancingEditor app={app} editable={editable} budgetTotal={budgetTotal} onSaved={load} />
       </div>
+
+      {/* Post-award (§49): beslut och redovisningskrav */}
+      {(data.decisions.length > 0 || data.reportingRequirements.length > 0 || app.state === 'AWARDED') && (
+        <div className="card">
+          <h2>Beslut och redovisning</h2>
+          {data.decisions.map((d) => (
+            <p key={d.id}>
+              <span className={`badge ${d.outcome === 'rejected' ? 'danger' : 'success'}`}>
+                {d.outcome === 'awarded' ? 'Beviljat' : d.outcome === 'partially_awarded' ? 'Delvis beviljat' : 'Avslag'}
+              </span>{' '}
+              {d.amountMinor != null && <strong>{formatSek(d.amountMinor)}</strong>}
+              {d.reference && <> · {d.reference}</>} · {formatDate(d.decidedAt)}
+              {d.note && <span className="meta-line"> — {d.note}</span>}
+            </p>
+          ))}
+          {data.reportingRequirements.length > 0 && (
+            <>
+              <h3>Redovisningskrav</h3>
+              {data.reportingRequirements.map((r) => (
+                <div className="explain-item" key={r.id}>
+                  <span className="explain-icon">{r.status === 'accepted' ? '✓' : '•'}</span>
+                  <span>
+                    {r.title} {r.dueAt && <span className="meta-line">— senast {formatDate(r.dueAt)}</span>}{' '}
+                    <span className={`badge ${r.status === 'accepted' ? 'success' : r.status === 'submitted' ? 'info' : 'warning'}`}>
+                      {r.status === 'accepted' ? 'godkänd' : r.status === 'submitted' ? 'inskickad' : 'väntar'}
+                    </span>
+                  </span>
+                </div>
+              ))}
+            </>
+          )}
+          {app.state === 'AWARDED' && (
+            <form
+              style={{ display: 'flex', gap: '0.5rem', alignItems: 'end', marginTop: '0.8rem', flexWrap: 'wrap' }}
+              onSubmit={(e) => {
+                e.preventDefault();
+                const fd = new FormData(e.currentTarget);
+                void post(`/v1/applications/${app.id}/reporting-requirements`, {
+                  title: String(fd.get('title')),
+                  dueAt: fd.get('dueAt') ? new Date(String(fd.get('dueAt'))).toISOString() : undefined,
+                }).then(load);
+                e.currentTarget.reset();
+              }}
+            >
+              <div style={{ flex: 2, minWidth: 200 }}>
+                <label>Lägg till redovisningskrav</label>
+                <input name="title" required maxLength={300} placeholder="t.ex. Slutrapport" />
+              </div>
+              <div><label>Senast</label><input name="dueAt" type="date" /></div>
+              <button type="submit" className="secondary">Lägg till</button>
+            </form>
+          )}
+        </div>
+      )}
 
       {/* Documents */}
       <AttachmentsCard caseId={app.id} documents={data.documents} editable={editable} onChanged={load} />

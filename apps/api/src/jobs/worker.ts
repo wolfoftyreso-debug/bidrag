@@ -12,11 +12,13 @@ import { fetchSource } from '../services/ingestion.ts';
 import { recomputeMatchesForProject } from '../services/matching.ts';
 import { notify } from '../services/notifications.ts';
 import { runDeadlineScan } from '../services/reminders.ts';
+import { runRetention } from '../services/retention.ts';
 
 export const QUEUES = {
   sourceFetch: 'source-fetch',
   deadlineScan: 'deadline-scan',
   staleMatchRecalc: 'stale-match-recalc',
+  retention: 'retention',
 } as const;
 
 export async function startWorker(): Promise<PgBoss> {
@@ -68,10 +70,16 @@ export async function startWorker(): Promise<PgBoss> {
     }
   });
 
+  // Time-based purging (GDPR storage limitation) — daily, conservative.
+  await boss.work(QUEUES.retention, { batchSize: 1 }, async () => {
+    await runRetention();
+  });
+
   // Schedules (cron in UTC).
   await boss.schedule(QUEUES.sourceFetch, '0 */6 * * *', {}, {});
   await boss.schedule(QUEUES.deadlineScan, '0 6 * * *', {}, {});
   await boss.schedule(QUEUES.staleMatchRecalc, '*/15 * * * *', {}, {});
+  await boss.schedule(QUEUES.retention, '30 4 * * *', {}, {});
 
   return boss;
 }

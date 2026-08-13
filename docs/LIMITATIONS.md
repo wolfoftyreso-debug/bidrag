@@ -52,11 +52,15 @@ decision vocabulary) and auto-matches to cases via submission references —
 with human override. The architecture normalises everything to
 `correspondence_events`, so a mailbox connector is additive.
 
-## 4. Email delivery not wired
+## 4. Email delivery — closed
 
-`SMTP_URL` is configured but no SMTP adapter ships; notifications are
-reliably delivered in-app and the skipped email is recorded in the audit
-trail. Wire nodemailer or a provider in `services/notifications.ts`.
+Nodemailer SMTP adapter (`services/email.ts`) activates on `SMTP_URL`;
+notifications email the relevant user (or the tenant's owners/applicants).
+Every outcome — sent, skipped (no SMTP configured), failed — is recorded in
+the audit trail; delivery is best-effort on top of the always-reliable
+in-app notification and never breaks the caller. Covered by tests with an
+injected transport. Remaining: point `SMTP_URL` at the real relay in the
+cluster and verify one end-to-end delivery.
 
 ## 5. Malware scanning optional
 
@@ -71,13 +75,16 @@ Documents live on a PVC (`UPLOAD_DIR`). Fine for a single cluster; for AWS
 production move to S3 — call sites are isolated in `routes/documents.ts` /
 `services/uploads.ts`.
 
-## 7. GDPR self-service — largely closed
+## 7. GDPR self-service — closed (operator's DPIA remains)
 
-`GET /v1/tenant/export` (full JSON bundle, owner role) and `DELETE
-/v1/tenant` (typed confirmation, file deletion + database cascade, tenant-less
-audit proof) now exist and are integration-tested. Remaining: a retention
-scheduler for time-based purging, UI surface for the endpoints, and the
-operator's DPIA before public launch (see PRIVACY.md, OPERATIONS.md).
+Export and erasure are full self-service: the "Konto & data" page offers the
+JSON download and the typed-confirmation erasure flow, backed by the tested
+endpoints (file deletion + database cascade + tenant-less audit proof). A
+daily retention job purges expired/revoked refresh tokens, old read
+notifications and excess source snapshots (conservative policy in
+`services/retention.ts`; applicant content is never auto-purged). Remaining
+before public launch: the operator's DPIA (organisational step, see
+PRIVACY.md).
 
 ## 8. Coverage is wave-1 (expanded)
 

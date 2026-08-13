@@ -11,6 +11,8 @@ import ApplicationPage from './pages/Application';
 import DocumentsPage from './pages/Documents';
 import InboxPage from './pages/Inbox';
 import AdminPage from './pages/Admin';
+import RuleEditorPage from './pages/RuleEditor';
+import AccountPage from './pages/Account';
 import SearchPage from './pages/Search';
 
 export interface Session {
@@ -74,6 +76,7 @@ function Shell() {
         <NavLink to="/inkorg">Inkorg</NavLink>
         {isCurator && <NavLink to="/admin">Administration</NavLink>}
         <div className="spacer" />
+        <NavLink to="/konto" className="meta-line">Konto &amp; data</NavLink>
         <div className="meta-line" style={{ padding: '0 0.6rem' }}>{session?.user.email}</div>
         <button className="subtle" onClick={logout} style={{ textAlign: 'left' }}>Logga ut</button>
       </nav>
@@ -90,6 +93,8 @@ function Shell() {
           <Route path="/dokument" element={<DocumentsPage />} />
           <Route path="/inkorg" element={<InboxPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin/regler/:id" element={<RuleEditorPage />} />
+          <Route path="/konto" element={<AccountPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

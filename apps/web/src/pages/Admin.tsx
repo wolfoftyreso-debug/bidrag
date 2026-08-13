@@ -3,6 +3,7 @@
  * snapshots and the human review queue. Curator/administrator roles only.
  */
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ApiError, formatDate, get, post } from '../api';
 
 interface SourceRow {
@@ -162,10 +163,11 @@ export default function AdminPage() {
                   </td>
                   <td>{formatDate(o.lastVerifiedAt)}</td>
                   <td>{overdue ? <span className="badge warning">förfallen</span> : formatDate(o.nextReviewAt)}</td>
-                  <td>
+                  <td style={{ whiteSpace: 'nowrap' }}>
                     <button className="secondary" onClick={() => post(`/v1/admin/opportunities/${o.id}/verify`).then(load)}>
                       Verifiera
-                    </button>
+                    </button>{' '}
+                    <Link to={`/admin/regler/${o.id}`}>Redigera regler</Link>
                   </td>
                 </tr>
               );

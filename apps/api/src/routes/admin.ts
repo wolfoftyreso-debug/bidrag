@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
+import { validateRuleSet } from '@bidrag/core';
 import { db } from '../db/client.ts';
 import {
   fundingOpportunities,
@@ -316,6 +317,17 @@ export async function adminRoutes(app: FastifyInstance) {
       };
       const [opp] = await db.select().from(fundingOpportunities).where(eq(fundingOpportunities.id, id)).limit(1);
       if (!opp) return reply.code(404).send({ error: 'not_found' });
+
+      // Malformed rules must never publish — they would silently break
+      // matching for every tenant (§43).
+      const issues = validateRuleSet({
+        criteria: body.criteria,
+        budgetRules: body.budgetRules,
+        evidenceRequirements: body.evidenceRequirements,
+      });
+      if (issues.length > 0) {
+        return reply.code(422).send({ error: 'invalid_rules', message: 'Regeluppsättningen har fel.', issues });
+      }
 
       const [latest] = await db
         .select({ version: ruleVersions.version })

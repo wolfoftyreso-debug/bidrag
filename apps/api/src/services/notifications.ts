@@ -1,12 +1,12 @@
 /**
- * Notification service (§53). In-app notifications always; email when SMTP is
- * configured. When email is not configured the fact is recorded — the system
- * never pretends a message was sent.
+ * Notification service (§53). In-app notifications always; email best-effort
+ * to the tenant's owner/applicant members via the SMTP adapter. Every email
+ * outcome (sent/skipped/failed) is recorded — never silently pretended.
  */
+import { and, eq, inArray } from 'drizzle-orm';
 import { db } from '../db/client.ts';
-import { notifications } from '../db/schema.ts';
-import { config } from '../config.ts';
-import { audit } from '../audit.ts';
+import { memberships, notifications, users } from '../db/schema.ts';
+import { sendEmail } from './email.ts';
 
 export interface NotifyInput {
   tenantId: string;
@@ -29,15 +29,21 @@ export async function notify(input: NotifyInput): Promise<void> {
     refId: input.refId ?? null,
   });
 
-  if (config.smtpUrl) {
-    // SMTP delivery adapter boundary: wire nodemailer or a provider here when
-    // SMTP_URL is configured in the environment. Recorded honestly until then.
-    await audit({
+  // Email the specific user when known, otherwise the tenant's owners/applicants.
+  const recipients = input.userId
+    ? await db.select({ email: users.email }).from(users).where(eq(users.id, input.userId))
+    : await db
+        .select({ email: users.email })
+        .from(memberships)
+        .innerJoin(users, eq(memberships.userId, users.id))
+        .where(and(eq(memberships.tenantId, input.tenantId), inArray(memberships.role, ['owner', 'applicant'])));
+
+  for (const r of recipients) {
+    await sendEmail({
+      to: r.email,
+      subject: `Bidrag.se: ${input.title}`,
+      text: input.body ?? input.title,
       tenantId: input.tenantId,
-      actorType: 'system',
-      action: 'notification.email_skipped_no_adapter',
-      entityType: 'notification',
-      after: { kind: input.kind },
     });
   }
 }
