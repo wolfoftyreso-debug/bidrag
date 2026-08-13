@@ -5,7 +5,16 @@
  */
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ELIGIBILITY_LABELS, INSTRUMENT_LABELS, formatDate, formatSek, get, patch, post } from '../api';
+import { ApiError, ELIGIBILITY_LABELS, INSTRUMENT_LABELS, formatDate, formatSek, get, patch, post } from '../api';
+
+interface StackPlan {
+  items: { opportunityId: string; title: string; plannedContributionMinor: number; compatibility: string; compatibilityNote: string }[];
+  ownContributionMinor: number;
+  totalBudgetMinor: number;
+  coveredMinor: number;
+  uncoveredMinor: number;
+  warnings: string[];
+}
 
 interface MissingFact {
   factPath: string;
@@ -184,23 +193,111 @@ export default function MatchesPage() {
         ))}
       </div>
 
+      {relevant.length > 1 && <StackPlanner projectId={projectId} />}
+
       {excluded.length > 0 && (
         <div className="card">
           <h2>Uppfyller inte kraven ({excluded.length})</h2>
-          <p className="guidance">Vi visar varför — kraven kommer från respektive källa.</p>
-          {excluded.map((m) => (
-            <div className="match-row" key={m.matchId}>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 600, color: 'var(--text-muted)' }}>{m.title}</div>
-                <div className="meta-line">
-                  {m.result.excludedBy.length > 0
-                    ? m.result.excludedBy.map((e) => e.description).join(' · ')
-                    : m.result.missingFacts.length > 0
-                      ? `Obesvarade krav: ${m.result.missingFacts.map((f) => f.question).slice(0, 2).join(' · ')}`
-                      : 'Uppfyller inte de publicerade kraven.'}
-                </div>
-              </div>
+          {excludedList(excluded)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function excludedList(excluded: MatchRow[]) {
+  return (
+    <>
+      <p className="guidance">Vi visar varför — kraven kommer från respektive källa.</p>
+      {excluded.map((m) => (
+        <div className="match-row" key={m.matchId}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 600, color: 'var(--text-muted)' }}>{m.title}</div>
+            <div className="meta-line">
+              {m.result.excludedBy.length > 0
+                ? m.result.excludedBy.map((e) => e.description).join(' · ')
+                : m.result.missingFacts.length > 0
+                  ? `Obesvarade krav: ${m.result.missingFacts.map((f) => f.question).slice(0, 2).join(' · ')}`
+                  : 'Uppfyller inte de publicerade kraven.'}
             </div>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
+/** Funding stack planner (§13): proposes a combination and flags what needs confirmation. */
+function StackPlanner({ projectId }: { projectId: string }) {
+  const [own, setOwn] = useState('');
+  const [plan, setPlan] = useState<StackPlan | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const compute = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const { stack } = await post<{ stack: { plan: StackPlan } }>(`/v1/projects/${projectId}/funding-stack`, {
+        ownContributionMinor: Math.round(Number(own || 0) * 100),
+      });
+      setPlan(stack.plan);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Kunde inte ta fram en plan.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="card">
+      <h2>Finansieringsplan</h2>
+      <p className="guidance">
+        Hur kan flera stöd kombineras för att täcka hela budgeten? Vi antar aldrig att två stöd kan kombineras — allt som
+        behöver bekräftas flaggas.
+      </p>
+      <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'end', flexWrap: 'wrap' }}>
+        <div>
+          <label>Egen insats (kr)</label>
+          <input type="number" min={0} value={own} onChange={(e) => setOwn(e.target.value)} placeholder="0" />
+        </div>
+        <button disabled={busy} onClick={compute}>Föreslå plan</button>
+      </div>
+      {error && <div className="alert error">{error}</div>}
+      {plan && (
+        <div style={{ marginTop: '1rem' }}>
+          <table className="data">
+            <thead><tr><th>Stöd</th><th>Planerat belopp</th><th>Kombination</th></tr></thead>
+            <tbody>
+              {plan.items.map((i) => (
+                <tr key={i.opportunityId}>
+                  <td>{i.title}</td>
+                  <td>{formatSek(i.plannedContributionMinor)}</td>
+                  <td>
+                    {i.compatibility === 'compatible' && <span className="badge success">kompatibel</span>}
+                    {i.compatibility === 'requires_confirmation' && (
+                      <span className="badge warning" title={i.compatibilityNote}>kräver bekräftelse</span>
+                    )}
+                    {i.compatibility === 'potentially_overlapping' && (
+                      <span className="badge warning" title={i.compatibilityNote}>kan överlappa</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+              <tr>
+                <td style={{ fontWeight: 600 }}>Egen insats</td>
+                <td>{formatSek(plan.ownContributionMinor)}</td>
+                <td />
+              </tr>
+              <tr>
+                <td style={{ fontWeight: 700 }}>Täckt av planen</td>
+                <td style={{ fontWeight: 700 }}>{formatSek(plan.coveredMinor)} av {formatSek(plan.totalBudgetMinor)}</td>
+                <td />
+              </tr>
+            </tbody>
+          </table>
+          {plan.warnings.map((w, i) => (
+            <div key={i} className="alert warning">{w}</div>
           ))}
         </div>
       )}
