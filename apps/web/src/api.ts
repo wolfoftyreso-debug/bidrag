@@ -21,16 +21,29 @@ async function tryRefresh(): Promise<boolean> {
   return refreshing;
 }
 
+/** Aktiv tenant väljs i sidofältet och skickas som header på varje anrop. */
+export function getActiveTenant(): string | null {
+  return localStorage.getItem('bidrag_tenant');
+}
+export function setActiveTenant(tenantId: string | null): void {
+  if (tenantId) localStorage.setItem('bidrag_tenant', tenantId);
+  else localStorage.removeItem('bidrag_tenant');
+}
+
 export async function api<T = unknown>(
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
   path: string,
   body?: unknown,
   opts: { retry?: boolean } = {},
 ): Promise<T> {
+  const headers: Record<string, string> = {};
+  if (body !== undefined && !(body instanceof FormData)) headers['Content-Type'] = 'application/json';
+  const tenant = getActiveTenant();
+  if (tenant) headers['X-Tenant-Id'] = tenant;
   const init: RequestInit = {
     method,
     credentials: 'include',
-    headers: body !== undefined && !(body instanceof FormData) ? { 'Content-Type': 'application/json' } : {},
+    headers,
     body: body === undefined ? undefined : body instanceof FormData ? body : JSON.stringify(body),
   };
   const res = await fetch(path, init);
@@ -40,6 +53,23 @@ export async function api<T = unknown>(
   const json = res.status === 204 ? {} : await res.json().catch(() => ({}));
   if (!res.ok) throw new ApiError(res.status, json as never);
   return json as T;
+}
+
+/** Ladda ner en fil via fetch så att tenant-headern följer med. */
+export async function downloadFile(path: string, filename: string): Promise<void> {
+  const tenant = getActiveTenant();
+  const res = await fetch(path, {
+    credentials: 'include',
+    headers: tenant ? { 'X-Tenant-Id': tenant } : {},
+  });
+  if (!res.ok) throw new ApiError(res.status, await res.json().catch(() => ({})));
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 export const get = <T>(path: string) => api<T>('GET', path);

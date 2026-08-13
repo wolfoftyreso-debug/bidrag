@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ApiError, api, formatDate, get } from '../api';
+import { ApiError, api, downloadFile, formatDate, get } from '../api';
 
 interface DocRow {
   id: string;
@@ -98,7 +98,11 @@ export default function DocumentsPage() {
                     {d.scanStatus === 'blocked' && <span className="badge danger">stoppad</span>}
                   </td>
                   <td>{formatDate(d.createdAt)}</td>
-                  <td><a href={`/v1/documents/${d.id}/download`}>Ladda ner</a></td>
+                  <td>
+                    <button className="subtle" onClick={() => void downloadFile(`/v1/documents/${d.id}/download`, d.filename)}>
+                      Ladda ner
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

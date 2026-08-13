@@ -58,6 +58,26 @@ export const memberships = pgTable(
   (t) => [uniqueIndex('memberships_user_tenant_idx').on(t.userId, t.tenantId)],
 );
 
+/** Invitations to join a tenant with a role (§26). Token stored hashed. */
+export const invites = pgTable(
+  'invites',
+  {
+    id: id(),
+    tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+    email: text('email').notNull(),
+    role: text('role', {
+      enum: ['applicant', 'contributor', 'reviewer', 'finance', 'administrator', 'data_curator'],
+    }).notNull(),
+    tokenHash: text('token_hash').notNull().unique(),
+    invitedBy: uuid('invited_by').notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    acceptedAt: timestamp('accepted_at', { withTimezone: true }),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [index('invites_tenant_idx').on(t.tenantId)],
+);
+
 export const refreshTokens = pgTable(
   'refresh_tokens',
   {

@@ -1,8 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import { get, post } from './api';
+import { get, getActiveTenant, post, setActiveTenant } from './api';
 import LoginPage from './pages/Login';
 import OnboardingPage from './pages/Onboarding';
+import CalendarPage from './pages/Calendar';
+import InvitePage from './pages/Invite';
 import DashboardPage from './pages/Dashboard';
 import MatchesPage from './pages/Matches';
 import OpportunityPage from './pages/Opportunity';
@@ -18,6 +20,7 @@ import SearchPage from './pages/Search';
 export interface Session {
   user: { id: string; email: string };
   activeTenant: { id: string; role: string };
+  tenants: { tenantId: string; role: string; name: string; kind: string }[];
 }
 
 const SessionContext = createContext<{ session: Session | null; reload: () => Promise<void> }>({
@@ -59,7 +62,14 @@ function Shell() {
   const isCurator = session?.activeTenant.role === 'administrator' || session?.activeTenant.role === 'data_curator';
 
   const logout = async () => {
+    setActiveTenant(null);
     await post('/v1/auth/logout');
+    await reload();
+    navigate('/');
+  };
+
+  const switchTenant = async (tenantId: string) => {
+    setActiveTenant(tenantId);
     await reload();
     navigate('/');
   };
@@ -68,9 +78,22 @@ function Shell() {
     <div className="app-shell">
       <nav className="sidebar">
         <div className="brand">Bidrag.se</div>
+        {(session?.tenants.length ?? 0) > 1 && (
+          <select
+            aria-label="Aktiv organisation"
+            value={getActiveTenant() ?? session?.activeTenant.id}
+            onChange={(e) => void switchTenant(e.target.value)}
+            style={{ marginBottom: '0.6rem', fontSize: '0.85rem' }}
+          >
+            {session?.tenants.map((t) => (
+              <option key={t.tenantId} value={t.tenantId}>{t.kind === 'personal' ? 'Personligt' : t.name}</option>
+            ))}
+          </select>
+        )}
         <NavLink to="/" end>Översikt</NavLink>
         <NavLink to="/projekt">Projekt &amp; matchningar</NavLink>
         <NavLink to="/ansokningar">Mina ansökningar</NavLink>
+        <NavLink to="/kalender">Kalender</NavLink>
         <NavLink to="/sok">Sök stöd</NavLink>
         <NavLink to="/dokument">Dokument</NavLink>
         <NavLink to="/inkorg">Inkorg</NavLink>
@@ -95,6 +118,8 @@ function Shell() {
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/regler/:id" element={<RuleEditorPage />} />
           <Route path="/konto" element={<AccountPage />} />
+          <Route path="/kalender" element={<CalendarPage />} />
+          <Route path="/inbjudan/:token" element={<InvitePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

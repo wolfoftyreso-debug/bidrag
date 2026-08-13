@@ -15,6 +15,7 @@ import { authPlugin } from './plugins/auth.ts';
 import { metricsPlugin } from './plugins/metrics.ts';
 import { originGuardPlugin } from './plugins/originGuard.ts';
 import { gdprRoutes } from './routes/gdpr.ts';
+import { teamRoutes } from './routes/team.ts';
 import { authRoutes } from './routes/auth.ts';
 import { profileRoutes } from './routes/profiles.ts';
 import { projectRoutes } from './routes/projects.ts';
@@ -114,6 +115,7 @@ export async function buildServer(): Promise<FastifyInstance> {
   await app.register(correspondenceRoutes);
   await app.register(notificationRoutes);
   await app.register(gdprRoutes);
+  await app.register(teamRoutes);
   await app.register(adminRoutes);
 
   // Serve the built SPA when co-deployed (WEB_DIST) with an SPA fallback.

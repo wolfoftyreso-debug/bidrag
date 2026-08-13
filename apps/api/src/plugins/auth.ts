@@ -64,6 +64,8 @@ async function resolveAuth(request: FastifyRequest): Promise<AuthContext | null>
         ? and(eq(memberships.userId, claims.sub), eq(memberships.tenantId, requestedTenant))
         : eq(memberships.userId, claims.sub),
     )
+    // Deterministic default tenant: the oldest membership (the personal one).
+    .orderBy(memberships.createdAt)
     .limit(1);
 
   const membership = rows[0];
