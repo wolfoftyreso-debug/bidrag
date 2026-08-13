@@ -45,6 +45,48 @@ export function summarizeChange(previous: ParsedSource | null, current: ParsedSo
 }
 
 /**
+ * Förslagsutkast för ett-klicks-godkännande (§65): när källan innehåller
+ * exakt ETT framtida datum i deadlinesammanhang som skiljer sig från ett
+ * kopplat stöds publicerade deadline föreslås en uppdatering — med textbevis.
+ * Medvetet konservativt: fler än ett kandidatdatum → inget förslag, bara
+ * flaggor. Kuratorn beslutar alltid; förslaget tillämpas aldrig automatiskt.
+ */
+export interface ChangeProposal {
+  type: 'update_deadline';
+  opportunitySlug: string;
+  opportunityTitle: string;
+  currentIso: string | null;
+  proposedIso: string;
+  evidence: string;
+}
+
+export function buildProposals(
+  current: ParsedSource,
+  opportunities: { slug: string; title: string; closesAtIso: string | null }[],
+  nowIso: string,
+): ChangeProposal[] {
+  const today = nowIso.slice(0, 10);
+  const futureDeadlineDates = current.dates.filter((d) => d.nearDeadlinePhrase && d.iso > today);
+  if (futureDeadlineDates.length !== 1) return [];
+
+  const candidate = futureDeadlineDates[0]!;
+  const proposals: ChangeProposal[] = [];
+  for (const opp of opportunities) {
+    const currentDay = opp.closesAtIso?.slice(0, 10) ?? null;
+    if (currentDay === candidate.iso) continue;
+    proposals.push({
+      type: 'update_deadline',
+      opportunitySlug: opp.slug,
+      opportunityTitle: opp.title,
+      currentIso: currentDay,
+      proposedIso: candidate.iso,
+      evidence: candidate.evidence,
+    });
+  }
+  return proposals;
+}
+
+/**
  * Materialflaggor: jämför källändringen med de publicerade stöd som pekar på
  * källan. Ett datum som försvinner och som är ett stöds publicerade deadline
  * är en varning; nya deadlinenära datum är information.

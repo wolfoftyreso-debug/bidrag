@@ -27,6 +27,7 @@ interface ReviewItem {
     url?: string;
     summary?: string;
     flags?: { severity: 'info' | 'warning'; message: string }[];
+    proposals?: { type: string; opportunityTitle: string; currentIso: string | null; proposedIso: string; evidence: string }[];
     addedLinks?: { href: string; text: string }[];
     addedDates?: string[];
     removedDates?: string[];
@@ -139,6 +140,19 @@ export default function AdminPage() {
             {(item.payload.flags ?? []).map((f, i) => (
               <div key={i} className={`alert ${f.severity === 'warning' ? 'warning' : 'info'}`} style={{ margin: '0.3rem 0', padding: '0.4rem 0.7rem' }}>
                 {f.message}
+              </div>
+            ))}
+            {(item.payload.proposals ?? []).map((p, i) => (
+              <div key={i} className="alert info" style={{ margin: '0.3rem 0', padding: '0.5rem 0.8rem' }}>
+                <strong>Förslag:</strong> uppdatera deadline för ”{p.opportunityTitle}”: {p.currentIso ?? 'ingen'} → {p.proposedIso}
+                <div className="meta-line">Bevis: ”{p.evidence.slice(0, 120)}…”</div>
+                <button
+                  className="secondary"
+                  style={{ marginTop: '0.3rem' }}
+                  onClick={() => post(`/v1/admin/review-queue/${item.id}/apply`, { proposalIndex: i }).then(load)}
+                >
+                  Tillämpa och godkänn
+                </button>
               </div>
             ))}
             {(item.payload.addedLinks ?? []).slice(0, 5).map((l, i) => (

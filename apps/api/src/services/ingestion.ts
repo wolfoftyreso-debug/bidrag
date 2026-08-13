@@ -15,7 +15,7 @@ import { db } from '../db/client.ts';
 import { fundingOpportunities, reviewItems, sources, sourceSnapshots } from '../db/schema.ts';
 import { audit } from '../audit.ts';
 import { PARSER_VERSION, parseSource } from './parsers/generic.ts';
-import { materialFlags, summarizeChange } from './parsers/diff.ts';
+import { buildProposals, materialFlags, summarizeChange } from './parsers/diff.ts';
 
 const MAX_FETCH_BYTES = 10 * 1024 * 1024;
 const FETCH_TIMEOUT_MS = 30_000;
@@ -190,14 +190,9 @@ export async function recordFetchedContent(
       .select({ slug: fundingOpportunities.slug, title: fundingOpportunities.title, closesAt: fundingOpportunities.closesAt })
       .from(fundingOpportunities)
       .where(eq(fundingOpportunities.sourceId, source.id));
-    const flags =
-      change && extracted
-        ? materialFlags(
-            change,
-            extracted,
-            linked.map((o) => ({ slug: o.slug, title: o.title, closesAtIso: o.closesAt?.toISOString() ?? null })),
-          )
-        : [];
+    const linkedView = linked.map((o) => ({ slug: o.slug, title: o.title, closesAtIso: o.closesAt?.toISOString() ?? null }));
+    const flags = change && extracted ? materialFlags(change, extracted, linkedView) : [];
+    const proposals = extracted ? buildProposals(extracted, linkedView, new Date().toISOString()) : [];
 
     await db.insert(reviewItems).values({
       kind: 'source_change',
@@ -210,6 +205,7 @@ export async function recordFetchedContent(
         contentHash,
         summary: diffSummary,
         flags,
+        proposals,
         addedLinks: change?.addedLinks ?? [],
         addedDates: change?.addedDates ?? [],
         removedDates: change?.removedDates ?? [],

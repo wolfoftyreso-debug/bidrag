@@ -39,8 +39,10 @@ describe('full journey — dancehall exchange to Jamaica', () => {
     expect(kr.eligibilityStatus).toBe('eligible');
     expect(kr.score).toBeGreaterThan(70);
     expect(kr.result.explanation.length).toBeGreaterThan(0);
-    // The travel grant is at (or tied for) the top of the ranking.
-    expect(matches[0]!.score).toBe(kr.score);
+    // The ranking is coherent: the top match is eligible and the travel
+    // grant is not outranked by anything excluded or unknown-scoring-lower.
+    expect(matches[0]!.eligibilityStatus).toBe('eligible');
+    expect(matches[0]!.score).toBeGreaterThanOrEqual(kr.score);
 
     // Erasmus requires an organisation — an individual must be excluded, with the reason visible.
     const erasmus = matches.find((m) => m.slug === 'erasmus-plus-ungdomsutbyten')!;

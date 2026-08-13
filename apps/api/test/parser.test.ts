@@ -6,11 +6,11 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 import { desc, eq } from 'drizzle-orm';
-import { testServer } from './helpers.ts';
+import { api, registerUser, testServer } from './helpers.ts';
 import { db } from '../src/db/client.ts';
-import { fundingOpportunities, reviewItems, sources, sourceSnapshots } from '../src/db/schema.ts';
+import { fundingOpportunities, matches, memberships, reviewItems, sources, sourceSnapshots } from '../src/db/schema.ts';
 import { extractAmounts, extractDates, extractLinks, htmlToText, parseSource } from '../src/services/parsers/generic.ts';
-import { materialFlags, summarizeChange } from '../src/services/parsers/diff.ts';
+import { buildProposals, materialFlags, summarizeChange } from '../src/services/parsers/diff.ts';
 import { recordFetchedContent } from '../src/services/ingestion.ts';
 
 let app: FastifyInstance;
@@ -86,6 +86,74 @@ describe('snapshot-diff och materialflaggor', () => {
     expect(warning?.message).toContain('2026-09-24');
     expect(warning?.message).toContain('Resebidrag');
     expect(flags.some((f) => f.message.includes('nya länkar'))).toBe(true);
+  });
+});
+
+describe('förslagsutkast (§65) — konservativa och ett-klicks-tillämpbara', () => {
+  const NOW = '2026-08-13T00:00:00Z';
+
+  it('proposes only when exactly one future deadline-context date exists', () => {
+    const single = parseSource(
+      '<p>Ansök senast den 15 oktober 2026.</p>',
+      'text/html',
+    );
+    const proposals = buildProposals(single, [{ slug: 's', title: 'Stödet', closesAtIso: '2026-09-24T21:59:59Z' }], NOW);
+    expect(proposals).toHaveLength(1);
+    expect(proposals[0]).toMatchObject({ type: 'update_deadline', proposedIso: '2026-10-15', currentIso: '2026-09-24' });
+    expect(proposals[0]!.evidence).toContain('Ansök senast');
+
+    // Två kandidatdatum → inget förslag, bara flaggor.
+    const double = parseSource('<p>Ansök senast 15 oktober 2026 eller stänger 30 november 2026.</p>', 'text/html');
+    expect(buildProposals(double, [{ slug: 's', title: 'Stödet', closesAtIso: null }], NOW)).toHaveLength(0);
+
+    // Datum i det förflutna föreslås aldrig.
+    const past = parseSource('<p>Ansök senast 1 januari 2020.</p>', 'text/html');
+    expect(buildProposals(past, [{ slug: 's', title: 'Stödet', closesAtIso: null }], NOW)).toHaveLength(0);
+
+    // Samma datum som redan publicerat → inget förslag.
+    expect(buildProposals(single, [{ slug: 's', title: 'Stödet', closesAtIso: '2026-10-15T21:59:59Z' }], NOW)).toHaveLength(0);
+  });
+
+  it('curator applies a proposal with one click: deadline updated, matches stale, item approved', async () => {
+    const curator = await registerUser(app, 'Förslagskurator');
+    await db.update(memberships).set({ role: 'data_curator' }).where(eq(memberships.tenantId, curator.tenantId));
+
+    const [source] = await db
+      .insert(sources)
+      .values({ name: 'Förslagskälla', url: 'https://example.org/forslag', method: 'html', quality: 'A' })
+      .returning();
+    const [opp] = await db
+      .select()
+      .from(fundingOpportunities)
+      .where(eq(fundingOpportunities.slug, 'kulturradet-projektbidrag-musik'))
+      .limit(1);
+    await db.update(fundingOpportunities).set({ sourceId: source!.id }).where(eq(fundingOpportunities.id, opp!.id));
+
+    await recordFetchedContent(source!, { content: Buffer.from('<p>Info.</p>'), contentType: 'text/html', httpStatus: 200 });
+    await recordFetchedContent(source!, {
+      content: Buffer.from('<p>Ny omgång: ansök senast den 1 december 2026.</p>'),
+      contentType: 'text/html',
+      httpStatus: 200,
+    });
+
+    const items = await db.select().from(reviewItems).where(eq(reviewItems.status, 'pending'));
+    const item = items.find((i) => (i.payload as { sourceId?: string }).sourceId === source!.id)!;
+    const proposals = (item.payload as { proposals: { opportunitySlug: string; proposedIso: string }[] }).proposals;
+    expect(proposals).toHaveLength(1);
+    expect(proposals[0]!.proposedIso).toBe('2026-12-01');
+
+    const res = await api(app, curator, 'POST', `/v1/admin/review-queue/${item.id}/apply`, { proposalIndex: 0 });
+    expect(res.statusCode).toBe(200);
+
+    const [updated] = await db.select().from(fundingOpportunities).where(eq(fundingOpportunities.id, opp!.id)).limit(1);
+    expect(updated!.closesAt?.toISOString().slice(0, 10)).toBe('2026-12-01');
+    expect(updated!.verificationStatus).toBe('human_verified');
+
+    const [resolvedItem] = await db.select().from(reviewItems).where(eq(reviewItems.id, item.id)).limit(1);
+    expect(resolvedItem!.status).toBe('approved');
+
+    const staleRows = await db.select({ stale: matches.stale }).from(matches).where(eq(matches.opportunityId, opp!.id));
+    expect(staleRows.every((r) => r.stale)).toBe(true);
   });
 });
 

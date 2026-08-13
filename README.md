@@ -30,7 +30,7 @@ Profil → Intention → Stödutbud → Behörighet → Matchning → Finansieri
 |---|---|
 | Teknisk kärna | ~85 % byggd, deterministisk och testad |
 | Production hardening | pågående — metrics, GDPR-självservice och runbook finns; verklig klusterdrift, backup-övning och lasttest återstår |
-| Kunskapstäckning | 36 kurerade stöd från 20 finansiärer, inkl. personliga ersättningar (FK, CSN, Pensionsmyndigheten, socialtjänsten) — bevisar motorn, inte nationell täckning |
+| Kunskapstäckning | 51 kurerade stöd från 29 finansiärer, inkl. personliga ersättningar (FK, CSN, Pensionsmyndigheten, socialtjänsten) — bevisar motorn, inte nationell täckning |
 | Integrationsmognad | låg per design — assisterad inlämning tills avtalade adaptrar finns |
 | Produktarkitektur | stark; skala/härda/befolka, inte bygga om |
 

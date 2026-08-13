@@ -281,6 +281,80 @@ export async function adminRoutes(app: FastifyInstance) {
     },
   );
 
+  /**
+   * Tillämpa ett förslagsutkast från en granskningspost med ett klick:
+   * uppdaterar stödets deadline, stämplar det som verifierat mot källan,
+   * markerar matchningar för omräkning och godkänner posten. Kuratorns
+   * aktiva val — aldrig automatiskt.
+   */
+  app.post(
+    '/v1/admin/review-queue/:id/apply',
+    {
+      schema: {
+        tags: ['admin'],
+        params: { type: 'object', properties: { id: { type: 'string', format: 'uuid' } }, required: ['id'] },
+        body: {
+          type: 'object',
+          required: ['proposalIndex'],
+          properties: { proposalIndex: { type: 'integer', minimum: 0, maximum: 50 } },
+          additionalProperties: false,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      const { proposalIndex } = request.body as { proposalIndex: number };
+
+      const [item] = await db.select().from(reviewItems).where(eq(reviewItems.id, id)).limit(1);
+      if (!item || item.status !== 'pending') return reply.code(404).send({ error: 'not_found_or_resolved' });
+
+      const proposals = (item.payload as { proposals?: { type: string; opportunitySlug: string; proposedIso: string; currentIso: string | null; evidence: string }[] }).proposals ?? [];
+      const proposal = proposals[proposalIndex];
+      if (!proposal || proposal.type !== 'update_deadline') {
+        return reply.code(422).send({ error: 'no_such_proposal' });
+      }
+
+      const [opp] = await db
+        .select()
+        .from(fundingOpportunities)
+        .where(eq(fundingOpportunities.slug, proposal.opportunitySlug))
+        .limit(1);
+      if (!opp) return reply.code(404).send({ error: 'opportunity_not_found' });
+
+      const now = new Date();
+      const closesAt = new Date(`${proposal.proposedIso}T21:59:59Z`);
+      await db
+        .update(fundingOpportunities)
+        .set({
+          closesAt,
+          deadlineModel: opp.deadlineModel === 'rolling' ? 'recurring' : opp.deadlineModel,
+          verificationStatus: 'human_verified',
+          lastVerifiedAt: now,
+          nextReviewAt: new Date(now.getTime() + 30 * 86_400_000),
+          updatedAt: now,
+        })
+        .where(eq(fundingOpportunities.id, opp.id));
+      await markMatchesStale(opp.id);
+
+      await db
+        .update(reviewItems)
+        .set({ status: 'approved', note: `Förslag tillämpat: deadline ${proposal.currentIso ?? '—'} → ${proposal.proposedIso}`, resolvedBy: request.auth!.userId, resolvedAt: now })
+        .where(eq(reviewItems.id, id));
+
+      await audit({
+        actorType: 'user',
+        actorUserId: request.auth!.userId,
+        action: 'review_item.proposal_applied',
+        entityType: 'funding_opportunity',
+        entityId: opp.id,
+        before: { closesAt: proposal.currentIso },
+        after: { closesAt: proposal.proposedIso, evidence: proposal.evidence },
+      });
+
+      return { applied: { slug: proposal.opportunitySlug, closesAt: closesAt.toISOString() } };
+    },
+  );
+
   // ── Rule versioning (§22) ──────────────────────────────────────────────────
 
   /**
