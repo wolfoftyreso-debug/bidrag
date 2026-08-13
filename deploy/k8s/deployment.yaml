@@ -1,0 +1,131 @@
+# Bidrag.se — Kubernetes manifests (§63).
+# Adjust namespace, ingress class, storage class and hostnames to the cluster's
+# conventions. Secrets are referenced, never inlined.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bidrag-api
+  labels: { app: bidrag-api }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: bidrag-api }
+  strategy:
+    rollingUpdate: { maxSurge: 1, maxUnavailable: 0 }
+  template:
+    metadata:
+      labels: { app: bidrag-api }
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 100
+        fsGroup: 101
+      containers:
+        - name: api
+          # CI publishes immutable tags — never :latest in production.
+          image: ghcr.io/wolfoftyreso-debug/bidrag:IMMUTABLE_TAG
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3000"
+            - name: UPLOAD_DIR
+              value: /data/uploads
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: { name: bidrag-secrets, key: database-url }
+            - name: AUTH_SECRET
+              valueFrom:
+                secretKeyRef: { name: bidrag-secrets, key: auth-secret }
+            - name: FIELD_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef: { name: bidrag-secrets, key: field-encryption-key }
+            - name: CORS_ORIGIN
+              valueFrom:
+                configMapKeyRef: { name: bidrag-config, key: cors-origin }
+            - name: PUBLIC_BASE_URL
+              valueFrom:
+                configMapKeyRef: { name: bidrag-config, key: public-base-url }
+            # Only one replica runs the pg-boss scheduler-heavy work; jobs are
+            # queue-based and idempotent so running it on all replicas is also
+            # safe — flip to "true" everywhere if preferred.
+            - name: ENABLE_WORKER
+              value: "true"
+          resources:
+            requests: { cpu: 250m, memory: 384Mi }
+            limits: { cpu: "1", memory: 768Mi }
+          readinessProbe:
+            httpGet: { path: /readyz, port: 3000 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /healthz, port: 3000 }
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          volumeMounts:
+            - name: uploads
+              mountPath: /data/uploads
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities: { drop: [ALL] }
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: bidrag-uploads
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bidrag-api
+spec:
+  selector: { app: bidrag-api }
+  ports:
+    - port: 80
+      targetPort: 3000
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: bidrag-api
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: { app: bidrag-api }
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bidrag-uploads
+spec:
+  # ReadWriteMany is required with >1 replica; use the cluster's shared
+  # storage class (EFS on AWS), or switch documents to S3 via the storage
+  # adapter boundary in services/uploads.ts.
+  accessModes: [ReadWriteMany]
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bidrag
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 25m
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: [bidrag.example.se]
+      secretName: bidrag-tls
+  rules:
+    - host: bidrag.example.se
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bidrag-api
+                port: { number: 80 }

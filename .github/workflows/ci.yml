@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: bidrag_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build core
+        run: npm run build -w packages/core
+      - name: Unit tests (core)
+        run: npm run test -w packages/core
+      - name: Integration tests (api, real Postgres)
+        run: npm run test -w apps/api
+        env:
+          TEST_DATABASE_URL: postgres://postgres@localhost:5432/bidrag_test
+      - name: Migration determinism — drizzle generate produces no drift
+        run: |
+          cd apps/api
+          npx drizzle-kit generate 2>&1 | tee /tmp/drift.log
+          if ls drizzle/*.sql | wc -l | grep -qv "^$(git ls-files drizzle/*.sql | wc -l)$"; then
+            echo "::error::Schema drift: uncommitted migration would be generated"; git status --short; exit 1
+          fi
+      - name: Build web
+        run: npm run build -w apps/web
+      - name: Build API
+        run: npm run build -w apps/api
+      - name: Dependency audit (high+)
+        run: npm audit --audit-level=high || true
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build production image
+        run: docker build -t bidrag:${{ github.sha }} .
+      - name: Smoke test image
+        run: |
+          docker network create ci
+          docker run -d --network ci --name pg -e POSTGRES_USER=postgres -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=bidrag postgres:16-alpine
+          sleep 8
+          docker run -d --network ci --name app \
+            -e DATABASE_URL=postgres://postgres@pg:5432/bidrag \
+            -e AUTH_SECRET=$(openssl rand -hex 32) \
+            -e FIELD_ENCRYPTION_KEY=$(openssl rand -hex 32) \
+            -e NODE_ENV=production -p 3000:3000 bidrag:${{ github.sha }}
+          for i in $(seq 1 30); do
+            if curl -sf localhost:3000/readyz; then echo "READY"; exit 0; fi
+            sleep 2
+          done
+          docker logs app
+          exit 1

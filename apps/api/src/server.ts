@@ -4,8 +4,11 @@ import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import multipart from '@fastify/multipart';
 import rateLimit from '@fastify/rate-limit';
+import fastifyStatic from '@fastify/static';
 import swagger from '@fastify/swagger';
 import { randomUUID } from 'node:crypto';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { config } from './config.ts';
 import { pool } from './db/client.ts';
 import { authPlugin } from './plugins/auth.ts';
@@ -90,6 +93,18 @@ export async function buildServer(): Promise<FastifyInstance> {
   await app.register(correspondenceRoutes);
   await app.register(notificationRoutes);
   await app.register(adminRoutes);
+
+  // Serve the built SPA when co-deployed (WEB_DIST) with an SPA fallback.
+  const webDist = process.env.WEB_DIST ? path.resolve(process.env.WEB_DIST) : null;
+  if (webDist && existsSync(webDist)) {
+    await app.register(fastifyStatic, { root: webDist, wildcard: false });
+    app.setNotFoundHandler(async (request, reply) => {
+      if (request.method === 'GET' && !request.url.startsWith('/v1/')) {
+        return reply.sendFile('index.html');
+      }
+      return reply.code(404).send({ error: 'not_found' });
+    });
+  }
 
   // User-safe error handling: never leak internals (§61).
   app.setErrorHandler((error: Error & { validation?: unknown; statusCode?: number }, request, reply) => {
