@@ -58,14 +58,18 @@ export const memberships = pgTable(
   (t) => [uniqueIndex('memberships_user_tenant_idx').on(t.userId, t.tenantId)],
 );
 
-export const refreshTokens = pgTable('refresh_tokens', {
-  id: id(),
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  tokenHash: text('token_hash').notNull().unique(),
-  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
-  revokedAt: timestamp('revoked_at', { withTimezone: true }),
-  createdAt: createdAt(),
-});
+export const refreshTokens = pgTable(
+  'refresh_tokens',
+  {
+    id: id(),
+    userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    tokenHash: text('token_hash').notNull().unique(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [index('refresh_tokens_user_idx').on(t.userId)],
+);
 
 // ── Applicant world (tenant-owned) ───────────────────────────────────────────
 
@@ -249,18 +253,22 @@ export const sourceSnapshots = pgTable(
 );
 
 /** Human review queue for extracted/changed funding facts (§43, §65). */
-export const reviewItems = pgTable('review_items', {
-  id: id(),
-  kind: text('kind').notNull(), // 'source_change' | 'extracted_rule' | 'correspondence_match' | ...
-  refType: text('ref_type').notNull(),
-  refId: uuid('ref_id'),
-  payload: jsonb('payload').notNull().default({}),
-  status: text('status', { enum: ['pending', 'approved', 'rejected'] }).notNull().default('pending'),
-  note: text('note'),
-  resolvedBy: uuid('resolved_by'),
-  resolvedAt: timestamp('resolved_at', { withTimezone: true }),
-  createdAt: createdAt(),
-});
+export const reviewItems = pgTable(
+  'review_items',
+  {
+    id: id(),
+    kind: text('kind').notNull(), // 'source_change' | 'extracted_rule' | 'correspondence_match' | ...
+    refType: text('ref_type').notNull(),
+    refId: uuid('ref_id'),
+    payload: jsonb('payload').notNull().default({}),
+    status: text('status', { enum: ['pending', 'approved', 'rejected'] }).notNull().default('pending'),
+    note: text('note'),
+    resolvedBy: uuid('resolved_by'),
+    resolvedAt: timestamp('resolved_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [index('review_items_status_idx').on(t.status, t.createdAt)],
+);
 
 // ── Matching (tenant-owned results over shared knowledge) ────────────────────
 
@@ -419,16 +427,20 @@ export const submissions = pgTable(
   (t) => [index('submissions_case_idx').on(t.caseId)],
 );
 
-export const submissionReceipts = pgTable('submission_receipts', {
-  id: id(),
-  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
-  submissionId: uuid('submission_id').notNull().references(() => submissions.id, { onDelete: 'cascade' }),
-  kind: text('kind', { enum: ['adapter_confirmation', 'user_receipt', 'authority_email'] }).notNull(),
-  reference: text('reference').notNull().default(''),
-  documentId: uuid('document_id'),
-  note: text('note').notNull().default(''),
-  receivedAt: timestamp('received_at', { withTimezone: true }).notNull().defaultNow(),
-});
+export const submissionReceipts = pgTable(
+  'submission_receipts',
+  {
+    id: id(),
+    tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+    submissionId: uuid('submission_id').notNull().references(() => submissions.id, { onDelete: 'cascade' }),
+    kind: text('kind', { enum: ['adapter_confirmation', 'user_receipt', 'authority_email'] }).notNull(),
+    reference: text('reference').notNull().default(''),
+    documentId: uuid('document_id'),
+    note: text('note').notNull().default(''),
+    receivedAt: timestamp('received_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('submission_receipts_tenant_idx').on(t.tenantId)],
+);
 
 // ── Correspondence inbox (§17–18, §48) ───────────────────────────────────────
 
@@ -512,15 +524,19 @@ export const notifications = pgTable(
   (t) => [index('notifications_tenant_idx').on(t.tenantId, t.createdAt)],
 );
 
-export const reminders = pgTable('reminders', {
-  id: id(),
-  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
-  caseId: uuid('case_id').references(() => applicationCases.id, { onDelete: 'cascade' }),
-  kind: text('kind').notNull(), // 'deadline_30d' | 'deadline_7d' | ...
-  dueAt: timestamp('due_at', { withTimezone: true }).notNull(),
-  sentAt: timestamp('sent_at', { withTimezone: true }),
-  createdAt: createdAt(),
-});
+export const reminders = pgTable(
+  'reminders',
+  {
+    id: id(),
+    tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+    caseId: uuid('case_id').references(() => applicationCases.id, { onDelete: 'cascade' }),
+    kind: text('kind').notNull(), // 'deadline_14d' | 'deadline_7d' | 'deadline_3d' | ...
+    dueAt: timestamp('due_at', { withTimezone: true }).notNull(),
+    sentAt: timestamp('sent_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [uniqueIndex('reminders_case_kind_idx').on(t.caseId, t.kind)],
+);
 
 // ── Audit (§45) — append-only ────────────────────────────────────────────────
 

@@ -8,6 +8,13 @@
       "when": 1786639848289,
       "tag": "0000_woozy_george_stacy",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786647238941,
+      "tag": "0001_faulty_sentry",
+      "breakpoints": true
     }
   ]
 }

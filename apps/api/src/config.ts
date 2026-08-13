@@ -38,5 +38,7 @@ export const config = {
   corsOrigin: env.CORS_ORIGIN ?? 'http://localhost:5173',
   /** ClamAV daemon address (host:port) when malware scanning is deployed. */
   clamavAddress: env.CLAMAV_ADDRESS ?? null,
+  /** Global per-IP rate limit per minute (auth endpoints have stricter own limits). */
+  rateLimitMax: Number(env.RATE_LIMIT_MAX ?? 300),
   logLevel: env.LOG_LEVEL ?? 'info',
 };

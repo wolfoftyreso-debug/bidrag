@@ -13,6 +13,7 @@ import { config } from './config.ts';
 import { pool } from './db/client.ts';
 import { authPlugin } from './plugins/auth.ts';
 import { metricsPlugin } from './plugins/metrics.ts';
+import { originGuardPlugin } from './plugins/originGuard.ts';
 import { gdprRoutes } from './routes/gdpr.ts';
 import { authRoutes } from './routes/auth.ts';
 import { profileRoutes } from './routes/profiles.ts';
@@ -53,7 +54,7 @@ export async function buildServer(): Promise<FastifyInstance> {
   });
   await app.register(cookie);
   await app.register(rateLimit, {
-    max: 300,
+    max: config.rateLimitMax,
     timeWindow: '1 minute',
   });
   await app.register(multipart, {
@@ -71,6 +72,23 @@ export async function buildServer(): Promise<FastifyInstance> {
     },
   });
 
+  // User-safe error handling (§61) — MUST be set before route registration:
+  // encapsulated route contexts capture the error handler at register time,
+  // so a handler set afterwards never applies to them. Found by failure
+  // injection (a DB outage leaked "connect ECONNREFUSED" to the client).
+  app.setErrorHandler((error: Error & { validation?: unknown; statusCode?: number }, request, reply) => {
+    if (error.validation) {
+      return reply.code(400).send({ error: 'validation_error', message: error.message });
+    }
+    const status = error.statusCode ?? 500;
+    if (status >= 500) {
+      request.log.error({ err: error, reqId: request.id }, 'unhandled error');
+      return reply.code(500).send({ error: 'internal_error', message: 'Ett oväntat fel inträffade.', requestId: request.id });
+    }
+    return reply.code(status).send({ error: error.name, message: error.message });
+  });
+
+  await app.register(originGuardPlugin);
   await app.register(authPlugin);
   await app.register(metricsPlugin);
 
@@ -109,19 +127,6 @@ export async function buildServer(): Promise<FastifyInstance> {
       return reply.code(404).send({ error: 'not_found' });
     });
   }
-
-  // User-safe error handling: never leak internals (§61).
-  app.setErrorHandler((error: Error & { validation?: unknown; statusCode?: number }, request, reply) => {
-    if (error.validation) {
-      return reply.code(400).send({ error: 'validation_error', message: error.message });
-    }
-    const status = error.statusCode ?? 500;
-    if (status >= 500) {
-      request.log.error({ err: error, reqId: request.id }, 'unhandled error');
-      return reply.code(500).send({ error: 'internal_error', message: 'Ett oväntat fel inträffade.', requestId: request.id });
-    }
-    return reply.code(status).send({ error: error.name, message: error.message });
-  });
 
   return app;
 }

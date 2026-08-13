@@ -73,12 +73,41 @@ dump; jobs are idempotent so replaying after restore is safe.
 - On a manual Art. 17 request (e.g. via email), perform the same erasure and
   record the request reference in the audit note.
 
-## Pre-launch drill checklist
+## Rehearsal log
 
-- [ ] Restore rehearsal completed against a scratch DB
+Executed in the development environment on 2026-08-13 (rerun in the real
+cluster before launch — the checklist below tracks that):
+
+- **Backup + restore drill** (`scripts/backup.sh` → `scripts/restore-verify.sh`):
+  dump + uploads archive with sha256 manifest; restored into a scratch DB;
+  row counts verified (36 published opportunities, all core tables, 2 applied
+  migrations); API booted against the restored DB — `/readyz` 200 and a full
+  registration succeeded. The drill also runs in CI on every push.
+- **Load test** (`scripts/loadtest.mjs`, 25 concurrent, 20 s, 4 vCPU dev box):
+  599 req/s sustained, 0 non-2xx. Read paths p95 ≈ 45 ms; match recompute
+  p95 164 ms after batching the upsert (was 504 ms with per-row writes).
+  First run honestly measured only the rate limiter (49 000 × 429) — the
+  script now counts any non-2xx as failure and prints the status
+  distribution; use `RATE_LIMIT_MAX` to load-test past the default limit.
+- **Failure injection** (kill Postgres under live traffic): the process
+  initially **crashed** — unhandled `error` event from idle pool clients —
+  and the default error path leaked `ECONNREFUSED` to clients because the
+  Fastify error handler was registered after the route contexts. Both fixed
+  (pool error handler; error handler registered before routes; regression
+  tests added). Verified after fix: `/readyz` 503 during outage, generic
+  error + requestId to clients, process survives, full read/write recovery
+  after DB restart.
+- **Dependency audit**: production dependencies at 0 known vulnerabilities
+  (`@fastify/static` and `drizzle-orm` patched). Remaining advisories are in
+  dev-only toolchain (esbuild dev server via vite/drizzle-kit) — not present
+  in the production image.
+
+## Pre-launch drill checklist (real cluster)
+
+- [x] Restore rehearsal against a scratch DB *(dev 2026-08-13 + automated in CI — repeat against the production backup target)*
 - [ ] Rollback rehearsal (deploy N, roll back to N-1 under traffic)
-- [ ] Load test: matching + application flows at expected peak ×3
-- [ ] Failure injection: kill DB connection, kill a pod, fill the uploads volume
+- [x] Load test *(dev reference numbers above — repeat at expected peak ×3 through the real ingress)*
+- [x] Failure injection: DB outage *(dev — repeat with pod kill and full uploads volume)*
 - [ ] Alert rules firing verified end-to-end (to the on-call channel)
 - [ ] ClamAV deployed and `scan_unavailable` rate ≈ 0
 - [ ] Secrets rotated once via the real secret-manager path

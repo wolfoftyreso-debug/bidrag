@@ -21,6 +21,16 @@ async function main() {
   };
   process.on('SIGTERM', () => void shutdown('SIGTERM'));
   process.on('SIGINT', () => void shutdown('SIGINT'));
+
+  // Last-resort guards: log with full context; for truly unknown state, exit
+  // non-zero so the orchestrator restarts a clean process.
+  process.on('unhandledRejection', (reason) => {
+    app.log.error({ err: reason }, 'unhandled promise rejection');
+  });
+  process.on('uncaughtException', (err) => {
+    app.log.fatal({ err }, 'uncaught exception — exiting for clean restart');
+    process.exit(1);
+  });
 }
 
 main().catch((err) => {

@@ -4,7 +4,7 @@
  * with the rule version they were computed against, so they are reproducible
  * and can be marked stale when rules change (§22).
  */
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import {
   computeMatch,
   type CriterionDef,
@@ -97,7 +97,9 @@ export async function recomputeMatchesForProject(
     : [];
   const versionById = new Map(versions.map((v) => [v.id, v]));
 
-  let count = 0;
+  // Compute in memory, persist as ONE batched upsert — the recompute path is
+  // hot (every intake answer triggers it) and per-row round trips dominate.
+  const rows: (typeof matches.$inferInsert)[] = [];
   for (const opp of opps) {
     const rv = opp.currentRuleVersionId ? versionById.get(opp.currentRuleVersionId) : undefined;
     if (!rv) continue;
@@ -113,33 +115,36 @@ export async function recomputeMatchesForProject(
       lastVerifiedAt: opp.lastVerifiedAt?.toISOString() ?? null,
     });
 
+    rows.push({
+      tenantId,
+      projectId,
+      opportunityId: opp.id,
+      ruleVersionId: rv.id,
+      referenceDate,
+      eligibilityStatus: result.eligibilityStatus,
+      score: result.score,
+      result,
+      stale: false,
+    });
+  }
+
+  if (rows.length > 0) {
     await db
       .insert(matches)
-      .values({
-        tenantId,
-        projectId,
-        opportunityId: opp.id,
-        ruleVersionId: rv.id,
-        referenceDate,
-        eligibilityStatus: result.eligibilityStatus,
-        score: result.score,
-        result,
-        stale: false,
-      })
+      .values(rows)
       .onConflictDoUpdate({
         target: [matches.projectId, matches.opportunityId],
         set: {
-          ruleVersionId: rv.id,
-          referenceDate,
-          eligibilityStatus: result.eligibilityStatus,
-          score: result.score,
-          result,
-          stale: false,
+          ruleVersionId: sql`excluded.rule_version_id`,
+          referenceDate: sql`excluded.reference_date`,
+          eligibilityStatus: sql`excluded.eligibility_status`,
+          score: sql`excluded.score`,
+          result: sql`excluded.result`,
+          stale: sql`excluded.stale`,
         },
       });
-    count++;
   }
-  return count;
+  return rows.length;
 }
 
 export async function listMatchesForProject(tenantId: string, projectId: string): Promise<MatchRow[]> {

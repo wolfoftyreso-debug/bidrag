@@ -45,6 +45,20 @@ jobs:
           if ls drizzle/*.sql | wc -l | grep -qv "^$(git ls-files drizzle/*.sql | wc -l)$"; then
             echo "::error::Schema drift: uncommitted migration would be generated"; git status --short; exit 1
           fi
+      - name: Backup/restore rehearsal (scripts must keep working)
+        run: |
+          sudo apt-get install -y -qq postgresql-client > /dev/null 2>&1 || true
+          createdb -h localhost -U postgres bidrag_ci
+          cd apps/api
+          DATABASE_URL=postgres://postgres@localhost:5432/bidrag_ci node --experimental-strip-types src/db/migrate.ts
+          DATABASE_URL=postgres://postgres@localhost:5432/bidrag_ci node --experimental-strip-types src/seed/run.ts
+          cd ../..
+          DATABASE_URL=postgres://postgres@localhost:5432/bidrag_ci ./scripts/backup.sh /tmp/ci-backups
+          createdb -h localhost -U postgres bidrag_ci_restore
+          SCRATCH_DATABASE_URL=postgres://postgres@localhost:5432/bidrag_ci_restore ./scripts/restore-verify.sh /tmp/ci-backups/bidrag-db-*.dump
+        env:
+          PGHOST: localhost
+          PGUSER: postgres
       - name: Build web
         run: npm run build -w apps/web
       - name: Build API

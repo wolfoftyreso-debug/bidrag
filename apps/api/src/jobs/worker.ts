@@ -4,13 +4,14 @@
  * via failed-job records (§59).
  */
 import PgBoss from 'pg-boss';
-import { and, eq, isNull, lt, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from '../db/client.ts';
-import { applicationCases, fundingOpportunities, matches, projects, sources } from '../db/schema.ts';
+import { matches, projects, sources } from '../db/schema.ts';
 import { config } from '../config.ts';
 import { fetchSource } from '../services/ingestion.ts';
 import { recomputeMatchesForProject } from '../services/matching.ts';
 import { notify } from '../services/notifications.ts';
+import { runDeadlineScan } from '../services/reminders.ts';
 
 export const QUEUES = {
   sourceFetch: 'source-fetch',
@@ -40,37 +41,10 @@ export async function startWorker(): Promise<PgBoss> {
     }
   });
 
-  // Daily deadline scan: notify tenants with open cases approaching deadline (§36, §53).
+  // Deadline scan: at most one notification per case and threshold bucket
+  // (deduplicated via the reminders table — safe at any schedule frequency).
   await boss.work(QUEUES.deadlineScan, { batchSize: 1 }, async () => {
-    const soon = new Date(Date.now() + 14 * 86_400_000);
-    const rows = await db
-      .select({
-        id: applicationCases.id,
-        tenantId: applicationCases.tenantId,
-        deadlineAt: applicationCases.deadlineAt,
-        state: applicationCases.state,
-        title: fundingOpportunities.title,
-      })
-      .from(applicationCases)
-      .innerJoin(fundingOpportunities, eq(applicationCases.opportunityId, fundingOpportunities.id))
-      .where(
-        and(
-          sql`${applicationCases.state} IN ('SELECTED','PREPARING','READY_FOR_REVIEW','READY_TO_SUBMIT')`,
-          lt(applicationCases.deadlineAt, soon),
-          sql`${applicationCases.deadlineAt} > now()`,
-        ),
-      );
-    for (const row of rows) {
-      const days = Math.ceil((row.deadlineAt!.getTime() - Date.now()) / 86_400_000);
-      await notify({
-        tenantId: row.tenantId,
-        kind: 'deadline_approaching',
-        title: `Deadline om ${days} dagar: ${row.title}`,
-        body: `Din ansökan är i läget "${row.state}". Se till att den blir klar i tid.`,
-        refType: 'application_case',
-        refId: row.id,
-      });
-    }
+    await runDeadlineScan();
   });
 
   // Recompute matches flagged stale after rule changes (§22, §65).
