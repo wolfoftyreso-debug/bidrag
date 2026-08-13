@@ -23,23 +23,28 @@ receipt before any case reads "Inlämnad". The UI says exactly this.
 agreement + API access with any authority plugs in without changing the
 application flow.
 
-## 2. Live source parsing is snapshot+diff, not structured extraction
+## 2. Source parsing is structured extraction + human curation, not rule auto-publishing
 
 **Blocker**: wave-1 sources publish HTML/PDF without machine-readable rule
-data; reliable unattended extraction of eligibility rules is not safe to
-publish without human review (§24).
+data; unattended *publishing* of extracted eligibility rules is not safe
+(§24) and remains deliberately out of scope.
 
-**Fallback implemented**: the ingestion pipeline fetches, hashes, snapshots
-and hash-diffs every registered source on a schedule with SSRF guards; any
-change lands in the human review queue; rules are published as curated,
-versioned `rule_versions` with provenance and `last_verified_at`. The seeded
-wave-1 opportunities are `human_curated` from the official URLs on
-2026-08-13, and the UI displays that status and date rather than claiming
-live verification. Deadlines that could not be verified are modelled as
-`rolling`/`upcoming_round` with no invented dates.
+**Implemented**: the ingestion pipeline fetches with SSRF guards, snapshots
+with hashes, and now runs a deterministic Swedish extraction layer
+(`services/parsers/`, version `generic-sv@1`): dates (written and ISO forms,
+with deadline-context detection), amounts (incl. millions), links, and
+deadline phrases — each extraction carrying its exact text evidence.
+Snapshot-to-snapshot diffs produce plain-Swedish summaries ("Nya länkar:
+'Residensbidrag för dansare' · Datum som försvunnit: 2026-09-24") and
+material flags against the published opportunities linked to the source —
+a vanished date that is a published deadline is a warning in the review
+queue. Everything still goes through human review before any rule changes;
+nothing auto-publishes. Fixture-tested end to end without network.
 
-**Next boundary**: per-source parsers registered on `sources.parserVersion`,
-emitting extracted rules into the same review queue.
+**Next boundary**: source-specific parsers (registered on
+`sources.parserVersion`) that map listing items to opportunity slugs and
+propose draft rule-version diffs for one-click curator approval; PDF text
+extraction for document-based sources.
 
 ## 3. Digital post / mailbox integrations not connected
 

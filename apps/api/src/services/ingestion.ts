@@ -12,8 +12,10 @@ import { lookup } from 'node:dns/promises';
 import { isIP } from 'node:net';
 import { desc, eq } from 'drizzle-orm';
 import { db } from '../db/client.ts';
-import { reviewItems, sources, sourceSnapshots } from '../db/schema.ts';
+import { fundingOpportunities, reviewItems, sources, sourceSnapshots } from '../db/schema.ts';
 import { audit } from '../audit.ts';
+import { PARSER_VERSION, parseSource } from './parsers/generic.ts';
+import { materialFlags, summarizeChange } from './parsers/diff.ts';
 
 const MAX_FETCH_BYTES = 10 * 1024 * 1024;
 const FETCH_TIMEOUT_MS = 30_000;
@@ -120,11 +122,25 @@ export async function fetchSource(sourceId: string): Promise<FetchOutcome> {
     return { snapshotId: snap!.id, changeStatus: 'error', httpStatus, error };
   }
 
+  return recordFetchedContent(source, { content, contentType, httpStatus });
+}
+
+/**
+ * Bearbetar hämtat innehåll: parsar, diffar mot föregående snapshot, lagrar
+ * med läsbar sammanfattning och lägger materialflaggor i granskningskön.
+ * Åtskild från nätverkshämtningen så att den kan testas med fixturer, och så
+ * att partnerfeeds/manuella uppladdningar kan gå samma väg (§20).
+ */
+export async function recordFetchedContent(
+  source: typeof sources.$inferSelect,
+  fetched: { content: Buffer; contentType: string | null; httpStatus: number | null },
+): Promise<FetchOutcome> {
+  const { content, contentType, httpStatus } = fetched;
   const contentHash = createHash('sha256').update(content).digest('hex');
   const [previous] = await db
-    .select({ contentHash: sourceSnapshots.contentHash })
+    .select({ contentHash: sourceSnapshots.contentHash, content: sourceSnapshots.content, contentType: sourceSnapshots.contentType })
     .from(sourceSnapshots)
-    .where(eq(sourceSnapshots.sourceId, sourceId))
+    .where(eq(sourceSnapshots.sourceId, source.id))
     .orderBy(desc(sourceSnapshots.fetchedAt))
     .limit(1);
 
@@ -135,36 +151,77 @@ export async function fetchSource(sourceId: string): Promise<FetchOutcome> {
       : 'changed';
 
   const isText = (contentType ?? '').includes('text') || (contentType ?? '').includes('json') || (contentType ?? '').includes('xml');
+
+  // Strukturerad extraktion + diff — endast för textinnehåll och bara när
+  // något faktiskt hänt. Osäkerhet förblir synlig: allt går via granskning.
+  let diffSummary: string | null = null;
+  let extracted: ReturnType<typeof parseSource> | null = null;
+  let change: ReturnType<typeof summarizeChange> | null = null;
+  if (isText && (changeStatus === 'changed' || changeStatus === 'new')) {
+    extracted = parseSource(content.toString('utf8'), contentType);
+    const prevParsed = previous?.content ? parseSource(previous.content, previous.contentType) : null;
+    change = summarizeChange(prevParsed, extracted);
+    diffSummary = change.summary;
+  } else if (changeStatus === 'changed') {
+    diffSummary = 'Binärt innehåll ändrades (hash-diff).';
+  }
+
   const [snap] = await db
     .insert(sourceSnapshots)
     .values({
-      sourceId,
+      sourceId: source.id,
       httpStatus,
       contentType,
       contentHash,
       content: isText ? content.toString('utf8').slice(0, 2_000_000) : null,
       changeStatus,
-      diffSummary: changeStatus === 'changed' ? 'Innehållet har ändrats sedan förra hämtningen (hash-diff).' : null,
+      diffSummary,
     })
     .returning({ id: sourceSnapshots.id });
 
-  await db.update(sources).set({ lastSuccessAt: new Date(), lastError: null }).where(eq(sources.id, sourceId));
+  await db
+    .update(sources)
+    .set({ lastSuccessAt: new Date(), lastError: null, parserVersion: isText ? PARSER_VERSION : source.parserVersion })
+    .where(eq(sources.id, source.id));
 
   if (changeStatus === 'changed') {
-    // Material change → human review queue; matches against affected
-    // opportunities are only recalculated after curation (§65).
+    // Materialflaggor mot stöd som pekar på källan (§65) — aldrig autopublicering.
+    const linked = await db
+      .select({ slug: fundingOpportunities.slug, title: fundingOpportunities.title, closesAt: fundingOpportunities.closesAt })
+      .from(fundingOpportunities)
+      .where(eq(fundingOpportunities.sourceId, source.id));
+    const flags =
+      change && extracted
+        ? materialFlags(
+            change,
+            extracted,
+            linked.map((o) => ({ slug: o.slug, title: o.title, closesAtIso: o.closesAt?.toISOString() ?? null })),
+          )
+        : [];
+
     await db.insert(reviewItems).values({
       kind: 'source_change',
       refType: 'source_snapshot',
       refId: snap!.id,
-      payload: { sourceId, sourceName: source.name, url: source.url, contentHash },
+      payload: {
+        sourceId: source.id,
+        sourceName: source.name,
+        url: source.url,
+        contentHash,
+        summary: diffSummary,
+        flags,
+        addedLinks: change?.addedLinks ?? [],
+        addedDates: change?.addedDates ?? [],
+        removedDates: change?.removedDates ?? [],
+        deadlineDates: extracted?.dates.filter((d) => d.nearDeadlinePhrase).slice(0, 10) ?? [],
+      },
     });
     await audit({
       actorType: 'job',
       action: 'source.change_detected',
       entityType: 'source',
-      entityId: sourceId,
-      after: { snapshotId: snap!.id, contentHash },
+      entityId: source.id,
+      after: { snapshotId: snap!.id, contentHash, summary: diffSummary },
     });
   }
 

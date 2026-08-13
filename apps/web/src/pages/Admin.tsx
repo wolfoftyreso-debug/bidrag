@@ -22,7 +22,15 @@ interface SourceRow {
 interface ReviewItem {
   id: string;
   kind: string;
-  payload: { sourceName?: string; url?: string };
+  payload: {
+    sourceName?: string;
+    url?: string;
+    summary?: string;
+    flags?: { severity: 'info' | 'warning'; message: string }[];
+    addedLinks?: { href: string; text: string }[];
+    addedDates?: string[];
+    removedDates?: string[];
+  };
   createdAt: string;
   affectedOpportunities: { id: string; slug: string; title: string }[];
 }
@@ -127,6 +135,15 @@ export default function AdminPage() {
           <div key={item.id} style={{ padding: '0.6rem 0', borderBottom: '1px solid var(--border)' }}>
             <strong>{item.kind === 'source_change' ? 'Källändring' : item.kind}</strong> — {item.payload.sourceName ?? ''}{' '}
             <span className="meta-line">{formatDate(item.createdAt)}</span>
+            {item.payload.summary && <div style={{ margin: '0.25rem 0' }}>{item.payload.summary}</div>}
+            {(item.payload.flags ?? []).map((f, i) => (
+              <div key={i} className={`alert ${f.severity === 'warning' ? 'warning' : 'info'}`} style={{ margin: '0.3rem 0', padding: '0.4rem 0.7rem' }}>
+                {f.message}
+              </div>
+            ))}
+            {(item.payload.addedLinks ?? []).slice(0, 5).map((l, i) => (
+              <div className="meta-line" key={i}>+ {l.text}</div>
+            ))}
             {item.affectedOpportunities.length > 0 && (
               <div className="meta-line">
                 Påverkar: {item.affectedOpportunities.map((o) => o.title).join(' · ')}
