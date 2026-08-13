@@ -1,0 +1,125 @@
+/* Bidrag.se design system — high-trust administrative product (§50). */
+:root {
+  --bg: #f7f8fa;
+  --surface: #ffffff;
+  --text: #1a2233;
+  --text-muted: #5a6478;
+  --border: #dfe3ea;
+  --primary: #1d4ed8;
+  --primary-dark: #1e40af;
+  --primary-soft: #eff4ff;
+  --success: #15803d;
+  --success-soft: #ecfdf3;
+  --warning: #b45309;
+  --warning-soft: #fffbeb;
+  --danger: #b91c1c;
+  --danger-soft: #fef2f2;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.55; }
+h1 { font-size: 1.6rem; margin: 0 0 0.5rem; }
+h2 { font-size: 1.2rem; margin: 1.5rem 0 0.75rem; }
+h3 { font-size: 1rem; margin: 1rem 0 0.5rem; }
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+p { margin: 0.4rem 0; }
+
+.app-shell { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 230px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border);
+  padding: 1.25rem 0.9rem; display: flex; flex-direction: column; gap: 0.15rem; position: sticky; top: 0; height: 100vh;
+}
+.sidebar .brand { font-weight: 700; font-size: 1.15rem; padding: 0 0.6rem 1rem; color: var(--primary-dark); }
+.sidebar a {
+  padding: 0.5rem 0.6rem; border-radius: 8px; color: var(--text); font-weight: 500;
+}
+.sidebar a:hover { background: var(--primary-soft); text-decoration: none; }
+.sidebar a.active { background: var(--primary-soft); color: var(--primary-dark); }
+.sidebar .spacer { flex: 1; }
+.main { flex: 1; padding: 2rem 2.25rem; max-width: 1060px; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin-bottom: 1rem; box-shadow: var(--shadow);
+}
+.card h2:first-child, .card h3:first-child { margin-top: 0; }
+
+.grid { display: grid; gap: 1rem; }
+.grid.cols-3 { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+
+button, .btn {
+  font: inherit; font-weight: 600; border: 1px solid var(--primary); background: var(--primary); color: #fff;
+  padding: 0.5rem 1.05rem; border-radius: 8px; cursor: pointer; display: inline-block;
+}
+button:hover, .btn:hover { background: var(--primary-dark); text-decoration: none; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button.secondary, .btn.secondary { background: var(--surface); color: var(--primary-dark); }
+button.secondary:hover { background: var(--primary-soft); }
+button.subtle { background: transparent; border-color: transparent; color: var(--text-muted); font-weight: 500; }
+button.subtle:hover { background: var(--bg); }
+
+label { display: block; font-weight: 600; margin: 0.85rem 0 0.25rem; }
+.guidance { color: var(--text-muted); font-size: 0.85rem; margin: 0.1rem 0 0.35rem; font-weight: 400; }
+input, textarea, select {
+  font: inherit; width: 100%; padding: 0.5rem 0.65rem; border: 1px solid var(--border);
+  border-radius: 8px; background: var(--surface); color: var(--text);
+}
+input:focus, textarea:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 0; border-color: var(--primary); }
+textarea { min-height: 110px; resize: vertical; }
+.checkbox-row { display: flex; align-items: flex-start; gap: 0.55rem; margin: 0.85rem 0; }
+.checkbox-row input { width: auto; margin-top: 0.28rem; }
+.checkbox-row label { margin: 0; font-weight: 500; }
+
+.badge {
+  display: inline-block; padding: 0.13rem 0.55rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600;
+  background: var(--bg); color: var(--text-muted); border: 1px solid var(--border);
+}
+.badge.success { background: var(--success-soft); color: var(--success); border-color: transparent; }
+.badge.warning { background: var(--warning-soft); color: var(--warning); border-color: transparent; }
+.badge.danger { background: var(--danger-soft); color: var(--danger); border-color: transparent; }
+.badge.info { background: var(--primary-soft); color: var(--primary-dark); border-color: transparent; }
+
+.alert { border-radius: 8px; padding: 0.7rem 1rem; margin: 0.75rem 0; font-size: 0.92rem; }
+.alert.error { background: var(--danger-soft); color: var(--danger); }
+.alert.warning { background: var(--warning-soft); color: var(--warning); }
+.alert.success { background: var(--success-soft); color: var(--success); }
+.alert.info { background: var(--primary-soft); color: var(--primary-dark); }
+
+.score-ring { font-size: 1.5rem; font-weight: 700; }
+.match-row {
+  display: flex; align-items: flex-start; gap: 1.1rem; padding: 1rem 0; border-bottom: 1px solid var(--border);
+}
+.match-row:last-child { border-bottom: none; }
+.match-score { min-width: 64px; text-align: center; }
+.match-score .n { font-size: 1.45rem; font-weight: 700; }
+.match-score .of { color: var(--text-muted); font-size: 0.75rem; }
+
+table.data { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+table.data th { text-align: left; color: var(--text-muted); font-weight: 600; padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--border); }
+table.data td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); }
+
+.meta-line { color: var(--text-muted); font-size: 0.85rem; }
+.kv { display: grid; grid-template-columns: 190px 1fr; gap: 0.3rem 1rem; font-size: 0.92rem; }
+.kv dt { color: var(--text-muted); }
+.kv dd { margin: 0; }
+
+.explain-item { display: flex; gap: 0.5rem; align-items: baseline; padding: 0.28rem 0; }
+.explain-icon { width: 1.1rem; text-align: center; flex-shrink: 0; }
+
+.auth-page { max-width: 420px; margin: 8vh auto; padding: 0 1rem; }
+.progress-steps { display: flex; gap: 0.4rem; margin-bottom: 1.25rem; }
+.progress-steps span { flex: 1; height: 5px; border-radius: 3px; background: var(--border); }
+.progress-steps span.done { background: var(--primary); }
+
+.source-line { border-top: 1px solid var(--border); margin-top: 1rem; padding-top: 0.8rem; font-size: 0.85rem; color: var(--text-muted); }
+
+@media (max-width: 800px) {
+  .app-shell { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; }
+  .main { padding: 1.25rem 1rem; }
+  .kv { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,98 @@
+import { createContext, useContext, useEffect, useState } from 'react';
+import { NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { get, post } from './api';
+import LoginPage from './pages/Login';
+import OnboardingPage from './pages/Onboarding';
+import DashboardPage from './pages/Dashboard';
+import MatchesPage from './pages/Matches';
+import OpportunityPage from './pages/Opportunity';
+import ApplicationsPage from './pages/Applications';
+import ApplicationPage from './pages/Application';
+import DocumentsPage from './pages/Documents';
+import InboxPage from './pages/Inbox';
+import AdminPage from './pages/Admin';
+import SearchPage from './pages/Search';
+
+export interface Session {
+  user: { id: string; email: string };
+  activeTenant: { id: string; role: string };
+}
+
+const SessionContext = createContext<{ session: Session | null; reload: () => Promise<void> }>({
+  session: null,
+  reload: async () => {},
+});
+
+export const useSession = () => useContext(SessionContext);
+
+export default function App() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const reload = async () => {
+    try {
+      const me = await get<Session>('/v1/auth/me');
+      setSession(me);
+    } catch {
+      setSession(null);
+    }
+  };
+
+  useEffect(() => {
+    reload().finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div className="auth-page"><p>Laddar…</p></div>;
+
+  return (
+    <SessionContext.Provider value={{ session, reload }}>
+      {session ? <Shell /> : <LoginPage onLogin={reload} />}
+    </SessionContext.Provider>
+  );
+}
+
+function Shell() {
+  const { session, reload } = useSession();
+  const navigate = useNavigate();
+  const isCurator = session?.activeTenant.role === 'administrator' || session?.activeTenant.role === 'data_curator';
+
+  const logout = async () => {
+    await post('/v1/auth/logout');
+    await reload();
+    navigate('/');
+  };
+
+  return (
+    <div className="app-shell">
+      <nav className="sidebar">
+        <div className="brand">Bidrag.se</div>
+        <NavLink to="/" end>Översikt</NavLink>
+        <NavLink to="/projekt">Projekt &amp; matchningar</NavLink>
+        <NavLink to="/ansokningar">Mina ansökningar</NavLink>
+        <NavLink to="/sok">Sök stöd</NavLink>
+        <NavLink to="/dokument">Dokument</NavLink>
+        <NavLink to="/inkorg">Inkorg</NavLink>
+        {isCurator && <NavLink to="/admin">Administration</NavLink>}
+        <div className="spacer" />
+        <div className="meta-line" style={{ padding: '0 0.6rem' }}>{session?.user.email}</div>
+        <button className="subtle" onClick={logout} style={{ textAlign: 'left' }}>Logga ut</button>
+      </nav>
+      <main className="main">
+        <Routes>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/kom-igang" element={<OnboardingPage />} />
+          <Route path="/projekt" element={<MatchesPage />} />
+          <Route path="/projekt/:projectId" element={<MatchesPage />} />
+          <Route path="/stod/:id" element={<OpportunityPage />} />
+          <Route path="/ansokningar" element={<ApplicationsPage />} />
+          <Route path="/ansokningar/:id" element={<ApplicationPage />} />
+          <Route path="/sok" element={<SearchPage />} />
+          <Route path="/dokument" element={<DocumentsPage />} />
+          <Route path="/inkorg" element={<InboxPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+    </div>
+  );
+}
