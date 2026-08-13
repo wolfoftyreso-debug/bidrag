@@ -81,8 +81,14 @@ export default function MatchesPage() {
 
   // Adaptive intake round two: only questions that can still change an
   // outcome — hard-excluded opportunities stay excluded regardless of answers.
+  // Questions from personal entitlements come first: in a rights
+  // investigation, "uteblir underhållet?" matters before "äger du jordbruk?".
+  const PERSONAL_Q = new Set(['social_benefit', 'educational_support']);
   const openQuestions = new Map<string, string>();
-  for (const m of matches) {
+  const ordered = [...matches].sort(
+    (a, b) => Number(PERSONAL_Q.has(b.instrumentType)) - Number(PERSONAL_Q.has(a.instrumentType)),
+  );
+  for (const m of ordered) {
     if (m.eligibilityStatus === 'excluded') continue;
     for (const f of m.result.missingFacts) {
       if (!openQuestions.has(f.factPath)) openQuestions.set(f.factPath, f.question);
@@ -116,8 +122,11 @@ export default function MatchesPage() {
 
   if (!loaded) return <p>Laddar matchningar…</p>;
 
+  const PERSONAL_INSTRUMENTS = new Set(['social_benefit', 'educational_support']);
   const relevant = matches.filter((m) => m.eligibilityStatus !== 'excluded');
   const excluded = matches.filter((m) => m.eligibilityStatus === 'excluded');
+  const personal = relevant.filter((m) => PERSONAL_INSTRUMENTS.has(m.instrumentType));
+  const funding = relevant.filter((m) => !PERSONAL_INSTRUMENTS.has(m.instrumentType));
 
   return (
     <div>
@@ -152,10 +161,56 @@ export default function MatchesPage() {
         </div>
       )}
 
+      {personal.length > 0 && (
+        <div className="card">
+          <h2>Det här ser du ut att kunna ha rätt till</h2>
+          <p className="guidance">
+            En bedömning utifrån dina svar — slutligt beslut fattas alltid av myndigheten. Vi hjälper dig gärna vidare med
+            en ansökan i taget.
+          </p>
+          {personal.map((m) => (
+            <div className="match-row" key={m.matchId}>
+              <div style={{ flex: 1 }}>
+                <div>
+                  <Link to={`/stod/${m.slug}?projekt=${projectId}`} style={{ fontWeight: 600 }}>{m.title}</Link>{' '}
+                  <LikelihoodBadge status={m.eligibilityStatus} confidence={m.result.confidence} />
+                </div>
+                <div className="meta-line">
+                  {m.authorityName} · <span className="badge info">{INSTRUMENT_LABELS[m.instrumentType] ?? m.instrumentType}</span>
+                  {' · '}Senast verifierad {formatDate(m.lastVerifiedAt)}
+                </div>
+                {m.result.missingFacts.length > 0 && (
+                  <div className="meta-line" style={{ color: 'var(--warning)' }}>
+                    För att veta säkert: {m.result.missingFacts.map((f) => f.question).slice(0, 2).join(' · ')}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {(() => {
+        // I det personliga spåret visas projektbidrag bara om de faktiskt ser
+        // aktuella ut — resten sammanfattas i stället för att skräpa ner listan.
+        const shownFunding = personal.length > 0 ? funding.filter((m) => m.eligibilityStatus === 'eligible') : funding;
+        const summarised = funding.length - shownFunding.length;
+        if (personal.length > 0 && shownFunding.length === 0) {
+          return summarised > 0 ? (
+            <p className="meta-line" style={{ margin: '0 0 1rem 0.25rem' }}>
+              Vi har även gått igenom {summarised} bidrag för projekt och verksamheter — inget av dem ser aktuellt ut för
+              din situation just nu.
+            </p>
+          ) : null;
+        }
+        return (
       <div className="card">
-        <h2>Stöd som kan passa ({relevant.length})</h2>
+        <h2>{personal.length > 0 ? `Bidrag och finansiering (${shownFunding.length})` : `Stöd som kan passa (${shownFunding.length})`}</h2>
         {relevant.length === 0 && <p className="meta-line">Inga matchningar ännu — svara på frågorna ovan eller uppdatera projektet.</p>}
-        {relevant.map((m) => (
+        {personal.length > 0 && summarised > 0 && (
+          <p className="guidance">Ytterligare {summarised} möjligheter visas inte eftersom uppgifter saknas.</p>
+        )}
+        {shownFunding.map((m) => (
           <div className="match-row" key={m.matchId}>
             <div className="match-score">
               <div className="n">{m.score}</div>
@@ -192,8 +247,10 @@ export default function MatchesPage() {
           </div>
         ))}
       </div>
+        );
+      })()}
 
-      {relevant.length > 1 && <StackPlanner projectId={projectId} />}
+      {personal.length === 0 && relevant.length > 1 && <StackPlanner projectId={projectId} />}
 
       {excluded.length > 0 && (
         <div className="card">
@@ -203,6 +260,16 @@ export default function MatchesPage() {
       )}
     </div>
   );
+}
+
+/**
+ * Rättighetsspråket: aldrig "du är berättigad" — alltid en bedömning.
+ * eligible+hög konfidens → hög sannolikhet; annars möjlig; okänt → utreds.
+ */
+function LikelihoodBadge({ status, confidence }: { status: string; confidence: string }) {
+  if (status === 'eligible' && confidence === 'high') return <span className="badge success">hög sannolikhet</span>;
+  if (status === 'eligible') return <span className="badge success">möjlig</span>;
+  return <span className="badge warning">behöver utredas</span>;
 }
 
 function excludedList(excluded: MatchRow[]) {

@@ -1,8 +1,17 @@
 # Bidrag.se
 
-**Ett finansierings-operativsystem**: hitta rätt bidrag, stipendier och stöd utifrån vem du är
-och vad du vill göra — förstå varför de passar, förbered hela ansökan, och hantera
-inlämning, svar och redovisning på ett ställe.
+**En personlig rättighets- och stödutredning**: berätta vad du behöver hjälp med,
+så tar systemet reda på vad du kan ha rätt till — bostadsbidrag, försörjningsstöd,
+studiemedel, stipendier, projektbidrag eller EU-finansiering — och hjälper dig hela
+vägen till ansökan, kvitto och beslut. Bidrag är ett av resultaten, inte produkten.
+
+Två hårda produktprinciper styr upplevelsen:
+
+1. **En fråga per skärm.** Ingen blankett, ingen "fyll i din profil". Dialogen
+   avgör vilka frågor som behöver ställas härnäst.
+2. **Bedömning, aldrig beslut.** Systemet säger "det här ser du ut att kunna ha
+   rätt till" (hög sannolikhet / möjlig / behöver utredas) — aldrig "du är
+   berättigad". Slutligt beslut fattas alltid av myndigheten.
 
 Not a grant directory. The system is a continuous pipeline:
 
@@ -21,7 +30,7 @@ Profil → Intention → Stödutbud → Behörighet → Matchning → Finansieri
 |---|---|
 | Teknisk kärna | ~85 % byggd, deterministisk och testad |
 | Production hardening | pågående — metrics, GDPR-självservice och runbook finns; verklig klusterdrift, backup-övning och lasttest återstår |
-| Kunskapstäckning | 28 kurerade stöd från 16 finansiärer — bevisar motorn, inte nationell täckning |
+| Kunskapstäckning | 36 kurerade stöd från 20 finansiärer, inkl. personliga ersättningar (FK, CSN, Pensionsmyndigheten, socialtjänsten) — bevisar motorn, inte nationell täckning |
 | Integrationsmognad | låg per design — assisterad inlämning tills avtalade adaptrar finns |
 | Produktarkitektur | stark; skala/härda/befolka, inte bygga om |
 

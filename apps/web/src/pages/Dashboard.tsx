@@ -57,10 +57,10 @@ export default function DashboardPage() {
       <div style={{ maxWidth: 640 }}>
         <h1>Välkommen till Bidrag.se</h1>
         <div className="card">
-          <h2>Vad vill du åstadkomma?</h2>
+          <h2>Vad behöver du hjälp med?</h2>
           <p>
-            Berätta vad du eller din organisation vill göra, så visar vi vilka bidrag, stipendier och stöd som kan vara
-            relevanta — och varför.
+            Berätta om din situation — eller vad du vill göra — så tar vi reda på vilka stöd, ersättningar och bidrag du
+            kan ha rätt till. Du behöver inte veta vad något heter. En fråga i taget.
           </p>
           <p style={{ marginTop: '1rem' }}>
             <Link className="btn" to="/kom-igang">Kom igång</Link>

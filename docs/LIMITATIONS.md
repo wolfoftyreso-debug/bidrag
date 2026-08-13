@@ -81,10 +81,16 @@ operator's DPIA before public launch (see PRIVACY.md, OPERATIONS.md).
 
 ## 8. Coverage is wave-1 (expanded)
 
-28 curated opportunities across 16 financiers (state agencies, foundations,
-sports federation, EU programmes) exercise the data patterns: recurring and
-rolling deadlines, upcoming rounds, OID/Quality Label requirements,
-applicant-type gates, co-financing shares, prefinancing requirements. This
+36 curated opportunities across 20 financiers — state agencies, foundations,
+the sports federation, EU programmes, and personal entitlements
+(Försäkringskassan, CSN, Pensionsmyndigheten, municipal social services) —
+exercise the data patterns: recurring and rolling deadlines, upcoming rounds,
+OID/Quality Label requirements, applicant-type gates, co-financing shares,
+prefinancing requirements, and household/income-based benefit conditions.
+Personal benefits carry instrument types `social_benefit`/
+`educational_support` and are always presented separately from grants, in
+rights-assessment language ("ser ut att kunna ha rätt till"), never as
+decisions. This
 proves the engine — it is not national coverage. Scaling to hundreds of
 opportunities is data work on the existing model plus curator throughput
 (the curator console now shows affected opportunities per source change and

@@ -31,7 +31,7 @@ export default function LoginPage({ onLogin }: { onLogin: () => Promise<void> })
     <div className="auth-page">
       <h1 style={{ color: 'var(--primary-dark)' }}>Bidrag.se</h1>
       <p className="meta-line" style={{ marginBottom: '1.5rem' }}>
-        Hitta rätt finansiering — och hantera hela ansökan på ett ställe.
+        Berätta vad du behöver hjälp med — vi tar reda på vad du kan ha rätt till, och hjälper dig hela vägen till ansökan.
       </p>
       <div className="card">
         <h2>{mode === 'login' ? 'Logga in' : 'Skapa konto'}</h2>
