@@ -1,0 +1,108 @@
+import Fastify, { type FastifyInstance } from 'fastify';
+import cookie from '@fastify/cookie';
+import cors from '@fastify/cors';
+import helmet from '@fastify/helmet';
+import multipart from '@fastify/multipart';
+import rateLimit from '@fastify/rate-limit';
+import swagger from '@fastify/swagger';
+import { randomUUID } from 'node:crypto';
+import { config } from './config.ts';
+import { pool } from './db/client.ts';
+import { authPlugin } from './plugins/auth.ts';
+import { authRoutes } from './routes/auth.ts';
+import { profileRoutes } from './routes/profiles.ts';
+import { projectRoutes } from './routes/projects.ts';
+import { opportunityRoutes } from './routes/opportunities.ts';
+import { applicationRoutes } from './routes/applications.ts';
+import { documentRoutes } from './routes/documents.ts';
+import { correspondenceRoutes } from './routes/correspondence.ts';
+import { notificationRoutes } from './routes/notifications.ts';
+import { adminRoutes } from './routes/admin.ts';
+
+export async function buildServer(): Promise<FastifyInstance> {
+  const app = Fastify({
+    logger: {
+      level: config.logLevel,
+      redact: ['req.headers.authorization', 'req.headers.cookie'],
+    },
+    genReqId: () => randomUUID(),
+    bodyLimit: 1 * 1024 * 1024,
+    trustProxy: true,
+  });
+
+  await app.register(helmet, {
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:'],
+        objectSrc: ["'none'"],
+        frameAncestors: ["'none'"],
+      },
+    },
+  });
+  await app.register(cors, {
+    origin: config.corsOrigin.split(','),
+    credentials: true,
+  });
+  await app.register(cookie);
+  await app.register(rateLimit, {
+    max: 300,
+    timeWindow: '1 minute',
+  });
+  await app.register(multipart, {
+    limits: { fileSize: config.maxUploadBytes, files: 1 },
+  });
+  await app.register(swagger, {
+    openapi: {
+      openapi: '3.1.0',
+      info: {
+        title: 'Bidrag.se API',
+        description: 'Funding discovery, eligibility, application and case-management platform.',
+        version: '1.0.0',
+      },
+      servers: [{ url: '/' }],
+    },
+  });
+
+  await app.register(authPlugin);
+
+  // Liveness/readiness probes (§63).
+  app.get('/healthz', async () => ({ ok: true }));
+  app.get('/readyz', async (_request, reply) => {
+    try {
+      await pool.query('SELECT 1');
+      return { ok: true };
+    } catch {
+      return reply.code(503).send({ ok: false });
+    }
+  });
+
+  app.get('/v1/openapi.json', async () => app.swagger());
+
+  await app.register(authRoutes);
+  await app.register(profileRoutes);
+  await app.register(projectRoutes);
+  await app.register(opportunityRoutes);
+  await app.register(applicationRoutes);
+  await app.register(documentRoutes);
+  await app.register(correspondenceRoutes);
+  await app.register(notificationRoutes);
+  await app.register(adminRoutes);
+
+  // User-safe error handling: never leak internals (§61).
+  app.setErrorHandler((error: Error & { validation?: unknown; statusCode?: number }, request, reply) => {
+    if (error.validation) {
+      return reply.code(400).send({ error: 'validation_error', message: error.message });
+    }
+    const status = error.statusCode ?? 500;
+    if (status >= 500) {
+      request.log.error({ err: error, reqId: request.id }, 'unhandled error');
+      return reply.code(500).send({ error: 'internal_error', message: 'Ett oväntat fel inträffade.', requestId: request.id });
+    }
+    return reply.code(status).send({ error: error.name, message: error.message });
+  });
+
+  return app;
+}
