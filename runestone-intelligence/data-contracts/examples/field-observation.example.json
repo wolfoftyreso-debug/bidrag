@@ -1,0 +1,83 @@
+[
+  {
+    "$schema_name": "field-observation",
+    "$note": "SYNTETISKT EXEMPEL - observation matchad mot kand sten. Notera: evidence innehaller mer an GPS.",
+    "record": {
+      "observation_id": "obs-example-0001",
+      "stone_id": "stone-example-known-0001",
+      "captured_at": "2026-08-14T11:45:00Z",
+      "gps": { "latitude": 59.8503, "longitude": 17.6297, "accuracy_m": 8 },
+      "device": { "camera": "iPhone 17", "os": "iOS 20.1" },
+      "weather": "overcast, light rain",
+      "condition_observed": "moss/weathering",
+      "images": ["img-example-0001"],
+      "reading_confidence": 0.96,
+      "match": {
+        "status": "matched",
+        "matched_stone_id": "stone-example-known-0001",
+        "identity_score": 0.978,
+        "evidence": ["visual_similarity", "gps_proximity", "inscription_similarity", "stone_geometry"]
+      },
+      "verification_status": "database_matched",
+      "verified_by": "matcher-v0.1",
+      "verified_at": "2026-08-14T11:46:00Z",
+      "consent": {
+        "media_storage": true,
+        "training_use": true,
+        "consent_version": "consent-v1",
+        "consented_at": "2026-08-14T11:44:00Z"
+      },
+      "provenance": {
+        "dataset_id": "field-observations",
+        "source": "Runestone Mobile field capture",
+        "source_url": "https://example.org/obs/obs-example-0001",
+        "source_record_id": "obs-example-0001",
+        "license": "user-contributed, consent-v1",
+        "creator": null,
+        "attribution": "Anonymized field contributor",
+        "modification_status": "unmodified",
+        "download_timestamp": "2026-08-14T11:46:00Z",
+        "dataset_version": "v0.1",
+        "checksum": "sha256:5555555555555555555555555555555555555555555555555555555555555555"
+      }
+    }
+  },
+  {
+    "$schema_name": "field-observation",
+    "$note": "SYNTETISKT EXEMPEL - ingen saker match: Unknown Runestone Observation, ovarifierad, utan traningssamtycke.",
+    "record": {
+      "observation_id": "obs-example-0002",
+      "stone_id": "stone-example-cand-0002",
+      "captured_at": "2026-08-10T14:00:00Z",
+      "gps": null,
+      "device": null,
+      "weather": null,
+      "condition_observed": null,
+      "images": ["img-example-0002"],
+      "reading_confidence": null,
+      "match": { "status": "no_match", "matched_stone_id": null, "identity_score": null, "evidence": [] },
+      "verification_status": "unverified",
+      "verified_by": null,
+      "verified_at": null,
+      "consent": {
+        "media_storage": true,
+        "training_use": false,
+        "consent_version": "consent-v1",
+        "consented_at": "2026-08-10T13:59:00Z"
+      },
+      "provenance": {
+        "dataset_id": "field-observations",
+        "source": "Runestone Mobile field capture",
+        "source_url": "https://example.org/obs/obs-example-0002",
+        "source_record_id": "obs-example-0002",
+        "license": "user-contributed, consent-v1",
+        "creator": null,
+        "attribution": "Anonymized field contributor",
+        "modification_status": "unmodified",
+        "download_timestamp": "2026-08-10T14:05:00Z",
+        "dataset_version": "v0.1",
+        "checksum": "sha256:6666666666666666666666666666666666666666666666666666666666666666"
+      }
+    }
+  }
+]

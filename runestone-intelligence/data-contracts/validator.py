@@ -115,9 +115,30 @@ def domain_invariants(record: dict, schema_name: str) -> list[str]:
     if schema_name == "image-rights":
         if record.get("rights_status") == "unknown" and record.get("usage", {}).get("training_allowed"):
             errors.append("rights_status 'unknown' kraver usage.training_allowed=false tills licensen ar klassad")
+        if (
+            record.get("layer") == "F"
+            and record.get("usage", {}).get("training_allowed")
+            and not record.get("consent_ref")
+        ):
+            errors.append("Layer F-bild med training_allowed=true kraver consent_ref (uttryckligt anvandarsamtycke)")
     if schema_name == "model-registry-entry":
         if record.get("status") in ("BENCHMARKED", "STAGING", "PRODUCTION") and not record.get("benchmark_results"):
             errors.append(f"status {record.get('status')} kraver benchmark_results (princip 5: ingen production-modell utan benchmark)")
+    if schema_name == "field-observation":
+        if record.get("verification_status") != "unverified" and not record.get("verified_by"):
+            errors.append("verifierad status kraver verified_by (verifieringstrappan ar sparbar)")
+        match = record.get("match", {})
+        if match.get("status") == "matched":
+            evidence = match.get("evidence", [])
+            if not [e for e in evidence if e != "gps_proximity"]:
+                errors.append("match=matched kraver minst en icke-GPS-evidens (GPS ar signal, inte facit)")
+            if not match.get("matched_stone_id"):
+                errors.append("match=matched kraver matched_stone_id")
+    if schema_name == "stone":
+        if record.get("atlas_status") == "registered_known" and not record.get("official_signum"):
+            errors.append("registered_known kraver official_signum")
+        if record.get("atlas_status") == "merged" and not record.get("merged_into"):
+            errors.append("atlas_status=merged kraver merged_into")
     if schema_name == "benchmark-case":
         if record.get("inscription_id") is None and record.get("category") != "I":
             errors.append("inscription_id far bara vara null for kategori I (unknown stone)")

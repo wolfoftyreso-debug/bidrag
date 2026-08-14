@@ -1,0 +1,75 @@
+{
+  "$id": "runestone/stone",
+  "title": "Stone",
+  "description": "Ett forstaklassobjekt i Runestone Atlas: en fysisk sten med position, skick och longitudinell observationshistorik - inte bara en bild. Kanda stenar bar officiellt signum; okanda stenar ar kandidater tills de matchas eller granskas.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "stone_id",
+    "atlas_status",
+    "location",
+    "current_condition",
+    "observation_count",
+    "provenance"
+  ],
+  "properties": {
+    "stone_id": { "type": "string", "pattern": "^stone-[a-z0-9-]+$" },
+    "official_signum": {
+      "type": ["string", "null"],
+      "description": "T.ex. 'U 489'. null for okanda kandidatstenar."
+    },
+    "inscription_id": {
+      "type": ["string", "null"],
+      "pattern": "^ric-[a-z0-9-]+$",
+      "description": "Koppling till canonical corpus nar identifieringen ar verifierad."
+    },
+    "atlas_status": {
+      "type": "string",
+      "enum": ["registered_known", "candidate_unknown", "merged", "retired"],
+      "description": "candidate_unknown = Unknown Runestone Observation som vantar pa expert- eller registermatchning."
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["latitude", "longitude", "source"],
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+        "precision_m": { "type": ["number", "null"], "minimum": 0 },
+        "source": {
+          "type": "string",
+          "enum": ["register", "field_gps_aggregate", "historical", "estimated"]
+        }
+      }
+    },
+    "historical_location": { "type": ["string", "null"] },
+    "current_condition": {
+      "type": "string",
+      "enum": ["standing", "fallen", "fragment", "moved", "indoors", "lost", "unknown"]
+    },
+    "first_observation": { "type": ["string", "null"] },
+    "last_observation": { "type": ["string", "null"] },
+    "observation_count": { "type": "integer", "minimum": 0 },
+    "condition_timeline": {
+      "type": "array",
+      "description": "Grund for forandringsdetektion: skick per observationsdatum.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["observed_at", "condition"],
+        "properties": {
+          "observed_at": { "type": "string", "minLength": 1 },
+          "condition": { "type": "string", "minLength": 1 },
+          "change_detected": { "type": "boolean" },
+          "notes": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "merged_into": {
+      "type": ["string", "null"],
+      "pattern": "^stone-[a-z0-9-]+$",
+      "description": "Satt nar atlas_status=merged (kandidat visade sig vara redan kand sten)."
+    },
+    "provenance": { "$contract": "provenance" }
+  }
+}

@@ -1,0 +1,77 @@
+[
+  {
+    "$schema_name": "stone",
+    "$note": "SYNTETISKT EXEMPEL - kand sten i Runestone Atlas med observationshistorik.",
+    "record": {
+      "stone_id": "stone-example-known-0001",
+      "official_signum": "EX 1",
+      "inscription_id": "ric-example-0001",
+      "atlas_status": "registered_known",
+      "location": {
+        "latitude": 59.85,
+        "longitude": 17.63,
+        "precision_m": 5,
+        "source": "register"
+      },
+      "historical_location": "Ursprunglig plats vid exempelvagen; flyttad 1952.",
+      "current_condition": "standing",
+      "first_observation": "2026-06-01T09:30:00Z",
+      "last_observation": "2026-08-14T11:45:00Z",
+      "observation_count": 2,
+      "condition_timeline": [
+        { "observed_at": "2026-06-01T09:30:00Z", "condition": "good", "change_detected": false, "notes": null },
+        { "observed_at": "2026-08-14T11:45:00Z", "condition": "moss/weathering", "change_detected": true, "notes": "Okad mossbelaggning pa runbandets nedre del." }
+      ],
+      "merged_into": null,
+      "provenance": {
+        "dataset_id": "atlas",
+        "source": "Runestone Atlas",
+        "source_url": "https://example.org/atlas/stone-example-known-0001",
+        "source_record_id": "stone-example-known-0001",
+        "license": "internal; underliggande registerdata CC0 (K-samsok)",
+        "creator": null,
+        "attribution": "Runestone Atlas; registerdata: Runor/K-samsok, Riksantikvarieambetet",
+        "modification_status": "enriched",
+        "download_timestamp": "2026-08-14T12:00:00Z",
+        "dataset_version": "v0.1",
+        "checksum": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+      }
+    }
+  },
+  {
+    "$schema_name": "stone",
+    "$note": "SYNTETISKT EXEMPEL - Unknown Runestone Observation som blivit kandidatobjekt.",
+    "record": {
+      "stone_id": "stone-example-cand-0002",
+      "official_signum": null,
+      "inscription_id": null,
+      "atlas_status": "candidate_unknown",
+      "location": {
+        "latitude": 59.4,
+        "longitude": 16.5,
+        "precision_m": 12,
+        "source": "field_gps_aggregate"
+      },
+      "historical_location": null,
+      "current_condition": "unknown",
+      "first_observation": "2026-08-10T14:00:00Z",
+      "last_observation": "2026-08-10T14:00:00Z",
+      "observation_count": 1,
+      "condition_timeline": [],
+      "merged_into": null,
+      "provenance": {
+        "dataset_id": "atlas",
+        "source": "Runestone Atlas",
+        "source_url": "https://example.org/atlas/stone-example-cand-0002",
+        "source_record_id": "stone-example-cand-0002",
+        "license": "internal; faltdata med anvandarsamtycke",
+        "creator": null,
+        "attribution": "Runestone Atlas field observation",
+        "modification_status": "unmodified",
+        "download_timestamp": "2026-08-10T14:05:00Z",
+        "dataset_version": "v0.1",
+        "checksum": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
+      }
+    }
+  }
+]

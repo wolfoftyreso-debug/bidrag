@@ -3,7 +3,8 @@
 ```
 AWS
 ├── Object Storage        raw / processed / datasets / models / evaluation
-├── PostgreSQL            corpus, provenance, rights records, registry
+├── PostgreSQL + PostGIS  corpus, provenance, rights records, registry,
+│                         atlas (stones, field observations, geospatial index)
 ├── Vector / Retrieval Store
 ├── Model Registry
 ├── Training Workers      GPU, skalas efter behov

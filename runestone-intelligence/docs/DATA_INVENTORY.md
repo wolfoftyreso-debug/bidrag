@@ -59,10 +59,19 @@ licensklassning i `docs/LICENSES.md`.
 - **Mål:** träna på hur runstenar faktiskt ser ut i fält, inte bara på
   perfekta forskningsfotografier.
 
-### 7. Fältdata (Layer F, efter MVP)
+### 7. Fältdata (Layer F) — Runestone Atlas
 
 - **Roll:** riktiga mobilbilder från fälttester och (med uttryckligt samtycke)
-  användare. Långsiktig datamoat. Aldrig automatiskt ground truth.
+  användare, strukturerade som fältobservationer i Runestone Atlas: GPS,
+  tidpunkt, kamera, väder, skick, observationshistorik per sten. Långsiktig
+  datamoat. Aldrig automatiskt ground truth — verifieringstrappan
+  `unverified → model/database/human/scholar verified` gäller alltid
+  (ADR-0007), och träningsanvändning kräver `consent.training_use` +
+  `consent_ref` på bilden.
+- **Extra värde:** scan coverage identifierar stenar utan moderna
+  fotografier (crowdsourcade fältuppdrag); upprepade observationer ger
+  förändringsdetektion; `no_match`-observationer kan avslöja luckor och
+  felaktigheter i befintliga register. Se `docs/ATLAS.md`.
 
 ## Relaterad forskning (bevakas, konkurrensposition)
 

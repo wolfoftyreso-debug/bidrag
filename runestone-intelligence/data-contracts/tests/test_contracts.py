@@ -14,10 +14,11 @@ from validator import validate_record  # noqa: E402
 EXAMPLES = Path(__file__).parent.parent / "examples"
 
 
-def load_example(name: str) -> tuple[str, dict]:
+def load_example(name: str, index: int = 0) -> tuple[str, dict]:
     with (EXAMPLES / f"{name}.example.json").open(encoding="utf-8") as fh:
         payload = json.load(fh)
-    return payload["$schema_name"], payload["record"]
+    entry = payload[index] if isinstance(payload, list) else payload
+    return entry["$schema_name"], entry["record"]
 
 
 class ExamplesAreValid(unittest.TestCase):
@@ -25,8 +26,10 @@ class ExamplesAreValid(unittest.TestCase):
         for path in sorted(EXAMPLES.glob("*.json")):
             with path.open(encoding="utf-8") as fh:
                 payload = json.load(fh)
-            errors = validate_record(payload["record"], payload["$schema_name"])
-            self.assertEqual(errors, [], f"{path.name}: {errors}")
+            entries = payload if isinstance(payload, list) else [payload]
+            for i, entry in enumerate(entries):
+                errors = validate_record(entry["record"], entry["$schema_name"])
+                self.assertEqual(errors, [], f"{path.name}[{i}]: {errors}")
 
 
 class ProvenanceIsMandatory(unittest.TestCase):
@@ -100,6 +103,61 @@ class ImageRights(unittest.TestCase):
         record = copy.deepcopy(record)
         record["rights_status"] = "unknown"
         record["usage"]["training_allowed"] = False
+        self.assertEqual(validate_record(record, schema), [])
+
+
+class AtlasObservations(unittest.TestCase):
+    def test_gps_alone_cannot_confirm_identity(self):
+        schema, record = load_example("field-observation")
+        record = copy.deepcopy(record)
+        record["match"]["evidence"] = ["gps_proximity"]
+        errors = validate_record(record, schema)
+        self.assertTrue(any("icke-GPS" in e for e in errors))
+
+    def test_matched_requires_stone_id(self):
+        schema, record = load_example("field-observation")
+        record = copy.deepcopy(record)
+        record["match"]["matched_stone_id"] = None
+        errors = validate_record(record, schema)
+        self.assertTrue(any("matched_stone_id" in e for e in errors))
+
+    def test_verified_status_requires_verifier(self):
+        schema, record = load_example("field-observation")
+        record = copy.deepcopy(record)
+        record["verification_status"] = "human_verified"
+        record["verified_by"] = None
+        errors = validate_record(record, schema)
+        self.assertTrue(any("verified_by" in e for e in errors))
+
+    def test_unverified_without_verifier_is_fine(self):
+        schema, record = load_example("field-observation", index=1)
+        self.assertEqual(validate_record(copy.deepcopy(record), schema), [])
+
+    def test_consent_is_required(self):
+        schema, record = load_example("field-observation")
+        record = copy.deepcopy(record)
+        del record["consent"]
+        self.assertTrue(any("consent" in e for e in validate_record(record, schema)))
+
+    def test_known_stone_requires_signum(self):
+        schema, record = load_example("stone")
+        record = copy.deepcopy(record)
+        record["official_signum"] = None
+        errors = validate_record(record, schema)
+        self.assertTrue(any("official_signum" in e for e in errors))
+
+    def test_candidate_stone_without_signum_is_fine(self):
+        schema, record = load_example("stone", index=1)
+        self.assertEqual(validate_record(copy.deepcopy(record), schema), [])
+
+    def test_field_image_training_requires_consent_ref(self):
+        schema, record = load_example("image-rights")
+        record = copy.deepcopy(record)
+        record["layer"] = "F"
+        record["usage"]["training_allowed"] = True
+        errors = validate_record(record, schema)
+        self.assertTrue(any("consent_ref" in e for e in errors))
+        record["consent_ref"] = "obs-example-0001"
         self.assertEqual(validate_record(record, schema), [])
 
 

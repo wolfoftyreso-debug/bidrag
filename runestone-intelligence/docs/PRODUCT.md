@@ -1,5 +1,13 @@
 # Produktdefinition — V1
 
+## Två produkter, ett system
+
+1. **Runstenläsaren** — fota → läs → översätt. Det enda användaren ser i V1.
+2. **Runestone Atlas** — observationslagret som varje foto (med samtycke)
+   bygger vidare på: position, skick, bilder, observationshistorik per sten.
+   Osynligt i V1-UI:t men förstaklassdel av backend från Sprint 0
+   (`docs/ATLAS.md`, ADR-0006).
+
 ## V1 gör en enda sak
 
 1. Användaren öppnar tjänsten.
@@ -80,6 +88,15 @@ Appen ska kunna instruera aktivt: "Flytta kameran närmare", "För mycket
 motljus", "Få med hela inskriften", "Försök från sidan". Med användarens
 uttryckliga samtycke blir fältbilder träningskandidater — men
 användargenererade bilder betraktas aldrig automatiskt som ground truth.
+
+## Fotoflödets andra liv (Atlas)
+
+Användaren tror att den bara skickar in ett foto för översättning. Med
+samtycke skapar samma foto samtidigt en fältobservation i Runestone Atlas:
+GPS (valfri), tidpunkt, kamera, väder, observerat skick. Okänd sten ⇒
+"Vi hittar ingen säker match i registret" + en Unknown Runestone Observation
+som kan matchas senare. Samtycket tas per observation i fotoflödet
+(versionshanterat), och V1-UI:t förblir exakt lika enkelt.
 
 ## V1 Definition of Done
 

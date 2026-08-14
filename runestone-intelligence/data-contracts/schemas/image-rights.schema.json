@@ -65,6 +65,16 @@
       "enum": ["B", "C", "D", "E", "F"],
       "description": "Datasetlager: B historical, C modern, D 3D, E synthetic, F field."
     },
+    "observation_id": {
+      "type": ["string", "null"],
+      "pattern": "^obs-[a-z0-9-]+$",
+      "description": "For Layer F: faltobservationen bilden kommer fran."
+    },
+    "consent_ref": {
+      "type": ["string", "null"],
+      "pattern": "^obs-[a-z0-9-]+$",
+      "description": "For Layer F: observation vars consent.training_use tacker bilden. Invariant: F + training_allowed kraver consent_ref."
+    },
     "provenance": { "$contract": "provenance" }
   }
 }

@@ -14,6 +14,8 @@ någon import körs.
 | `dataset-manifest` | Immutable datasetversion med splitpolicy på inskriftsnivå (plan §32, ADR-0002) |
 | `benchmark-case` | RUNEBENCH-testfall inkl. gold-flagga och abstention (plan §24–26) |
 | `model-registry-entry` | Reproducerbar modellmetadata + statusflöde (plan §32–33) |
+| `stone` | Atlasobjekt: position, skick, observationshistorik, kandidat/känd (ADR-0006) |
+| `field-observation` | Fältobservation: GPS, enhet, samtycke, matchningsevidens, verifieringstrappa (ADR-0007) |
 
 ## Domäninvarianter utöver schemana
 
@@ -25,6 +27,13 @@ Enforceas i `validator.domain_invariants`:
 - `inscription_id = null` tillåts endast för kategori I (unknown stone).
 - `split_policy.unit` är `const: inscription_id` — bildnivåsplit är
   schematekniskt omöjlig.
+- `match.status = matched` kräver minst en evidens utöver `gps_proximity`
+  och ett `matched_stone_id` — GPS är signal, aldrig facit.
+- Verifieringsstatus över `unverified` kräver `verified_by`.
+- Layer F-bild med `training_allowed = true` kräver `consent_ref`
+  (uttryckligt användarsamtycke per observation).
+- `registered_known`-sten kräver `official_signum`; `merged` kräver
+  `merged_into`.
 
 ## Körning
 

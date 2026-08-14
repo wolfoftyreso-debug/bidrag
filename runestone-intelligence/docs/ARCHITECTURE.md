@@ -55,7 +55,7 @@ Systemet får **aldrig** hoppa direkt från `IMAGE → free-form answer`.
 | 2 | **Stone / Inscription Detector** | lokalisera `stone`, `inscription`, `rune_band`, `ornament`, `damage` | masker/boxar — språkmodellen slipper tolka hela landskapsbilden |
 | 3 | **Inscription Rectification** | krökta/lutande/snett fotograferade ytor | `raw image → mask → perspective estimation → surface normalization → rectified inscription` |
 | 4 | **Rune Vision Model** (kärnmodellen) | rektifierad inskriftsbild → runsekvens | både text (`ᚼᛅᚾ ᚱᛅᛁᛋᛏᛁ ...`) och strukturerad per-tecken-output med kandidater + confidence — diagnostiserbar |
-| 5 | **Stone Identification Engine** | identifiera känd sten (bild + ev. GPS) | `Likely stone: U 489, 97.8 %` |
+| 5 | **Stone Identification Engine** | identifiera känd sten via kombinerad score: visual similarity + GPS proximity + inscription similarity + stone geometry + known location — GPS ensam räcker aldrig (ADR-0007) | `Likely stone: U 489, 97.8 %` + evidenslista |
 | 6 | **Knowledge/Retrieval Engine** | predicted inscription → candidate retrieval → similarity ranking → historical evidence | retrieval på runföljd, translitterering, geografi, runtyp, visuella egenskaper, signum, inskriftslängd, namn, ornamentik |
 | 7 | **Verification Engine** | cross-check `visual reading` vs `canonical inscription` | MATCH HIGH/LOW; låg match triggar alternativ analys |
 | 8 | **Translation layer** | översättning först efter stabiliserad runtext | `RUNE → TRANSLITERATION → NORMALIZATION → TRANSLATION`, aldrig `IMAGE → LLM guesses meaning` |
@@ -105,12 +105,29 @@ Varje resultat kopplas till: källdatabas, inskrift (signum), source record,
 translation source, image source, modellversion (`RuneVision v0.8`) och
 inference timestamp.
 
+## Atlas-flödet (parallellt med läsflödet)
+
+Varje analyserat foto skriver — med samtycke — en fältobservation:
+
+```
+MOBILFOTO (image + GPS + timestamp + device)
+   → STONE MATCHING ─ känd sten → verifiera ─┐
+                    └ okänd sten → kandidat ─┴→ RUNESTONE ATLAS
+                                                (position, bilder, skick,
+                                                 observationshistorik)
+```
+
+Verifieringstrappan `unverified → model_verified → database_matched →
+human_verified → scholar_verified` gäller all fältdata. Se `docs/ATLAS.md`,
+`atlas/README.md`, ADR-0006/0007.
+
 ## Infrastruktur (self-hosted AWS/Kubernetes)
 
 ```
 AWS
 ├── Object Storage        (raw / processed / datasets / models / evaluation)
-├── PostgreSQL            (canonical corpus, provenance, rights records)
+├── PostgreSQL + PostGIS  (canonical corpus, provenance, rights records,
+│                          atlas: stones + field observations)
 ├── Vector / Retrieval Store
 ├── Model Registry
 ├── Training Workers      (GPU, skalas efter behov)

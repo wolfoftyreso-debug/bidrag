@@ -1,6 +1,6 @@
 # Engineering principles
 
-Projektets tolv regler. De är inte ambitioner — de är constraints som
+Projektets grundregler. De är inte ambitioner — de är constraints som
 enforceas i kod, CI och review.
 
 1. **Git är source of truth.** Ingen manuell produktion direkt i buckets.
@@ -21,3 +21,9 @@ enforceas i kod, CI och review.
 11. **Alla modeller kan återkallas till exakt datasetversion och Git-commit.**
 12. **Specialiserad modell ska bevisas bättre än generell baseline innan
     komplexiteten ökas.**
+13. **Ingen crowdsourcad bild blir automatiskt sann data.**
+    Verifieringstrappan `unverified → model_verified → database_matched →
+    human_verified → scholar_verified` gäller all fältdata, och träning på
+    fältbilder kräver uttryckligt samtycke (ADR-0006/0007).
+14. **GPS är en signal, aldrig facit.** Stenidentitet kräver alltid minst en
+    icke-GPS-evidens — maskinellt enforcerat i data contracts.

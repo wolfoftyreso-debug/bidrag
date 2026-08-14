@@ -11,6 +11,13 @@ Detta är **inte** en wrapper runt en generell multimodal modell och **inte**
 en chatbot som vet mycket om runor. Det är ett visuellt lässystem med en
 runologisk kunskapsbas och verifieringsmotor bakom sig.
 
+Systemet har **två produkter** (ADR-0006):
+
+1. **Runstenläsaren** — fota → läs → översätt (det användaren ser i V1).
+2. **Runestone Atlas** — en kontinuerligt växande, geospatial
+   observationsdatabas över verkliga runstenar: position, skick, bilder och
+   longitudinell observationshistorik. Se `docs/ATLAS.md`.
+
 ## Positionering
 
 Riksantikvarieämbetets **Runor** (~7 200 registrerade inskrifter) och Uppsala
@@ -51,6 +58,7 @@ licensing, benchmark, baseline) — inte appen. Se `docs/ROADMAP.md`.
 | `training/` | Träningskonfigurationer och reproducerbarhetsmetadata |
 | `inference/` | Inference-workers och optimering |
 | `knowledge/` | Canonical corpus + retrieval (Runestone Intelligence Corpus) |
+| `atlas/` | Runestone Atlas: stenobjekt, fältobservationer, stone matching, verifieringstrappa, scan coverage |
 | `verification/` | Cross-check: observerad läsning vs kanonisk inskrift |
 | `api/` | OpenAPI-kontrakt: `POST /v1/analyze` + interna endpoints |
 | `deployment/` | AWS/Kubernetes-arkitektur, GitOps |
@@ -64,3 +72,6 @@ Se `docs/ENGINEERING_PRINCIPLES.md`. De viktigaste:
 3. Ingen production-modell utan benchmark; ingen hallucinerad läsning blir ground truth.
 4. Train/test-split sker på **sten-/inskriftsnivå**, aldrig på bildnivå.
 5. Osäkerhet exponeras — abstention ("jag vet inte") är ett officiellt KPI.
+6. Ingen crowdsourcad bild blir automatiskt sann data — verifieringstrappan
+   `unverified → model/database/human/scholar verified` gäller alltid, och
+   GPS är en signal, aldrig facit (ADR-0007).
