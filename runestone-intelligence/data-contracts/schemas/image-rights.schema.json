@@ -1,0 +1,70 @@
+{
+  "$id": "runestone/image-rights",
+  "title": "ImageRightsRecord",
+  "description": "Egen rights record per bild. Vi antar aldrig att kulturarvsdata betyder fria bilder (ADR-0003).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "image_id",
+    "original_url",
+    "local_object",
+    "license",
+    "source_institution",
+    "resolution",
+    "orientation",
+    "rights_status",
+    "usage",
+    "provenance"
+  ],
+  "properties": {
+    "image_id": { "type": "string", "pattern": "^img-[a-z0-9-]+$" },
+    "inscription_id": {
+      "type": ["string", "null"],
+      "description": "Koppling signum/inskrift nar matchningen ar gjord (STEG 7)."
+    },
+    "original_url": { "type": "string", "pattern": "^https?://" },
+    "local_object": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Objektnyckel i object storage (raw/...). Originalet muteras aldrig."
+    },
+    "license": { "type": "string", "minLength": 1 },
+    "photographer": { "type": ["string", "null"] },
+    "source_institution": { "type": "string", "minLength": 1 },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "orientation": {
+      "type": "string",
+      "enum": ["landscape", "portrait", "square", "unknown"]
+    },
+    "rights_status": {
+      "type": "string",
+      "enum": ["open", "attribution_required", "share_alike", "restricted", "unknown"]
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["training_allowed", "redistribution_allowed"],
+      "properties": {
+        "training_allowed": { "type": "boolean" },
+        "redistribution_allowed": { "type": "boolean" },
+        "verified_by": { "type": ["string", "null"] },
+        "verified_at": { "type": ["string", "null"] }
+      },
+      "description": "rights_status=unknown maste ge training_allowed=false tills klassad (valideras i validate_all)."
+    },
+    "layer": {
+      "type": "string",
+      "enum": ["B", "C", "D", "E", "F"],
+      "description": "Datasetlager: B historical, C modern, D 3D, E synthetic, F field."
+    },
+    "provenance": { "$contract": "provenance" }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "$id": "runestone/model-registry-entry",
+  "title": "ModelRegistryEntry",
+  "description": "Registerpost for en tranad modell. Reproducerbarhetsregel: exakt vilken data och kod skapade denna modell? Invariant (enforceas i validate_all): status STAGING/PRODUCTION kraver benchmark_results.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "model_name",
+    "model_version",
+    "status",
+    "dataset_version",
+    "code_commit",
+    "training_config",
+    "base_model",
+    "hyperparameters",
+    "gpu_environment",
+    "evaluation_version"
+  ],
+  "properties": {
+    "model_name": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "model_version": { "type": "string", "pattern": "^\\d+\\.\\d+(\\.\\d+)?$" },
+    "status": {
+      "type": "string",
+      "enum": ["TRAINING", "CANDIDATE", "BENCHMARKED", "STAGING", "PRODUCTION", "RETIRED"]
+    },
+    "dataset_version": { "type": "string", "pattern": "^v\\d+\\.\\d+(\\.\\d+)?$" },
+    "code_commit": { "type": "string", "pattern": "^[a-f0-9]{7,40}$" },
+    "training_config": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Repo-relativ sokvag till versionshanterad traningskonfiguration."
+    },
+    "base_model": { "type": ["string", "null"] },
+    "hyperparameters": { "type": "object" },
+    "gpu_environment": { "type": "string", "minLength": 1 },
+    "evaluation_version": { "type": "string", "pattern": "^v\\d+(\\.\\d+)?$" },
+    "benchmark_results": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["benchmark_version", "metrics"],
+      "properties": {
+        "benchmark_version": { "type": "string", "pattern": "^v\\d+(\\.\\d+)?$" },
+        "metrics": {
+          "type": "object",
+          "description": "T.ex. character_error_rate, rune_accuracy, sequence_accuracy, transliteration_cer, word_error_rate, normalization_accuracy, translation_similarity, stone_identification_accuracy, calibration_ece, abstention_quality."
+        },
+        "report_path": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "$id": "runestone/provenance",
+  "title": "ProvenanceRecord",
+  "description": "Obligatorisk provenance for varje objekt i corpus. Inget objekt utan komplett provenance (ADR-0003).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "dataset_id",
+    "source",
+    "source_url",
+    "source_record_id",
+    "license",
+    "attribution",
+    "modification_status",
+    "download_timestamp",
+    "dataset_version",
+    "checksum"
+  ],
+  "properties": {
+    "dataset_id": { "type": "string", "minLength": 1 },
+    "source": { "type": "string", "minLength": 1 },
+    "source_url": { "type": "string", "pattern": "^https?://" },
+    "source_record_id": { "type": "string", "minLength": 1 },
+    "license": { "type": "string", "minLength": 1 },
+    "creator": { "type": ["string", "null"] },
+    "attribution": { "type": "string", "minLength": 1 },
+    "modification_status": {
+      "type": "string",
+      "enum": ["unmodified", "normalized", "enriched", "corrected"]
+    },
+    "download_timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "dataset_version": { "type": "string", "pattern": "^v\\d+\\.\\d+(\\.\\d+)?$" },
+    "checksum": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+  }
+}

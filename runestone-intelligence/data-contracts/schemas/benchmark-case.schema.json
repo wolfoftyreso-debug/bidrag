@@ -1,0 +1,54 @@
+{
+  "$id": "runestone/benchmark-case",
+  "title": "BenchmarkCase",
+  "description": "Ett testfall i RUNEBENCH. Gold-fall (RUNEBENCH-GOLD) ar manuellt verifierade mot auktoritativa kallor.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "benchmark_version",
+    "category",
+    "inscription_id",
+    "image_id",
+    "expected",
+    "gold",
+    "split"
+  ],
+  "properties": {
+    "case_id": { "type": "string", "pattern": "^rb-[a-z0-9-]+$" },
+    "benchmark_version": { "type": "string", "pattern": "^v\\d+(\\.\\d+)?$" },
+    "category": {
+      "type": "string",
+      "enum": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"],
+      "description": "A clean, B field, C low-res, D oblique, E damaged, F partial, G low contrast, H weathered, I unknown stone, J long, K rare rune forms, L non-Viking."
+    },
+    "inscription_id": {
+      "type": ["string", "null"],
+      "description": "null endast for kategori I (unknown stone)."
+    },
+    "signum": { "type": ["string", "null"] },
+    "image_id": { "type": "string", "pattern": "^img-[a-z0-9-]+$" },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transliteration"],
+      "properties": {
+        "rune_sequence": { "type": ["string", "null"] },
+        "transliteration": { "type": "string", "minLength": 1 },
+        "normalization": { "type": ["string", "null"] },
+        "translation_sv": { "type": ["string", "null"] },
+        "abstention_expected": {
+          "type": "boolean",
+          "description": "true nar korrekt beteende ar att avsta (t.ex. otillracklig bildkvalitet)."
+        }
+      }
+    },
+    "gold": {
+      "type": "boolean",
+      "description": "true = ingar i RUNEBENCH-GOLD, manuellt kvalitetssakrad. Automatisk import blir aldrig gold utan kontroll."
+    },
+    "verified_by": { "type": ["string", "null"] },
+    "split": { "type": "string", "enum": ["test", "unknown_stone_test"] },
+    "notes": { "type": ["string", "null"] }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "$schema_name": "dataset-manifest",
+  "$note": "SYNTETISKT EXEMPEL - formatdemonstration for corpus-v0.1.",
+  "record": {
+    "dataset_name": "runestone-corpus",
+    "dataset_version": "v0.1",
+    "layer": "A",
+    "created_at": "2026-08-14T12:00:00Z",
+    "immutable": true,
+    "records_count": 7200,
+    "checksum": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+    "parent_version": null,
+    "source_datasets": [
+      {
+        "source": "Scandinavian Runic-text Database",
+        "license": "Use permitted with reporting and attribution (Uppsala University terms)",
+        "source_url": "https://www.nordiska.uu.se/forskning/samnord/"
+      },
+      {
+        "source": "Runor / K-samsok (Riksantikvarieambetet)",
+        "license": "CC0 (metadata); image rights per object",
+        "source_url": "https://app.raa.se/open/runor/search"
+      }
+    ],
+    "split_policy": {
+      "unit": "inscription_id",
+      "unknown_stone_test_set": true,
+      "seed": 20260814
+    }
+  }
+}

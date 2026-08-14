@@ -1,0 +1,102 @@
+{
+  "$id": "runestone/inscription",
+  "title": "Inscription",
+  "description": "Canonical inskriftsobjekt i Runestone Intelligence Corpus. Poster fran Uppsala-databasen behaller alltid source_database/source_provider (ADR-0004).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "inscription_id",
+    "signum",
+    "source_database",
+    "source_provider",
+    "country",
+    "rune_type",
+    "transliteration",
+    "provenance"
+  ],
+  "properties": {
+    "inscription_id": {
+      "type": "string",
+      "pattern": "^ric-[a-z0-9-]+$",
+      "description": "Internt stabilt id; enhet for train/test-split (ADR-0002)."
+    },
+    "signum": { "type": "string", "minLength": 1 },
+    "source_database": { "type": "string", "minLength": 1 },
+    "source_provider": { "type": "string", "minLength": 1 },
+    "region": { "type": ["string", "null"] },
+    "country": { "type": "string", "minLength": 1 },
+    "location": { "type": ["string", "null"] },
+    "coordinates": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["latitude", "longitude"],
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      }
+    },
+    "dating": { "type": ["string", "null"] },
+    "rune_type": {
+      "type": "string",
+      "enum": [
+        "elder_futhark",
+        "younger_futhark",
+        "short_twig",
+        "staveless",
+        "medieval",
+        "anglo_saxon",
+        "mixed",
+        "unknown"
+      ]
+    },
+    "runic_text": { "type": ["string", "null"] },
+    "transliteration": { "type": "string", "minLength": 1 },
+    "normalization": { "type": ["string", "null"] },
+    "translation_sv": { "type": ["string", "null"] },
+    "translation_en": { "type": ["string", "null"] },
+    "alternative_readings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["reading", "source"],
+        "properties": {
+          "reading": { "type": "string", "minLength": 1 },
+          "source": { "type": "string", "minLength": 1 },
+          "notes": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "uncertain_characters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["position", "status"],
+        "properties": {
+          "position": { "type": "integer", "minimum": 0 },
+          "status": {
+            "type": "string",
+            "enum": ["uncertain", "damaged", "lost", "reconstructed"]
+          },
+          "candidates": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "carver": { "type": ["string", "null"] },
+    "style": { "type": ["string", "null"] },
+    "bibliography": { "type": "array", "items": { "type": "string" } },
+    "scholarly_status": {
+      "type": "string",
+      "enum": [
+        "established",
+        "probable",
+        "uncertain",
+        "alternative_readings",
+        "insufficient_evidence"
+      ],
+      "description": "Vetenskaplig statusklassning (ADR-0005 / sakerhetsregel 39)."
+    },
+    "provenance": { "$contract": "provenance" }
+  }
+}

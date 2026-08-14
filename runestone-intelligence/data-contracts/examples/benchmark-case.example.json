@@ -1,0 +1,23 @@
+{
+  "$schema_name": "benchmark-case",
+  "$note": "SYNTETISKT EXEMPEL - formatdemonstration.",
+  "record": {
+    "case_id": "rb-example-0001",
+    "benchmark_version": "v1",
+    "category": "A",
+    "inscription_id": "ric-example-0001",
+    "signum": "EX 1",
+    "image_id": "img-example-0001",
+    "expected": {
+      "rune_sequence": "ᛁᚴᛋᛁᛘᛒᛁᛚ",
+      "transliteration": "iksimbil",
+      "normalization": "exempel",
+      "translation_sv": "Detta ar en syntetisk exempelpost.",
+      "abstention_expected": false
+    },
+    "gold": true,
+    "verified_by": "manual-review-example",
+    "split": "test",
+    "notes": "Formatdemonstration; verkliga gold-fall kvalitetssakras mot auktoritativa kallor."
+  }
+}

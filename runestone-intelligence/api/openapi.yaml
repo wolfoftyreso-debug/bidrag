@@ -1,0 +1,148 @@
+openapi: 3.1.0
+info:
+  title: Runestone Intelligence API
+  version: 0.1.0
+  description: >
+    Minimal publik V1: POST /v1/analyze (foto -> lasning -> svensk
+    oversattning). Interna endpoints ar separata och exponeras aldrig publikt.
+    Kontraktet ar Sprint 0-leverans; implementationen byggs forst nar Data
+    Foundation v0.1 ar verifierad.
+paths:
+  /v1/analyze:
+    post:
+      summary: Analysera ett foto av en runsten
+      operationId: analyze
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image:
+                  type: string
+                  format: binary
+                latitude:
+                  type: number
+                  minimum: -90
+                  maximum: 90
+                longitude:
+                  type: number
+                  minimum: -180
+                  maximum: 180
+      responses:
+        "200":
+          description: Analysresultat med confidence, osakerheter och kallor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyzeResponse"
+        "422":
+          description: >
+            Abstention: otillracklig bildkvalitet eller ingen inskrift
+            detekterad. Hellre detta an en falskt saker oversattning.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AbstentionResponse"
+
+  # Interna endpoints (separat natverkspolicy, aldrig publika)
+  /vision/detect:
+    post:
+      summary: "Intern: detektera sten/inskrift/runband/ornament/skada"
+      responses: { "200": { description: Detektioner med masker } }
+  /vision/read:
+    post:
+      summary: "Intern: rektifierad inskrift -> runsekvens med per-tecken-kandidater"
+      responses: { "200": { description: Strukturerad runsekvens } }
+  /knowledge/retrieve:
+    post:
+      summary: "Intern: kandidatinskrifter fran canonical corpus"
+      responses: { "200": { description: Rankade kandidater med kallor } }
+  /interpret:
+    post:
+      summary: "Intern: translitterering -> normalisering -> tolkning"
+      responses: { "200": { description: Lingvistisk tolkning } }
+  /verify:
+    post:
+      summary: "Intern: cross-check observerad lasning vs kanonisk inskrift"
+      responses: { "200": { description: "MATCH HIGH/LOW + avvikelser" } }
+
+components:
+  schemas:
+    AnalyzeResponse:
+      type: object
+      required: [result, uncertainties, sources, stage_confidence]
+      properties:
+        result:
+          type: object
+          required: [transliteration, translation_sv, confidence, scholarly_status]
+          properties:
+            stone_id:
+              type: [string, "null"]
+              description: Signum om stenen identifierats, annars null.
+            identification_confidence:
+              type: [number, "null"]
+            transliteration: { type: string }
+            translation_sv: { type: string }
+            confidence: { type: number }
+            scholarly_status:
+              type: string
+              enum: [established, probable, uncertain, alternative_readings, insufficient_evidence]
+        stage_confidence:
+          type: object
+          description: >
+            Confidence per pipelinesteg (ADR-0005). Aggregat far aldrig
+            maskera svaga delkomponenter.
+          properties:
+            image_quality: { type: number }
+            stone_identification: { type: number }
+            inscription_detection: { type: number }
+            rune_recognition: { type: number }
+            transliteration: { type: number }
+            normalization: { type: number }
+            historical_retrieval: { type: number }
+            translation: { type: number }
+        uncertainties:
+          type: array
+          items:
+            type: object
+            required: [position, candidates]
+            properties:
+              position: { type: integer }
+              candidates:
+                type: array
+                items:
+                  type: object
+                  required: [candidate, confidence]
+                  properties:
+                    candidate: { type: string }
+                    confidence: { type: number }
+        sources:
+          type: array
+          description: Kallforankring - gor resultatet reproducerbart.
+          items:
+            type: object
+            properties:
+              source_database: { type: string }
+              inscription: { type: string }
+              source_record: { type: string }
+              translation_source: { type: string }
+              image_source: { type: string }
+        model:
+          type: object
+          properties:
+            model_version: { type: string }
+            inference_timestamp: { type: string }
+    AbstentionResponse:
+      type: object
+      required: [reason, recommendation]
+      properties:
+        reason:
+          type: string
+          enum: [insufficient_image_quality, no_inscription_detected, unreadable_inscription]
+        recommendation:
+          type: string
+          description: T.ex. "Flytta kameran narmare".
+        image_quality: { type: number }

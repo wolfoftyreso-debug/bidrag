@@ -1,0 +1,36 @@
+{
+  "$schema_name": "image-rights",
+  "$note": "SYNTETISKT EXEMPEL - formatdemonstration.",
+  "record": {
+    "image_id": "img-example-0001",
+    "inscription_id": "ric-example-0001",
+    "original_url": "https://example.org/photos/ex1.jpg",
+    "local_object": "raw/images/img-example-0001.jpg",
+    "license": "CC BY-SA 4.0",
+    "photographer": "Exempel Fotograf",
+    "source_institution": "Wikimedia Commons",
+    "resolution": { "width": 3024, "height": 4032 },
+    "orientation": "portrait",
+    "rights_status": "share_alike",
+    "usage": {
+      "training_allowed": true,
+      "redistribution_allowed": true,
+      "verified_by": "license-review",
+      "verified_at": "2026-08-14T12:00:00Z"
+    },
+    "layer": "C",
+    "provenance": {
+      "dataset_id": "wikimedia-harvest",
+      "source": "Wikimedia Commons",
+      "source_url": "https://example.org/photos/ex1.jpg",
+      "source_record_id": "File:Ex1.jpg",
+      "license": "CC BY-SA 4.0",
+      "creator": "Exempel Fotograf",
+      "attribution": "Exempel Fotograf, CC BY-SA 4.0, via Wikimedia Commons",
+      "modification_status": "unmodified",
+      "download_timestamp": "2026-08-14T12:00:00Z",
+      "dataset_version": "v0.1",
+      "checksum": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    }
+  }
+}

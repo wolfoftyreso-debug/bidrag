@@ -1,0 +1,27 @@
+{
+  "$schema_name": "model-registry-entry",
+  "$note": "SYNTETISKT EXEMPEL - formatdemonstration.",
+  "record": {
+    "model_name": "runestone-vision",
+    "model_version": "0.1.0",
+    "status": "BENCHMARKED",
+    "dataset_version": "v0.1",
+    "code_commit": "0123456789abcdef0123456789abcdef01234567",
+    "training_config": "training/configs/runestone-vision-0.1.yaml",
+    "base_model": "example-vision-backbone",
+    "hyperparameters": { "lr": 0.0003, "epochs": 20, "batch_size": 32 },
+    "gpu_environment": "aws-k8s gpu-worker a10g x1, cuda 12.4",
+    "evaluation_version": "v1",
+    "benchmark_results": {
+      "benchmark_version": "v1",
+      "metrics": {
+        "character_error_rate": 0.12,
+        "rune_accuracy": 0.88,
+        "sequence_accuracy": 0.41,
+        "calibration_ece": 0.06,
+        "abstention_quality": 0.71
+      },
+      "report_path": "benchmark/reports/runestone-vision-0.1.0.md"
+    }
+  }
+}

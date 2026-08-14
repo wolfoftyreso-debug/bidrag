@@ -1,0 +1,22 @@
+name: Runestone data contracts
+
+on:
+  push:
+    paths: ['runestone-intelligence/**']
+  pull_request:
+    paths: ['runestone-intelligence/**']
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate example records against schemas
+        run: python3 validate_all.py
+        working-directory: runestone-intelligence/data-contracts
+      - name: Contract tests (provenance, split policy, model governance)
+        run: python3 -m unittest discover -s tests -v
+        working-directory: runestone-intelligence/data-contracts

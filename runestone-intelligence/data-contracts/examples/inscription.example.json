@@ -1,0 +1,48 @@
+{
+  "$schema_name": "inscription",
+  "$note": "SYNTETISKT EXEMPEL. Signum och textfalt ar platshallare som visar formatet - inte en verklig vetenskaplig lasning. Verkliga poster skapas av ingestion-pipelinen fran Scandinavian Runic-text Database.",
+  "record": {
+    "inscription_id": "ric-example-0001",
+    "signum": "EX 1",
+    "source_database": "Scandinavian Runic-text Database",
+    "source_provider": "Uppsala University",
+    "region": "Uppland",
+    "country": "Sweden",
+    "location": "Exempelsocken",
+    "coordinates": { "latitude": 59.85, "longitude": 17.63 },
+    "dating": "V (Viking Age)",
+    "rune_type": "younger_futhark",
+    "runic_text": "ᛁᚴᛋᛁᛘᛒᛁᛚ",
+    "transliteration": "iksimbil",
+    "normalization": "exempel",
+    "translation_sv": "Detta ar en syntetisk exempelpost.",
+    "translation_en": "This is a synthetic example record.",
+    "alternative_readings": [
+      {
+        "reading": "iksimbil (alt.)",
+        "source": "Exempelreferens 1901",
+        "notes": "Endast formatdemonstration."
+      }
+    ],
+    "uncertain_characters": [
+      { "position": 3, "status": "damaged", "candidates": ["ᛁ", "ᛚ"] }
+    ],
+    "carver": null,
+    "style": "Pr 3",
+    "bibliography": ["Exempelreferens 1901, s. 42"],
+    "scholarly_status": "uncertain",
+    "provenance": {
+      "dataset_id": "srd-import",
+      "source": "Scandinavian Runic-text Database",
+      "source_url": "https://www.nordiska.uu.se/forskning/samnord/",
+      "source_record_id": "EX 1",
+      "license": "Use permitted with reporting and attribution (Uppsala University terms)",
+      "creator": "Uppsala University",
+      "attribution": "Scandinavian Runic-text Database, Uppsala University",
+      "modification_status": "normalized",
+      "download_timestamp": "2026-08-14T12:00:00Z",
+      "dataset_version": "v0.1",
+      "checksum": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  }
+}
