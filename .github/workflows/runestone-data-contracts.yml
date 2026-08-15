@@ -26,6 +26,9 @@ jobs:
       - name: Benchmark tests (metrics, case building, evaluation)
         run: python3 -m unittest discover -s tests -v
         working-directory: runestone-intelligence/benchmark
+      - name: Baseline runner tests (adapters, http_vlm parsing, e2e)
+        run: python3 -m unittest discover -s tests -v
+        working-directory: runestone-intelligence/models
       - name: Corpus build smoke test (deterministic fixtures)
         run: |
           python3 build_corpus.py --srd fixtures/srd_sample.jsonl \
