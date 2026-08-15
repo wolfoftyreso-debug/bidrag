@@ -20,3 +20,13 @@ jobs:
       - name: Contract tests (provenance, split policy, model governance)
         run: python3 -m unittest discover -s tests -v
         working-directory: runestone-intelligence/data-contracts
+      - name: Ingestion tests (signum, importers, matcher, split, e2e)
+        run: python3 -m unittest discover -s tests -v
+        working-directory: runestone-intelligence/ingestion
+      - name: Corpus build smoke test (deterministic fixtures)
+        run: |
+          python3 build_corpus.py --srd fixtures/srd_sample.jsonl \
+            --images fixtures/hf_sample.jsonl \
+            --out /tmp/corpus-ci --version v0.1 \
+            --timestamp 2026-08-15T00:00:00Z --seed 20260815
+        working-directory: runestone-intelligence/ingestion
