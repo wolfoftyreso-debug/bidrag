@@ -32,8 +32,8 @@ vidare.
 | 3 | **Benchmark** *(harness klart)* | **RUNEBENCH** + **RUNEBENCH-GOLD** + automatiserad evaluation. Ingen modell räknas som "bättre" utan benchmark. Metrics, casebygge och evalueringsharness är byggda och testade; skarpa testfall väntar på riktig corpusdata (Sprint 1-spärrar) och bildannotering för kategorierna B/D/E/G/H/K/L |
 | 4 | **Baseline models** *(runner klar)* | Generic VLM, Gemma baseline, OCR/HTR-pipeline, specialized sequence baseline → **Baseline Report v0.1**. Adapterramverk, diagnostiska golv (oracle/abstain/constant), HTTP-VLM-adapter och rapportgenerator byggda och testade; skarp VLM-körning kräver serverad modell + benchmarkbilder |
 | 5 | Rune Vision | Första specialiserade runläsaren → **RuneVision v0.1** |
-| 6 | Retrieval | image reading → text retrieval → candidate ranking → **RuneKnowledge v0.1** |
-| 7 | Verification | Cross-check model reading vs known inscription → **RuneVerifier v0.1** |
+| 6 | **Retrieval** *(v0.1 klar)* | image reading → text retrieval → candidate ranking → **RuneKnowledge v0.1**: trigram+editavstånd på läsning, GPS-närhet som signal, filter, evidens per kandidat, gps_only-flagga |
+| 7 | **Verification** *(v0.1 klar)* | Cross-check model reading vs known inscription → **RuneVerifier v0.1**: MATCH HIGH/MEDIUM/LOW, positionsvisa avvikelser, alternativ analys vid LOW, vetenskaplig status nedgraderas men förbättras aldrig |
 | 8 | Translation | runic → transliteration → normalization → Swedish → **RuneTranslation v0.1** |
 | 9 | Synthetic data | 3D-integrering; tusentals/miljontals syntetiska variationer med känd facittext → **Synthetic Rune Corpus v0.1** |
 | 10 | Field test | ≥25 stenar, flera provinser, olika väder/ljus/kameror/avstånd — första skarpa Atlas-observationerna med full samtyckes- och verifieringskedja |

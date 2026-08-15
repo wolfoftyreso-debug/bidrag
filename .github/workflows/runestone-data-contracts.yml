@@ -29,6 +29,12 @@ jobs:
       - name: Baseline runner tests (adapters, http_vlm parsing, e2e)
         run: python3 -m unittest discover -s tests -v
         working-directory: runestone-intelligence/models
+      - name: Retrieval tests (similarity, GPS signal, filters)
+        run: python3 -m unittest discover -s tests -v
+        working-directory: runestone-intelligence/knowledge
+      - name: Verification tests (match levels, status downgrade rules)
+        run: python3 -m unittest discover -s tests -v
+        working-directory: runestone-intelligence/verification
       - name: Corpus build smoke test (deterministic fixtures)
         run: |
           python3 build_corpus.py --srd fixtures/srd_sample.jsonl \
