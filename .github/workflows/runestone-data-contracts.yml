@@ -23,6 +23,9 @@ jobs:
       - name: Ingestion tests (signum, importers, matcher, split, e2e)
         run: python3 -m unittest discover -s tests -v
         working-directory: runestone-intelligence/ingestion
+      - name: Benchmark tests (metrics, case building, evaluation)
+        run: python3 -m unittest discover -s tests -v
+        working-directory: runestone-intelligence/benchmark
       - name: Corpus build smoke test (deterministic fixtures)
         run: |
           python3 build_corpus.py --srd fixtures/srd_sample.jsonl \

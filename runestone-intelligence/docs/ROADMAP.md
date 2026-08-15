@@ -29,7 +29,7 @@ vidare.
 | 0 | **Discovery** *(klar)* | Datainventering, licensinventering, source mapping, dataset schema, benchmark definition, ADR:er — inkl. **Atlas-kontrakten** (stone, field-observation, samtycke, verifieringstrappa; ADR-0006/0007). **Ingen modellträning.** |
 | 1 | **Corpus ingestion** *(pågår)* | Rundata/SRD-importer, Runor metadata-importer, K-samsök-connector, image provenance pipeline, dataset versioning → **Runestone Corpus v0.1**. Motorn (signum, SRD-/HF-importers, matcher, split, manifest, e2e-CLI) är byggd och testad mot fixturer; skarp körning väntar på Uppsala-rapportering + källformatadapter |
 | 2 | Image corpus | Licensierade bilder, Wikimedia (där licens tillåter), RAÄ-data (där användning tillåts), befintliga multimodala dataset → **Image Corpus v0.1** |
-| 3 | Benchmark | **RUNEBENCH** + **RUNEBENCH-GOLD** + automatiserad evaluation. Ingen modell räknas som "bättre" utan benchmark. |
+| 3 | **Benchmark** *(harness klart)* | **RUNEBENCH** + **RUNEBENCH-GOLD** + automatiserad evaluation. Ingen modell räknas som "bättre" utan benchmark. Metrics, casebygge och evalueringsharness är byggda och testade; skarpa testfall väntar på riktig corpusdata (Sprint 1-spärrar) och bildannotering för kategorierna B/D/E/G/H/K/L |
 | 4 | Baseline models | Generic VLM, Gemma baseline, OCR/HTR-pipeline, specialized sequence baseline → **Baseline Report v0.1** |
 | 5 | Rune Vision | Första specialiserade runläsaren → **RuneVision v0.1** |
 | 6 | Retrieval | image reading → text retrieval → candidate ranking → **RuneKnowledge v0.1** |

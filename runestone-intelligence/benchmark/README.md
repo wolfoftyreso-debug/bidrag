@@ -58,6 +58,30 @@ slutliga sanningskällan för modellutvärdering.
 `expected.abstention_expected=true` mäter att systemet hellre svarar
 "Otillräcklig bildkvalitet" än hallucinerar.
 
+## Implementerat (Sprint 3)
+
+| Modul | Gör |
+|---|---|
+| `metrics.py` | CER, WER, rune accuracy, sequence accuracy, calibration (ECE) och abstention-metrics (true abstentions, **false confidence**, over-abstentions, F1). Odefinierade mätningar blir `null`, aldrig fejkade nollor |
+| `build_benchmark.py` | Corpusversion → benchmarkfall. Endast test-/unknown-stone-partitioner (träningsstenar kan inte läcka in); deterministisk kategorisering I/C/J/A; unknown-stone-fall döljer identiteten (`inscription_id`/`signum` = null); `gold=false` alltid — promotion sker manuellt |
+| `evaluate.py` | Cases + predictions → rapport med totalmetrics, per kategori och per fall. Saknade predictions rapporteras som `missing`, aldrig tyst. Metrics-blocket har samma nycklar som `model-registry-entry.benchmark_results.metrics` — resultatet kopplas direkt till registret |
+
+Kategorierna B/D/E/G/H/K/L kräver bildannotering och sätts via
+annotation-verktyget; builderns automatiska regler täcker I (unknown stone),
+C (lågupplöst), J (lång inskrift) och A (default).
+
+## Körning
+
+```bash
+python3 build_benchmark.py --corpus /tmp/corpus-v0.1 --out /tmp/runebench --version v1
+python3 evaluate.py --cases /tmp/runebench/cases.jsonl \
+  --predictions predictions.jsonl --out report.json --version v1
+python3 -m unittest discover -s tests   # 15 tester
+```
+
+Predictionsformat, en rad per fall:
+`{"case_id": "rb-...", "transliteration": "...", "confidence": 0.93, "abstained": false}`
+
 ## Initiala KPI-mål
 
 Rune recognition ≥95 % (clean), transliteration ≥90 % sequence-level
