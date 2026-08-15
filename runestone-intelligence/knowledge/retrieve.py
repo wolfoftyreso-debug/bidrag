@@ -21,8 +21,10 @@ from pathlib import Path
 _HERE = Path(__file__).parent
 sys.path.insert(0, str(_HERE))
 sys.path.insert(0, str(_HERE.parent / "verification"))
+sys.path.insert(0, str(_HERE.parent / "translation"))
 
 from retrieval import CorpusIndex  # noqa: E402
+from translate import translate  # noqa: E402
 from verify import verify_against_candidates  # noqa: E402
 
 
@@ -45,7 +47,9 @@ def main() -> int:
 
     result: dict = {"candidates": candidates}
     if args.text:
-        result["verdict"] = verify_against_candidates(args.text, candidates)
+        verdict = verify_against_candidates(args.text, candidates)
+        result["verdict"] = verdict
+        result["translation"] = translate(args.text, verdict)
 
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0

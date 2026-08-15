@@ -35,6 +35,9 @@ jobs:
       - name: Verification tests (match levels, status downgrade rules)
         run: python3 -m unittest discover -s tests -v
         working-directory: runestone-intelligence/verification
+      - name: Translation tests (rune mapping, normalization, policy chain)
+        run: python3 -m unittest discover -s tests -v
+        working-directory: runestone-intelligence/translation
       - name: Corpus build smoke test (deterministic fixtures)
         run: |
           python3 build_corpus.py --srd fixtures/srd_sample.jsonl \

@@ -60,6 +60,7 @@ licensing, benchmark, baseline) — inte appen. Se `docs/ROADMAP.md`.
 | `knowledge/` | Canonical corpus + retrieval (Runestone Intelligence Corpus) |
 | `atlas/` | Runestone Atlas: stenobjekt, fältobservationer, stone matching, verifieringstrappa, scan coverage |
 | `verification/` | Cross-check: observerad läsning vs kanonisk inskrift |
+| `translation/` | RuneTranslation: runor → translitterering → normalisering → svenska, policykedja canonical/formulaic/abstain |
 | `api/` | OpenAPI-kontrakt: `POST /v1/analyze` + interna endpoints |
 | `deployment/` | AWS/Kubernetes-arkitektur, GitOps |
 

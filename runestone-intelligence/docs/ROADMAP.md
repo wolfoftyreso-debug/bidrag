@@ -34,7 +34,7 @@ vidare.
 | 5 | Rune Vision | Första specialiserade runläsaren → **RuneVision v0.1** |
 | 6 | **Retrieval** *(v0.1 klar)* | image reading → text retrieval → candidate ranking → **RuneKnowledge v0.1**: trigram+editavstånd på läsning, GPS-närhet som signal, filter, evidens per kandidat, gps_only-flagga |
 | 7 | **Verification** *(v0.1 klar)* | Cross-check model reading vs known inscription → **RuneVerifier v0.1**: MATCH HIGH/MEDIUM/LOW, positionsvisa avvikelser, alternativ analys vid LOW, vetenskaplig status nedgraderas men förbättras aldrig |
-| 8 | Translation | runic → transliteration → normalization → Swedish → **RuneTranslation v0.1** |
+| 8 | **Translation** *(v0.1 klar)* | runic → transliteration → normalization → Swedish → **RuneTranslation v0.1**: runmappning (yngre futharken), seed-lexikon för normalisering, policykedja canonical → formulaic → abstain; mismatch översätts aldrig |
 | 9 | Synthetic data | 3D-integrering; tusentals/miljontals syntetiska variationer med känd facittext → **Synthetic Rune Corpus v0.1** |
 | 10 | Field test | ≥25 stenar, flera provinser, olika väder/ljus/kameror/avstånd — första skarpa Atlas-observationerna med full samtyckes- och verifieringskedja |
 | 11 | Hardening | Latency, GPU-kostnad, failure modes, confidence-kalibrering, minne, concurrency, API-stabilitet |
