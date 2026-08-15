@@ -38,6 +38,9 @@ jobs:
       - name: Translation tests (rune mapping, normalization, policy chain)
         run: python3 -m unittest discover -s tests -v
         working-directory: runestone-intelligence/translation
+      - name: API tests (pipeline, abstention, observations, HTTP server)
+        run: python3 -m unittest discover -s tests -v
+        working-directory: runestone-intelligence/api
       - name: Corpus build smoke test (deterministic fixtures)
         run: |
           python3 build_corpus.py --srd fixtures/srd_sample.jsonl \

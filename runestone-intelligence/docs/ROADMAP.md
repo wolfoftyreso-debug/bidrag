@@ -37,7 +37,7 @@ vidare.
 | 8 | **Translation** *(v0.1 klar)* | runic → transliteration → normalization → Swedish → **RuneTranslation v0.1**: runmappning (yngre futharken), seed-lexikon för normalisering, policykedja canonical → formulaic → abstain; mismatch översätts aldrig |
 | 9 | Synthetic data | 3D-integrering; tusentals/miljontals syntetiska variationer med känd facittext → **Synthetic Rune Corpus v0.1** |
 | 10 | Field test | ≥25 stenar, flera provinser, olika väder/ljus/kameror/avstånd — första skarpa Atlas-observationerna med full samtyckes- och verifieringskedja |
-| 11 | Hardening | Latency, GPU-kostnad, failure modes, confidence-kalibrering, minne, concurrency, API-stabilitet |
+| 11 | Hardening | Latency, GPU-kostnad, failure modes, confidence-kalibrering, minne, concurrency, API-stabilitet. API-orkestreringen (`POST /v1/analyze` med pluggbar läsare, confidence-min-aggregat, 422-abstention, Atlas-observationer med samtycke) är byggd och testad i förväg |
 | 12 | **Public MVP** | Endast **Fota → Läs → Översätt**; backend redan byggd för hela arkitekturen |
 
 ## Träningsstrategi (Phase 1–8)
