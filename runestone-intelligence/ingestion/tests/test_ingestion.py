@@ -77,8 +77,11 @@ class SrdImporterTests(unittest.TestCase):
 
     def test_idempotent_rerun(self):
         rows = read_jsonl(FIXTURES / "srd_sample.jsonl")
-        a = import_srd(rows, source_url="u", dataset_version="v0.1", download_timestamp=TS)
-        b = import_srd(rows, source_url="u", dataset_version="v0.1", download_timestamp=TS)
+        a = import_srd(rows, source_url="https://example.org/srd",
+                       dataset_version="v0.1", download_timestamp=TS)
+        b = import_srd(rows, source_url="https://example.org/srd",
+                       dataset_version="v0.1", download_timestamp=TS)
+        self.assertEqual(len(a.imported), 3)  # aldrig trivialt tomt==tomt
         self.assertEqual(a.imported, b.imported)
 
 

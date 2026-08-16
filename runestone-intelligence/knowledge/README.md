@@ -26,6 +26,8 @@ Uppsala-härledda poster behåller alltid `source_database` /
 |---|---|
 | `retrieval.py` | `CorpusIndex`: teckentrigram-grovsökning + editavstånds-omrankning på läsningen, GPS-närhet (haversine, 5 km-radie), filter på runtyp/region. Varje kandidat bär evidens per signal och källförankring (`source_database`, `translation_sv`, `scholarly_status`). Sökning med enbart GPS flaggas `gps_only` — kandidatförslag, aldrig identifiering (ADR-0007). Deterministisk rankning |
 | `retrieve.py` | CLI: corpus + läsning (+ ev. GPS/filter) → rankade kandidater + verifieringsutlåtande via `verification/verify.py` |
+| `identity.py` | IDENTITY LOCK (ADR-0008): ≥0.95 lock / 0.70–0.95 review / <0.70 fallback; GPS kan aldrig låsa, LOW-match bryter |
+| `master.py` | RUNESTONE MASTER DATABASE-vyn (ADR-0009): ett kunskapsobjekt per sten — identitet, position, bilder, inskrift, tolkning, personer, källor, atlas. Muterar aldrig L1; vägrar blanda stenar |
 
 ```bash
 python3 retrieve.py --corpus <corpus-dir> --text "iksimbil" --lat 59.85 --lon 17.63
