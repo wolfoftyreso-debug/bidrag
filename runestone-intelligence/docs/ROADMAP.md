@@ -46,6 +46,11 @@ Baseline → specialiserad runigenkänning → full inscription model → retrie
 → translation → synthetic augmentation → field adaptation → continuous
 training (misslyckanden blir nya träningsfall).
 
+## Samlad status
+
+Se `docs/DATA_FOUNDATION.md` — komplett statusrapport med byggt/blockerat
+och beslutspunkter för nästa fas.
+
 ## Första KPI:er
 
 | KPI | Mål |

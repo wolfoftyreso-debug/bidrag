@@ -128,6 +128,30 @@ class AnalyzeFlowTests(unittest.TestCase):
         self.assertIsNone(out["body"]["result"]["translation_sv"])
         self.assertEqual(out["body"]["result"]["scholarly_status"], "insufficient_evidence")
 
+    def test_too_small_image_rejected_before_reading(self):
+        import struct, zlib
+        ihdr = struct.pack(">II", 300, 200) + b"\x08\x02\x00\x00\x00"
+        chunk = b"IHDR" + ihdr
+        tiny_png = (b"\x89PNG\r\n\x1a\n" + struct.pack(">I", len(ihdr)) + chunk
+                    + struct.pack(">I", zlib.crc32(chunk)))
+        p = pipeline_with(MockReader("iksimbil", 0.91))
+        out = p.analyze(tiny_png)
+        self.assertEqual(out["status"], 422)
+        self.assertEqual(out["body"]["reason"], "insufficient_image_quality")
+        self.assertEqual(out["body"]["image_quality"], 0.2)
+
+    def test_research_mode_includes_evidence_chain(self):
+        p = pipeline_with(MockReader("iksimbil", 0.91))
+        out = p.analyze(IMAGE, gps=(59.8501, 17.6302), research=True)
+        research = out["body"]["research"]
+        self.assertIn("candidates", research)
+        self.assertIn("identity", research)
+        self.assertIn("image_quality", research)
+        self.assertGreater(len(research["candidates"]), 0)
+        # utan research-flaggan: inget research-block
+        out2 = p.analyze(IMAGE)
+        self.assertNotIn("research", out2["body"])
+
     def test_uncertainties_propagate(self):
         unc = [{"position": 3, "candidates": [
             {"candidate": "ᚢ", "confidence": 0.61}, {"candidate": "ᚦ", "confidence": 0.29}]}]
@@ -246,6 +270,20 @@ class HttpServerTests(unittest.TestCase):
     def test_explore_requires_position(self):
         status, _ = self._post("/v1/explore", {})
         self.assertEqual(status, 400)
+
+    def test_trail_endpoint(self):
+        status, body = self._post("/v1/trail",
+                                  {"latitude": 59.8501, "longitude": 17.6302, "count": 2})
+        self.assertEqual(status, 200)
+        self.assertEqual(body["count"], 2)
+        self.assertEqual(body["stones"][0]["signum"], "U 9001")
+        self.assertIn("total_km", body)
+
+    def test_research_endpoint(self):
+        status, body = self._post("/research/analyze", {
+            "image_b64": base64.b64encode(IMAGE).decode()})
+        self.assertEqual(status, 200)
+        self.assertIn("research", body)
 
     def test_map_endpoint(self):
         status, body = self._post("/v1/map", {"seen": ["U 9001"]})

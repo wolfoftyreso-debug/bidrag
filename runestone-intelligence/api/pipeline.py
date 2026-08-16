@@ -23,8 +23,10 @@ import sys
 from pathlib import Path
 
 _ROOT = Path(__file__).parents[1]
-for sub in ("knowledge", "verification", "translation", "data-contracts"):
+for sub in ("knowledge", "verification", "translation", "data-contracts", "models"):
     sys.path.insert(0, str(_ROOT / sub))
+
+from image_quality import assess as assess_image_quality  # noqa: E402
 
 from identity import REVIEW_THRESHOLD, decide as identity_decide  # noqa: E402
 from meaning import extract_meaning  # noqa: E402
@@ -56,10 +58,26 @@ class AnalyzePipeline:
     def analyze(self, image_bytes: bytes | None, *,
                 gps: tuple[float, float] | None = None,
                 consent: dict | None = None,
+                research: bool = False,
                 inference_timestamp: str = "1970-01-01T00:00:00Z") -> dict:
         """-> {"status": 200|422, "body": {...}, "observation": dict|None}"""
         if not image_bytes:
             return {"status": 400, "body": {"error": "image saknas"}, "observation": None}
+
+        # Steg 1: image quality-gaten (v0-heuristik, samma kontrakt som den
+        # tranade modellen). For liten bild avvisas FORE lasning; okant
+        # format ar omatbart (None) och slapps vidare - v0 domer bara det
+        # den faktiskt kan mata.
+        quality = assess_image_quality(image_bytes)
+        if quality["verdict"] == "too_small":
+            return {
+                "status": 422,
+                "body": {"reason": "insufficient_image_quality",
+                         "recommendation": quality["recommendation"],
+                         "image_quality": quality["image_quality"],
+                         "note": None},
+                "observation": None,
+            }
 
         reading = self.reader.read(image_bytes)
         if reading["abstained"] or not reading.get("transliteration"):
@@ -122,7 +140,7 @@ class AnalyzePipeline:
         # identifierad sten (plan §19).
         identification = verdict.get("identification") if verdict.get("status") == "verified" else None
         stage_confidence = {
-            "image_quality": None,          # matbar forst med Image Quality Model
+            "image_quality": quality["image_quality"],  # v0-heuristik; None = omatbart
             "stone_identification": identification["identification_score"] if identification else None,
             "inscription_detection": None,  # matbar forst med detektorn
             "rune_recognition": reading["confidence"],
@@ -168,6 +186,17 @@ class AnalyzePipeline:
             "model": {"model_version": MODEL_VERSION,
                       "inference_timestamp": inference_timestamp},
         }
+        if research:
+            # Research mode (§40): hela evidenskedjan - kandidater med
+            # evidens, fullt oversattningsblock och kvalitetsbedomning.
+            # Samma pipeline, mer av det som redan beraknats - inget extra
+            # tolkningslager.
+            body["research"] = {
+                "image_quality": quality,
+                "candidates": candidates,
+                "translation": translation,
+                "identity": identity.to_dict(),
+            }
         observation = self._observation(reading, verdict, gps, consent, inference_timestamp)
         return {"status": 200, "body": body, "observation": observation}
 

@@ -36,7 +36,7 @@ _HERE = Path(__file__).parent
 sys.path.insert(0, str(_HERE))
 sys.path.insert(0, str(_HERE.parent / "atlas"))
 
-from explore import nearby  # noqa: E402
+from explore import nearby, trail  # noqa: E402
 from mapview import stones_geojson  # noqa: E402
 from pipeline import AnalyzePipeline  # noqa: E402
 from readers import build_reader  # noqa: E402
@@ -101,6 +101,10 @@ def make_handler(pipeline: AnalyzePipeline, index: CorpusIndex,
                 self._explore(payload)
             elif self.path == "/v1/map":
                 self._map(payload)
+            elif self.path == "/v1/trail":
+                self._trail(payload)
+            elif self.path == "/research/analyze":
+                self._analyze(payload, research=True)
             elif self.path == "/knowledge/retrieve":
                 self._retrieve(payload)
             elif self.path == "/verify":
@@ -110,7 +114,17 @@ def make_handler(pipeline: AnalyzePipeline, index: CorpusIndex,
             else:
                 self._send(404, {"error": "not found"})
 
-        def _analyze(self, payload: dict) -> None:
+        def _trail(self, payload: dict) -> None:
+            # RUNESTONE TRAIL (ADR-0009): girig slinga fran startpunkten.
+            if payload.get("latitude") is None or payload.get("longitude") is None:
+                self._send(400, {"error": "latitude/longitude kravs"})
+                return
+            self._send(200, trail(
+                index.records(),
+                (float(payload["latitude"]), float(payload["longitude"])),
+                count=int(payload.get("count", 7))))
+
+        def _analyze(self, payload: dict, research: bool = False) -> None:
             try:
                 image = base64.b64decode(payload.get("image_b64", ""), validate=True) or None
             except binascii.Error:
@@ -121,7 +135,7 @@ def make_handler(pipeline: AnalyzePipeline, index: CorpusIndex,
                 gps = (float(payload["latitude"]), float(payload["longitude"]))
 
             outcome = pipeline.analyze(
-                image, gps=gps, consent=payload.get("consent"),
+                image, gps=gps, consent=payload.get("consent"), research=research,
                 inference_timestamp=datetime.now(timezone.utc)
                 .strftime("%Y-%m-%dT%H:%M:%SZ"),
             )

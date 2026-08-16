@@ -45,11 +45,13 @@ existerar inte i verkliga korpusar) tills två spärrar är lösta:
 
 Riktig data lagras i object storage, aldrig i Git.
 
-## Kvarstående importers (Sprint 2)
+| `wikimedia_harvester.py` | Commons-skördare med per-fil licensklassning (PD-varianter → open; oklassat → aldrig träningsbart), CC-attribution och signum-kopplingar som alltid verifieras av matchern |
 
-`ksamsok_connector` (skarp API-adapter mot K-samsöks JSON-LD — kontraktsytan
-är `runor_importer`s radformat), `wikimedia_harvester` (per-fil
-licensklassning).
+## Kvarstående (Sprint 2)
+
+Endast de skarpa API-adaptrarna återstår: SRD-distributionens filformat,
+K-samsöks JSON-LD och Commons imageinfo-API — kontraktsytorna är fastlagda
+i respektive importer, det som tillkommer är parsning av källformatet.
 
 ## Krav på varje importer
 

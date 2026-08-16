@@ -1,0 +1,4 @@
+{"file": "File:Runsten U9001 exempel.jpg", "url": "https://example.org/wm/u9001.jpg", "license": "CC BY-SA 4.0", "artist": "Wikianvandare A", "width": 4000, "height": 3000, "signum": "U 9001", "$note": "SYNTETISK FIXTUR"}
+{"file": "File:Runsten okand exempel.jpg", "url": "https://example.org/wm/unknown.jpg", "license": "PD-old", "artist": null, "width": 1200, "height": 900, "$note": "SYNTETISK FIXTUR - public domain, utan signum"}
+{"file": "File:Runsten ratt skyddad.jpg", "url": "https://example.org/wm/protected.jpg", "license": "All rights reserved", "artist": "Fotograf B", "width": 2000, "height": 1500, "signum": "Sö 9002", "$note": "SYNTETISK FIXTUR - oklassad licens: aldrig traningsbar"}
+{"file": "File:Runsten trasigt signum.jpg", "url": "https://example.org/wm/bad.jpg", "license": "CC0", "artist": "C", "width": 800, "height": 600, "signum": "QQ 999", "$note": "SYNTETISK FIXTUR - otolkbart signum: bild in, koppling avvisas"}
