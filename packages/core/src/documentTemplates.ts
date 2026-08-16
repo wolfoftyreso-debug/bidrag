@@ -147,6 +147,14 @@ export const DOCUMENT_TEMPLATES: DocumentTemplate[] = [
       { key: 'measurement', label: 'Hur och av vem mäts det?', type: 'text', required: true, showIf: { key: 'hasIndicator', equals: true }, guidance: 'Datakälla och ansvarig — t.ex. "medlemsregistret, följs upp av kassören varje kvartal".' },
       { key: 'organisation', label: 'Vem gör vad i projektet?', type: 'textarea', required: true, guidance: 'Roller, kompetens och ungefärlig tid — det som visar att ni faktiskt kan genomföra det.' },
       { key: 'capacityGaps', label: 'Vilka funktioner eller kompetenser saknas i dag — och hur löser ni det?', type: 'textarea', guidance: 'En öppet redovisad lucka med en plan är starkare än en dold.' },
+      // Riskregister (red team §19): frivilligt, men när en risk anges krävs
+      // hela strukturen RISK→SANNOLIKHET/PÅVERKAN→HANTERING→ANSVARIG. Inga
+      // mallrisker — en påhittad risk för att fylla en mall är sämre än ingen.
+      { key: 'hasRisks', label: 'Vill du redovisa risker för genomförandet?', type: 'boolean', guidance: 'En moget beskriven risk stärker trovärdigheten. Ta bara med verkliga risker — inga mallrisker för formens skull.' },
+      { key: 'riskMain', label: 'Vilken är den största risken?', type: 'textarea', required: true, showIf: { key: 'hasRisks', equals: true }, guidance: 'Konkret: vad kan hända som hotar genomförandet eller resultatet?' },
+      { key: 'riskLikelihoodImpact', label: 'Hur sannolik är den, och vad blir konsekvensen?', type: 'text', required: true, showIf: { key: 'hasRisks', equals: true }, guidance: 'T.ex. "låg sannolikhet, men skulle försena projektet en termin".' },
+      { key: 'riskMitigation', label: 'Hur hanterar ni risken — och vem ansvarar?', type: 'textarea', required: true, showIf: { key: 'hasRisks', equals: true }, guidance: 'Förebyggande åtgärd eller reservplan, med namngiven roll som äger frågan.' },
+      { key: 'riskOther', label: 'Finns fler väsentliga risker?', type: 'textarea', showIf: { key: 'hasRisks', equals: true }, guidance: 'Samma struktur per risk: vad, sannolikhet/konsekvens, hantering, ansvarig.' },
       { key: 'longTerm', label: 'Vad händer efter projektets slut?', type: 'textarea', required: true, guidance: '"Resultaten lever vidare" räcker inte: vem tar över, vem betalar, vad består konkret?' },
       { key: 'whyUs', label: 'Varför just ni — och varför nu?', type: 'textarea', guidance: 'Det som skiljer er från liknande projekt. Hitta inte på fördelar — det ni faktiskt har räcker.' },
       // §20 Horisontella principer: frivilliga, men aldrig kosmetiska —
@@ -167,6 +175,16 @@ export const DOCUMENT_TEMPLATES: DocumentTemplate[] = [
       },
       { title: 'Genomförande', lines: ['{{activities}}'] },
       { title: 'Organisation och kapacitet', lines: ['{{organisation}}', 'Identifierade luckor och hur de hanteras: {{capacityGaps}}'] },
+      {
+        title: 'Risker och hantering',
+        showIf: { key: 'hasRisks', equals: true },
+        lines: [
+          'Största risken: {{riskMain}}',
+          'Sannolikhet och konsekvens: {{riskLikelihoodImpact}}',
+          'Hantering och ansvar: {{riskMitigation}}',
+          'Övriga risker: {{riskOther}}',
+        ],
+      },
       { title: 'Efter projektet', lines: ['{{longTerm}}'] },
       { title: 'Varför vi, varför nu', lines: ['{{whyUs}}'] },
       {

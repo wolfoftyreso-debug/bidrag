@@ -2014,4 +2014,135 @@ export const applicationSchemaDefs: { opportunitySlug: string; def: unknown }[] 
       ],
     },
   },
+
+  // ── Schematäckning (revisionens §38 prio 1): de mest sökta stöden får
+  // digitaliserade förberedelseformulär så granskningen slutar vara blind.
+  // Kanoniska nycklar återanvänds medvetet: namn-, orgnr-, belopp- och
+  // periodkorskontrollerna verkar automatiskt på varje nytt schema.
+  // Personnummer efterfrågas ALDRIG — det hör hemma i myndighetens e-tjänst.
+  {
+    opportunitySlug: 'kommun-forsorjningsstod',
+    def: {
+      id: 'kommun-forsorjningsstod-v1',
+      version: 1,
+      title: 'Ansökan — Försörjningsstöd (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'hushall', title: 'Hushållet' },
+        { key: 'ekonomi', title: 'Ekonomi per månad' },
+        { key: 'behov', title: 'Din situation' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'hushall_vuxna', canonicalKey: 'person.householdAdults', type: 'number', label: 'Antal vuxna i hushållet', required: true, min: 1, max: 10, section: 'hushall' },
+        { key: 'hushall_barn', canonicalKey: 'person.childrenAtHomeCount', type: 'number', label: 'Antal barn som bor hemma', required: true, min: 0, max: 15, section: 'hushall' },
+        { key: 'inkomst_manad', canonicalKey: 'person.monthlyHouseholdIncome', type: 'currency', label: 'Hushållets inkomster per månad (kr)', guidance: 'Räkna ihop lön, ersättningar och bidrag före skatt. Ungefärligt räcker i förberedelsen — kommunen begär exakta underlag.', required: true, min: 0, section: 'ekonomi' },
+        { key: 'boendekostnad', canonicalKey: 'person.housingCostMonthly', type: 'currency', label: 'Boendekostnad per månad (kr)', required: true, min: 0, section: 'ekonomi' },
+        { key: 'har_tillgangar', type: 'boolean', label: 'Har hushållet sparade medel eller tillgångar som kan användas till försörjningen?', required: true, section: 'ekonomi' },
+        {
+          key: 'tillgangar_beskrivning',
+          type: 'long_text',
+          label: 'Beskriv tillgångarna',
+          guidance: 'T.ex. sparkonto, bil, värdepapper. Kommunen prövar alltid tillgångar först — att redovisa dem öppet undviker kompletteringar.',
+          required: true,
+          maxLength: 2000,
+          section: 'ekonomi',
+          visibleWhen: [{ factPath: 'har_tillgangar', op: 'is_true' }],
+        },
+        { key: 'behov_beskrivning', type: 'long_text', label: 'Beskriv din situation och vad du behöver stöd till', guidance: 'Konkret: vad har hänt, vad räcker inte pengarna till, och vad gör du själv för att förändra situationen?', required: true, maxLength: 4000, section: 'behov' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'fk-bostadsbidrag-barnfamiljer',
+    def: {
+      id: 'fk-bostadsbidrag-barnfamiljer-v1',
+      version: 1,
+      title: 'Ansökan — Bostadsbidrag till barnfamiljer (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'boende', title: 'Bostaden' },
+        { key: 'ekonomi', title: 'Inkomster' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'barn_hemma', canonicalKey: 'person.childrenAtHomeCount', type: 'number', label: 'Antal barn som bor hemma (helt eller växelvis)', required: true, min: 1, max: 15, section: 'sokande' },
+        { key: 'boendekostnad', canonicalKey: 'person.housingCostMonthly', type: 'currency', label: 'Boendekostnad per månad (kr)', guidance: 'Hyra eller månadskostnad inklusive uppvärmning.', required: true, min: 0, section: 'boende' },
+        { key: 'boyta', type: 'number', label: 'Bostadens yta (kvm)', guidance: 'Bidraget beräknas delvis på ytan — siffran står i hyresavtalet.', required: true, min: 5, max: 500, section: 'boende' },
+        { key: 'inkomst_ar', type: 'currency', label: 'Hushållets beräknade inkomst i år, före skatt (kr)', guidance: 'Bostadsbidraget stäms av mot årsinkomsten i efterhand — en för låg uppskattning kan ge återkrav. Ta i lite uppåt hellre än neråt.', required: true, min: 0, section: 'ekonomi' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'majblomman-bidrag-barn',
+    def: {
+      id: 'majblomman-bidrag-barn-v1',
+      version: 1,
+      title: 'Ansökan — Majblomman, bidrag till barn (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'barnet', title: 'Barnet' },
+        { key: 'behov', title: 'Vad ni söker för' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn (vårdnadshavare)', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'barn_alder', type: 'number', label: 'Barnets ålder', required: true, min: 0, max: 18, section: 'barnet' },
+        { key: 'behov_vad', type: 'long_text', label: 'Vad söker ni bidrag för?', guidance: 'Något konkret som gör skillnad för barnet: en fritidsaktivitet, kläder, utrustning, en cykel. Majblomman ger till barnet, inte till hushållets löpande utgifter.', required: true, maxLength: 2000, section: 'behov' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Ungefärligt belopp (kr)', required: true, min: 1, max: 20000, section: 'behov' },
+        { key: 'situation', type: 'long_text', label: 'Beskriv kort familjens situation', guidance: 'Varför räcker pengarna inte till det här just nu? Kortfattat räcker.', required: true, maxLength: 2000, section: 'behov' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'af-stod-start-naringsverksamhet',
+    def: {
+      id: 'af-stod-start-naringsverksamhet-v1',
+      version: 1,
+      title: 'Ansökan — Stöd till start av näringsverksamhet (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'verksamhet', title: 'Affärsidén' },
+        { key: 'plan', title: 'Planen' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'inskriven_af', type: 'boolean', label: 'Är du inskriven som arbetssökande hos Arbetsförmedlingen?', guidance: 'Stödet förutsätter inskrivning — beslutet fattas av din handläggare.', required: true, section: 'sokande' },
+        { key: 'affarside', type: 'long_text', label: 'Beskriv affärsidén', guidance: 'Vad ska du sälja, till vem, och varför finns det efterfrågan? Konkreta belägg (kundkontakter, erfarenhet, marknadskännedom) väger tyngre än visioner.', required: true, maxLength: 4000, section: 'verksamhet' },
+        { key: 'verksamhet_start', type: 'date', label: 'Planerad start', required: true, section: 'plan' },
+        { key: 'har_affarsplan', type: 'boolean', label: 'Har du en skriftlig affärsplan?', required: true, section: 'plan' },
+        { key: 'forsorjning', type: 'long_text', label: 'Hur försörjer du dig under uppstarten?', guidance: 'Aktivitetsstödet är tidsbegränsat — visa att kalkylen håller tills verksamheten bär sig.', required: true, maxLength: 2000, section: 'plan' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'kulturradet-projektbidrag-musik',
+    def: {
+      id: 'kulturradet-projektbidrag-musik-v1',
+      version: 1,
+      title: 'Ansökan — Kulturrådet, projektbidrag musik (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om er som söker' },
+        { key: 'projekt', title: 'Projektet' },
+        { key: 'budget', title: 'Budget och finansiering' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Sökandens namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', guidance: 'Tio siffror. Kontrollsiffran valideras — ett felskrivet nummer är en vanlig avslagsorsak på formalia.', required: true, maxLength: 20, section: 'sokande' },
+        { key: 'projekt_sammanfattning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv projektet', guidance: 'Vad ska genomföras, av vem, för vilken publik — och vad skiljer det från er ordinarie verksamhet?', required: true, maxLength: 5000, section: 'projekt' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'projekt' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', required: true, min: 1, section: 'budget' },
+        { key: 'ovrig_finansiering', type: 'long_text', label: 'Beskriv övrig finansiering', guidance: 'Egna medel, andra bidrag, intäkter. Lämna tomt om allt söks här.', required: false, maxLength: 2000, section: 'budget' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
 ];

@@ -127,6 +127,29 @@ describe('projektbeskrivningen — interventionslogik och indikatorer (§13–16
     expect(withIndicator.text).toContain('Nuläge: 35');
   });
 
+  it('§19 riskregister: opt-in, full struktur krävs, aldrig mallrisker', () => {
+    const t = getTemplate('projektbeskrivning')!;
+    // Utan risker: ingen risksektion, ingen validering som tvingar fram mallrisker.
+    const without = renderDocument(t, { ...base, hasIndicator: false }, ctx);
+    expect(without.text).not.toContain('RISKER');
+    // Med risk: sannolikhet/konsekvens + hantering/ansvar blir obligatoriska.
+    const missing = validateDocumentAnswers(t, { ...base, hasIndicator: false, hasRisks: true, riskMain: 'Nyckelperson slutar.' });
+    expect(missing.ok).toBe(false);
+    expect(missing.missing.map((m) => m.key)).toEqual(expect.arrayContaining(['riskLikelihoodImpact', 'riskMitigation']));
+    const doc = renderDocument(
+      t,
+      {
+        ...base, hasIndicator: false, hasRisks: true,
+        riskMain: 'Instruktörerna är två — blir en långtidssjuk halveras kapaciteten.',
+        riskLikelihoodImpact: 'Låg sannolikhet; skulle halvera antalet klasser under en termin.',
+        riskMitigation: 'Vikarielista med tre externa instruktörer underhålls av projektledaren.',
+      },
+      ctx,
+    );
+    expect(doc.text).toContain('RISKER OCH HANTERING');
+    expect(doc.text).toContain('Hantering och ansvar');
+  });
+
   it('§28: särskilda omständigheter carries the evidence question', () => {
     const t = getTemplate('sarskilda-omstandigheter')!;
     const doc = renderDocument(
