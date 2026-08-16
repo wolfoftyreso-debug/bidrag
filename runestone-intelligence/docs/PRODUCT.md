@@ -1,5 +1,22 @@
 # Produktdefinition — V1
 
+## Positionering (ADR-0009)
+
+Inte "AI-runöversättare" — ett **digitalt lager ovanpå det fysiska
+runarvet**: *"Point your camera at history. See a rune. Know its story."*
+Berättelsen levereras i nivåer: kontext ("För ungefär 1 000 år sedan stod
+några människor här") → mänsklig betydelse (L3) → "VAD STÅR DET
+EGENTLIGEN?" (vetenskaplig läsning, L1). Flerspråkigt (sv/en/de/fr/ja) för
+turistmarknaden; skol-/museisamarbeten som senare kanal.
+
+**MVP:** 10–20 välkända stenar. Framgångsmåttet är inte "tycker du om
+appen?" utan **fotograferar personen en andra sten?** Ingen betalmodell
+före bevisat WOW.
+
+**Explore är kärnfunktion:** efter varje sten visas NÄSTA RUNSTEN
+(avstånd, gång-/körtid) och senare RUNESTONE TRAILS — runstensjakten är
+produktens tillväxtmotor (`atlas/explore.py`, `POST /v1/explore`).
+
 ## Två produkter, ett system
 
 1. **Runstenläsaren** — fota → läs → översätt. Det enda användaren ser i V1.

@@ -1,6 +1,11 @@
 # Runestone Intelligence
 
-**Fota stenen. Systemet läser vad som står.**
+**Point your camera at history. See a rune. Know its story.**
+
+Ett digitalt lager ovanpå det fysiska runarvet: fota stenen — systemet
+känner igen den, hämtar den verifierade kunskapen och berättar den
+mänskliga historien. Inte en översättningsapp: en upptäcktsupplevelse
+(ADR-0009).
 
 Ett produktionshärdat system som från ett vanligt fotografi av en runsten
 identifierar, lokaliserar och läser runinskriften, translittererar den, tolkar

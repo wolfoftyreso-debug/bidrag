@@ -43,6 +43,13 @@
       }
     },
     "historical_location": { "type": ["string", "null"] },
+    "country": { "type": ["string", "null"] },
+    "municipality": { "type": ["string", "null"] },
+    "accessibility": {
+      "type": ["string", "null"],
+      "enum": ["easy", "moderate", "difficult", "restricted", "indoors", "unknown", null],
+      "description": "For Explore/trails: hur latt ar stenen att besoka?"
+    },
     "current_condition": {
       "type": "string",
       "enum": ["standing", "fallen", "fragment", "moved", "indoors", "lost", "unknown"]

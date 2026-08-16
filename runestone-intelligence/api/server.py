@@ -34,7 +34,9 @@ from pathlib import Path
 
 _HERE = Path(__file__).parent
 sys.path.insert(0, str(_HERE))
+sys.path.insert(0, str(_HERE.parent / "atlas"))
 
+from explore import nearby  # noqa: E402
 from pipeline import AnalyzePipeline  # noqa: E402
 from readers import build_reader  # noqa: E402
 from retrieval import CorpusIndex  # noqa: E402  (via pipeline sys.path)
@@ -80,6 +82,8 @@ def make_handler(pipeline: AnalyzePipeline, index: CorpusIndex,
 
             if self.path == "/v1/analyze":
                 self._analyze(payload)
+            elif self.path == "/v1/explore":
+                self._explore(payload)
             elif self.path == "/knowledge/retrieve":
                 self._retrieve(payload)
             elif self.path == "/verify":
@@ -108,6 +112,19 @@ def make_handler(pipeline: AnalyzePipeline, index: CorpusIndex,
                 with observations_path.open("a", encoding="utf-8") as fh:
                     fh.write(json.dumps(outcome["observation"], ensure_ascii=False) + "\n")
             self._send(outcome["status"], outcome["body"])
+
+        def _explore(self, payload: dict) -> None:
+            # NASTA RUNSTEN (ADR-0009): narmaste kanda stenar fran positionen.
+            if payload.get("latitude") is None or payload.get("longitude") is None:
+                self._send(400, {"error": "latitude/longitude kravs"})
+                return
+            position = (float(payload["latitude"]), float(payload["longitude"]))
+            seen = set(payload.get("seen", []))
+            results = nearby(index.records(), position,
+                             limit=int(payload.get("limit", 5)),
+                             exclude_seen=seen,
+                             max_km=payload.get("max_km"))
+            self._send(200, {"nearby": results})
 
         def _retrieve(self, payload: dict) -> None:
             gps = None

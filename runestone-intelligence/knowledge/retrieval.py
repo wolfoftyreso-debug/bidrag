@@ -107,6 +107,9 @@ class CorpusIndex:
                 "trigrams": trigrams(ins.get("transliteration", "")),
             })
 
+    def records(self) -> list[dict]:
+        return [item["record"] for item in self._items]
+
     @classmethod
     def from_corpus_dir(cls, corpus_dir: Path) -> "CorpusIndex":
         lines = (Path(corpus_dir) / "inscriptions.jsonl").read_text(encoding="utf-8").splitlines()

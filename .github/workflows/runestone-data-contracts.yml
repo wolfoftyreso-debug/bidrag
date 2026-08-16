@@ -41,6 +41,9 @@ jobs:
       - name: API tests (pipeline, abstention, observations, HTTP server)
         run: python3 -m unittest discover -s tests -v
         working-directory: runestone-intelligence/api
+      - name: Explore tests (nearby, trails)
+        run: python3 -m unittest discover -s tests -v
+        working-directory: runestone-intelligence/atlas
       - name: Manifest tests (k8s invariants)
         run: |
           pip install --quiet pyyaml

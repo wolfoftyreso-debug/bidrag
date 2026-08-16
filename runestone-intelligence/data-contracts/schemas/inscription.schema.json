@@ -49,6 +49,15 @@
         "unknown"
       ]
     },
+    "runic_tradition": {
+      "type": ["string", "null"],
+      "enum": ["scandinavian", "anglo_frisian", "continental", null],
+      "description": "Nordisk-generisk modell (ADR-0009): objektet ar RunicInscription, aldrig 'SwedishRunestone'."
+    },
+    "language": {
+      "type": ["string", "null"],
+      "description": "T.ex. 'Old East Norse', 'Old West Norse', 'Proto-Norse'."
+    },
     "runic_text": { "type": ["string", "null"] },
     "transliteration": { "type": "string", "minLength": 1 },
     "normalization": { "type": ["string", "null"] },

@@ -228,6 +228,18 @@ class HttpServerTests(unittest.TestCase):
         status, _ = self._post("/knowledge/retrieve", {})
         self.assertEqual(status, 400)
 
+    def test_explore_endpoint(self):
+        status, body = self._post("/v1/explore",
+                                  {"latitude": 59.8501, "longitude": 17.6302})
+        self.assertEqual(status, 200)
+        signa = [s["signum"] for s in body["nearby"]]
+        self.assertEqual(signa[0], "U 9001")  # narmast forst
+        self.assertIn("walk_min", body["nearby"][0])
+
+    def test_explore_requires_position(self):
+        status, _ = self._post("/v1/explore", {})
+        self.assertEqual(status, 400)
+
     def test_interpret_endpoint(self):
         status, body = self._post("/interpret",
                                   {"transliteration": "burkil raisti stain þinsa aftir ulf sun sin"})

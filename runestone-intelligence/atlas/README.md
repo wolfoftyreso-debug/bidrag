@@ -21,6 +21,14 @@ besluten i ADR-0006 och ADR-0007.
 - **Change detection (senare):** jämför observationer över tid, flaggar
   `change_detected` som hypotes för mänsklig verifiering.
 
+## Explore (ADR-0009)
+
+`explore.py`: **NÄSTA RUNSTEN** (närmaste stenar med avstånd + gång-/körtid,
+seen-flaggning, radiefilter) och **RUNESTONE TRAIL** (girig
+närmaste-granne-slinga med total längd och tidsestimat). Exponeras via
+`POST /v1/explore`. Deterministisk fågelvägsgeometri — riktig ruttning är
+en senare integrationsfråga.
+
 ## Gränssnitt
 
 - Skrivs till av inference-pipelinen (varje analyserat foto med samtycke).
