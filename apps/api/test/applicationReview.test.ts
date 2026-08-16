@@ -19,7 +19,11 @@ interface Review {
   eligibility: { status: string; missingFacts: { question: string }[] };
   evidence: { kind: string; status: string }[];
   deadline: { passed: boolean };
-  gaps: { severity: string; area: string; message: string; requiresFactualChange: boolean }[];
+  criteria: { criterionId: string; kind: string; outcome: string; nonCompensatory: boolean; evidenceLevel: string }[];
+  internalEstimate: { label: string; fitScore: number | null };
+  doubleFunding: { status: string; notes: string[] };
+  likelyComplementRequests: string[];
+  gaps: { id: string; severity: string; area: string; message: string; requiresFactualChange: boolean }[];
 }
 
 async function getReview(): Promise<Review> {
@@ -194,5 +198,57 @@ describe('granskning inför inlämning', () => {
     const review = await getReview();
     expect(review.gaps, JSON.stringify(review.gaps, null, 1)).toEqual([]);
     expect(review.overallStatus).toBe('READY_FOR_SUBMISSION');
+  });
+
+  // ── Block 2: evaluation matrix, evidensnivåer, dubbelfinansiering, diligence ──
+
+  it('§7: every frozen criterion is assessed with outcome, non-compensatory flag and evidence level', async () => {
+    const review = await getReview();
+    expect(review.criteria.length).toBeGreaterThan(0);
+    for (const c of review.criteria) {
+      expect(['pass', 'fail', 'unknown']).toContain(c.outcome);
+      expect(['E0', 'E1']).toContain(c.evidenceLevel);
+      // E0 exakt när utfallet är okänt — ett obesvarat krav är obevisat.
+      expect(c.evidenceLevel === 'E0').toBe(c.outcome === 'unknown');
+      expect(c.nonCompensatory).toBe(c.kind !== 'weighted');
+    }
+    expect(review.criteria.some((c) => c.nonCompensatory)).toBe(true);
+  });
+
+  it('§8: the internal quality score is always labeled INTERNAL_ESTIMATE, never a decision forecast', async () => {
+    const review = await getReview();
+    expect(review.internalEstimate.label).toBe('INTERNAL_ESTIMATE');
+    expect(review.internalEstimate.fitScore).not.toBeNull();
+  });
+
+  it('§23: likely complement requests point at E1-based mandatory criteria — never hidden', async () => {
+    const review = await getReview();
+    // Behöriga kriterier vilar på eget svar (E1) ⇒ minst en trolig komplettering.
+    expect(review.likelyComplementRequests.length).toBeGreaterThan(0);
+    expect(review.likelyComplementRequests.some((r) => r.includes('E1'))).toBe(true);
+  });
+
+  it('§18: other public funding against an exclusive scheme is HIGH_RISK — and schemes that allow it stay clear', async () => {
+    // Erasmus+ utesluter annan offentlig finansiering; resebidraget gör det inte.
+    const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
+    const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string }[] };
+    const erasmus = matches.find((m) => m.slug === 'erasmus-plus-ungdomsutbyten')!;
+    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: erasmus.opportunityId });
+    const idE = (created.json() as { application: { id: string } }).application.id;
+    await api(app, user, 'PATCH', `/v1/applications/${idE}`, {
+      financing: { requestedMinor: 1000000, ownContributionMinor: 0, otherFundingMinor: 300000, inKindMinor: 0 },
+    });
+    const res = await api(app, user, 'GET', `/v1/applications/${idE}/review`);
+    const review = (res.json() as { review: Review }).review;
+    expect(review.doubleFunding.status).toBe('HIGH_RISK');
+    expect(review.gaps.some((g) => g.id === 'double-funding-excluded' && g.severity === 'HIGH' && g.requiresFactualChange)).toBe(true);
+    expect(review.overallStatus).toBe('NOT_READY');
+
+    // Resebidragets ansökan (tillåter samfinansiering) förblir READY — det är
+    // stödordningens regel som styr, inte ett generiskt antagande.
+    const travel = await getReview();
+    expect(travel.doubleFunding.status).not.toBe('HIGH_RISK');
+    expect(travel.doubleFunding.notes.join(' ')).toContain('pågående ansökan');
+    expect(travel.overallStatus).toBe('READY_FOR_SUBMISSION');
   });
 });

@@ -15,15 +15,15 @@ rör ansökningsberedning får byggas i strid med principerna här.
 | §4 Grant Fingerprint | Delvis | `funding_opportunities` + versionerade `rule_versions` (kriterier, budgetregler, bevisning, källa, ändringsnot) täcker kärnfälten; fler fält läggs till i kurerad data vid behov |
 | §5 Eligibility Gate (PASS/FAIL/UNKNOWN, stoppregel) | **Implementerad** | Matchmotorn `packages/core/src/matching.ts`; granskningen flaggar FAIL som `requiresFactualChange` — systemet skriver aldrig runt ett hårt krav |
 | §6 Requirement Matrix | Delvis | `application_schemas` mappar formulärfält; full kriteriemappning återstår |
-| §7–9 Evaluation matrix, poängsimulering, non-compensatory | Planerad | Interna kvalitetspoäng måste märkas INTERNAL_ESTIMATE; icke-kompensatoriska krav = hard/mandatory-kriterier i motorn |
-| §10–11 Evidence engine E0–E4 + claim register | Planerad (grund finns) | `documents.kind` + `evidenceRequirements` + `case_documents` är E2-grunden; nivåklassning och claimregister återstår |
+| §7–9 Evaluation matrix, poängsimulering, non-compensatory | **Implementerad (light)** | Granskningen bedömer varje kriterium ur den FRYSTA regelversionen (utfall, icke-kompensatorisk märkning, evidensnivå); intern styrkeindikator alltid märkt `INTERNAL_ESTIMATE` med förklaringen att den aldrig är en beslutsprognos |
+| §10–11 Evidence engine E0–E4 + claim register | Delvis | E0 (obesvarat) och E1 (sökandens eget svar) klassas per kriterium; E2 påstås aldrig utan kurerad kriterium↔bilaga-koppling (som återstår). Claimregister: sifferkonflikter via konsistensmotorn; fullständigt register återstår |
 | §12 Consistency engine | **Implementerad (v1)** | `packages/core/src/consistency.ts`: sifferpåståenden korsjämförs över fält (500/450/600-fallet), sökt belopp↔finansieringsplan korskontrolleras strukturerat (blockerande), budget↔finansiering balanskontrolleras åt båda hållen. Namn/datum/partners återstår |
 | §13–16 Interventionslogik, mål/indikatorer, metod, organisation | Planerad | Kräver utökade mallfrågor; får aldrig genereras utan användarens sakuppgifter (§27) |
 | §17 Budget engine | **Implementerad** | `packages/core/src/budget.ts`: öre-exakta heltal, stödandel, medfinansiering, kategoritak/-krav/-uteslutning, finansieringsbalans |
-| §18 Double funding | Delvis | `excludesOtherPublicFunding` + stackningsregler i `packages/core/src/stacking.ts` |
+| §18 Double funding | **Implementerad (v1)** | Granskningen: annan offentlig finansiering mot en stödordning som utesluter den ⇒ HIGH_RISK + blockerande lucka (`requiresFactualChange` — döljs aldrig); parallella ansökningar i samma projekt ⇒ POTENTIAL_OVERLAP-notis |
 | §19 Statsstöd | Planerad | Flaggas STATE_AID_UNKNOWN tills kurerade regler finns — aldrig gissning |
 | §20–22 Horisontella principer, långsiktighet, konkurrens | Planerad | Byggs som mallfrågor + granskningspunkter, aldrig som kosmetiska standardsatser |
-| §23–24 Handläggarperspektiv, kompletteringsrisk | **Implementerad (v1)** | Granskningens prioriterade luckor CRITICAL/HIGH/MEDIUM/LOW i `reviewCase` |
+| §23–24 Handläggarperspektiv, kompletteringsrisk | **Implementerad (v1)** | Prioriterade luckor CRITICAL/HIGH/MEDIUM/LOW + diligence: troliga kompletteringsbegäranden härleds ur saknad bevisning, E1-baserade icke-kompensatoriska kriterier och motstridiga uppgifter |
 | §25–27 Language compiler, teckengränser, no-hallucination | **Implementerad (för dokumentmotorn)** | `packages/core/src/documents.ts`: obesvarade rader utelämnas — dokumentet ljuger aldrig; ingen LLM-textgenerering finns i v1 |
 | §28 Negative-fact detection | Planerad | FACT→IMPACT→MITIGATION→EVIDENCE-struktur i mallar |
 | §29 Decision traceability | **Implementerad (grund)** | Deterministisk motor: varje bedömning spårbar till kriterium + regelversion + källa; `answer_provenance` på ansökningssvar |

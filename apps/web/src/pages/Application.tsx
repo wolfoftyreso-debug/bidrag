@@ -36,6 +36,10 @@ interface CaseReview {
   overallStatus: 'READY_FOR_SUBMISSION' | 'NOT_READY';
   eligibility: { status: 'PASS' | 'FAIL' | 'UNKNOWN'; missingFacts: { question: string }[] };
   deadline: { deadlineAt: string | null; daysLeft: number | null; passed: boolean };
+  criteria: { criterionId: string; description: string; kind: string; outcome: 'pass' | 'fail' | 'unknown'; nonCompensatory: boolean; evidenceLevel: 'E0' | 'E1' }[];
+  internalEstimate: { label: string; fitScore: number | null; explanation: string };
+  doubleFunding: { status: 'CLEAR' | 'POTENTIAL_OVERLAP' | 'HIGH_RISK'; notes: string[] };
+  likelyComplementRequests: string[];
   gaps: { id: string; severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'; area: string; message: string; action: string }[];
 }
 interface BudgetLine {
@@ -300,6 +304,50 @@ export default function ApplicationPage() {
               </div>
             ))}
             {review.gaps.length === 0 && <div className="explain-item"><span className="explain-icon pass">✓</span><span>Inga brister hittades.</span></div>}
+
+            {review.likelyComplementRequests.length > 0 && (
+              <details style={{ marginTop: '0.8rem' }}>
+                <summary style={{ cursor: 'pointer', fontWeight: 600 }}>Det här kan handläggaren vilja kontrollera ({review.likelyComplementRequests.length})</summary>
+                {review.likelyComplementRequests.map((r, i) => (
+                  <div className="explain-item" key={i}><span className="explain-icon unknown">?</span><span>{r}</span></div>
+                ))}
+              </details>
+            )}
+
+            {review.criteria.length > 0 && (
+              <details style={{ marginTop: '0.6rem' }}>
+                <summary style={{ cursor: 'pointer', fontWeight: 600 }}>Bedömning per kriterium ({review.criteria.length})</summary>
+                <p className="guidance" style={{ marginTop: '0.4rem' }}>
+                  Kriterierna ur regelverket din ansökan skapades under. "Kan inte vägas upp" betyder att en brist
+                  där aldrig kompenseras av styrkor någon annanstans. E1 = bygger på ditt eget svar; E0 = obesvarat.
+                </p>
+                {review.criteria.map((c) => (
+                  <div className="explain-item" key={c.criterionId}>
+                    <span className={`explain-icon ${c.outcome === 'pass' ? 'pass' : c.outcome === 'fail' ? 'fail' : 'unknown'}`}>
+                      {c.outcome === 'pass' ? '✓' : c.outcome === 'fail' ? '✗' : '?'}
+                    </span>
+                    <span>
+                      {c.description}{' '}
+                      <span className="badge">{c.evidenceLevel}</span>
+                      {c.nonCompensatory && <span className="badge warning"> kan inte vägas upp</span>}
+                    </span>
+                  </div>
+                ))}
+                {review.internalEstimate.fitScore !== null && (
+                  <p className="meta-line" style={{ marginTop: '0.4rem' }}>
+                    Intern styrkeindikator: {review.internalEstimate.fitScore}/100{' '}
+                    <span className="badge">{review.internalEstimate.label}</span> — {review.internalEstimate.explanation}
+                  </p>
+                )}
+              </details>
+            )}
+
+            {review.doubleFunding.status !== 'CLEAR' && (
+              <div className={`alert ${review.doubleFunding.status === 'HIGH_RISK' ? 'error' : 'warning'}`} style={{ marginTop: '0.6rem' }}>
+                <strong>{review.doubleFunding.status === 'HIGH_RISK' ? 'Dubbelfinansiering — hög risk.' : 'Möjlig finansieringsöverlappning.'}</strong>{' '}
+                {review.doubleFunding.notes.join(' ')}
+              </div>
+            )}
           </div>
         )}
       </div>

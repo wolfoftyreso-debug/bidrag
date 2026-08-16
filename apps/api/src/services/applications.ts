@@ -6,10 +6,12 @@
 import { and, eq, sql } from 'drizzle-orm';
 import {
   assertTransition,
+  evaluateAll,
   findNumericConflicts,
   prefillFromCanonical,
   validateAnswers,
   validateBudget,
+  type CriterionDef,
   type Answers,
   type AnswerValue,
   type ApplicationSchemaDef,
@@ -22,6 +24,7 @@ import {
 } from '@bidrag/core';
 import { db } from '../db/client.ts';
 import {
+  applicantProfiles,
   applicationCases,
   applicationSchemas,
   budgetLines,
@@ -30,6 +33,7 @@ import {
   documents,
   fundingOpportunities,
   matches,
+  projects,
   ruleVersions,
 } from '../db/schema.ts';
 import { audit } from '../audit.ts';
@@ -59,6 +63,25 @@ export interface ReviewGap {
   requiresFactualChange: boolean;
 }
 
+/**
+ * Evaluation matrix light (§7): en rad per kriterium ur den frysta
+ * regelversionen, med utfall, icke-kompensatorisk märkning (hard/mandatory
+ * kan aldrig vägas upp av styrkor någon annanstans) och evidensnivå.
+ * E-nivåerna följer spec §10 — i v1 kan systemet skilja E0 (obesvarat) från
+ * E1 (sökandens eget svar); E2 (dokumenterat per kriterium) kräver kurerad
+ * kriterium↔bilaga-koppling och är därför aldrig något systemet påstår.
+ */
+export interface CriterionAssessment {
+  criterionId: string;
+  description: string;
+  kind: 'hard' | 'mandatory' | 'weighted';
+  outcome: 'pass' | 'fail' | 'unknown';
+  /** Icke-kompensatorisk: svaghet här kan inte vägas upp av andra styrkor. */
+  nonCompensatory: boolean;
+  /** Var bevisas detta? E0 = obesvarat, E1 = sökandens eget svar. */
+  evidenceLevel: 'E0' | 'E1';
+}
+
 export interface CaseReview {
   overallStatus: 'READY_FOR_SUBMISSION' | 'NOT_READY';
   eligibility: {
@@ -75,6 +98,21 @@ export interface CaseReview {
     requestedMinor: number;
   };
   deadline: { deadlineAt: string | null; daysLeft: number | null; passed: boolean };
+  /** Evaluation matrix light (§7): kriterierna ur den frysta regelversionen. */
+  criteria: CriterionAssessment[];
+  /**
+   * Intern kvalitetsindikator (§8). Märkningen är obligatorisk: detta är
+   * "styrkan i tillgängligt beslutsunderlag relativt publicerade krav" —
+   * ALDRIG en prognos om myndighetens beslut.
+   */
+  internalEstimate: { label: 'INTERNAL_ESTIMATE'; fitScore: number | null; explanation: string };
+  /** Dubbelfinansiering (§18): CLEAR / POTENTIAL_OVERLAP / HIGH_RISK. */
+  doubleFunding: { status: 'CLEAR' | 'POTENTIAL_OVERLAP' | 'HIGH_RISK'; notes: string[] };
+  /**
+   * Diligence v1 (§23–24): det en handläggare sannolikt vill kontrollera
+   * eller begära komplettering om — informativt, blockerar inte.
+   */
+  likelyComplementRequests: string[];
   /** Prioriterad åtgärdslista, allvarligast först. */
   gaps: ReviewGap[];
 }
@@ -266,6 +304,91 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
     status: (missingKinds.has(e.kind) ? 'MISSING' : 'ATTACHED') as 'ATTACHED' | 'MISSING',
   }));
 
+  // ── Evaluation matrix light (§7): kriterierna ur den FRYSTA regelversionen
+  // utvärderas mot sökandens aktuella fakta — spårbart till exakt det
+  // regelverk ansökan skapades under (§29).
+  const [factsRow] = await db
+    .select({ projectFacts: projects.facts, profileFacts: applicantProfiles.facts })
+    .from(projects)
+    .leftJoin(applicantProfiles, eq(projects.profileId, applicantProfiles.id))
+    .where(eq(projects.id, caseRow.projectId))
+    .limit(1);
+  const mergedFacts = {
+    ...((factsRow?.profileFacts as Record<string, unknown>) ?? {}),
+    ...((factsRow?.projectFacts as Record<string, unknown>) ?? {}),
+  };
+  const frozenCriteria = ((caseRow.opportunitySnapshot as { ruleVersion?: { criteria?: CriterionDef[] } | null })
+    .ruleVersion?.criteria ?? []) as CriterionDef[];
+  const criteria: CriterionAssessment[] = evaluateAll(frozenCriteria, mergedFacts as never).map((r) => ({
+    criterionId: r.criterion.id,
+    description: r.criterion.description,
+    kind: r.criterion.kind,
+    outcome: r.outcome,
+    nonCompensatory: r.criterion.kind !== 'weighted',
+    // E0 = obesvarat; E1 = sökandens eget svar. E2 (dokumenterat per
+    // kriterium) kräver kurerad kriterium↔bilaga-koppling — påstås aldrig.
+    evidenceLevel: r.outcome === 'unknown' ? 'E0' : 'E1',
+  }));
+
+  // ── Intern kvalitetsindikator (§8) — obligatoriskt märkt, aldrig en prognos.
+  const fitScore = typeof (matchResult as { fitScore?: number } | undefined)?.fitScore === 'number'
+    ? (matchResult as { fitScore: number }).fitScore
+    : null;
+  const internalEstimate = {
+    label: 'INTERNAL_ESTIMATE' as const,
+    fitScore,
+    explanation:
+      'Intern indikator på styrkan i tillgängligt beslutsunderlag relativt de publicerade kraven — aldrig en prognos om myndighetens beslut.',
+  };
+
+  // ── Dubbelfinansiering (§18): känd motsägelse mot stödordningen blockerar;
+  // parallella ansökningar i samma projekt rapporteras som möjlig överlappning.
+  const oppSnapshot = (caseRow.opportunitySnapshot as { opportunity?: { excludesOtherPublicFunding?: boolean } | null }).opportunity;
+  const dfNotes: string[] = [];
+  let dfStatus: 'CLEAR' | 'POTENTIAL_OVERLAP' | 'HIGH_RISK' = 'CLEAR';
+  if (oppSnapshot?.excludesOtherPublicFunding && financing.otherFundingMinor > 0) {
+    dfStatus = 'HIGH_RISK';
+    dfNotes.push(
+      `Stödordningen tillåter inte annan offentlig finansiering, men finansieringsplanen anger ${(financing.otherFundingMinor / 100).toLocaleString('sv-SE')} kr i övrig finansiering.`,
+    );
+    gaps.push({
+      id: 'double-funding-excluded',
+      severity: 'HIGH',
+      area: 'budget',
+      message: dfNotes[dfNotes.length - 1]!,
+      action:
+        'Ta bort den andra offentliga finansieringen ur planen eller välj ett stöd som tillåter samfinansiering — uppgiften får aldrig döljas.',
+      requiresFactualChange: true,
+    });
+  }
+  const siblingCases = await db
+    .select({ id: applicationCases.id, state: applicationCases.state, opportunityId: applicationCases.opportunityId })
+    .from(applicationCases)
+    .where(and(eq(applicationCases.projectId, caseRow.projectId), eq(applicationCases.tenantId, caseRow.tenantId)));
+  const activeSiblings = siblingCases.filter((s) => s.id !== caseRow.id && !['SELECTED', 'WITHDRAWN', 'REJECTED'].includes(s.state));
+  if (activeSiblings.length > 0 && dfStatus === 'CLEAR') {
+    dfStatus = 'POTENTIAL_OVERLAP';
+    dfNotes.push(
+      `Projektet har ${activeSiblings.length} annan pågående ansökan — kontrollera att samma kostnader inte söks två gånger och redovisa annan sökt finansiering öppet.`,
+    );
+  }
+
+  // ── Diligence v1 (§23–24): det en handläggare sannolikt begär komplettering
+  // om. Informativt — döljs aldrig, blockerar inte.
+  const likelyComplementRequests: string[] = [];
+  for (const a of validation.missingAttachments) {
+    likelyComplementRequests.push(`Handläggaren kommer att begära den obligatoriska bilagan: ${a.description}.`);
+  }
+  for (const c of criteria.filter((c) => c.nonCompensatory && c.outcome === 'pass' && c.evidenceLevel === 'E1').slice(0, 5)) {
+    likelyComplementRequests.push(
+      `"${c.description}" bygger på ditt eget svar (E1) — handläggaren kan begära underlag som styrker det.`,
+    );
+  }
+  for (const g of gaps.filter((g) => g.area === 'consistency')) {
+    likelyComplementRequests.push('Motstridiga uppgifter i ansökan leder ofta till en kompletteringsfråga — rätta dem före inlämning.');
+    break;
+  }
+
   gaps.sort((a, b) => SEVERITY_ORDER.indexOf(a.severity) - SEVERITY_ORDER.indexOf(b.severity));
   const blocking = gaps.some((g) => g.severity === 'CRITICAL' || g.severity === 'HIGH');
 
@@ -276,6 +399,10 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
     evidence,
     budget: { findings: validation.budgetFindings, totalMinor, financingTotalMinor, requestedMinor: financing.requestedMinor },
     deadline: { deadlineAt, daysLeft, passed: deadlinePassed },
+    criteria,
+    internalEstimate,
+    doubleFunding: { status: dfStatus, notes: dfNotes },
+    likelyComplementRequests,
     gaps,
   };
 }
