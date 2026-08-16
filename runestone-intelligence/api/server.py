@@ -37,6 +37,7 @@ sys.path.insert(0, str(_HERE))
 sys.path.insert(0, str(_HERE.parent / "atlas"))
 
 from explore import nearby  # noqa: E402
+from mapview import stones_geojson  # noqa: E402
 from pipeline import AnalyzePipeline  # noqa: E402
 from readers import build_reader  # noqa: E402
 from retrieval import CorpusIndex  # noqa: E402  (via pipeline sys.path)
@@ -45,7 +46,9 @@ from verify import verify_against_candidates  # noqa: E402
 
 
 def make_handler(pipeline: AnalyzePipeline, index: CorpusIndex,
-                 observations_path: Path | None):
+                 observations_path: Path | None,
+                 corpus_images: list[dict] | None = None):
+    corpus_images = corpus_images or []
 
     class Handler(BaseHTTPRequestHandler):
         server_version = "RunestoneAPI/0.1"
@@ -71,6 +74,18 @@ def make_handler(pipeline: AnalyzePipeline, index: CorpusIndex,
         def do_GET(self):
             if self.path == "/healthz":
                 self._send(200, {"status": "ok"})
+            elif self.path.split("?")[0] == "/map":
+                # Demo-kartklienten serveras fran samma origin (ingen CORS).
+                page = _HERE.parent / "web" / "map.html"
+                if page.is_file():
+                    body = page.read_bytes()
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Length", str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
+                else:
+                    self._send(404, {"error": "map.html saknas"})
             else:
                 self._send(404, {"error": "not found"})
 
@@ -84,6 +99,8 @@ def make_handler(pipeline: AnalyzePipeline, index: CorpusIndex,
                 self._analyze(payload)
             elif self.path == "/v1/explore":
                 self._explore(payload)
+            elif self.path == "/v1/map":
+                self._map(payload)
             elif self.path == "/knowledge/retrieve":
                 self._retrieve(payload)
             elif self.path == "/verify":
@@ -112,6 +129,15 @@ def make_handler(pipeline: AnalyzePipeline, index: CorpusIndex,
                 with observations_path.open("a", encoding="utf-8") as fh:
                     fh.write(json.dumps(outcome["observation"], ensure_ascii=False) + "\n")
             self._send(outcome["status"], outcome["body"])
+
+        def _map(self, payload: dict) -> None:
+            # Kartfeeden: alla stenar med position, publikt visningsbart foto
+            # (endast redistribution_allowed), avbockning fran seen-listan
+            # och vagbeskrivningslankar (ADR-0009).
+            self._send(200, stones_geojson(
+                index.records(), corpus_images,
+                seen=set(payload.get("seen", [])),
+                own_observations=payload.get("own_observations", [])))
 
         def _explore(self, payload: dict) -> None:
             # NASTA RUNSTEN (ADR-0009): narmaste kanda stenar fran positionen.
@@ -166,9 +192,15 @@ def main() -> int:
     args = ap.parse_args()
 
     index = CorpusIndex.from_corpus_dir(args.corpus)
+    images_path = args.corpus / "images.jsonl"
+    corpus_images = []
+    if images_path.is_file():
+        corpus_images = [json.loads(l) for l in
+                         images_path.read_text(encoding="utf-8").splitlines() if l.strip()]
     pipeline = AnalyzePipeline(index, build_reader(args.reader))
     server = ThreadingHTTPServer(
-        ("0.0.0.0", args.port), make_handler(pipeline, index, args.observations))
+        ("0.0.0.0", args.port),
+        make_handler(pipeline, index, args.observations, corpus_images))
     print(f"RunestoneAPI/0.1 pa :{args.port} (reader={args.reader})")
     server.serve_forever()
     return 0

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Runestone Atlas — karta</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.css" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; font-family: system-ui, sans-serif; }
+  #map { position: absolute; inset: 0; }
+  #hud {
+    position: absolute; top: 12px; left: 12px; z-index: 2;
+    background: rgba(255,255,255,.95); border-radius: 10px;
+    padding: 10px 14px; box-shadow: 0 2px 10px rgba(0,0,0,.15); font-size: 14px;
+  }
+  #hud strong { font-size: 16px; }
+  .popup { max-width: 240px; }
+  .popup img { width: 100%; border-radius: 6px; display: block; }
+  .popup .attr { font-size: 10px; color: #666; margin-top: 2px; }
+  .popup .status { font-size: 12px; color: #666; }
+  .popup a.dir, .popup button.check {
+    display: inline-block; margin-top: 6px; margin-right: 6px;
+    padding: 5px 10px; border-radius: 6px; border: 1px solid #ccc;
+    background: #f7f7f7; font-size: 12px; text-decoration: none;
+    color: #222; cursor: pointer;
+  }
+  .popup button.check.done { background: #2e7d32; color: #fff; border-color: #2e7d32; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="hud"><strong>Runestone Atlas</strong><br><span id="stats">Laddar…</span></div>
+<script>
+/* Demo-klient for kartvyn (ADR-0009).
+   - Token: ?token=pk.… i URL:en (Mapbox public token), annars prompt.
+   - API:  ?api=… (default samma origin) → POST /v1/map med seen-listan.
+   - Avbockning lagras kontolost i localStorage (V1: inga konton). */
+const params = new URLSearchParams(location.search);
+const API = params.get("api") || "";
+mapboxgl.accessToken = params.get("token") || prompt("Mapbox public token (pk.…):");
+
+const SEEN_KEY = "runestone-seen";
+const seen = () => new Set(JSON.parse(localStorage.getItem(SEEN_KEY) || "[]"));
+const saveSeen = (s) => localStorage.setItem(SEEN_KEY, JSON.stringify([...s]));
+
+const map = new mapboxgl.Map({
+  container: "map",
+  style: "mapbox://styles/mapbox/outdoors-v12",
+  center: [17.63, 59.85], zoom: 8,
+});
+map.addControl(new mapboxgl.NavigationControl());
+map.addControl(new mapboxgl.GeolocateControl({trackUserLocation: true}));
+
+async function loadStones() {
+  const res = await fetch(API + "/v1/map", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({seen: [...seen()]}),
+  });
+  return res.json();
+}
+
+function popupHtml(p) {
+  const done = seen().has(p.signum);
+  return `<div class="popup">
+    <strong>${p.signum}</strong>
+    <div class="status">${p.region || ""} · ${p.scholarly_status || ""}</div>
+    ${p.photo ? `<img src="${p.photo.url}" alt="${p.signum}">
+                 <div class="attr">${p.photo.attribution || ""}</div>` : ""}
+    ${p.translation_sv ? `<p>${p.translation_sv}</p>` : ""}
+    <a class="dir" href="${p.directions.google}" target="_blank" rel="noopener">Vägbeskrivning</a>
+    <a class="dir" href="${p.directions.apple}" target="_blank" rel="noopener">Apple Maps</a>
+    <button class="check ${done ? "done" : ""}" data-signum="${p.signum}">
+      ${done ? "✓ Fotad" : "Bocka av"}</button>
+    <div class="attr">Källa: ${p.source_database || ""}</div>
+  </div>`;
+}
+
+function render(geojson) {
+  document.getElementById("stats").textContent =
+    `${geojson.meta.visited} / ${geojson.meta.total} stenar avbockade`;
+  const src = map.getSource("stones");
+  if (src) { src.setData(geojson); return; }
+
+  map.addSource("stones", {type: "geojson", data: geojson});
+  map.addLayer({
+    id: "stones", type: "circle", source: "stones",
+    paint: {
+      "circle-radius": 9,
+      "circle-color": ["case", ["get", "visited"], "#2e7d32", "#b3541e"],
+      "circle-stroke-width": 2, "circle-stroke-color": "#fff",
+    },
+  });
+  map.on("click", "stones", (e) => {
+    const p = e.features[0].properties;
+    ["photo", "directions"].forEach(k => { if (typeof p[k] === "string") p[k] = JSON.parse(p[k]); });
+    new mapboxgl.Popup().setLngLat(e.features[0].geometry.coordinates)
+      .setHTML(popupHtml(p)).addTo(map);
+  });
+  map.on("mouseenter", "stones", () => map.getCanvas().style.cursor = "pointer");
+  map.on("mouseleave", "stones", () => map.getCanvas().style.cursor = "");
+}
+
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest("button.check");
+  if (!btn) return;
+  const s = seen();
+  s.has(btn.dataset.signum) ? s.delete(btn.dataset.signum) : s.add(btn.dataset.signum);
+  saveSeen(s);
+  render(await loadStones());
+  btn.classList.toggle("done");
+  btn.textContent = btn.classList.contains("done") ? "✓ Fotad" : "Bocka av";
+});
+
+map.on("load", async () => {
+  const geojson = await loadStones();
+  render(geojson);
+  if (geojson.features.length) {
+    const bounds = new mapboxgl.LngLatBounds();
+    geojson.features.forEach(f => bounds.extend(f.geometry.coordinates));
+    map.fitBounds(bounds, {padding: 60, maxZoom: 12});
+  }
+});
+</script>
+</body>
+</html>

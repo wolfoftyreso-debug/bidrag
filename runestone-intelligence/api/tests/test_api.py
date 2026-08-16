@@ -176,13 +176,20 @@ class ReaderRegistryTests(unittest.TestCase):
 
 
 class HttpServerTests(unittest.TestCase):
+    IMAGES = [
+        {"image_id": "img-map-1", "inscription_id": "ric-u-9001", "layer": "C",
+         "original_url": "https://example.org/1.jpg", "license": "CC BY-SA 4.0",
+         "photographer": "A", "usage": {"redistribution_allowed": True},
+         "provenance": {"attribution": "A, CC BY-SA 4.0"}},
+    ]
+
     @classmethod
     def setUpClass(cls):
         from http.server import ThreadingHTTPServer
         index = CorpusIndex(INSCRIPTIONS)
         pipeline = AnalyzePipeline(index, MockReader("iksimbil", 0.91))
         cls.server = ThreadingHTTPServer(
-            ("127.0.0.1", 0), make_handler(pipeline, index, None))
+            ("127.0.0.1", 0), make_handler(pipeline, index, None, cls.IMAGES))
         cls.port = cls.server.server_address[1]
         cls.thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
         cls.thread.start()
@@ -239,6 +246,22 @@ class HttpServerTests(unittest.TestCase):
     def test_explore_requires_position(self):
         status, _ = self._post("/v1/explore", {})
         self.assertEqual(status, 400)
+
+    def test_map_endpoint(self):
+        status, body = self._post("/v1/map", {"seen": ["U 9001"]})
+        self.assertEqual(status, 200)
+        self.assertEqual(body["type"], "FeatureCollection")
+        u = next(f["properties"] for f in body["features"]
+                 if f["properties"]["signum"] == "U 9001")
+        self.assertTrue(u["visited"])
+        self.assertEqual(u["photo"]["image_id"], "img-map-1")
+        self.assertIn("google", u["directions"])
+        self.assertEqual(body["meta"]["visited"], 1)
+
+    def test_map_page_served(self):
+        with urllib.request.urlopen(f"http://127.0.0.1:{self.port}/map") as resp:
+            self.assertEqual(resp.status, 200)
+            self.assertIn("mapbox-gl", resp.read().decode())
 
     def test_interpret_endpoint(self):
         status, body = self._post("/interpret",

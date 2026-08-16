@@ -82,6 +82,20 @@ samma foto samtidigt en fältobservation: olika ljus, kameror, vinklar, väder,
 vegetation, snö, erosion, nya skador — mer värdefullt än ytterligare 1 000
 perfekta museifotografier.
 
+## Kartvyn (Mapbox)
+
+Alla stenar visas på karta (`atlas/mapview.py` → `POST /v1/map`, demoklient
+i `web/map.html`): position, foto per sten, avbockning av stenar man själv
+fotat (gröna markörer; egna fältfoton bockar av automatiskt) och
+vägbeskrivning per sten. Två regler:
+
+- **Licensspärr:** endast bilder med `redistribution_allowed=true` visas
+  publikt — en rights record ger visningsrätt, inte tvärtom. Attribution
+  följer alltid med. Användarens egna fältfoton är synliga enbart för
+  användaren själv (`own_photos`).
+- **Kontolöst:** avbockningen ägs av klienten (`seen`-lista/localStorage) —
+  V1 kräver inga konton; egna foton refereras via observationer.
+
 ## Scan coverage — crowdsourcat fältuppdragssystem
 
 Atlasen vet per sten: antal användare, fotografier, datum, kameratyper,

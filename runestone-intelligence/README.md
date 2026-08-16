@@ -68,6 +68,7 @@ licensing, benchmark, baseline) — inte appen. Se `docs/ROADMAP.md`.
 | `translation/` | RuneTranslation: runor → translitterering → normalisering → svenska, policykedja canonical/formulaic/abstain |
 | `api/` | OpenAPI-kontrakt: `POST /v1/analyze` + interna endpoints |
 | `deployment/` | AWS/Kubernetes-arkitektur, GitOps |
+| `web/` | Kartdemo (Mapbox GL): markörer, foton med licensspärr, avbockning, vägbeskrivning |
 
 ## Icke förhandlingsbara regler
 
