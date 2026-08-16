@@ -9,6 +9,7 @@ import {
   assertTransition,
   evaluateAll,
   findNumericConflicts,
+  findPeriodConflicts,
   isValidSwedishOrgNumber,
   prefillFromCanonical,
   validateAnswers,
@@ -292,6 +293,35 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
       requiresFactualChange: false,
     });
   }
+  // Periodkonsistens (red team §9 claim propagation): månader i fritexten som
+  // ligger utanför den angivna projektperioden är sannolikt kvarglömda efter en
+  // periodändring. Flaggas rådgivande — texten eller perioden ska uppdateras.
+  const periodField = (schema?.fields ?? []).find((f) => f.type === 'date_range');
+  const periodAnswer = periodField ? answers[periodField.key] : undefined;
+  if (Array.isArray(periodAnswer) && typeof periodAnswer[0] === 'string' && typeof periodAnswer[1] === 'string') {
+    if (periodAnswer[0] > periodAnswer[1]) {
+      gaps.push({
+        id: 'consistency-period-order',
+        severity: 'HIGH',
+        area: 'consistency',
+        message: `Projektperiodens slut (${periodAnswer[1]}) ligger före dess start (${periodAnswer[0]}).`,
+        action: 'Rätta start- och slutdatum så att perioden är möjlig.',
+        requiresFactualChange: false,
+      });
+    } else {
+      for (const c of findPeriodConflicts(answers, { start: periodAnswer[0], end: periodAnswer[1] }).slice(0, 3)) {
+        gaps.push({
+          id: `consistency-period-${c.month}`,
+          severity: 'MEDIUM',
+          area: 'consistency',
+          message: `Texten nämner ${c.month} ("${c.snippet}") men projektperioden är ${periodAnswer[0]}–${periodAnswer[1]}.`,
+          action: 'Uppdatera texten eller perioden så att de stämmer överens — kvarglömda datum efter en ändring är en vanlig kompletteringsorsak.',
+          requiresFactualChange: false,
+        });
+      }
+    }
+  }
+
   // Ödmjukhetsprotokollet (konstitutionen §12–13, PASS 8): ogrundade superlativ
   // och kvantifierade utfallslöften i fritextsvaren flaggas rådgivande (MEDIUM,
   // aldrig blockerande) — ett styrkt starkt påstående får stå kvar, och texten

@@ -161,6 +161,22 @@ describe('granskning inför inlämning', () => {
     expect(after.gaps.filter((g) => g.area === 'language')).toEqual([]);
   });
 
+  it('§9 claim propagation: a month left behind after a period change is flagged', async () => {
+    // Perioden är 2026-10-01–2026-10-14; texten nämner januari — kvarglömt.
+    await api(app, user, 'PATCH', `/v1/applications/${caseId}`, {
+      answers: { projekt_sammanfattning: 'Residenset genomförs i januari med två föreställningar.' },
+    });
+    const review = await getReview();
+    const period = review.gaps.find((g) => g.id === 'consistency-period-januari');
+    expect(period, JSON.stringify(review.gaps.map((g) => g.id))).toBeDefined();
+    expect(period!.severity).toBe('MEDIUM');
+    await api(app, user, 'PATCH', `/v1/applications/${caseId}`, {
+      answers: { projekt_sammanfattning: 'Residenset genomförs i oktober med två föreställningar.' },
+    });
+    const after = await getReview();
+    expect(after.gaps.some((g) => g.id.startsWith('consistency-period'))).toBe(false);
+  });
+
   it('K2: financing exceeding the budget blocks submission — both directions are contradictions', async () => {
     await api(app, user, 'PATCH', `/v1/applications/${caseId}`, {
       financing: { requestedMinor: 2600000, ownContributionMinor: 0, otherFundingMinor: 0, inKindMinor: 0 },

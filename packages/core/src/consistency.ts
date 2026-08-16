@@ -79,6 +79,50 @@ export function extractNumericClaims(answers: Record<string, unknown>): NumericC
  * Samma storhet, olika värden, olika fält ⇒ sannolik motsägelse.
  * Samma värde på flera ställen är konsekvent och flaggas inte.
  */
+/**
+ * Periodkonsistens (claim propagation, red team §9): när projektperioden
+ * ändras ska gamla månadsangivelser i fritexten inte leva kvar. Månader som
+ * nämns i textsvar men ligger utanför den angivna perioden flaggas — en
+ * uppmaning att uppdatera texten eller perioden, aldrig en tyst rättning.
+ */
+const MONTHS = ['januari', 'februari', 'mars', 'april', 'maj', 'juni', 'juli', 'augusti', 'september', 'oktober', 'november', 'december'];
+const MONTH_RE = new RegExp(`\\b(${MONTHS.join('|')})\\b`, 'gi');
+
+export interface PeriodConflict {
+  month: string;
+  fieldKey: string;
+  snippet: string;
+}
+
+export function findPeriodConflicts(
+  answers: Record<string, unknown>,
+  period: { start: string; end: string },
+): PeriodConflict[] {
+  const start = new Date(period.start);
+  const end = new Date(period.end);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || start > end) return [];
+  // Månader som perioden täcker (kalendermånadsupplösning, max ett varv).
+  const covered = new Set<number>();
+  const cursor = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1));
+  for (let i = 0; i < 12 && cursor <= end; i++) {
+    covered.add(cursor.getUTCMonth());
+    cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+  }
+  if (covered.size >= 12) return []; // helårsperiod — ingen månad kan motsäga den
+
+  const conflicts: PeriodConflict[] = [];
+  for (const [fieldKey, value] of Object.entries(answers)) {
+    if (typeof value !== 'string') continue;
+    for (const m of value.matchAll(MONTH_RE)) {
+      const idx = MONTHS.indexOf(m[1]!.toLowerCase());
+      if (idx === -1 || covered.has(idx)) continue;
+      const from = Math.max(0, m.index! - 30);
+      conflicts.push({ month: MONTHS[idx]!, fieldKey, snippet: value.slice(from, m.index! + m[0].length + 15).trim() });
+    }
+  }
+  return conflicts;
+}
+
 export function findNumericConflicts(answers: Record<string, unknown>): ConsistencyConflict[] {
   const byUnit = new Map<string, NumericClaim[]>();
   for (const c of extractNumericClaims(answers)) {

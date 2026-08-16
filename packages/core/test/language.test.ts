@@ -65,3 +65,32 @@ describe('answerLanguageFindings — skannar bara fritext', () => {
     expect(found[0]!.fieldKey).toBe('problem');
   });
 });
+
+describe('findPeriodConflicts — claim propagation för projektperioden (§9)', async () => {
+  const { findPeriodConflicts } = await import('../src/index.js');
+  const period = { start: '2026-10-01', end: '2026-11-14' };
+
+  it('flags months mentioned outside the period, with field and snippet', () => {
+    const c = findPeriodConflicts(
+      { plan: 'Residenset genomförs i januari med två föreställningar.', ovrigt: 'Redovisning sker i november.' },
+      period,
+    );
+    expect(c).toHaveLength(1);
+    expect(c[0]).toMatchObject({ month: 'januari', fieldKey: 'plan' });
+  });
+
+  it('stays silent when all months fall inside the period, and for year-long periods', () => {
+    expect(findPeriodConflicts({ plan: 'Start i oktober, avslut i november.' }, period)).toEqual([]);
+    expect(findPeriodConflicts({ plan: 'Aktiviteter i mars och juli.' }, { start: '2026-01-01', end: '2026-12-31' })).toEqual([]);
+  });
+
+  it('handles periods spanning a year boundary', () => {
+    const winter = { start: '2026-12-01', end: '2027-02-28' };
+    expect(findPeriodConflicts({ plan: 'Uppstart i december, avslut i februari.' }, winter)).toEqual([]);
+    expect(findPeriodConflicts({ plan: 'Turné i juni.' }, winter)).toHaveLength(1);
+  });
+
+  it('an impossible period yields no month flags (the order error is reported separately)', () => {
+    expect(findPeriodConflicts({ plan: 'I januari.' }, { start: '2026-11-01', end: '2026-10-01' })).toEqual([]);
+  });
+});
