@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: runestone-api-config
+  namespace: runestone
+  labels:
+    app.kubernetes.io/name: runestone-api
+    app.kubernetes.io/part-of: runestone-intelligence
+data:
+  # Datasetversionen ar en explicit, immutable pin - byts via Git-commit,
+  # aldrig genom att skriva om innehallet i en bucket (princip 1-2).
+  CORPUS_VERSION: "corpus-v0.1"
+  CORPUS_DIR: "/data/corpus"
+  # READER: "null" tills en runlasare ar i PRODUCTION i modellregistret;
+  # "http_vlm" kraver VLM_ENDPOINT/VLM_MODEL (+ secret for API-nyckel).
+  READER: "null"
+  VLM_ENDPOINT: ""
+  VLM_MODEL: ""
+  OBSERVATIONS_PATH: "/data/observations/observations.jsonl"

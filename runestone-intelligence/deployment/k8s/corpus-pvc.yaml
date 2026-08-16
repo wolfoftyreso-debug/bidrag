@@ -1,0 +1,28 @@
+# Corpusvolym: fylls av init-jobbet fran object storage (datasets/<version>).
+# Lasbar av API-podarna; skrivs aldrig av dem (originaldata muteras aldrig).
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: runestone-corpus
+  namespace: runestone
+  labels:
+    app.kubernetes.io/part-of: runestone-intelligence
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 5Gi
+---
+# Observationssanka tills PostgreSQL-lagringen ar pa plats (referensgrans).
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: runestone-observations
+  namespace: runestone
+  labels:
+    app.kubernetes.io/part-of: runestone-intelligence
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 10Gi

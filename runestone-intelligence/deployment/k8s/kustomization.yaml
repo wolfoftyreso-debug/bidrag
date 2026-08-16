@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: runestone
+resources:
+  - namespace.yaml
+  - api-configmap.yaml
+  - corpus-pvc.yaml
+  - api-deployment.yaml
+  - api-service.yaml
+  - api-ingress.yaml
+  - api-pdb.yaml
+# api-secret.template.yaml appliceras INTE harifran - secrets gar via
+# SealedSecrets/ExternalSecrets, aldrig i klartext via Git.

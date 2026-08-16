@@ -1,0 +1,30 @@
+# Runestone Intelligence API - referensimage (stdlib-only, inga pip-steg).
+# Corpus bakas INTE in i imagen: datasetversioner ar immutable artefakter i
+# object storage och monteras/hamtas vid start (se k8s/api-deployment.yaml).
+FROM python:3.12-slim
+
+RUN useradd --uid 10001 --create-home runestone
+USER 10001
+
+WORKDIR /app
+
+# Endast koden - ingen data, inga fixturer i produktionsimagen behovs
+# (fixturer foljer med for smoke-tester men ar tydligt syntetiska).
+COPY --chown=10001 data-contracts/ data-contracts/
+COPY --chown=10001 knowledge/ knowledge/
+COPY --chown=10001 verification/ verification/
+COPY --chown=10001 translation/ translation/
+COPY --chown=10001 models/ models/
+COPY --chown=10001 benchmark/ benchmark/
+COPY --chown=10001 ingestion/ ingestion/
+COPY --chown=10001 api/ api/
+
+EXPOSE 8080
+
+# CORPUS_DIR pekas mot monterad datasetversion; READER valjs per miljo.
+ENV CORPUS_DIR=/data/corpus READER=null OBSERVATIONS_PATH=/data/observations/observations.jsonl
+
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+  CMD python3 -c "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8080/healthz', timeout=2)"
+
+CMD ["/bin/sh", "-c", "python3 api/server.py --corpus \"$CORPUS_DIR\" --port 8080 --reader \"$READER\" --observations \"$OBSERVATIONS_PATH\""]

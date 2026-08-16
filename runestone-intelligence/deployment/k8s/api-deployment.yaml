@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: runestone-api
+  namespace: runestone
+  labels:
+    app.kubernetes.io/name: runestone-api
+    app.kubernetes.io/part-of: runestone-intelligence
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: runestone-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: runestone-api
+        app.kubernetes.io/part-of: runestone-intelligence
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        # Hamtar den pinnade, immutabla datasetversionen fran object storage.
+        # Ingen manuell produktion direkt i buckets: versionen kommer fran
+        # ConfigMap som ar Git-styrd (princip 1-2).
+        - name: fetch-corpus
+          image: amazon/aws-cli:2.17.0
+          command: ["/bin/sh", "-c"]
+          args:
+            - >
+              aws s3 sync
+              "s3://${DATASETS_BUCKET}/datasets/${CORPUS_VERSION}/" /data/corpus/
+              --no-progress
+          envFrom:
+            - configMapRef:
+                name: runestone-api-config
+          env:
+            - name: DATASETS_BUCKET
+              value: runestone-datasets
+          volumeMounts:
+            - name: corpus
+              mountPath: /data/corpus
+      containers:
+        - name: api
+          image: ghcr.io/OWNER/runestone-api:0.1.0   # pinnad tagg, satt av CI
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: runestone-api-config
+            - secretRef:
+                name: runestone-api-secrets
+                optional: true
+          volumeMounts:
+            - name: corpus
+              mountPath: /data/corpus
+              readOnly: true
+            - name: observations
+              mountPath: /data/observations
+          readinessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { cpu: "1", memory: 1Gi }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+      volumes:
+        - name: corpus
+          persistentVolumeClaim:
+            claimName: runestone-corpus
+        - name: observations
+          persistentVolumeClaim:
+            claimName: runestone-observations

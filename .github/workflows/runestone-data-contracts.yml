@@ -41,6 +41,11 @@ jobs:
       - name: API tests (pipeline, abstention, observations, HTTP server)
         run: python3 -m unittest discover -s tests -v
         working-directory: runestone-intelligence/api
+      - name: Manifest tests (k8s invariants)
+        run: |
+          pip install --quiet pyyaml
+          python3 -m unittest discover -s tests -v
+        working-directory: runestone-intelligence/deployment
       - name: Corpus build smoke test (deterministic fixtures)
         run: |
           python3 build_corpus.py --srd fixtures/srd_sample.jsonl \
@@ -48,3 +53,32 @@ jobs:
             --out /tmp/corpus-ci --version v0.1 \
             --timestamp 2026-08-15T00:00:00Z --seed 20260815
         working-directory: runestone-intelligence/ingestion
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build API image
+        run: docker build -f deployment/Dockerfile.api -t runestone-api:${{ github.sha }} .
+        working-directory: runestone-intelligence
+      - name: Smoke test image (healthz + honest 422 without reader)
+        run: |
+          cd runestone-intelligence
+          python3 ingestion/build_corpus.py --srd ingestion/fixtures/srd_sample.jsonl \
+            --images ingestion/fixtures/hf_sample.jsonl \
+            --out /tmp/smoke-corpus --version v0.1 \
+            --timestamp 2026-08-15T00:00:00Z --seed 8
+          docker run -d --name api -p 8080:8080 \
+            -v /tmp/smoke-corpus:/data/corpus:ro \
+            -e OBSERVATIONS_PATH=/tmp/observations.jsonl \
+            runestone-api:${{ github.sha }}
+          for i in $(seq 1 20); do
+            if curl -sf localhost:8080/healthz; then break; fi
+            sleep 1
+          done
+          curl -sf localhost:8080/healthz
+          status=$(curl -s -o /tmp/resp.json -w '%{http_code}' -X POST localhost:8080/v1/analyze \
+            -H 'Content-Type: application/json' -d '{"image_b64": "ZmFrZQ=="}')
+          cat /tmp/resp.json
+          test "$status" = "422" || { echo "::error::expected honest 422 without reader, got $status"; docker logs api; exit 1; }
