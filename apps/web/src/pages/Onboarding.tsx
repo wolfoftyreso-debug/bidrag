@@ -17,8 +17,14 @@ interface Answers {
   householdType?: 'alone' | 'partner' | 'other';
   children?: 'yes' | 'shared' | 'no';
   separatedParent?: boolean;
+  // barnspåret: situationsfrågor som öppnar stöd folk inte vet finns
+  childSchool?: 'grundskola' | 'gymnasiet' | 'both' | 'none';
+  childCostsStrain?: boolean;
+  childMissedLeisure?: boolean;
+  childNeedsGlasses?: boolean;
+  childTravelHard?: boolean;
   ageBand?: 'under20' | '20-28' | '29-65' | '66plus';
-  employment?: 'working' | 'unemployed' | 'sick' | 'studying' | 'retired';
+  employment?: 'working' | 'unemployed' | 'sick' | 'studying' | 'retired' | 'self_employed';
   reducedCapacity?: boolean;
   incomeBand?: 'under15' | '15-25' | '25-40' | 'over40';
   limitedSavings?: boolean;
@@ -41,7 +47,9 @@ const initial: Answers = { freeIntent: '', extraContext: '', activityTypes: [] }
 
 type StepId =
   | 'entry'
-  | 'p-household' | 'p-children' | 'p-separated' | 'p-age' | 'p-employment' | 'p-capacity'
+  | 'p-household' | 'p-children' | 'p-separated'
+  | 'p-child-school' | 'p-child-costs' | 'p-child-leisure' | 'p-child-glasses' | 'p-child-travel'
+  | 'p-age' | 'p-employment' | 'p-capacity'
   | 'p-income' | 'p-savings' | 'p-housing' | 'p-housing-cost' | 'p-extra'
   | 'pr-intent' | 'pr-who' | 'pr-municipality' | 'pr-artist' | 'pr-sector' | 'pr-activities'
   | 'pr-international' | 'pr-knowledge' | 'pr-youth' | 'pr-budget';
@@ -52,7 +60,14 @@ function nextStep(current: StepId, a: Answers): StepId | 'done' {
     case 'entry': return a.track === 'personal' ? 'p-household' : 'pr-intent';
     case 'p-household': return 'p-children';
     case 'p-children': return a.children !== 'no' ? 'p-separated' : 'p-age';
-    case 'p-separated': return 'p-age';
+    case 'p-separated': return 'p-child-school';
+    // Barnspåret ställs bara när det finns barn — och varje fråga kan öppna
+    // stöd användaren inte visste fanns.
+    case 'p-child-school': return 'p-child-costs';
+    case 'p-child-costs': return a.childCostsStrain ? 'p-child-glasses' : 'p-child-leisure';
+    case 'p-child-leisure': return 'p-child-glasses';
+    case 'p-child-glasses': return a.childSchool !== 'none' ? 'p-child-travel' : 'p-age';
+    case 'p-child-travel': return 'p-age';
     case 'p-age': return 'p-employment';
     case 'p-employment': return a.employment === 'sick' ? 'p-capacity' : 'p-income';
     case 'p-capacity': return 'p-income';
@@ -87,6 +102,29 @@ function personalFacts(a: Answers): Record<string, unknown> {
     if (a.ageBand === 'under20' || a.ageBand === '20-28') facts['person.age40OrYounger'] = true;
     if (a.ageBand === '66plus') facts['person.age40OrYounger'] = false;
   }
+  // Barnspåret: upptäcktsfrågorna sätter fakta som öppnar stöd användaren
+  // sällan känner till (Majblomman, glasögonbidrag, skolskjuts, elevresor).
+  if (a.childSchool) {
+    facts['person.childInCompulsorySchool'] = a.childSchool === 'grundskola' || a.childSchool === 'both';
+    facts['person.childInUpperSecondary'] = a.childSchool === 'gymnasiet' || a.childSchool === 'both';
+  }
+  if (a.childCostsStrain !== undefined || a.childMissedLeisure !== undefined) {
+    // Endera upptäcktsfrågan räcker: skolutflykten ELLER fritidsaktiviteten.
+    facts['person.childCostsStrain'] = Boolean(a.childCostsStrain || a.childMissedLeisure);
+  }
+  if (a.childNeedsGlasses !== undefined) facts['person.childNeedsGlasses'] = a.childNeedsGlasses;
+  if (a.childTravelHard !== undefined) {
+    // Grundskolans skolskjuts bedöms brett (avstånd/trafik/funktionsnedsättning);
+    // gymnasiets elevresor har ett exakt sexkilometersvillkor som får bli
+    // följdfråga i resultatet i stället för att gissas här.
+    if (a.childSchool === 'grundskola' || a.childSchool === 'both') {
+      facts['person.childSchoolDistanceQualifies'] = a.childTravelHard;
+    }
+    if (!a.childTravelHard) {
+      facts['person.childSchoolDistanceQualifies'] = false;
+      facts['person.childGymnasiumLongTravel'] = false;
+    }
+  }
   if (a.employment) {
     facts['person.employmentStatus'] = a.employment;
     if (a.employment === 'studying') facts['person.isOrPlansStudying'] = true;
@@ -94,6 +132,8 @@ function personalFacts(a: Answers): Record<string, unknown> {
     // Redan besvarat implicit: den som arbetar/studerar/är pensionär ska inte
     // få följdfrågan "är du inskriven som arbetssökande?".
     facts['person.registeredUnemployed'] = a.employment === 'unemployed';
+    // "Driver eget" är en datapunkt i situationen — inte en huvudkategori.
+    facts['person.selfEmployed'] = a.employment === 'self_employed';
   }
   if (a.reducedCapacity !== undefined) facts['person.reducedWorkCapacityLongTerm'] = a.reducedCapacity;
   if (a.incomeBand) {
@@ -283,7 +323,10 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
   switch (step) {
     case 'entry':
       return (
-        <Q title="Vad behöver du hjälp med?" guidance="Du behöver inte veta vad något stöd heter — berätta bara vad det gäller.">
+        <Q
+          title="Vad behöver du hjälp med?"
+          guidance="Berätta lite om din situation så hittar vi stöd som kan vara relevanta för dig — många stöd är sådana man inte vet att de finns. Du behöver inte veta vad något heter."
+        >
           <Choice
             label="Jag har svårt att få ekonomin att gå ihop"
             sub="Vi tar reda på vilka stöd och ersättningar du kan ha rätt till."
@@ -320,6 +363,54 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
           <YesNo onAnswer={(v) => onAnswer({ separatedParent: v })} />
         </Q>
       );
+
+    // ── Barnspåret: frågor som upptäcker stöd man inte söker efter ──────────
+    case 'p-child-school':
+      return (
+        <Q title="Går något av barnen i skolan?">
+          <Choice label="Ja, i grundskolan" onClick={() => onAnswer({ childSchool: 'grundskola' })} />
+          <Choice label="Ja, på gymnasiet" onClick={() => onAnswer({ childSchool: 'gymnasiet' })} />
+          <Choice label="Ja, både grundskola och gymnasium" onClick={() => onAnswer({ childSchool: 'both' })} />
+          <Choice label="Nej, inte ännu" onClick={() => onAnswer({ childSchool: 'none' })} />
+        </Q>
+      );
+    case 'p-child-costs':
+      return (
+        <Q
+          title="Har du någon gång haft svårt att betala för en skolutflykt, klassresa eller aktivitet som skolan förväntar sig att ditt barn ska delta i?"
+          guidance="Det finns stöd just för sådant — de flesta känner inte till dem."
+        >
+          <YesNo onAnswer={(v) => onAnswer({ childCostsStrain: v })} />
+        </Q>
+      );
+    case 'p-child-leisure':
+      return (
+        <Q
+          title="Har ditt barn behövt avstå från en fritidsaktivitet för att den kostar för mycket?"
+          guidance="Även utrustning och avgifter räknas."
+        >
+          <YesNo onAnswer={(v) => onAnswer({ childMissedLeisure: v })} />
+        </Q>
+      );
+    case 'p-child-glasses':
+      return (
+        <Q
+          title="Behöver något av dina barn i åldern 8–19 år glasögon eller linser?"
+          guidance="Alla regioner ger bidrag för barns glasögon — långt ifrån alla föräldrar vet om det."
+        >
+          <YesNo onAnswer={(v) => onAnswer({ childNeedsGlasses: v })} />
+        </Q>
+      );
+    case 'p-child-travel':
+      return (
+        <Q
+          title="Har något av barnen lång, trafikfarlig eller på annat sätt besvärlig väg till skolan?"
+          guidance="Skolskjuts och resestöd är rättigheter under vissa villkor — kommunen gör bedömningen."
+        >
+          <YesNo onAnswer={(v) => onAnswer({ childTravelHard: v })} />
+        </Q>
+      );
+
     case 'p-age':
       return (
         <Q title="Hur gammal är du?" guidance="Åldern avgör vilka stöd som är aktuella — vi behöver inget personnummer.">
@@ -336,6 +427,7 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
           <Choice label="Arbetslös" onClick={() => onAnswer({ employment: 'unemployed' })} />
           <Choice label="Sjukskriven eller nedsatt arbetsförmåga" onClick={() => onAnswer({ employment: 'sick' })} />
           <Choice label="Studerar" onClick={() => onAnswer({ employment: 'studying' })} />
+          <Choice label="Driver eget företag" sub="Det är en del av din situation — inte en egen kategori. Vi väger in både personliga och företagsrelaterade stöd." onClick={() => onAnswer({ employment: 'self_employed' })} />
           <Choice label="Pensionär" onClick={() => onAnswer({ employment: 'retired' })} />
         </Q>
       );

@@ -30,7 +30,7 @@ Profil → Intention → Stödutbud → Behörighet → Matchning → Finansieri
 |---|---|
 | Teknisk kärna | ~85 % byggd, deterministisk och testad |
 | Production hardening | pågående — metrics, GDPR-självservice och runbook finns; verklig klusterdrift, backup-övning och lasttest återstår |
-| Kunskapstäckning | 51 kurerade stöd från 29 finansiärer, inkl. personliga ersättningar (FK, CSN, Pensionsmyndigheten, socialtjänsten) — bevisar motorn, inte nationell täckning |
+| Kunskapstäckning | 55 kurerade stöd från 31 finansiärer, inkl. personliga ersättningar (FK, CSN, Pensionsmyndigheten, socialtjänsten) — bevisar motorn, inte nationell täckning |
 | Integrationsmognad | låg per design — assisterad inlämning tills avtalade adaptrar finns |
 | Kommersiell modell | engångsupplåsning av analysen (39 kr): teaser → betalning bekräftad → kvitto (löpnummer, momsspecifikation, omskickbart) → full rapport. Betalningen är den auktoritativa händelsen; Swish-adaptern väntar ärligt (503) på handelsavtal + certifikat; momsklassning stäms av med redovisningen före produktion |
 | Produktarkitektur | stark; skala/härda/befolka, inte bygga om |

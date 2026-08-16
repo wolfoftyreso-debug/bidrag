@@ -14,8 +14,13 @@ type Answers = Partial<{
   household: 'alone' | 'partner' | 'other';
   children: 'yes' | 'shared' | 'no';
   separated: boolean;
+  childSchool: 'grundskola' | 'gymnasiet' | 'both' | 'none';
+  childCostsStrain: boolean;
+  childMissedLeisure: boolean;
+  childNeedsGlasses: boolean;
+  childTravelHard: boolean;
   age: 'under20' | '20-28' | '29-65' | '66plus';
-  employment: 'working' | 'unemployed' | 'sick' | 'studying' | 'retired';
+  employment: 'working' | 'unemployed' | 'sick' | 'studying' | 'retired' | 'self_employed';
   capacity: boolean;
   income: 'under15' | '15-25' | '25-40' | 'over40';
   savings: boolean;
@@ -35,11 +40,29 @@ function personalFacts(a: Answers): Facts {
     if (a.age === 'under20' || a.age === '20-28') f['person.age40OrYounger'] = true;
     if (a.age === '66plus') f['person.age40OrYounger'] = false;
   }
+  if (a.childSchool) {
+    f['person.childInCompulsorySchool'] = a.childSchool === 'grundskola' || a.childSchool === 'both';
+    f['person.childInUpperSecondary'] = a.childSchool === 'gymnasiet' || a.childSchool === 'both';
+  }
+  if (a.childCostsStrain !== undefined || a.childMissedLeisure !== undefined) {
+    f['person.childCostsStrain'] = Boolean(a.childCostsStrain || a.childMissedLeisure);
+  }
+  if (a.childNeedsGlasses !== undefined) f['person.childNeedsGlasses'] = a.childNeedsGlasses;
+  if (a.childTravelHard !== undefined) {
+    if (a.childSchool === 'grundskola' || a.childSchool === 'both') {
+      f['person.childSchoolDistanceQualifies'] = a.childTravelHard;
+    }
+    if (!a.childTravelHard) {
+      f['person.childSchoolDistanceQualifies'] = false;
+      f['person.childGymnasiumLongTravel'] = false;
+    }
+  }
   if (a.employment) {
     f['person.employmentStatus'] = a.employment;
     if (a.employment === 'studying') f['person.isOrPlansStudying'] = true;
     f['person.receivesPension'] = a.employment === 'retired';
     f['person.registeredUnemployed'] = a.employment === 'unemployed';
+    f['person.selfEmployed'] = a.employment === 'self_employed';
   }
   if (a.capacity !== undefined) f['person.reducedWorkCapacityLongTerm'] = a.capacity;
   if (a.income) {
@@ -158,6 +181,54 @@ describe('scenariomatris — personliga situationer', () => {
     expect(r.get('fk-bostadsbidrag-unga')!.eligibilityStatus).toBe('excluded'); // betalar inget boende
     expect(r.get('kommun-forsorjningsstod')!.eligibilityStatus).toBe('eligible');
     expect(r.get('af-stod-start-naringsverksamhet')!.eligibilityStatus).toBe('unknown');
+  });
+
+  it('6b. Barnspåret: förälder som tackat nej till skolutflykt öppnar stöd hen inte visste fanns', () => {
+    // Arbetande förälder med ok-inkomst — skulle ALDRIG själv söka på "bidrag".
+    // Upptäcktsfrågan (skolutflykten) + glasögonfrågan öppnar tre stödspår.
+    const r = run(personalFacts({
+      household: 'partner', children: 'yes', separated: false,
+      childSchool: 'grundskola', childCostsStrain: true, childNeedsGlasses: true, childTravelHard: true,
+      age: '29-65', employment: 'working', income: '25-40', paysHousing: true,
+    }));
+    expect(r.get('majblomman-bidrag-barn')!.eligibilityStatus).toBe('eligible');
+    expect(r.get('region-glasogonbidrag-barn')!.eligibilityStatus).toBe('eligible');
+    expect(r.get('kommun-skolskjuts')!.eligibilityStatus).toBe('eligible');
+    // Gymnasiestöden är korrekt uteslutna — barnet går i grundskolan.
+    expect(r.get('kommun-elevresor-gymnasiet')!.eligibilityStatus).toBe('excluded');
+    // Och inkomstprövade stöd blandas inte in i onödan: bostadsbidraget
+    // utesluts på inkomsten, inte visas som falskt hopp.
+    expect(r.get('fk-bostadsbidrag-barnfamiljer')!.eligibilityStatus).toBe('excluded');
+  });
+
+  it('6c. Barnspåret: fritidsaktivitets-frågan räcker ensam för Majblomman', () => {
+    const r = run(personalFacts({
+      household: 'alone', children: 'shared', separated: true,
+      childSchool: 'gymnasiet', childCostsStrain: false, childMissedLeisure: true, childNeedsGlasses: false, childTravelHard: true,
+      age: '29-65', employment: 'working', income: '15-25', paysHousing: true,
+    }));
+    expect(r.get('majblomman-bidrag-barn')!.eligibilityStatus).toBe('eligible');
+    expect(r.get('region-glasogonbidrag-barn')!.eligibilityStatus).toBe('excluded'); // behöver inga glasögon
+    expect(r.get('kommun-skolskjuts')!.eligibilityStatus).toBe('excluded'); // inget barn i grundskolan
+    // Gymnasiet + besvärlig resväg: sexkilometersvillkoret är medvetet en
+    // följdfråga (kommunens exakta villkor) — inte en gissning.
+    const elevresor = r.get('kommun-elevresor-gymnasiet')!;
+    expect(elevresor.eligibilityStatus).toBe('unknown');
+    expect(elevresor.missingFacts.some((f) => f.question.includes('sex kilometer'))).toBe(true);
+  });
+
+  it('6d. Egenföretagare med barn: "driver eget" är en datapunkt, inte en kategori', () => {
+    const r = run(personalFacts({
+      household: 'partner', children: 'yes', separated: false,
+      childSchool: 'grundskola', childCostsStrain: true, childNeedsGlasses: false, childTravelHard: false,
+      age: '29-65', employment: 'self_employed', income: '15-25', paysHousing: true,
+    }));
+    // Familjespåren öppnas oavsett företagandet…
+    expect(r.get('majblomman-bidrag-barn')!.eligibilityStatus).toBe('eligible');
+    expect(r.get('fk-bostadsbidrag-barnfamiljer')!.eligibilityStatus).toBe('eligible');
+    // …och egenföretagaren får inte AF-frågan om att vara inskriven arbetssökande.
+    const questions = allQuestions(r);
+    expect(questions.some((q) => q.includes('arbetssökande'))).toBe(false);
   });
 });
 

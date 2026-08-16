@@ -103,7 +103,7 @@ PRIVACY.md).
 
 ## 8. Coverage is wave-1 (expanded)
 
-51 curated opportunities across 29 financiers — state agencies, foundations,
+55 curated opportunities across 31 financiers — state agencies, foundations,
 the sports federation, EU programmes, and personal entitlements
 (Försäkringskassan, CSN, Pensionsmyndigheten, municipal social services) —
 exercise the data patterns: recurring and rolling deadlines, upcoming rounds,
