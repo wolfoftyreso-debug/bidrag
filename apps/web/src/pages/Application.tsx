@@ -36,7 +36,7 @@ interface CaseReview {
   overallStatus: 'READY_FOR_SUBMISSION' | 'NOT_READY';
   eligibility: { status: 'PASS' | 'FAIL' | 'UNKNOWN'; missingFacts: { question: string }[] };
   deadline: { deadlineAt: string | null; daysLeft: number | null; passed: boolean };
-  criteria: { criterionId: string; description: string; kind: string; outcome: 'pass' | 'fail' | 'unknown'; nonCompensatory: boolean; evidenceLevel: 'E0' | 'E1' | 'E2' }[];
+  criteria: { criterionId: string; description: string; kind: string; outcome: 'pass' | 'fail' | 'unknown'; nonCompensatory: boolean; evidenceLevel: 'E0' | 'E1' | 'E2' | 'E3' }[];
   internalEstimate: { label: string; fitScore: number | null; explanation: string };
   doubleFunding: { status: 'CLEAR' | 'POTENTIAL_OVERLAP' | 'HIGH_RISK'; notes: string[] };
   stateAid: { status: 'NOT_APPLICABLE' | 'STATE_AID_UNKNOWN'; note: string };

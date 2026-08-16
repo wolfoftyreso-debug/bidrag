@@ -255,7 +255,7 @@ describe('granskning inför inlämning', () => {
     expect(review.criteria.length).toBeGreaterThan(0);
     for (const c of review.criteria) {
       expect(['pass', 'fail', 'unknown']).toContain(c.outcome);
-      expect(['E0', 'E1', 'E2']).toContain(c.evidenceLevel);
+      expect(['E0', 'E1', 'E2', 'E3']).toContain(c.evidenceLevel);
       // E0 exakt när utfallet är okänt — ett obesvarat krav är obevisat.
       expect(c.evidenceLevel === 'E0').toBe(c.outcome === 'unknown');
       expect(c.nonCompensatory).toBe(c.kind !== 'weighted');
@@ -325,13 +325,13 @@ describe('granskning inför inlämning', () => {
 
   // ── Block 3: E2-koppling, statsstöd, källfärskhet, schematäckning ──────────
 
-  it('§10: criteria backed by an attached linked document reach E2 — never by guesswork', async () => {
+  it('§10: attached linked documents lift criteria to E2, externally issued ones to E3 — never by guesswork', async () => {
     const review = await getReview();
-    // CV och inbjudan är bifogade; de kurerade kopplingarna lyfter kriterierna till E2.
+    // CV (eget dokument) ⇒ E2; inbjudan (utfärdad av värdorganisationen) ⇒ E3.
     const m1 = review.criteria.find((c) => c.criterionId === 'kr-rb-m1')!;
     const m2 = review.criteria.find((c) => c.criterionId === 'kr-rb-m2')!;
     expect(m1.evidenceLevel).toBe('E2');
-    expect(m2.evidenceLevel).toBe('E2');
+    expect(m2.evidenceLevel).toBe('E3'); // extern part går i god — men äkthet kontrolleras aldrig (E4 finns inte)
     // Kriterier utan kurerad koppling stannar på E1 trots bifogade dokument.
     const h1 = review.criteria.find((c) => c.criterionId === 'kr-rb-h1')!;
     expect(h1.evidenceLevel).toBe('E1');

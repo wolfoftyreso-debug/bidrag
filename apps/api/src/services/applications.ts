@@ -5,6 +5,7 @@
  */
 import { and, eq, sql } from 'drizzle-orm';
 import {
+  EXTERNAL_EVIDENCE_KINDS,
   answerLanguageFindings,
   assertTransition,
   evaluateAll,
@@ -84,9 +85,12 @@ export interface CriterionAssessment {
   nonCompensatory: boolean;
   /**
    * Var bevisas detta? E0 = obesvarat, E1 = sökandens eget svar,
-   * E2 = styrkt av bifogat dokument enligt kurerad kriterium↔bilaga-koppling.
+   * E2 = styrkt av bifogat eget dokument enligt kurerad koppling,
+   * E3 = styrkt av bifogat dokument utfärdat av extern part (inbjudan,
+   * partnerintyg, läkarintyg) — aldrig äkthetskontrollerat (det vore E4,
+   * som inte finns och aldrig påstås).
    */
-  evidenceLevel: 'E0' | 'E1' | 'E2';
+  evidenceLevel: 'E0' | 'E1' | 'E2' | 'E3';
 }
 
 export interface CaseReview {
@@ -424,15 +428,16 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
     kind: r.criterion.kind,
     outcome: r.outcome,
     nonCompensatory: r.criterion.kind !== 'weighted',
-    // E0 = obesvarat. E1 = sökandens eget svar. E2 = ett bifogat dokument av
-    // en bilagetyp som enligt den KURERADE kopplingen styrker kriteriet —
-    // aldrig en gissning, och utan koppling stannar nivån på E1.
-    evidenceLevel:
-      r.outcome === 'unknown'
-        ? 'E0'
-        : (r.criterion.evidenceKinds ?? []).some((k) => attachedKindSet.has(k))
-          ? 'E2'
-          : 'E1',
+    // E0 = obesvarat. E1 = sökandens eget svar. E2/E3 = ett bifogat dokument
+    // av en bilagetyp som enligt den KURERADE kopplingen styrker kriteriet —
+    // E3 när bilagetypen är utfärdad av extern part (inbjudan, partnerintyg,
+    // läkarintyg), annars E2. Aldrig en gissning; utan koppling stannar E1.
+    evidenceLevel: ((): 'E0' | 'E1' | 'E2' | 'E3' => {
+      if (r.outcome === 'unknown') return 'E0';
+      const attached = (r.criterion.evidenceKinds ?? []).filter((k) => attachedKindSet.has(k));
+      if (attached.length === 0) return 'E1';
+      return attached.some((k) => EXTERNAL_EVIDENCE_KINDS.has(k)) ? 'E3' : 'E2';
+    })(),
   }));
 
   // ── Intern kvalitetsindikator (§8) — obligatoriskt märkt, aldrig en prognos.

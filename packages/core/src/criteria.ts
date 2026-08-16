@@ -33,11 +33,26 @@ export type CriterionKind =
   /** Layer 3 — weighted strategic fit; contributes to score, never gates. */
   | 'weighted';
 
+/**
+ * Evidensnivå E3 (§10): bilagetyper som till sin natur är UTFÄRDADE AV EN
+ * EXTERN PART — en inbjudan skrivs av värdorganisationen, ett partnerintyg av
+ * partnern, ett läkarintyg av läkaren. De väger tyngre än sökandens egna
+ * dokument (E2: projektbeskrivning, budget, CV) eftersom en annan aktör går i
+ * god för innehållet. OBS: systemet äkthetskontrollerar ingenting — verifierad
+ * extern källa (E4) finns inte och påstås aldrig. Kurerad lista, aldrig
+ * heuristik.
+ */
+export const EXTERNAL_EVIDENCE_KINDS: ReadonlySet<string> = new Set([
+  'invitation',
+  'partner_letter',
+  'medical_certificate',
+]);
+
 export interface CriterionDef {
   /**
    * Kurerad kriterium↔bilaga-koppling (§10): bilagetyper som styrker
-   * kriteriet. Grunden för evidensnivå E2 — utan koppling kan ett kriterium
-   * aldrig klassas högre än E1 (sökandens eget svar).
+   * kriteriet. Grunden för evidensnivå E2/E3 — utan koppling kan ett
+   * kriterium aldrig klassas högre än E1 (sökandens eget svar).
    */
   evidenceKinds?: string[];
   id: string;
