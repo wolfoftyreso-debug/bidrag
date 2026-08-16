@@ -137,7 +137,9 @@ const c = (
   description: string,
   intakeQuestion?: string,
   weight?: number,
-) => ({ id, kind, factPath, op, expected, description, intakeQuestion, weight });
+  /** Kurerad kriterium↔bilaga-koppling (§10): bilagetyper som STYRKER kriteriet — grunden för evidensnivå E2. */
+  evidenceKinds?: string[],
+) => ({ id, kind, factPath, op, expected, description, intakeQuestion, weight, evidenceKinds });
 
 /**
  * Defaults for curated entries: assisted submission, no invented amounts or
@@ -200,8 +202,8 @@ export const opportunities: SeedOpportunity[] = [
     criteria: [
       c('kr-rb-h1', 'hard', 'applicant.country', 'eq', 'SE', 'Sökande ska vara verksam i Sverige'),
       c('kr-rb-h2', 'hard', 'applicant.type', 'in', ['individual', 'association', 'company'], 'Sökande ska vara yrkesverksam kulturskapare, grupp eller organisation'),
-      c('kr-rb-m1', 'mandatory', 'person.professionalArtist', 'is_true', undefined, 'Sökande ska vara yrkesverksam inom kulturområdet', 'Är du yrkesverksam inom kulturområdet (t.ex. dans, musik, scenkonst)?'),
-      c('kr-rb-m2', 'mandatory', 'project.hasInternationalComponent', 'is_true', undefined, 'Projektet ska avse internationellt kulturutbyte', 'Innehåller projektet en internationell resa eller ett internationellt utbyte?'),
+      c('kr-rb-m1', 'mandatory', 'person.professionalArtist', 'is_true', undefined, 'Sökande ska vara yrkesverksam inom kulturområdet', 'Är du yrkesverksam inom kulturområdet (t.ex. dans, musik, scenkonst)?', undefined, ['cv']),
+      c('kr-rb-m2', 'mandatory', 'project.hasInternationalComponent', 'is_true', undefined, 'Projektet ska avse internationellt kulturutbyte', 'Innehåller projektet en internationell resa eller ett internationellt utbyte?', undefined, ['invitation']),
       c('kr-rb-w1', 'weighted', 'project.sector', 'eq', 'culture', 'Kulturprojekt', undefined, 3),
       c('kr-rb-w2', 'weighted', 'project.activityTypes', 'intersects', ['exchange', 'training', 'performance'], 'Utbyte, fortbildning eller framträdande', undefined, 2),
       c('kr-rb-w3', 'weighted', 'project.bringsKnowledgeBack', 'is_true', undefined, 'Kunskapen tas tillvara i Sverige', 'Kommer erfarenheterna att användas i din verksamhet i Sverige?', 1),
@@ -1954,6 +1956,60 @@ export const applicationSchemaDefs: { opportunitySlug: string; def: unknown }[] 
           section: 'deltagare',
           visibleWhen: [{ factPath: 'har_partner', op: 'is_true' }],
         },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'nordisk-kulturfond-projektstod',
+    def: {
+      id: 'nordisk-kulturfond-projektstod-v1',
+      version: 1,
+      title: 'Ansökan — Nordisk kulturfond, projektstöd (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig/er som söker' },
+        { key: 'projekt', title: 'Projektet' },
+        { key: 'norden', title: 'Nordisk dimension' },
+        { key: 'budget', title: 'Budget och finansiering' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Sökandens namn (person eller organisation)', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'projekt_titel', canonicalKey: 'project.title', type: 'text', label: 'Projektets titel', required: true, maxLength: 200, section: 'projekt' },
+        { key: 'projekt_sammanfattning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv projektet', guidance: 'Vad ska ni göra, varför, och vad är den konstnärliga/kulturella idén?', required: true, maxLength: 4000, section: 'projekt' },
+        { key: 'nordiska_lander', type: 'multiselect', label: 'Vilka nordiska länder deltar aktivt i projektet?', guidance: 'Fonden kräver samarbete mellan flera nordiska länder — ange de länder som har en aktiv roll.', required: true, section: 'norden', options: [
+          { value: 'SE', label: 'Sverige' }, { value: 'DK', label: 'Danmark' }, { value: 'NO', label: 'Norge' },
+          { value: 'FI', label: 'Finland' }, { value: 'IS', label: 'Island' }, { value: 'GL', label: 'Grönland' },
+          { value: 'FO', label: 'Färöarna' }, { value: 'AX', label: 'Åland' },
+        ] },
+        { key: 'nordisk_dimension', type: 'long_text', label: 'Vad tillför det nordiska samarbetet projektet?', guidance: 'Konkret: vad händer i samarbetet som inte hade hänt nationellt?', required: true, maxLength: 2000, section: 'norden' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'projekt' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', required: true, min: 1, section: 'budget' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'mucf-projektbidrag-ungdomsorganisationer',
+    def: {
+      id: 'mucf-projektbidrag-v1',
+      version: 1,
+      title: 'Ansökan — MUCF projektbidrag (förberedelse)',
+      sections: [
+        { key: 'org', title: 'Organisationen' },
+        { key: 'projekt', title: 'Projektet' },
+        { key: 'malgrupp', title: 'Målgrupp och delaktighet' },
+        { key: 'budget', title: 'Budget och finansiering' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'org_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Organisationens namn', required: true, maxLength: 200, section: 'org' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', required: true, maxLength: 20, section: 'org' },
+        { key: 'projekt_titel', canonicalKey: 'project.title', type: 'text', label: 'Projektets namn', required: true, maxLength: 200, section: 'projekt' },
+        { key: 'projekt_syfte', canonicalKey: 'project.summary', type: 'long_text', label: 'Syfte och genomförande', guidance: 'Vilket problem adresserar projektet, vad ska ni göra, och hur vet ni att det fungerat?', required: true, maxLength: 5000, section: 'projekt' },
+        { key: 'malgrupp_beskrivning', type: 'long_text', label: 'Vilka unga når projektet, och hur är de delaktiga?', guidance: 'Ungas egen delaktighet i planering och genomförande väger tungt i bedömningen.', required: true, maxLength: 3000, section: 'malgrupp' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'projekt' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', required: true, min: 1, section: 'budget' },
         { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
       ],
     },

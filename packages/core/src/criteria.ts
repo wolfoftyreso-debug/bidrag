@@ -34,6 +34,12 @@ export type CriterionKind =
   | 'weighted';
 
 export interface CriterionDef {
+  /**
+   * Kurerad kriterium↔bilaga-koppling (§10): bilagetyper som styrker
+   * kriteriet. Grunden för evidensnivå E2 — utan koppling kan ett kriterium
+   * aldrig klassas högre än E1 (sökandens eget svar).
+   */
+  evidenceKinds?: string[];
   id: string;
   kind: CriterionKind;
   /** Dot-path into the facts object, e.g. "project.countries". */

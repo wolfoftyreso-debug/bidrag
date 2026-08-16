@@ -78,8 +78,11 @@ export interface CriterionAssessment {
   outcome: 'pass' | 'fail' | 'unknown';
   /** Icke-kompensatorisk: svaghet här kan inte vägas upp av andra styrkor. */
   nonCompensatory: boolean;
-  /** Var bevisas detta? E0 = obesvarat, E1 = sökandens eget svar. */
-  evidenceLevel: 'E0' | 'E1';
+  /**
+   * Var bevisas detta? E0 = obesvarat, E1 = sökandens eget svar,
+   * E2 = styrkt av bifogat dokument enligt kurerad kriterium↔bilaga-koppling.
+   */
+  evidenceLevel: 'E0' | 'E1' | 'E2';
 }
 
 export interface CaseReview {
@@ -108,6 +111,12 @@ export interface CaseReview {
   internalEstimate: { label: 'INTERNAL_ESTIMATE'; fitScore: number | null; explanation: string };
   /** Dubbelfinansiering (§18): CLEAR / POTENTIAL_OVERLAP / HIGH_RISK. */
   doubleFunding: { status: 'CLEAR' | 'POTENTIAL_OVERLAP' | 'HIGH_RISK'; notes: string[] };
+  /**
+   * Statsstöd (§19): utan kurerade statsstödsuppgifter gissar systemet
+   * aldrig — personliga ersättningar är NOT_APPLICABLE, allt annat flaggas
+   * STATE_AID_UNKNOWN tills uppgifterna är kurerade.
+   */
+  stateAid: { status: 'NOT_APPLICABLE' | 'STATE_AID_UNKNOWN'; note: string };
   /**
    * Diligence v1 (§23–24): det en handläggare sannolikt vill kontrollera
    * eller begära komplettering om — informativt, blockerar inte.
@@ -308,15 +317,34 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
   // utvärderas mot sökandens aktuella fakta — spårbart till exakt det
   // regelverk ansökan skapades under (§29).
   const [factsRow] = await db
-    .select({ projectFacts: projects.facts, profileFacts: applicantProfiles.facts })
+    .select({
+      projectFacts: projects.facts,
+      profileFacts: applicantProfiles.facts,
+      applicantType: applicantProfiles.applicantType,
+      applicantCountry: applicantProfiles.country,
+      applicantRegion: applicantProfiles.region,
+      applicantMunicipality: applicantProfiles.municipality,
+    })
     .from(projects)
     .leftJoin(applicantProfiles, eq(projects.profileId, applicantProfiles.id))
     .where(eq(projects.id, caseRow.projectId))
     .limit(1);
+  // Samma faktabygge som matchningstjänsten: härledda applicant.*-fakta
+  // ingår — annars blir behörighetskriterier felaktigt "obesvarade" här.
   const mergedFacts = {
+    'applicant.type': factsRow?.applicantType ?? undefined,
+    'applicant.country': factsRow?.applicantCountry ?? undefined,
+    'applicant.region': factsRow?.applicantRegion ?? undefined,
+    'applicant.municipality': factsRow?.applicantMunicipality ?? undefined,
     ...((factsRow?.profileFacts as Record<string, unknown>) ?? {}),
     ...((factsRow?.projectFacts as Record<string, unknown>) ?? {}),
   };
+  const attachedForE2 = await db
+    .select({ kind: documents.kind })
+    .from(caseDocuments)
+    .innerJoin(documents, eq(caseDocuments.documentId, documents.id))
+    .where(eq(caseDocuments.caseId, caseRow.id));
+  const attachedKindSet = new Set(attachedForE2.map((r) => r.kind));
   const frozenCriteria = ((caseRow.opportunitySnapshot as { ruleVersion?: { criteria?: CriterionDef[] } | null })
     .ruleVersion?.criteria ?? []) as CriterionDef[];
   const criteria: CriterionAssessment[] = evaluateAll(frozenCriteria, mergedFacts as never).map((r) => ({
@@ -325,9 +353,15 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
     kind: r.criterion.kind,
     outcome: r.outcome,
     nonCompensatory: r.criterion.kind !== 'weighted',
-    // E0 = obesvarat; E1 = sökandens eget svar. E2 (dokumenterat per
-    // kriterium) kräver kurerad kriterium↔bilaga-koppling — påstås aldrig.
-    evidenceLevel: r.outcome === 'unknown' ? 'E0' : 'E1',
+    // E0 = obesvarat. E1 = sökandens eget svar. E2 = ett bifogat dokument av
+    // en bilagetyp som enligt den KURERADE kopplingen styrker kriteriet —
+    // aldrig en gissning, och utan koppling stannar nivån på E1.
+    evidenceLevel:
+      r.outcome === 'unknown'
+        ? 'E0'
+        : (r.criterion.evidenceKinds ?? []).some((k) => attachedKindSet.has(k))
+          ? 'E2'
+          : 'E1',
   }));
 
   // ── Intern kvalitetsindikator (§8) — obligatoriskt märkt, aldrig en prognos.
@@ -373,6 +407,45 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
     );
   }
 
+  // ── Statsstöd (§19): utan kurerade uppgifter gissar systemet aldrig.
+  const oppMeta = (caseRow.opportunitySnapshot as {
+    opportunity?: { instrumentType?: string; nextReviewAt?: string | null } | null;
+  }).opportunity;
+  const PERSONAL_INSTRUMENTS = new Set(['social_benefit', 'educational_support']);
+  const stateAid: CaseReview['stateAid'] =
+    oppMeta?.instrumentType && PERSONAL_INSTRUMENTS.has(oppMeta.instrumentType) && factsRow?.applicantType === 'individual'
+      ? {
+          status: 'NOT_APPLICABLE',
+          note: 'Personlig ersättning till privatperson — statsstödsreglerna aktualiseras inte.',
+        }
+      : {
+          status: 'STATE_AID_UNKNOWN',
+          note: 'Statsstödsuppgifter är inte kurerade för det här stödet. Kontrollera med finansiären om stödet omfattas av statsstödsregler (t.ex. de minimis) innan du räknar med beloppet.',
+        };
+  if (stateAid.status === 'STATE_AID_UNKNOWN') {
+    gaps.push({
+      id: 'state-aid-unknown',
+      severity: 'MEDIUM',
+      area: 'coverage',
+      message: stateAid.note,
+      action: 'Fråga finansiären eller läs utlysningens statsstödsavsnitt — systemet gissar aldrig i den här frågan.',
+      requiresFactualChange: false,
+    });
+  }
+
+  // ── Källfärskhet (§18 fail-safe): en regelkälla äldre än sitt
+  // omverifieringsdatum flaggas — villkoren kan ha ändrats.
+  if (oppMeta?.nextReviewAt && Date.parse(oppMeta.nextReviewAt) < Date.now()) {
+    gaps.push({
+      id: 'source-stale',
+      severity: 'MEDIUM',
+      area: 'coverage',
+      message: 'Regelverket för det här stödet har passerat sitt omverifieringsdatum — villkoren kan ha ändrats sedan de kurerades.',
+      action: 'Kontrollera de angivna villkoren mot finansiärens aktuella utlysning innan du lämnar in.',
+      requiresFactualChange: false,
+    });
+  }
+
   // ── Diligence v1 (§23–24): det en handläggare sannolikt begär komplettering
   // om. Informativt — döljs aldrig, blockerar inte.
   const likelyComplementRequests: string[] = [];
@@ -402,6 +475,7 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
     criteria,
     internalEstimate,
     doubleFunding: { status: dfStatus, notes: dfNotes },
+    stateAid,
     likelyComplementRequests,
     gaps,
   };

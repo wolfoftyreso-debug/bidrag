@@ -36,9 +36,10 @@ interface CaseReview {
   overallStatus: 'READY_FOR_SUBMISSION' | 'NOT_READY';
   eligibility: { status: 'PASS' | 'FAIL' | 'UNKNOWN'; missingFacts: { question: string }[] };
   deadline: { deadlineAt: string | null; daysLeft: number | null; passed: boolean };
-  criteria: { criterionId: string; description: string; kind: string; outcome: 'pass' | 'fail' | 'unknown'; nonCompensatory: boolean; evidenceLevel: 'E0' | 'E1' }[];
+  criteria: { criterionId: string; description: string; kind: string; outcome: 'pass' | 'fail' | 'unknown'; nonCompensatory: boolean; evidenceLevel: 'E0' | 'E1' | 'E2' }[];
   internalEstimate: { label: string; fitScore: number | null; explanation: string };
   doubleFunding: { status: 'CLEAR' | 'POTENTIAL_OVERLAP' | 'HIGH_RISK'; notes: string[] };
+  stateAid: { status: 'NOT_APPLICABLE' | 'STATE_AID_UNKNOWN'; note: string };
   likelyComplementRequests: string[];
   gaps: { id: string; severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'; area: string; message: string; action: string }[];
 }
@@ -319,7 +320,7 @@ export default function ApplicationPage() {
                 <summary style={{ cursor: 'pointer', fontWeight: 600 }}>Bedömning per kriterium ({review.criteria.length})</summary>
                 <p className="guidance" style={{ marginTop: '0.4rem' }}>
                   Kriterierna ur regelverket din ansökan skapades under. "Kan inte vägas upp" betyder att en brist
-                  där aldrig kompenseras av styrkor någon annanstans. E1 = bygger på ditt eget svar; E0 = obesvarat.
+                  där aldrig kompenseras av styrkor någon annanstans. E2 = styrkt av bifogat dokument, E1 = bygger på ditt eget svar, E0 = obesvarat.
                 </p>
                 {review.criteria.map((c) => (
                   <div className="explain-item" key={c.criterionId}>
