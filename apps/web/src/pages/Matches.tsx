@@ -84,14 +84,22 @@ export default function MatchesPage() {
   // Questions from personal entitlements come first: in a rights
   // investigation, "uteblir underhållet?" matters before "äger du jordbruk?".
   const PERSONAL_Q = new Set(['social_benefit', 'educational_support']);
-  const openQuestions = new Map<string, string>();
+  // Varje fråga bär sin kontext: vilka stöd den avgör. Utan den etiketten är
+  // "Har du sparpengar…?" obegriplig mitt i en lista.
+  const openQuestions = new Map<string, { question: string; forTitles: string[] }>();
   const ordered = [...matches].sort(
     (a, b) => Number(PERSONAL_Q.has(b.instrumentType)) - Number(PERSONAL_Q.has(a.instrumentType)),
   );
   for (const m of ordered) {
     if (m.eligibilityStatus === 'excluded') continue;
+    const shortTitle = m.title.split(' — ').pop() ?? m.title;
     for (const f of m.result.missingFacts) {
-      if (!openQuestions.has(f.factPath)) openQuestions.set(f.factPath, f.question);
+      const entry = openQuestions.get(f.factPath);
+      if (entry) {
+        if (!entry.forTitles.includes(shortTitle)) entry.forTitles.push(shortTitle);
+      } else {
+        openQuestions.set(f.factPath, { question: f.question, forTitles: [shortTitle] });
+      }
     }
   }
 
@@ -146,9 +154,12 @@ export default function MatchesPage() {
         <div className="card" style={{ borderColor: 'var(--warning)' }}>
           <h2>Några frågor kvar</h2>
           <p className="guidance">Dina svar avgör vilka stöd du faktiskt kan söka.</p>
-          {[...openQuestions.entries()].slice(0, 6).map(([factPath, question]) => (
-            <div key={factPath} style={{ margin: '0.6rem 0' }}>
-              <strong>{question}</strong>
+          {[...openQuestions.entries()].slice(0, 6).map(([factPath, q]) => (
+            <div key={factPath} style={{ margin: '0.75rem 0' }}>
+              <div className="meta-line" style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                Gäller {q.forTitles.slice(0, 2).join(' och ')}{q.forTitles.length > 2 ? ` + ${q.forTitles.length - 2} till` : ''}
+              </div>
+              <strong>{q.question}</strong>
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.3rem' }}>
                 <button className={answers[factPath] === true ? '' : 'secondary'} onClick={() => setAnswers({ ...answers, [factPath]: true })}>Ja</button>
                 <button className={answers[factPath] === false ? '' : 'secondary'} onClick={() => setAnswers({ ...answers, [factPath]: false })}>Nej</button>

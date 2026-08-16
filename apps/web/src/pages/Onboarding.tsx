@@ -84,17 +84,23 @@ function personalFacts(a: Answers): Record<string, unknown> {
     facts['person.ageBand'] = a.ageBand;
     facts['person.ageUnder29'] = a.ageBand === 'under20' || a.ageBand === '20-28';
     facts['person.age66Plus'] = a.ageBand === '66plus';
+    if (a.ageBand === 'under20' || a.ageBand === '20-28') facts['person.age40OrYounger'] = true;
+    if (a.ageBand === '66plus') facts['person.age40OrYounger'] = false;
   }
   if (a.employment) {
     facts['person.employmentStatus'] = a.employment;
     if (a.employment === 'studying') facts['person.isOrPlansStudying'] = true;
     facts['person.receivesPension'] = a.employment === 'retired';
+    // Redan besvarat implicit: den som arbetar/studerar/är pensionär ska inte
+    // få följdfrågan "är du inskriven som arbetssökande?".
+    facts['person.registeredUnemployed'] = a.employment === 'unemployed';
   }
   if (a.reducedCapacity !== undefined) facts['person.reducedWorkCapacityLongTerm'] = a.reducedCapacity;
   if (a.incomeBand) {
     facts['person.monthlyIncomeBand'] = a.incomeBand;
     facts['person.lowHouseholdIncome'] = a.incomeBand === 'under15' || a.incomeBand === '15-25';
     if (a.incomeBand === 'under15') facts['person.incomeInsufficientForBasicNeeds'] = true;
+    if (a.incomeBand === 'over40') facts['person.incomeInsufficientForBasicNeeds'] = false;
   }
   if (a.limitedSavings !== undefined) facts['person.limitedSavings'] = a.limitedSavings;
   if (a.paysHousing !== undefined) facts['person.paysHousingCost'] = a.paysHousing;

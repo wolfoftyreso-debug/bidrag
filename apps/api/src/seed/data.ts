@@ -1206,7 +1206,7 @@ export const opportunities: SeedOpportunity[] = [
     criteria: [
       c('kfs-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Stödet söks av privatpersoner'),
       c('kfs-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Du ska bo i Sverige'),
-      c('kfs-m1', 'mandatory', 'person.incomeInsufficientForBasicNeeds', 'is_true', undefined, 'Inkomsterna ska inte räcka till det mest nödvändiga', 'Räcker hushållets inkomster inte till mat, boende och det mest nödvändiga?'),
+      c('kfs-m1', 'mandatory', 'person.incomeInsufficientForBasicNeeds', 'is_true', undefined, 'Inkomsterna ska inte räcka till det mest nödvändiga', 'Har hushållet svårt att klara kostnaderna för mat, boende och det mest nödvändiga?'),
       c('kfs-m2', 'mandatory', 'person.limitedSavings', 'is_true', undefined, 'Du ska sakna sparande eller tillgångar som kan täcka behoven', 'Saknar du sparpengar eller tillgångar som kan täcka utgifterna?'),
     ],
   }),
@@ -1289,7 +1289,7 @@ export const opportunities: SeedOpportunity[] = [
       c('fk-us-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Stödet söks av privatpersoner'),
       c('fk-us-m1', 'mandatory', 'person.hasChildrenAtHome', 'is_true', undefined, 'Barnet ska bo hos dig', 'Har du barn som bor hos dig?'),
       c('fk-us-m2', 'mandatory', 'person.separatedParent', 'is_true', undefined, 'Föräldrarna ska inte bo tillsammans', 'Bor du och barnets andra förälder på skilda håll?'),
-      c('fk-us-m3', 'mandatory', 'person.otherParentNotPaying', 'is_true', undefined, 'Den andra föräldern betalar inte underhåll (eller för lite)', 'Uteblir underhållet från den andra föräldern, helt eller delvis?'),
+      c('fk-us-m3', 'mandatory', 'person.otherParentNotPaying', 'is_true', undefined, 'Den andra föräldern betalar inte underhåll (eller för lite)', 'Betalar den andra föräldern inget eller mindre än fullt underhåll?'),
     ],
   }),
 
@@ -1344,7 +1344,7 @@ export const opportunities: SeedOpportunity[] = [
       c('pm-afs-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Stödet söks av privatpersoner'),
       c('pm-afs-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Du ska bo i Sverige'),
       c('pm-afs-m1', 'mandatory', 'person.age66Plus', 'is_true', undefined, 'Du ska ha fyllt 66 år', 'Har du fyllt 66 år?'),
-      c('pm-afs-m2', 'mandatory', 'person.veryLowOrNoPension', 'is_true', undefined, 'Pension och inkomster ska inte räcka till en skälig levnadsnivå', 'Räcker din pension och dina inkomster inte till en skälig levnadsnivå?'),
+      c('pm-afs-m2', 'mandatory', 'person.veryLowOrNoPension', 'is_true', undefined, 'Pension och inkomster ska inte räcka till en skälig levnadsnivå', 'Har du svårt att klara dig på din pension och dina övriga inkomster?'),
     ],
   }),
 
@@ -1676,7 +1676,7 @@ export const opportunities: SeedOpportunity[] = [
       c('tv-ris-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Verksamheten ska bedrivas i Sverige'),
       c('tv-ris-m1', 'mandatory', 'organisation.inSupportArea', 'is_true', undefined, 'Verksamhetsorten ska ligga i stödområde A eller B', 'Ligger verksamhetsorten i stödområde A eller B (stora delar av Norrland och inre Svealand)?'),
       c('tv-ris-m2', 'mandatory', 'project.activityTypes', 'includes', 'investment', 'Ansökan ska avse en investering', 'Avser ansökan en investering i byggnader eller maskiner?'),
-      c('tv-ris-m3', 'mandatory', 'project.notStartedYet', 'is_true', undefined, 'Investeringen får inte vara påbörjad före ansökan', 'Är investeringen ännu inte påbörjad?'),
+      c('tv-ris-m3', 'mandatory', 'project.notStartedYet', 'is_true', undefined, 'Investeringen får inte vara påbörjad före ansökan', 'Kommer investeringen att påbörjas först efter att ni skickat in ansökan?'),
     ],
     budgetRules: [
       { id: 'tv-ris-b1', type: 'max_funding_share', percent: 35, description: 'Stödandelen är högst 35 % beroende på område och företagsstorlek.' },
