@@ -32,6 +32,11 @@ spärrarna nedan.
 1. **Uppsala-rapporteringen.** Användningen av Scandinavian Runic-text
    Database ska rapporteras formellt innan skarp import (`docs/LICENSES.md`).
    *Ägare: människa. Blockar: allt skarpt corpusarbete.*
+   **Utkast klart att skicka: `docs/outreach/uppsala-report-draft.md`.**
+   Notera även: denna utvecklingsmiljö saknar nätverksegress till
+   kulturarvsdata.se/app.raa.se (verifierat 2026-08-16) — skarp skörd körs
+   från miljö med tillåten utgående trafik. MVP-arbetslistan med
+   verifieringschecklista och körordning: `docs/MVP_STONES.md`.
 2. **Skarpa källadaptrar.** SRD-distributionens filformat, K-samsöks
    JSON-LD-API och Commons API — kontraktsytorna är fastlagda i respektive
    importer; endast parsning tillkommer.
