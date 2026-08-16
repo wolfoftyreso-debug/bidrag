@@ -3,7 +3,7 @@
  * Safe to run repeatedly: keyed on slugs/keys, existing rows are updated
  * with a new rule version only when content changed.
  */
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { fileURLToPath } from 'node:url';
 import { db, pool } from '../db/client.ts';
 import {
@@ -11,12 +11,25 @@ import {
   fundingAuthorities,
   fundingOpportunities,
   fundingProgrammes,
+  matches,
   ruleVersions,
   sources,
 } from '../db/schema.ts';
 import { CURATED_AT, applicationSchemaDefs, authorities, opportunities, seedSources } from './data.ts';
 
-export async function runSeed(): Promise<{ opportunities: number }> {
+/** Nyckelordnings-oberoende serialisering (jsonb-roundtrip-säker). */
+function canonical(v: unknown): string {
+  if (Array.isArray(v)) return `[${v.map(canonical).join(',')}]`;
+  if (v && typeof v === 'object') {
+    return `{${Object.keys(v as object).sort().map((k) => {
+      const val = (v as Record<string, unknown>)[k];
+      return val === undefined ? null : `${JSON.stringify(k)}:${canonical(val)}`;
+    }).filter(Boolean).join(',')}}`;
+  }
+  return JSON.stringify(v) ?? 'null';
+}
+
+export async function runSeed(): Promise<{ opportunities: number; rulesUpdated: number }> {
   const authorityIdByKey = new Map<string, string>();
   for (const a of authorities) {
     const [existing] = await db.select().from(fundingAuthorities).where(eq(fundingAuthorities.name, a.name)).limit(1);
@@ -54,6 +67,7 @@ export async function runSeed(): Promise<{ opportunities: number }> {
 
   const programmeIdByKey = new Map<string, string>();
   let seeded = 0;
+  let rulesUpdated = 0;
 
   for (const o of opportunities) {
     const authorityId = authorityIdByKey.get(o.authorityKey)!;
@@ -127,14 +141,23 @@ export async function runSeed(): Promise<{ opportunities: number }> {
       opportunityId = row!.id;
     }
 
-    // Rule version: create v1 if none exists.
+    // Regelversionering (fynd i 30-simuleringen): en ändrad kurerad regel
+    // ska nå BEFINTLIGA databaser också — som en NY version (append-only,
+    // samma modell som kuratorsflödet), aldrig som tyst no-op och aldrig
+    // genom att skriva över historiken. Berörda matchningar flaggas stale
+    // och räknas om av jobbet.
     const [rv] = await db
       .select()
       .from(ruleVersions)
       .where(eq(ruleVersions.opportunityId, opportunityId))
+      .orderBy(desc(ruleVersions.version))
       .limit(1);
     let ruleVersionId = rv?.id;
-    if (!ruleVersionId) {
+    // Kanonisk jämförelse: Postgres jsonb sorterar nycklar, så en naiv
+    // stringify ser ALLT som ändrat och skapar versionschurn vid varje seed.
+    const desired = canonical({ c: o.criteria, b: o.budgetRules, e: o.evidenceRequirements });
+    const current = rv ? canonical({ c: rv.criteria, b: rv.budgetRules, e: rv.evidenceRequirements }) : null;
+    if (!rv) {
       const [created] = await db
         .insert(ruleVersions)
         .values({
@@ -148,6 +171,22 @@ export async function runSeed(): Promise<{ opportunities: number }> {
         })
         .returning();
       ruleVersionId = created!.id;
+    } else if (current !== desired) {
+      const [created] = await db
+        .insert(ruleVersions)
+        .values({
+          opportunityId,
+          version: rv.version + 1,
+          criteria: o.criteria,
+          budgetRules: o.budgetRules,
+          evidenceRequirements: o.evidenceRequirements,
+          changeNote: 'Updated curated rule set from official source.',
+          createdBy: 'seed',
+        })
+        .returning();
+      ruleVersionId = created!.id;
+      await db.update(matches).set({ stale: true }).where(eq(matches.opportunityId, opportunityId));
+      rulesUpdated++;
     }
     await db
       .update(fundingOpportunities)
@@ -174,13 +213,13 @@ export async function runSeed(): Promise<{ opportunities: number }> {
     }
   }
 
-  return { opportunities: seeded };
+  return { opportunities: seeded, rulesUpdated };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   runSeed()
     .then(async (r) => {
-      console.log(`Seed complete: ${r.opportunities} opportunities.`);
+      console.log(`Seed complete: ${r.opportunities} opportunities${r.rulesUpdated ? ` (${r.rulesUpdated} rule sets updated to new versions)` : ''}.`);
       await pool.end();
     })
     .catch(async (err) => {
