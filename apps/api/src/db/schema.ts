@@ -135,6 +135,25 @@ export const passwordResetTokens = pgTable(
   (t) => [index('password_reset_tokens_user_idx').on(t.userId)],
 );
 
+/**
+ * Engångs-återställningskoder — den kanal-lösa återställningsvägen
+ * (produktbeslutet i docs/LIMITATIONS.md): fungerar utan e-postkanal.
+ * Koderna visas EN gång vid generering, lagras enbart hashade (SHA-256 av
+ * normaliserad form; ~73 bitar entropi per kod) och förbrukas atomiskt.
+ * Nygenerering ersätter alltid hela uppsättningen.
+ */
+export const recoveryCodes = pgTable(
+  'recovery_codes',
+  {
+    id: id(),
+    userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    codeHash: text('code_hash').notNull().unique(),
+    usedAt: timestamp('used_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [index('recovery_codes_user_idx').on(t.userId)],
+);
+
 // ── Applicant world (tenant-owned) ───────────────────────────────────────────
 
 export const applicantProfiles = pgTable(

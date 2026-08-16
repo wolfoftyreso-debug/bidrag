@@ -56,9 +56,10 @@ git push → GitHub → Vercel build → Preview/Production
    `SELLER_VAT_NUMBER`/`SELLER_ADDRESS` behöver bara sättas om
    bolagsuppgifterna ändras.
    E-post är INTE ett produktionskrav: kvitton är förstaklass i kontot
-   (Mina köp), notiser finns i Inkorgen och inbjudningar har delbara länkar.
-   Utan konfigurerad kanal är lösenordsåterställningen avstängd fail-closed
-   (503) — se docs/LIMITATIONS.md för det öppna produktbeslutet.
+   (Mina köp), notiser finns i Inkorgen, inbjudningar har delbara länkar
+   och lösenordsåterställning fungerar via engångs-återställningskoder
+   (Konto & data). Länk-vägen för återställning kräver en kanal och är
+   annars avstängd fail-closed (503) — se docs/LIMITATIONS.md §4.
 3. Peka produktionsdomänen (bidrag.se) på projektet; sätt `PUBLIC_BASE_URL`
    och `CORS_ORIGIN` till `https://bidrag.se`.
 4. Vercel Cron (definierad i `vercel.json`) anropar jobben med

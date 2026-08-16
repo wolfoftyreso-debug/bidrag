@@ -1,9 +1,15 @@
 import type { FastifyInstance } from 'fastify';
 import { and, eq, isNull } from 'drizzle-orm';
 import { db } from '../db/client.ts';
-import { memberships, passwordResetTokens, refreshTokens, tenants, users } from '../db/schema.ts';
+import { memberships, passwordResetTokens, recoveryCodes, refreshTokens, tenants, users } from '../db/schema.ts';
 import { hashPassword, verifyPassword } from '../auth/password.ts';
-import { generateRefreshToken, hashRefreshToken, signAccessToken } from '../auth/tokens.ts';
+import {
+  generateRecoveryCode,
+  generateRefreshToken,
+  hashRecoveryCode,
+  hashRefreshToken,
+  signAccessToken,
+} from '../auth/tokens.ts';
 import { audit } from '../audit.ts';
 import { config } from '../config.ts';
 import { emailConfigured, sendEmail } from '../services/email.ts';
@@ -164,14 +170,13 @@ export async function authRoutes(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      // Fail-closed: utan e-postkanal finns ingen säker återställningsväg i
-      // auth-modellen — vi låtsas ALDRIG att en länk skickats. (Produkt-
-      // beslut krävs för kanal-lös återställning; se docs/LIMITATIONS.md.)
+      // Fail-closed: utan e-postkanal låtsas vi ALDRIG att en länk skickats.
+      // Den kanal-lösa vägen är återställningskoder (/v1/auth/recover-with-code).
       if (!emailConfigured()) {
         return reply.code(503).send({
           error: 'recovery_unavailable',
           message:
-            'Lösenordsåterställning är inte tillgänglig i den här miljön. Kontakta support så hjälper vi dig.',
+            'Återställningslänk via e-post är inte tillgänglig i den här miljön. Har du sparade återställningskoder kan du använda en av dem.',
         });
       }
       const email = (request.body as { email: string }).email.trim().toLowerCase();
@@ -252,6 +257,110 @@ export async function authRoutes(app: FastifyInstance) {
         action: 'auth.password_reset_completed',
         entityType: 'user',
         entityId: row.userId,
+      });
+      return { ok: true };
+    },
+  );
+
+  /**
+   * Återställningskoder — den kanal-lösa återställningsvägen. Koderna visas
+   * EN gång här och lagras enbart hashade; nygenerering ersätter alltid hela
+   * uppsättningen (gamla koder slutar gälla omedelbart).
+   */
+  app.post(
+    '/v1/auth/recovery-codes',
+    { preHandler: [app.requireAuth], config: { rateLimit: { max: 5, timeWindow: '1 minute' } }, schema: { tags: ['auth'] } },
+    async (request) => {
+      const userId = request.auth!.userId;
+      const fresh = Array.from({ length: 8 }, () => generateRecoveryCode());
+      await db.transaction(async (tx) => {
+        await tx.delete(recoveryCodes).where(eq(recoveryCodes.userId, userId));
+        await tx.insert(recoveryCodes).values(fresh.map((c) => ({ userId, codeHash: c.codeHash })));
+      });
+      await audit({
+        tenantId: null,
+        actorType: 'user',
+        actorUserId: userId,
+        action: 'auth.recovery_codes_generated',
+        entityType: 'user',
+        entityId: userId,
+      });
+      return { codes: fresh.map((c) => c.code) };
+    },
+  );
+
+  app.get('/v1/auth/recovery-codes', { preHandler: [app.requireAuth], schema: { tags: ['auth'] } }, async (request) => {
+    const rows = await db
+      .select({ usedAt: recoveryCodes.usedAt })
+      .from(recoveryCodes)
+      .where(eq(recoveryCodes.userId, request.auth!.userId));
+    return { total: rows.length, remaining: rows.filter((r) => r.usedAt === null).length };
+  });
+
+  app.post(
+    '/v1/auth/recover-with-code',
+    {
+      config: { rateLimit: { max: 10, timeWindow: '1 minute' } },
+      schema: {
+        tags: ['auth'],
+        body: {
+          type: 'object',
+          required: ['email', 'code', 'password'],
+          properties: {
+            email: { type: 'string', format: 'email', maxLength: 320 },
+            code: { type: 'string', minLength: 10, maxLength: 40 },
+            password: { type: 'string', minLength: 10, maxLength: 200 },
+          },
+          additionalProperties: false,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { email, code, password } = request.body as { email: string; code: string; password: string };
+      const [user] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.email, email.trim().toLowerCase()))
+        .limit(1);
+
+      // Engångsanvändning atomiskt, precis som länk-vägen: used_at sätts i
+      // samma UPDATE som villkoret — två samtidiga försök med samma kod kan
+      // aldrig båda lyckas. Koden är bunden till kontots e-postadress.
+      let claimed = false;
+      if (user) {
+        const rows = await db
+          .update(recoveryCodes)
+          .set({ usedAt: new Date() })
+          .where(
+            and(
+              eq(recoveryCodes.userId, user.id),
+              eq(recoveryCodes.codeHash, hashRecoveryCode(code)),
+              isNull(recoveryCodes.usedAt),
+            ),
+          )
+          .returning();
+        claimed = rows.length > 0;
+      }
+      // Konstant svar oavsett om kontot finns eller koden är fel/förbrukad —
+      // ingen kontouppräkning via den här ytan.
+      if (!user || !claimed) {
+        return reply.code(422).send({
+          error: 'invalid_code',
+          message: 'Fel e-postadress eller ogiltig/förbrukad återställningskod.',
+        });
+      }
+
+      const now = new Date();
+      await db.update(users).set({ passwordHash: await hashPassword(password) }).where(eq(users.id, user.id));
+      // Lösenordsbyte dödar alla sessioner — en kapad session överlever inte.
+      await db.update(refreshTokens).set({ revokedAt: now }).where(eq(refreshTokens.userId, user.id));
+      await audit({
+        tenantId: null,
+        actorType: 'user',
+        actorUserId: user.id,
+        action: 'auth.password_reset_completed',
+        entityType: 'user',
+        entityId: user.id,
       });
       return { ok: true };
     },

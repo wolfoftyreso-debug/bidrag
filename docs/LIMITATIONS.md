@@ -67,15 +67,19 @@ links. The adapter in `services/email.ts` remains as an optional best-effort
 channel (Resend key or `SMTP_URL`) — when unconfigured every send is honestly
 recorded as `skipped` and no flow depends on it.
 
-**Open product decision — password recovery.** The only flow that genuinely
-requires an out-of-band channel is password reset. Without a configured
-email channel the endpoint fails closed (503 `recovery_unavailable`, honest
-message in the UI) rather than pretending to send a link. There is no safe
-replacement in the current auth model (no phone numbers, no BankID). Before
-real customers: decide between (a) configuring an email channel solely for
-recovery, (b) BankID-based recovery (future), or (c) documented manual
-support routine. Until decided, a user who forgets their password cannot
-recover the account self-service.
+**Password recovery — decided: one-time recovery codes.** Self-service
+recovery no longer depends on any channel. Users generate eight one-time
+recovery codes under Konto & data (shown exactly once, stored only as
+SHA-256 hashes of the normalized form, ~73 bits of entropy each); a code
+plus the account email sets a new password via
+`POST /v1/auth/recover-with-code`, with the same guarantees as the link
+path: atomic single-use claim, all sessions revoked, constant response with
+no account enumeration, strict rate limit. Regenerating replaces the whole
+set. The email link path remains as a convenience when a channel is
+configured; without one it still fails closed (503) and the UI points to
+recovery codes. A user who forgets their password *and* has no saved codes
+still needs support — that residual case is inherent to not holding any
+out-of-band identity (no phone, no BankID).
 
 ## 5. Malware scanning optional
 

@@ -46,6 +46,8 @@ export default function AccountPage() {
 
       <PurchasesCard />
 
+      <RecoveryCodesCard />
+
       <div className="card">
         <h2>Hämta ut din data</h2>
         <p>
@@ -171,6 +173,70 @@ function PurchasesCard() {
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Återställningskoder: den kanal-lösa vägen tillbaka in i kontot om
+ * lösenordet glöms. Koderna visas EN gång — servern sparar bara hashar.
+ */
+function RecoveryCodesCard() {
+  const [status, setStatus] = useState<{ total: number; remaining: number } | null>(null);
+  const [codes, setCodes] = useState<string[] | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    get<{ total: number; remaining: number }>('/v1/auth/recovery-codes').then(setStatus).catch(() => {});
+  }, []);
+
+  const generate = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await post<{ codes: string[] }>('/v1/auth/recovery-codes');
+      setCodes(res.codes);
+      setStatus({ total: res.codes.length, remaining: res.codes.length });
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Koderna kunde inte skapas. Försök igen.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="card">
+      <h2>Återställningskoder</h2>
+      <p className="guidance">
+        Med en återställningskod kan du välja ett nytt lösenord om du glömmer ditt — utan e-post. Varje kod fungerar en
+        gång. Förvara dem säkert, t.ex. i en lösenordshanterare.
+      </p>
+      {status && status.total > 0 && !codes && (
+        <p>
+          Du har <strong>{status.remaining} av {status.total}</strong> koder kvar.
+          {status.remaining <= 2 && ' Skapa nya snart — gamla koder slutar gälla när du gör det.'}
+        </p>
+      )}
+      {codes && (
+        <div className="alert warning">
+          <p style={{ marginTop: 0 }}>
+            <strong>Spara koderna nu — de visas bara den här gången.</strong> Gamla koder har slutat gälla.
+          </p>
+          <pre style={{ background: 'var(--bg)', padding: '0.8rem', borderRadius: 8, fontSize: '0.95rem', letterSpacing: '0.04em', margin: 0 }}>
+            {codes.join('\n')}
+          </pre>
+          <p style={{ marginBottom: 0 }}>
+            <button className="secondary" onClick={() => void navigator.clipboard.writeText(codes.join('\n'))}>
+              Kopiera alla
+            </button>
+          </p>
+        </div>
+      )}
+      {error && <div className="alert error">{error}</div>}
+      <button className="secondary" disabled={busy} onClick={generate}>
+        {busy ? 'Skapar…' : status && status.total > 0 ? 'Skapa nya koder' : 'Skapa återställningskoder'}
+      </button>
     </div>
   );
 }

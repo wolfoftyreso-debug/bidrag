@@ -64,6 +64,13 @@
       "when": 1786891947515,
       "tag": "0008_workable_silvermane",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1786894755471,
+      "tag": "0009_thin_next_avengers",
+      "breakpoints": true
     }
   ]
 }

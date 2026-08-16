@@ -37,3 +37,27 @@ export function generateRefreshToken(): { token: string; tokenHash: string } {
 export function hashRefreshToken(token: string): string {
   return createHash('sha256').update(token).digest('hex');
 }
+
+/**
+ * Återställningskoder: 3 grupper à 5 tecken ur ett 30-teckensalfabet utan
+ * förväxlingsbara tecken (I/L/O/U/0/1) ≈ 73 bitar entropi — utom räckhåll
+ * för offlineattack mot SHA-256-hashen. Jämförelse sker alltid på
+ * normaliserad form, så "k7q2m 8xj4p r9t3v" matchar "K7Q2M-8XJ4P-R9T3V".
+ */
+const RECOVERY_ALPHABET = 'ABCDEFGHJKMNPQRSTVWXYZ23456789';
+
+export function normalizeRecoveryCode(input: string): string {
+  return input.toUpperCase().replace(/[^A-Z2-9]/g, '');
+}
+
+export function hashRecoveryCode(input: string): string {
+  return createHash('sha256').update(normalizeRecoveryCode(input)).digest('hex');
+}
+
+export function generateRecoveryCode(): { code: string; codeHash: string } {
+  const bytes = randomBytes(15);
+  let s = '';
+  for (const b of bytes) s += RECOVERY_ALPHABET[b % RECOVERY_ALPHABET.length];
+  const code = `${s.slice(0, 5)}-${s.slice(5, 10)}-${s.slice(10, 15)}`;
+  return { code, codeHash: hashRecoveryCode(code) };
+}
