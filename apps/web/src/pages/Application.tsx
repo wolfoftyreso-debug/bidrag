@@ -31,6 +31,13 @@ interface Validation {
   missingAttachments: { kind: string; description: string }[];
   ready: boolean;
 }
+/** Granskningsläget (§30–31): samlad bedömning med prioriterade luckor. */
+interface CaseReview {
+  overallStatus: 'READY_FOR_SUBMISSION' | 'NOT_READY';
+  eligibility: { status: 'PASS' | 'FAIL' | 'UNKNOWN'; missingFacts: { question: string }[] };
+  deadline: { deadlineAt: string | null; daysLeft: number | null; passed: boolean };
+  gaps: { id: string; severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'; area: string; message: string; action: string }[];
+}
 interface BudgetLine {
   id: string;
   category: string;
@@ -120,6 +127,7 @@ export default function ApplicationPage() {
   const [busy, setBusy] = useState(false);
   const [submitPrep, setSubmitPrep] = useState<{ submissionId: string; officialUrl: string | null } | null>(null);
   const [receiptRef, setReceiptRef] = useState('');
+  const [review, setReview] = useState<CaseReview | null>(null);
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -247,6 +255,54 @@ export default function ApplicationPage() {
       </p>
 
       {message && <div className={`alert ${message.tone}`}>{message.text}</div>}
+
+      {/* Granskningsläget (Application Intelligence §30–31) */}
+      <div className="card">
+        <h2>Granskning inför inlämning</h2>
+        <p className="guidance">
+          En samlad genomgång: behörighet, obligatoriska fält, bilagor, budgetens matematik och deadline —
+          med det viktigaste först. Ett obesvarat krav räknas aldrig som uppfyllt.
+        </p>
+        <button
+          className="secondary"
+          disabled={busy}
+          onClick={() => void get<{ review: CaseReview }>(`/v1/applications/${app.id}/review`).then((r) => setReview(r.review))}
+        >
+          {review ? 'Granska igen' : 'Granska ansökan'}
+        </button>
+        {review && (
+          <div style={{ marginTop: '0.8rem' }}>
+            {review.overallStatus === 'READY_FOR_SUBMISSION' ? (
+              <div className="alert success">
+                <strong>Klar att lämna in.</strong> Inga kritiska brister — kontrollera varningarna nedan om några visas.
+              </div>
+            ) : (
+              <div className="alert warning">
+                <strong>Inte klar än.</strong> Åtgärda punkterna nedan i ordning — de allvarligaste först.
+              </div>
+            )}
+            <div className="meta-line" style={{ margin: '0.4rem 0' }}>
+              Behörighet:{' '}
+              {review.eligibility.status === 'PASS' ? <span className="badge success">uppfylld enligt dina svar</span>
+                : review.eligibility.status === 'FAIL' ? <span className="badge danger">ej uppfylld</span>
+                : <span className="badge warning">obesvarade krav</span>}
+              {review.deadline.daysLeft !== null && !review.deadline.passed && <> · {review.deadline.daysLeft} dagar till deadline</>}
+            </div>
+            {review.gaps.map((g, i) => (
+              <div className="explain-item" key={`${g.id}-${i}`}>
+                <span className={`badge ${g.severity === 'CRITICAL' ? 'danger' : g.severity === 'HIGH' ? 'warning' : ''}`} style={{ flexShrink: 0 }}>
+                  {g.severity === 'CRITICAL' ? 'Kritisk' : g.severity === 'HIGH' ? 'Hög' : g.severity === 'MEDIUM' ? 'Medel' : 'Låg'}
+                </span>
+                <span>
+                  {g.message}
+                  <div className="meta-line">{g.action}</div>
+                </span>
+              </div>
+            ))}
+            {review.gaps.length === 0 && <div className="explain-item"><span className="explain-icon pass">✓</span><span>Inga brister hittades.</span></div>}
+          </div>
+        )}
+      </div>
 
       {/* Checklist / validation */}
       <div className="card">

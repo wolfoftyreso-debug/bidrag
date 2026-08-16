@@ -28,6 +28,7 @@ import {
   caseDocuments,
   documents,
   fundingOpportunities,
+  matches,
   ruleVersions,
 } from '../db/schema.ts';
 import { audit } from '../audit.ts';
@@ -37,6 +38,185 @@ export interface CaseValidation {
   budgetFindings: { ruleId: string; severity: string; message: string }[];
   missingAttachments: { kind: string; description: string }[];
   ready: boolean;
+}
+
+// ── Granskningsläget (Application Intelligence §30–31) ───────────────────────
+
+export type GapSeverity = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+
+export interface ReviewGap {
+  id: string;
+  severity: GapSeverity;
+  area: 'eligibility' | 'fields' | 'evidence' | 'budget' | 'deadline';
+  message: string;
+  /** Vad som stänger luckan. */
+  action: string;
+  /**
+   * §5-stoppregeln: bristen kräver en faktisk förändring i omständigheterna —
+   * den kan och ska inte "skrivas runt" med bättre text.
+   */
+  requiresFactualChange: boolean;
+}
+
+export interface CaseReview {
+  overallStatus: 'READY_FOR_SUBMISSION' | 'NOT_READY';
+  eligibility: {
+    status: 'PASS' | 'FAIL' | 'UNKNOWN';
+    excludedBy: { description: string }[];
+    missingFacts: { question: string }[];
+  };
+  fields: { issues: FieldValidationIssue[] };
+  evidence: { kind: string; description: string; status: 'ATTACHED' | 'MISSING' }[];
+  budget: {
+    findings: { ruleId: string; severity: string; message: string }[];
+    totalMinor: number;
+    financingTotalMinor: number;
+    requestedMinor: number;
+  };
+  deadline: { deadlineAt: string | null; daysLeft: number | null; passed: boolean };
+  /** Prioriterad åtgärdslista, allvarligast först. */
+  gaps: ReviewGap[];
+}
+
+const SEVERITY_ORDER: GapSeverity[] = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
+
+/**
+ * Deterministisk helhetsgranskning av en ansökan inför inlämning:
+ * behörighet (matchmotorns trevärdesbedömning — UNKNOWN blir aldrig ett
+ * positivt antagande), obligatoriska fält, obligatorisk bevisning, budgetens
+ * matematik och regelefterlevnad samt deadline. Utfallet är READY_FOR_-
+ * SUBMISSION eller NOT_READY med en prioriterad åtgärdslista. En FAIL på ett
+ * hårt behörighetskrav flaggas som något som kräver ändrade omständigheter —
+ * systemet försöker aldrig "skriva runt" den.
+ */
+export async function reviewCase(caseRow: typeof applicationCases.$inferSelect): Promise<CaseReview> {
+  const validation = await validateCase(caseRow);
+  const gaps: ReviewGap[] = [];
+
+  // Behörighet ur senaste matchningen för projekt + stöd.
+  const [matchRow] = await db
+    .select({ result: matches.result })
+    .from(matches)
+    .where(and(eq(matches.projectId, caseRow.projectId), eq(matches.opportunityId, caseRow.opportunityId)))
+    .limit(1);
+  const matchResult = matchRow?.result as
+    | { eligibilityStatus?: string; excludedBy?: { description: string }[]; missingFacts?: { question: string }[] }
+    | undefined;
+  const eligibilityStatus: 'PASS' | 'FAIL' | 'UNKNOWN' =
+    matchResult?.eligibilityStatus === 'eligible' ? 'PASS' : matchResult?.eligibilityStatus === 'excluded' ? 'FAIL' : 'UNKNOWN';
+  const excludedBy = matchResult?.excludedBy ?? [];
+  const missingFacts = matchResult?.missingFacts ?? [];
+
+  if (eligibilityStatus === 'FAIL') {
+    for (const e of excludedBy.length > 0 ? excludedBy : [{ description: 'Ett obligatoriskt villkor är inte uppfyllt.' }]) {
+      gaps.push({
+        id: 'eligibility-fail',
+        severity: 'CRITICAL',
+        area: 'eligibility',
+        message: `Behörighetskrav ej uppfyllt: ${e.description}`,
+        action:
+          'Kravet kan inte lösas med bättre text — det kräver att omständigheterna faktiskt ändras. Kontrollera villkoret hos finansiären innan du går vidare.',
+        requiresFactualChange: true,
+      });
+    }
+  } else if (eligibilityStatus === 'UNKNOWN') {
+    for (const f of missingFacts.slice(0, 5)) {
+      gaps.push({
+        id: 'eligibility-unknown',
+        severity: 'MEDIUM',
+        area: 'eligibility',
+        message: `Obesvarad behörighetsfråga: ${f.question}`,
+        action: 'Besvara frågan i analysen — ett obesvarat krav räknas aldrig som uppfyllt.',
+        requiresFactualChange: false,
+      });
+    }
+  }
+
+  // Deadline: en passerad ansökningsperiod går inte att åtgärda med text.
+  const deadlineAt = caseRow.deadlineAt ? new Date(caseRow.deadlineAt).toISOString() : null;
+  const daysLeft = caseRow.deadlineAt
+    ? Math.floor((new Date(caseRow.deadlineAt).getTime() - Date.now()) / 86_400_000)
+    : null;
+  const deadlinePassed = daysLeft !== null && daysLeft < 0;
+  if (deadlinePassed) {
+    gaps.push({
+      id: 'deadline-passed',
+      severity: 'CRITICAL',
+      area: 'deadline',
+      message: 'Ansökningsperioden har passerat.',
+      action: 'Kontrollera om en ny ansökningsomgång öppnar, eller välj ett annat stöd.',
+      requiresFactualChange: true,
+    });
+  }
+
+  for (const a of validation.missingAttachments) {
+    gaps.push({
+      id: `evidence-${a.kind}`,
+      severity: 'CRITICAL',
+      area: 'evidence',
+      message: `Obligatorisk bilaga saknas: ${a.description}`,
+      action: 'Ladda upp dokumentet i dokumentvalvet och koppla det till ansökan.',
+      requiresFactualChange: false,
+    });
+  }
+  for (const i of validation.fieldIssues) {
+    gaps.push({
+      id: `field-${i.fieldKey}`,
+      severity: 'HIGH',
+      area: 'fields',
+      message: i.message,
+      action: 'Fyll i fältet i ansökningsformuläret.',
+      requiresFactualChange: false,
+    });
+  }
+  for (const f of validation.budgetFindings) {
+    gaps.push({
+      id: `budget-${f.ruleId}`,
+      severity: f.severity === 'error' ? 'HIGH' : 'MEDIUM',
+      area: 'budget',
+      message: f.message,
+      action:
+        f.severity === 'error'
+          ? 'Justera budgetposterna eller finansieringen så att regeln uppfylls — beloppen måste stämma matematiskt.'
+          : 'Kontrollera posten — en varning hindrar inte inlämning men kan leda till kompletteringskrav.',
+      requiresFactualChange: false,
+    });
+  }
+
+  const lines = await db.select().from(budgetLines).where(eq(budgetLines.caseId, caseRow.id));
+  const totalMinor = lines.reduce((s, l) => s + Math.round(l.quantity * l.unitCostMinor), 0);
+  const financing = (caseRow.financing as BudgetFinancing | null) ?? {
+    requestedMinor: 0,
+    ownContributionMinor: 0,
+    otherFundingMinor: 0,
+    inKindMinor: 0,
+  };
+  const financingTotalMinor =
+    financing.requestedMinor + financing.ownContributionMinor + financing.otherFundingMinor + financing.inKindMinor;
+
+  const snapshot = caseRow.opportunitySnapshot as {
+    ruleVersion?: { evidenceRequirements?: EvidenceRequirement[] } | null;
+  };
+  const required = (snapshot.ruleVersion?.evidenceRequirements ?? []).filter((e) => e.mandatory);
+  const missingKinds = new Set(validation.missingAttachments.map((a) => a.kind));
+  const evidence = required.map((e) => ({
+    kind: e.kind,
+    description: e.description,
+    status: (missingKinds.has(e.kind) ? 'MISSING' : 'ATTACHED') as 'ATTACHED' | 'MISSING',
+  }));
+
+  gaps.sort((a, b) => SEVERITY_ORDER.indexOf(a.severity) - SEVERITY_ORDER.indexOf(b.severity));
+  const blocking = gaps.some((g) => g.severity === 'CRITICAL' || g.severity === 'HIGH');
+
+  return {
+    overallStatus: blocking ? 'NOT_READY' : 'READY_FOR_SUBMISSION',
+    eligibility: { status: eligibilityStatus, excludedBy, missingFacts },
+    fields: { issues: validation.fieldIssues },
+    evidence,
+    budget: { findings: validation.budgetFindings, totalMinor, financingTotalMinor, requestedMinor: financing.requestedMinor },
+    deadline: { deadlineAt, daysLeft, passed: deadlinePassed },
+    gaps,
+  };
 }
 
 export async function createCase(opts: {

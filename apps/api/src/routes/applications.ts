@@ -16,7 +16,7 @@ import {
 } from '../db/schema.ts';
 import { audit } from '../audit.ts';
 import { WRITER_ROLES } from '../plugins/auth.ts';
-import { createCase, getCaseSchema, saveAnswers, transitionCase, validateCase } from '../services/applications.ts';
+import { createCase, getCaseSchema, reviewCase, saveAnswers, transitionCase, validateCase } from '../services/applications.ts';
 import { findAdapter, hashPayload, type SubmissionPayload } from '../services/submission.ts';
 
 const uuidParam = {
@@ -248,6 +248,17 @@ export async function applicationRoutes(app: FastifyInstance) {
     const caseRow = await loadCase(request.auth!.tenantId, (request.params as { id: string }).id);
     if (!caseRow) return reply.code(404).send({ error: 'not_found' });
     return { validation: await validateCase(caseRow) };
+  });
+
+  /**
+   * Granskningsläget (Application Intelligence §30–31): deterministisk
+   * helhetsgranskning — behörighet, fält, bevisning, budget, deadline —
+   * med READY_FOR_SUBMISSION/NOT_READY och prioriterad åtgärdslista.
+   */
+  app.get('/v1/applications/:id/review', { schema: { tags: ['applications'], params: uuidParam } }, async (request, reply) => {
+    const caseRow = await loadCase(request.auth!.tenantId, (request.params as { id: string }).id);
+    if (!caseRow) return reply.code(404).send({ error: 'not_found' });
+    return { review: await reviewCase(caseRow) };
   });
 
   // ── Budget lines ────────────────────────────────────────────────────────────
