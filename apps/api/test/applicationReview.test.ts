@@ -75,7 +75,9 @@ describe('granskning inför inlämning', () => {
     for (const f of schema?.fields ?? []) {
       if (!f.required) continue;
       answers[f.key] =
-        f.type === 'number' || f.type === 'currency' ? 12000
+        // Beloppet matchar finansieringsplanen nedan — korskontrollen K2b vaktar.
+        f.type === 'currency' ? 15000
+        : f.type === 'number' ? 12000
         : f.type === 'percentage' ? 50
         : f.type === 'boolean' || f.type === 'declaration' ? true
         : f.type === 'date' ? '2026-10-01'
@@ -113,5 +115,84 @@ describe('granskning inför inlämning', () => {
     const stranger = await registerUser(app, 'Främling');
     const res = await api(app, stranger, 'GET', `/v1/applications/${caseId}/review`);
     expect(res.statusCode).toBe(404);
+  });
+
+  // ── Revisionsfynden K1–K5 (slutrevisionen) ──────────────────────────────────
+
+  it('K4: conflicting participant figures across fields are flagged', async () => {
+    await api(app, user, 'PATCH', `/v1/applications/${caseId}`, {
+      answers: {
+        projekt_sammanfattning: 'Utbytet når 500 deltagare genom öppna klasser.',
+        aterforing: 'Metodiken sprids till 450 deltagare i Sverige.',
+      },
+    });
+    const review = await getReview();
+    const conflict = review.gaps.find((g) => g.area === 'consistency' && g.message.includes('deltagare'));
+    expect(conflict, 'konsistenskonflikten saknas').toBeDefined();
+    // Återställ.
+    await api(app, user, 'PATCH', `/v1/applications/${caseId}`, {
+      answers: {
+        projekt_sammanfattning: 'Residens hos Kingston Dance Collective med gemensamma föreställningar.',
+        aterforing: 'Metodiken dokumenteras och delas i workshops efter hemkomst.',
+      },
+    });
+  });
+
+  it('K2: financing exceeding the budget blocks submission — both directions are contradictions', async () => {
+    await api(app, user, 'PATCH', `/v1/applications/${caseId}`, {
+      financing: { requestedMinor: 2600000, ownContributionMinor: 0, otherFundingMinor: 0, inKindMinor: 0 },
+    });
+    const review = await getReview();
+    expect(review.overallStatus).toBe('NOT_READY');
+    expect(review.gaps.some((g) => g.area === 'budget' && g.severity === 'HIGH')).toBe(true);
+    // Sökt > totalbudget är dessutom en implicit stödandel över 100 %.
+    expect(review.gaps.some((g) => g.id === 'budget-requested-exceeds-total')).toBe(true);
+    await api(app, user, 'PATCH', `/v1/applications/${caseId}`, {
+      financing: { requestedMinor: 1500000, ownContributionMinor: 200000, otherFundingMinor: 0, inKindMinor: 0 },
+    });
+  });
+
+  it('K2b: the form amount and the financing plan must agree', async () => {
+    await api(app, user, 'PATCH', `/v1/applications/${caseId}`, { answers: { sokt_belopp: 20000 } });
+    const review = await getReview();
+    expect(review.gaps.some((g) => g.id === 'consistency-requested-amount' && g.severity === 'HIGH')).toBe(true);
+    await api(app, user, 'PATCH', `/v1/applications/${caseId}`, { answers: { sokt_belopp: 15000 } });
+    const after = await getReview();
+    expect(after.gaps.some((g) => g.id === 'consistency-requested-amount')).toBe(false);
+  });
+
+  it('K1+K3: unknown eligibility and missing schema both block the gate', async () => {
+    const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
+    const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string; eligibilityStatus: string }[] };
+    const unknown = matches.find((m) => m.eligibilityStatus === 'unknown')!;
+    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: unknown.opportunityId });
+    const idU = (created.json() as { application: { id: string } }).application.id;
+    const res = await api(app, user, 'GET', `/v1/applications/${idU}/review`);
+    const review = (res.json() as { review: Review }).review;
+    expect(review.eligibility.status).toBe('UNKNOWN');
+    expect(review.overallStatus).toBe('NOT_READY');
+    expect(review.gaps.some((g) => g.area === 'eligibility' && g.severity === 'HIGH')).toBe(true);
+    // Stödet saknar digitaliserat formulär — granskningen säger det öppet (§18).
+    expect(review.gaps.some((g) => g.area === 'coverage' && g.severity === 'HIGH')).toBe(true);
+  });
+
+  it('K5: the state machine refuses READY_TO_SUBMIT on unresolved eligibility, with the review attached', async () => {
+    const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
+    const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string; eligibilityStatus: string }[] };
+    const unknown = matches.filter((m) => m.eligibilityStatus === 'unknown')[1] ?? matches.find((m) => m.eligibilityStatus === 'unknown')!;
+    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: unknown.opportunityId });
+    const idU = (created.json() as { application: { id: string } }).application.id;
+    await api(app, user, 'POST', `/v1/applications/${idU}/transition`, { to: 'PREPARING' });
+    await api(app, user, 'POST', `/v1/applications/${idU}/transition`, { to: 'READY_FOR_REVIEW' });
+    const res = await api(app, user, 'POST', `/v1/applications/${idU}/transition`, { to: 'READY_TO_SUBMIT' });
+    expect(res.statusCode).toBe(422);
+    const body = res.json() as { review?: { gaps: { area: string }[] } };
+    expect(body.review?.gaps.some((g) => g.area === 'eligibility')).toBe(true);
+  });
+
+  it('the complete application still passes the hardened gate', async () => {
+    const review = await getReview();
+    expect(review.gaps, JSON.stringify(review.gaps, null, 1)).toEqual([]);
+    expect(review.overallStatus).toBe('READY_FOR_SUBMISSION');
   });
 });

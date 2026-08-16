@@ -6,6 +6,7 @@
 import { and, eq, sql } from 'drizzle-orm';
 import {
   assertTransition,
+  findNumericConflicts,
   prefillFromCanonical,
   validateAnswers,
   validateBudget,
@@ -47,7 +48,7 @@ export type GapSeverity = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
 export interface ReviewGap {
   id: string;
   severity: GapSeverity;
-  area: 'eligibility' | 'fields' | 'evidence' | 'budget' | 'deadline';
+  area: 'eligibility' | 'fields' | 'evidence' | 'budget' | 'deadline' | 'consistency' | 'coverage';
   message: string;
   /** Vad som stänger luckan. */
   action: string;
@@ -120,13 +121,15 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
       });
     }
   } else if (eligibilityStatus === 'UNKNOWN') {
+    // Revisionsfynd K1: ett obesvarat behörighetskrav får aldrig passera
+    // submission-gaten — UNKNOWN är blockerande tills frågan är besvarad.
     for (const f of missingFacts.slice(0, 5)) {
       gaps.push({
         id: 'eligibility-unknown',
-        severity: 'MEDIUM',
+        severity: 'HIGH',
         area: 'eligibility',
         message: `Obesvarad behörighetsfråga: ${f.question}`,
-        action: 'Besvara frågan i analysen — ett obesvarat krav räknas aldrig som uppfyllt.',
+        action: 'Besvara frågan i analysen — ett obesvarat krav räknas aldrig som uppfyllt vid inlämning.',
         requiresFactualChange: false,
       });
     }
@@ -170,15 +173,17 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
     });
   }
   for (const f of validation.budgetFindings) {
+    // Revisionsfynd K2: finansiering ≠ budget är en matematisk motsägelse åt
+    // BÅDA hållen — även överfinansiering blockerar inlämning.
+    const blocking = f.severity === 'error' || f.ruleId === '_financing_balance';
     gaps.push({
       id: `budget-${f.ruleId}`,
-      severity: f.severity === 'error' ? 'HIGH' : 'MEDIUM',
+      severity: blocking ? 'HIGH' : 'MEDIUM',
       area: 'budget',
       message: f.message,
-      action:
-        f.severity === 'error'
-          ? 'Justera budgetposterna eller finansieringen så att regeln uppfylls — beloppen måste stämma matematiskt.'
-          : 'Kontrollera posten — en varning hindrar inte inlämning men kan leda till kompletteringskrav.',
+      action: blocking
+        ? 'Justera budgetposterna eller finansieringen så att beloppen stämmer matematiskt.'
+        : 'Kontrollera posten — en varning hindrar inte inlämning men kan leda till kompletteringskrav.',
       requiresFactualChange: false,
     });
   }
@@ -193,6 +198,62 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
   };
   const financingTotalMinor =
     financing.requestedMinor + financing.ownContributionMinor + financing.otherFundingMinor + financing.inKindMinor;
+
+  // Revisionsfynd K2: sökt stöd som ensamt överstiger hela budgeten är en
+  // stödandel över 100 % — en motsägelse oavsett om stödet saknar explicit
+  // andelsregel.
+  if (totalMinor > 0 && financing.requestedMinor > totalMinor) {
+    gaps.push({
+      id: 'budget-requested-exceeds-total',
+      severity: 'HIGH',
+      area: 'budget',
+      message: `Sökt belopp (${(financing.requestedMinor / 100).toLocaleString('sv-SE')} kr) överstiger hela projektbudgeten (${(totalMinor / 100).toLocaleString('sv-SE')} kr).`,
+      action: 'Sänk sökt belopp eller komplettera budgetposterna — stödandelen kan inte överstiga 100 %.',
+      requiresFactualChange: false,
+    });
+  }
+
+  const schema = await getCaseSchema(caseRow);
+
+  // Revisionsfynd K3 (fail-safe §18): när stödet saknar digitaliserat
+  // ansökningsformulär kan granskningen inte verifiera fälten — det sägs
+  // öppet och blockerar, i stället för att tyst godkänna en tom ansökan.
+  if (!schema) {
+    gaps.push({
+      id: 'coverage-no-schema',
+      severity: 'HIGH',
+      area: 'coverage',
+      message: 'Ansökningsformuläret för det här stödet är inte digitaliserat i systemet — granskningen kan inte verifiera att alla obligatoriska fält är besvarade.',
+      action: 'Fyll i ansökan hos finansiären enligt deras formulär. Använd granskningens övriga punkter (behörighet, bilagor, budget) som checklista.',
+      requiresFactualChange: false,
+    });
+  }
+
+  // Konsistensmotor v1 (§11–12): sifferpåståenden korsjämförs över fälten,
+  // och sökt belopp i formuläret jämförs mot finansieringsplanen.
+  const answers = caseRow.answers as Record<string, unknown>;
+  for (const c of findNumericConflicts(answers)) {
+    gaps.push({
+      id: `consistency-${c.unit}`,
+      severity: 'MEDIUM',
+      area: 'consistency',
+      message: c.message,
+      action: `Rätta uppgifterna så att samma antal ${c.unit} anges överallt (${c.values.map((v) => `"${v.snippet}"`).join(' · ')}).`,
+      requiresFactualChange: false,
+    });
+  }
+  const requestedField = (schema?.fields ?? []).find((f) => f.canonicalKey === 'project.requestedAmount');
+  const requestedAnswer = requestedField ? answers[requestedField.key] : undefined;
+  if (typeof requestedAnswer === 'number' && financing.requestedMinor > 0 && Math.round(requestedAnswer * 100) !== financing.requestedMinor) {
+    gaps.push({
+      id: 'consistency-requested-amount',
+      severity: 'HIGH',
+      area: 'consistency',
+      message: `Sökt belopp i formuläret (${requestedAnswer.toLocaleString('sv-SE')} kr) stämmer inte med finansieringsplanen (${(financing.requestedMinor / 100).toLocaleString('sv-SE')} kr).`,
+      action: 'Ange samma sökta belopp i formuläret och finansieringsplanen.',
+      requiresFactualChange: false,
+    });
+  }
 
   const snapshot = caseRow.opportunitySnapshot as {
     ruleVersion?: { evidenceRequirements?: EvidenceRequirement[] } | null;
@@ -376,11 +437,16 @@ export async function transitionCase(opts: {
   assertTransition(from, opts.to);
 
   if (opts.to === 'READY_TO_SUBMIT') {
-    const validation = await validateCase(caseRow);
-    if (!validation.ready) {
+    // Revisionsfynd K5: övergången vaktar på HELA granskningen — behörighet,
+    // deadline, konsistens och täckning — inte bara fält/budget/bilagor. En
+    // ansökan med olöst eller underkänd behörighet kan aldrig bli klar att
+    // skicka in, oavsett hur komplett den ser ut i övrigt.
+    const review = await reviewCase(caseRow);
+    if (review.overallStatus !== 'READY_FOR_SUBMISSION') {
       throw Object.assign(new Error('application is not complete'), {
         statusCode: 422,
-        validation,
+        validation: await validateCase(caseRow),
+        review,
       });
     }
   }

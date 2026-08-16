@@ -17,7 +17,7 @@ rör ansökningsberedning får byggas i strid med principerna här.
 | §6 Requirement Matrix | Delvis | `application_schemas` mappar formulärfält; full kriteriemappning återstår |
 | §7–9 Evaluation matrix, poängsimulering, non-compensatory | Planerad | Interna kvalitetspoäng måste märkas INTERNAL_ESTIMATE; icke-kompensatoriska krav = hard/mandatory-kriterier i motorn |
 | §10–11 Evidence engine E0–E4 + claim register | Planerad (grund finns) | `documents.kind` + `evidenceRequirements` + `case_documents` är E2-grunden; nivåklassning och claimregister återstår |
-| §12 Consistency engine | Delvis | Budget↔finansiering balanskontroll i `validateBudget`; namn/nummer/datum-konsistens återstår |
+| §12 Consistency engine | **Implementerad (v1)** | `packages/core/src/consistency.ts`: sifferpåståenden korsjämförs över fält (500/450/600-fallet), sökt belopp↔finansieringsplan korskontrolleras strukturerat (blockerande), budget↔finansiering balanskontrolleras åt båda hållen. Namn/datum/partners återstår |
 | §13–16 Interventionslogik, mål/indikatorer, metod, organisation | Planerad | Kräver utökade mallfrågor; får aldrig genereras utan användarens sakuppgifter (§27) |
 | §17 Budget engine | **Implementerad** | `packages/core/src/budget.ts`: öre-exakta heltal, stödandel, medfinansiering, kategoritak/-krav/-uteslutning, finansieringsbalans |
 | §18 Double funding | Delvis | `excludesOtherPublicFunding` + stackningsregler i `packages/core/src/stacking.ts` |
@@ -27,7 +27,7 @@ rör ansökningsberedning får byggas i strid med principerna här.
 | §25–27 Language compiler, teckengränser, no-hallucination | **Implementerad (för dokumentmotorn)** | `packages/core/src/documents.ts`: obesvarade rader utelämnas — dokumentet ljuger aldrig; ingen LLM-textgenerering finns i v1 |
 | §28 Negative-fact detection | Planerad | FACT→IMPACT→MITIGATION→EVIDENCE-struktur i mallar |
 | §29 Decision traceability | **Implementerad (grund)** | Deterministisk motor: varje bedömning spårbar till kriterium + regelversion + källa; `answer_provenance` på ansökningssvar |
-| §30 Final Application Gate | **Implementerad** | `reviewCase` i `apps/api/src/services/applications.ts` + tillståndsvakt för READY_TO_SUBMIT |
+| §30 Final Application Gate | **Implementerad** | `reviewCase` i `apps/api/src/services/applications.ts`; tillståndsövergången till READY_TO_SUBMIT vaktar på HELA granskningen. Efter slutrevisionen: UNKNOWN-behörighet blockerar, finansiering ≠ budget blockerar åt båda hållen (inkl. sökt > totalbudget = stödandel över 100 %), och stöd utan digitaliserat formulär flaggas öppet i stället för att tyst godkännas (§18 fail-safe) |
 | §31 Final Review Mode | **Implementerad (v1)** | `GET /v1/applications/:id/review` + "Granskning inför inlämning" i ansökningsvyn |
 | §32 Generation mode (BEFORE/REASON/AFTER) | Planerad | Gäller när textförbättring byggs; kräver spårbar motivering per ändring |
 | §33 Output contract | Planerad | Granskningssvaret är första delmängden |

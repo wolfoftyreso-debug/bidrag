@@ -236,6 +236,7 @@ export async function applicationRoutes(app: FastifyInstance) {
             error: 'not_ready',
             message: 'Ansökan är inte komplett.',
             validation: (err as { validation?: unknown }).validation,
+            review: (err as { review?: unknown }).review,
           });
         }
         if (status) return reply.code(status).send({ error: (err as Error).message });
