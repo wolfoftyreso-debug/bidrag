@@ -4,7 +4,7 @@
  * samma värde på flera ställen är konsekvent (ingen flagga).
  */
 import { describe, expect, it } from 'vitest';
-import { extractNumericClaims, findNumericConflicts } from '../src/index.js';
+import { extractNumericClaims, findNumericConflicts, isValidSwedishOrgNumber } from '../src/index.js';
 
 describe('konsistensmotorn', () => {
   it('detects the 500/450/600 participant conflict across fields', () => {
@@ -51,5 +51,13 @@ describe('konsistensmotorn', () => {
 
   it('ignores non-string answers and generic units', () => {
     expect(findNumericConflicts({ n: 42, b: true, t: 'Vi ses 3 gånger per år, sedan 4 gånger.' })).toEqual([]);
+  });
+
+  it('validates Swedish organisation numbers with the Luhn check digit', () => {
+    expect(isValidSwedishOrgNumber('556016-0680')).toBe(true); // giltig kontrollsiffra
+    expect(isValidSwedishOrgNumber('5560160680')).toBe(true); // format utan bindestreck
+    expect(isValidSwedishOrgNumber('556016-0681')).toBe(false); // fel kontrollsiffra
+    expect(isValidSwedishOrgNumber('55601-0680')).toBe(false); // för kort
+    expect(isValidSwedishOrgNumber('inte ett nummer')).toBe(false);
   });
 });

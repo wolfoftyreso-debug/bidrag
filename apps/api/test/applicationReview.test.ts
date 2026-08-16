@@ -326,6 +326,52 @@ describe('granskning inför inlämning', () => {
     expect(gate.blocking_gaps).toBe(0);
   });
 
+  it('§12: an invalid organisation number is flagged as a formal-rejection risk', async () => {
+    const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
+    const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string }[] };
+    const mucf = matches.find((m) => m.slug === 'mucf-projektbidrag-ungdomsorganisationer')!;
+    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: mucf.opportunityId });
+    const idM = (created.json() as { application: { id: string } }).application.id;
+    await api(app, user, 'PATCH', `/v1/applications/${idM}`, { answers: { org_nummer: '556016-0681' } });
+    let res = await api(app, user, 'GET', `/v1/applications/${idM}/review`);
+    let review = (res.json() as { review: Review }).review;
+    expect(review.gaps.some((g) => g.id === 'consistency-orgnumber' && g.severity === 'HIGH')).toBe(true);
+    // Rätt kontrollsiffra ⇒ flaggan försvinner.
+    await api(app, user, 'PATCH', `/v1/applications/${idM}`, { answers: { org_nummer: '556016-0680' } });
+    res = await api(app, user, 'GET', `/v1/applications/${idM}/review`);
+    review = (res.json() as { review: Review }).review;
+    expect(review.gaps.some((g) => g.id === 'consistency-orgnumber')).toBe(false);
+  });
+
+  it('§12: a form name that differs from the profile name is reported', async () => {
+    await api(app, user, 'PATCH', `/v1/applications/${caseId}`, { answers: { sokande_namn: 'Helt Annat Namn' } });
+    let review = await getReview();
+    expect(review.gaps.some((g) => g.id === 'consistency-applicant-name')).toBe(true);
+    await api(app, user, 'PATCH', `/v1/applications/${caseId}`, { answers: { sokande_namn: 'Dansare' } });
+    review = await getReview();
+    expect(review.gaps.some((g) => g.id === 'consistency-applicant-name')).toBe(false);
+  });
+
+  it('§3: a pending source change for the opportunity surfaces as a CONFLICT flag', async () => {
+    const { db } = await import('../src/db/client.ts');
+    const { applicationCases, reviewItems } = await import('../src/db/schema.ts');
+    const { eq } = await import('drizzle-orm');
+    const [row] = await db.select().from(applicationCases).where(eq(applicationCases.id, caseId)).limit(1);
+    const sourceId = (row!.opportunitySnapshot as { opportunity: { sourceId: string | null } }).opportunity.sourceId;
+    expect(sourceId).not.toBeNull();
+    const [item] = await db
+      .insert(reviewItems)
+      .values({ kind: 'source_change', refType: 'source_snapshot', refId: null, payload: { sourceId } })
+      .returning();
+
+    const review = await getReview();
+    expect(review.gaps.some((g) => g.id === 'source-conflict' && g.message.includes('CONFLICT'))).toBe(true);
+
+    await db.delete(reviewItems).where(eq(reviewItems.id, item!.id));
+    const after = await getReview();
+    expect(after.gaps.some((g) => g.id === 'source-conflict')).toBe(false);
+  });
+
   it('K3 residual: the newly curated schemas exist for Nordisk kulturfond and MUCF', async () => {
     const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
     const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string }[] };

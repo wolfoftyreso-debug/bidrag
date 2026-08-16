@@ -8,6 +8,7 @@ import {
   assertTransition,
   evaluateAll,
   findNumericConflicts,
+  isValidSwedishOrgNumber,
   prefillFromCanonical,
   validateAnswers,
   validateBudget,
@@ -34,6 +35,7 @@ import {
   fundingOpportunities,
   matches,
   projects,
+  reviewItems,
   ruleVersions,
 } from '../db/schema.ts';
 import { audit } from '../audit.ts';
@@ -321,6 +323,7 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
       projectFacts: projects.facts,
       profileFacts: applicantProfiles.facts,
       applicantType: applicantProfiles.applicantType,
+      profileName: applicantProfiles.displayName,
       applicantCountry: applicantProfiles.country,
       applicantRegion: applicantProfiles.region,
       applicantMunicipality: applicantProfiles.municipality,
@@ -429,6 +432,57 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
       area: 'coverage',
       message: stateAid.note,
       action: 'Fråga finansiären eller läs utlysningens statsstödsavsnitt — systemet gissar aldrig i den här frågan.',
+      requiresFactualChange: false,
+    });
+  }
+
+  // ── Källkonflikt (§3): den officiella källan har ändrats sedan regelverket
+  // kurerades och ändringen väntar på kuratorsgranskning ⇒ FLAGGA CONFLICT.
+  // Systemet gissar aldrig när källorna pekar åt olika håll.
+  const oppSourceId = (caseRow.opportunitySnapshot as { opportunity?: { sourceId?: string | null } | null }).opportunity?.sourceId ?? null;
+  if (oppSourceId) {
+    const pendingChanges = await db
+      .select({ payload: reviewItems.payload })
+      .from(reviewItems)
+      .where(and(eq(reviewItems.kind, 'source_change'), eq(reviewItems.status, 'pending')));
+    const conflict = pendingChanges.some((i) => (i.payload as { sourceId?: string }).sourceId === oppSourceId);
+    if (conflict) {
+      gaps.push({
+        id: 'source-conflict',
+        severity: 'MEDIUM',
+        area: 'coverage',
+        message:
+          'CONFLICT: den officiella källan för det här stödet har ändrats sedan regelverket kurerades, och ändringen väntar på granskning — villkoren kan vara inaktuella.',
+        action: 'Kontrollera villkoren direkt mot finansiärens aktuella utlysning innan du lämnar in.',
+        requiresFactualChange: false,
+      });
+    }
+  }
+
+  // ── §12: organisationsnummer och namn — kända felkällor för formella avslag.
+  const schemaFields = schema?.fields ?? [];
+  const orgNrField = schemaFields.find((f) => f.canonicalKey === 'organisation.orgNumber');
+  const orgNrAnswer = orgNrField ? answers[orgNrField.key] : undefined;
+  if (typeof orgNrAnswer === 'string' && orgNrAnswer.trim() !== '' && !isValidSwedishOrgNumber(orgNrAnswer)) {
+    gaps.push({
+      id: 'consistency-orgnumber',
+      severity: 'HIGH',
+      area: 'consistency',
+      message: `Organisationsnumret "${orgNrAnswer}" är inte giltigt (fel format eller kontrollsiffra).`,
+      action: 'Kontrollera organisationsnumret mot registreringsbeviset — ett felaktigt nummer är en vanlig orsak till formellt avslag.',
+      requiresFactualChange: false,
+    });
+  }
+  const nameField = schemaFields.find((f) => f.canonicalKey === 'applicant.displayName');
+  const nameAnswer = nameField ? answers[nameField.key] : undefined;
+  const profileName = factsRow?.profileName?.trim();
+  if (typeof nameAnswer === 'string' && nameAnswer.trim() !== '' && profileName && nameAnswer.trim().toLowerCase() !== profileName.toLowerCase()) {
+    gaps.push({
+      id: 'consistency-applicant-name',
+      severity: 'MEDIUM',
+      area: 'consistency',
+      message: `Namnet i formuläret ("${nameAnswer.trim()}") skiljer sig från profilens ("${profileName}").`,
+      action: 'Kontrollera vilket namn som är rätt — samma sökande ska anges överallt.',
       requiresFactualChange: false,
     });
   }

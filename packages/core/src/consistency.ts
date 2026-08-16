@@ -25,6 +25,26 @@ export interface ConsistencyConflict {
   message: string;
 }
 
+/**
+ * Svenskt organisationsnummer: tio siffror där den sista är Luhn-kontrollsiffra.
+ * Ett format- eller kontrollsiffefel är en känd felkälla för formella avslag
+ * (§12 organisationsnummer) och flaggas därför i granskningen.
+ */
+export function isValidSwedishOrgNumber(input: string): boolean {
+  const digits = input.replace(/\D/g, '');
+  if (digits.length !== 10) return false;
+  let sum = 0;
+  for (let i = 0; i < 10; i++) {
+    let d = Number(digits[i]);
+    if (i % 2 === 0) {
+      d *= 2;
+      if (d > 9) d -= 9;
+    }
+    sum += d;
+  }
+  return sum % 10 === 0;
+}
+
 /** Monetära enheter undantas — kostnadsposter skiljer sig legitimt åt. */
 const MONETARY = new Set(['kr', 'kronor', 'sek', 'öre', 'tkr', 'mkr', 'kr.']);
 /** Enhetsord som är för generiska för att jämföras meningsfullt. */
