@@ -1,0 +1,1 @@
+ALTER TABLE "receipts" ADD COLUMN "seller_address" text;

@@ -632,6 +632,7 @@ export const receipts = pgTable(
     sellerName: text('seller_name').notNull(),
     sellerOrgNumber: text('seller_org_number'),
     sellerVatNumber: text('seller_vat_number'),
+    sellerAddress: text('seller_address'),
     email: text('email'),
     emailStatus: text('email_status', { enum: ['pending', 'sent', 'skipped', 'failed'] }).notNull().default('pending'),
     emailSentAt: timestamp('email_sent_at', { withTimezone: true }),

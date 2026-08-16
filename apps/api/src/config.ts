@@ -60,10 +60,16 @@ export const config = {
    * sats skulle ge felaktiga kvitton och fel i momsredovisningen.
    */
   vatRateBps: 2500,
-  /** Säljaruppgifter som fryses på varje kvitto/verifikation. */
-  sellerName: env.SELLER_NAME ?? 'Bidrag.se',
-  sellerOrgNumber: env.SELLER_ORG_NUMBER ?? null,
-  sellerVatNumber: env.SELLER_VAT_NUMBER ?? null,
+  /**
+   * Säljaruppgifter som fryses på varje kvitto/verifikation. Bidrag.se drivs
+   * av Landvex AB (org.nr 559141-7042, Tyresö); momsregistreringsnumret är
+   * standardhärlett (SE + orgnr + 01). Env-variablerna finns kvar som
+   * override om bolagsuppgifterna ändras.
+   */
+  sellerName: env.SELLER_NAME ?? 'Landvex AB',
+  sellerOrgNumber: env.SELLER_ORG_NUMBER ?? '559141-7042',
+  sellerVatNumber: env.SELLER_VAT_NUMBER ?? 'SE559141704201',
+  sellerAddress: env.SELLER_ADDRESS ?? 'Antennvägen 2, 135 48 Tyresö',
   /** Resend för transaktionsmail (kvitton). Faller tillbaka på SMTP_URL, annars ärligt hoppat. */
   resendApiKey: env.RESEND_API_KEY ?? null,
   /**

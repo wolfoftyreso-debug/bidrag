@@ -50,8 +50,11 @@ git push → GitHub → Vercel build → Preview/Production
    `DATABASE_URL` (poolad!), `DIRECT_DATABASE_URL`, `AUTH_SECRET`,
    `FIELD_ENCRYPTION_KEY`, `STORAGE_DRIVER=supabase`, `SUPABASE_URL`,
    `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET`, `PUBLIC_BASE_URL`,
-   `CORS_ORIGIN`, `PG_POOL_MAX=2`,
-   `SELLER_NAME`/`SELLER_ORG_NUMBER`/`SELLER_VAT_NUMBER`.
+   `CORS_ORIGIN`, `PG_POOL_MAX=2`. Säljaruppgifterna på kvittona
+   (Landvex AB, org.nr 559141-7042, Antennvägen 2, 135 48 Tyresö) är
+   standardvärden i koden; `SELLER_NAME`/`SELLER_ORG_NUMBER`/
+   `SELLER_VAT_NUMBER`/`SELLER_ADDRESS` behöver bara sättas om
+   bolagsuppgifterna ändras.
    E-post är INTE ett produktionskrav: kvitton är förstaklass i kontot
    (Mina köp), notiser finns i Inkorgen och inbjudningar har delbara länkar.
    Utan konfigurerad kanal är lösenordsåterställningen avstängd fail-closed

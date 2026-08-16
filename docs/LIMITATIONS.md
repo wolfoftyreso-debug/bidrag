@@ -168,8 +168,10 @@ with one real 39 kr payment. VAT is fixed at the Swedish standard rate of
 electronically supplied services to consumers in Sweden, which carry the
 standard rate; the rate is deliberately not configurable so a bad
 environment variable can never produce incorrect receipts. Seller identity
-comes from `SELLER_NAME`/`SELLER_ORG_NUMBER`/`SELLER_VAT_NUMBER` and must
-be set to the real company details before production. The mock provider
+on receipts defaults to the real operating company — Landvex AB, org.nr
+559141-7042, Antennvägen 2, 135 48 Tyresö, VAT no SE559141704201 — and can
+be overridden via `SELLER_NAME`/`SELLER_ORG_NUMBER`/`SELLER_VAT_NUMBER`/
+`SELLER_ADDRESS` if the company details ever change. The mock provider
 used by tests and the demo is disabled in production by construction
 (`PAYMENTS_MOCK_ENABLED` is ignored when `NODE_ENV=production`), and it is
 never selected when Swish is configured.

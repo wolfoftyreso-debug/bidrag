@@ -69,6 +69,7 @@ export async function issueReceipt(tx: Tx, payment: PaymentRow): Promise<Receipt
       sellerName: config.sellerName,
       sellerOrgNumber: config.sellerOrgNumber,
       sellerVatNumber: config.sellerVatNumber,
+      sellerAddress: config.sellerAddress,
       email: payment.receiptEmail,
     })
     .returning();
@@ -91,6 +92,7 @@ export function receiptDocument(r: ReceiptRow): string {
     `Säljare:           ${r.sellerName}`,
     ...(r.sellerOrgNumber ? [`Organisationsnr:   ${r.sellerOrgNumber}`] : []),
     ...(r.sellerVatNumber ? [`Momsreg.nr:        ${r.sellerVatNumber}`] : []),
+    ...(r.sellerAddress ? [`Adress:            ${r.sellerAddress}`] : []),
     '',
     `Produkt:           ${r.productDescription}`,
     `Betalningsmetod:   ${METHOD_LABEL[r.paymentMethod] ?? r.paymentMethod}`,
@@ -101,7 +103,7 @@ export function receiptDocument(r: ReceiptRow): string {
     `Moms (${vatPercent} %):   ${kr(r.vatAmountMinor)}`,
     `Totalt (${r.currency}):      ${kr(r.amountGrossMinor)}`,
     '',
-    'Detta kvitto gäller upplåsning av en personlig bidragsanalys på Bidrag.se.',
+    'Detta kvitto gäller en digitalt levererad tjänst på Bidrag.se.',
     'Analysen är en vägledning och inte ett myndighetsbeslut.',
   ];
   return lines.join('\n');

@@ -57,6 +57,13 @@
       "when": 1786880994676,
       "tag": "0007_worried_wallflower",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1786891947515,
+      "tag": "0008_workable_silvermane",
+      "breakpoints": true
     }
   ]
 }

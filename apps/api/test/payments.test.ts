@@ -143,7 +143,9 @@ describe('kvitto/verifikationsunderlag', () => {
     expect(receipt.refundStatus).toBe('none');
 
     // Ett riktigt verifikationsdokument — inte ett "tack för betalningen"-mail.
-    for (const expected of ['KVITTO', 'Kvittonummer', 'Köp-ID', 'Moms (25,00 %)', '31,20 kr', '7,80 kr', '39,00 kr', 'Betalningsmetod', 'Återbetalning']) {
+    // Säljaruppgifterna är Landvex AB:s riktiga (bokföringslagens krav på
+    // verifikationen: säljarens namn, organisationsnummer och adress).
+    for (const expected of ['KVITTO', 'Kvittonummer', 'Köp-ID', 'Moms (25,00 %)', '31,20 kr', '7,80 kr', '39,00 kr', 'Betalningsmetod', 'Återbetalning', 'Landvex AB', '559141-7042', 'SE559141704201', 'Antennvägen 2, 135 48 Tyresö']) {
       expect(document, `dokumentet saknar "${expected}"`).toContain(expected);
     }
   });
