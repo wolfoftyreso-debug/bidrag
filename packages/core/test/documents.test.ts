@@ -48,7 +48,8 @@ describe('document template engine', () => {
     expect(doc.text).toContain('BESKRIVNING AV BEHOV');
     expect(doc.text).toContain('Vera, 9 år');
     expect(doc.text).not.toContain('Ungefärlig kostnad'); // obesvarat ⇒ utelämnat, aldrig gissat
-    expect(doc.text).toContain('Slutlig bedömning görs alltid av mottagande myndighet');
+    // Sökandens handling till myndigheten: ingen verktygsattribution, inga friskrivningar.
+    expect(doc.text).not.toContain('Bidrag.se');
     expect(renderDocument(t, answers, ctx).text).toBe(doc.text); // deterministisk
   });
 

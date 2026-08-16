@@ -99,7 +99,7 @@ describe('dokumentstudion', () => {
     expect(body.document.content).toContain('BESKRIVNING AV BEHOV');
     expect(body.document.content).toContain('Majblommans Riksförbund');
     expect(body.document.content).toContain('Vera, 9 år');
-    expect(body.document.content).toContain('Slutlig bedömning görs alltid av mottagande myndighet');
+    expect(body.document.content).not.toContain('Bidrag.se'); // sökandens handling — ingen verktygsattribution
   });
 
   it('missing required answers → 422 with the exact missing fields, no credit consumed', async () => {

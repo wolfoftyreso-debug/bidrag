@@ -232,6 +232,19 @@ function paginate(lines: Line[]): Line[][] {
     used += line.height + (page.length === 1 ? 0 : line.spaceBefore);
   }
   if (page.length > 0 || pages.length === 0) pages.push(page);
+
+  // Änkekontroll: 1–2 rader får aldrig bilda en egen sista sida. De ryms i
+  // praktiken alltid i nederkantsmarginalen på föregående sida (sidfoten
+  // ligger på fast höjd och krockar inte), och en nästan tom sida är ett
+  // sämre dokument än några punkter kortare marginal.
+  if (pages.length > 1) {
+    const last = pages[pages.length - 1]!;
+    const lastHeight = last.reduce((s, l, i) => s + l.height + (i === 0 ? 0 : l.spaceBefore), 0);
+    if (last.length <= 2 && lastHeight <= 2 * LINE_H + 10) {
+      pages[pages.length - 2] = [...pages[pages.length - 2]!, ...last];
+      pages.pop();
+    }
+  }
   return pages;
 }
 

@@ -134,6 +134,9 @@ export function renderDocument(
     paragraphs.push({ heading: s.title || null, text: lines.join('\n') });
   }
 
+  // Dokumentet är SÖKANDENS handling till myndigheten — ingen verktygsreklam
+  // och inga friskrivningar här. Produktens ansvarstexter hör hemma i
+  // gränssnittet där dokumentet skapas, aldrig i det som lämnas in.
   const text = [
     t.title.toUpperCase(),
     `Avser: ${ctx.opportunityTitle}`,
@@ -141,11 +144,7 @@ export function renderDocument(
     `Datum: ${ctx.date}`,
     '',
     ...paragraphs.flatMap((p) => [...(p.heading ? [p.heading.toUpperCase()] : []), p.text, '']),
-    '—',
-    'Dokumentet är förberett med stöd av Bidrag.se utifrån uppgifter som den',
-    'sökande själv lämnat. Den sökande ansvarar för att uppgifterna är riktiga.',
-    'Slutlig bedömning görs alltid av mottagande myndighet eller organisation.',
-  ].join('\n');
+  ].join('\n').trimEnd();
 
   return { title: t.title, recipient: ctx.recipient, paragraphs, text };
 }
