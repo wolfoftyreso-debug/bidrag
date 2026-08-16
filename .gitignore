@@ -16,3 +16,4 @@ test-uploads/
 .vercel/
 .env.local
 *.tsbuildinfo
+doc-*.pdf
