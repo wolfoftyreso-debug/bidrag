@@ -84,7 +84,10 @@ function buildTeaser(rows: MatchRow[]) {
 }
 
 /** Matchningar för projektet, filtrerade till spårets relevans (F1). */
-async function trackRelevantMatches(tenantId: string, projectId: string): Promise<MatchRow[]> {
+async function trackRelevantMatches(
+  tenantId: string,
+  projectId: string,
+): Promise<{ rows: MatchRow[]; facts: Record<string, unknown> }> {
   const [row] = await db
     .select({ projectFacts: projects.facts, profileFacts: applicantProfiles.facts })
     .from(projects)
@@ -93,7 +96,7 @@ async function trackRelevantMatches(tenantId: string, projectId: string): Promis
     .limit(1);
   const merged = { ...((row?.profileFacts as Record<string, unknown>) ?? {}), ...((row?.projectFacts as Record<string, unknown>) ?? {}) };
   const rows = await listMatchesForProject(tenantId, projectId);
-  return relevantForTrack(rows, detectTrack(merged));
+  return { rows: relevantForTrack(rows, detectTrack(merged)), facts: merged };
 }
 
 const projectBody = {
@@ -243,11 +246,11 @@ export async function projectRoutes(app: FastifyInstance) {
           entityId: id,
           after: { count },
         });
-        const rows = await trackRelevantMatches(request.auth!.tenantId, id);
+        const { rows, facts } = await trackRelevantMatches(request.auth!.tenantId, id);
         if (!(await isProjectUnlocked(request.auth!.tenantId, id))) {
           return { computed: count, ...buildTeaser(rows) };
         }
-        return { computed: count, matches: rows };
+        return { computed: count, matches: rows, facts };
       } catch (err) {
         const status = (err as { statusCode?: number }).statusCode ?? 500;
         if (status === 404) return reply.code(404).send({ error: 'not_found' });
@@ -267,11 +270,13 @@ export async function projectRoutes(app: FastifyInstance) {
         .where(and(eq(projects.id, id), eq(projects.tenantId, request.auth!.tenantId)))
         .limit(1);
       if (!project) return reply.code(404).send({ error: 'not_found' });
-      const rows = await trackRelevantMatches(request.auth!.tenantId, id);
+      const { rows, facts } = await trackRelevantMatches(request.auth!.tenantId, id);
       if (!(await isProjectUnlocked(request.auth!.tenantId, id))) {
         return buildTeaser(rows);
       }
-      return { matches: rows };
+      // facts följer med i den upplåsta vyn så att "Dina svar" kan visa och
+      // ändra besvarade frågor — en fråga försvinner aldrig för att den fått svar.
+      return { matches: rows, facts };
     },
   );
 

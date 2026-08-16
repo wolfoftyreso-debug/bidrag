@@ -39,6 +39,8 @@ interface MatchRow {
   submissionLevel: string;
   result: {
     missingFacts: MissingFact[];
+    /** Besvarade intakefrågor — spegeln av missingFacts, för "Dina svar". */
+    answeredFacts?: MissingFact[];
     missingEvidence: { kind: string; description: string }[];
     excludedBy: { description: string }[];
     explanation: { kind: string; outcome: string }[];
@@ -69,6 +71,7 @@ export default function MatchesPage() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [matches, setMatches] = useState<MatchRow[]>([]);
+  const [facts, setFacts] = useState<Record<string, unknown>>({});
   const [teaser, setTeaser] = useState<Teaser | null>(null);
   const [answers, setAnswers] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState(false);
@@ -91,6 +94,7 @@ export default function MatchesPage() {
         } else {
           setTeaser(null);
           setMatches((body as { matches: MatchRow[] }).matches);
+          setFacts((body as { facts?: Record<string, unknown> }).facts ?? {});
         }
       })
       .finally(() => setLoaded(true));
@@ -131,6 +135,35 @@ export default function MatchesPage() {
       await patch(`/v1/projects/${projectId}`, { facts: answers });
       await post(`/v1/projects/${projectId}/matches`, {});
       setAnswers({});
+      load();
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  // Dina svar: en besvarad fråga försvinner aldrig — den flyttar hit och kan
+  // ändras när som helst; matchningen räknas om direkt. Ändringen skrivs som
+  // projektfakta och vinner därmed över intagssvaret i sammanvägningen.
+  const answeredQuestions = new Map<string, { question: string; value: boolean; forTitles: string[] }>();
+  for (const m of [...matches].sort((a, b) => Number(PERSONAL_Q.has(b.instrumentType)) - Number(PERSONAL_Q.has(a.instrumentType)))) {
+    const shortTitle = m.title.split(' — ').pop() ?? m.title;
+    for (const f of m.result.answeredFacts ?? []) {
+      if (typeof facts[f.factPath] !== 'boolean') continue;
+      const entry = answeredQuestions.get(f.factPath);
+      if (entry) {
+        if (!entry.forTitles.includes(shortTitle)) entry.forTitles.push(shortTitle);
+      } else {
+        answeredQuestions.set(f.factPath, { question: f.question, value: facts[f.factPath] as boolean, forTitles: [shortTitle] });
+      }
+    }
+  }
+
+  const changeAnswer = async (factPath: string, value: boolean) => {
+    if (!projectId || busy) return;
+    setBusy(true);
+    try {
+      await patch(`/v1/projects/${projectId}`, { facts: { [factPath]: value } });
+      await post(`/v1/projects/${projectId}/matches`, {});
       load();
     } finally {
       setBusy(false);
@@ -201,6 +234,29 @@ export default function MatchesPage() {
             {busy ? 'Uppdaterar…' : 'Uppdatera matchningar'}
           </button>
         </div>
+      )}
+
+      {answeredQuestions.size > 0 && (
+        <details className="card" style={{ padding: '0.9rem 1.35rem' }}>
+          <summary style={{ cursor: 'pointer', fontWeight: 600 }}>
+            Dina svar ({answeredQuestions.size}) — granska eller ändra
+          </summary>
+          <p className="guidance" style={{ marginTop: '0.5rem' }}>
+            Ändrar du ett svar räknas hela analysen om direkt.
+          </p>
+          {[...answeredQuestions.entries()].map(([factPath, q]) => (
+            <div key={factPath} style={{ margin: '0.75rem 0' }}>
+              <div className="meta-line" style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                Gäller {q.forTitles.slice(0, 2).join(' och ')}{q.forTitles.length > 2 ? ` + ${q.forTitles.length - 2} till` : ''}
+              </div>
+              <strong>{q.question}</strong>
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.3rem' }}>
+                <button className={q.value === true ? '' : 'secondary'} disabled={busy} onClick={() => q.value !== true && void changeAnswer(factPath, true)}>Ja</button>
+                <button className={q.value === false ? '' : 'secondary'} disabled={busy} onClick={() => q.value !== false && void changeAnswer(factPath, false)}>Nej</button>
+              </div>
+            </div>
+          ))}
+        </details>
       )}
 
       {personal.length > 0 && (

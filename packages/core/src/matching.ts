@@ -61,6 +61,13 @@ export interface MatchResultComputed {
   mandatoryPassRate: number;   // 0–1 over *known* mandatory criteria
   explanation: MatchExplanationItem[];
   missingFacts: MissingFact[];
+  /**
+   * Besvarade intakefrågor (kriterier med fråga vars utfall är känt) — spegeln
+   * av missingFacts. Gör att UI:t kan visa "Dina svar" och låta användaren
+   * ändra sig efter köpet: en fråga försvinner aldrig bara för att den fått
+   * ett svar.
+   */
+  answeredFacts: MissingFact[];
   missingEvidence: EvidenceRequirement[];
   excludedBy: MatchExplanationItem[];
   daysToDeadline: number | null;
@@ -103,6 +110,14 @@ export function computeMatch(input: MatchInput): MatchResultComputed {
       criterionId: r.criterion.id,
     }));
 
+  const answeredFacts: MissingFact[] = results
+    .filter((r) => r.outcome !== 'unknown' && r.criterion.intakeQuestion)
+    .map((r) => ({
+      factPath: r.criterion.factPath,
+      question: r.criterion.intakeQuestion!,
+      criterionId: r.criterion.id,
+    }));
+
   const missingEvidence = input.evidenceRequirements.filter(
     (e) => e.mandatory && !input.availableEvidenceKinds.includes(e.kind),
   );
@@ -130,6 +145,7 @@ export function computeMatch(input: MatchInput): MatchResultComputed {
       mandatoryPassRate: 0,
       explanation,
       missingFacts,
+      answeredFacts,
       missingEvidence,
       excludedBy,
       daysToDeadline,
@@ -165,6 +181,7 @@ export function computeMatch(input: MatchInput): MatchResultComputed {
       mandatoryPassRate,
       explanation,
       missingFacts,
+      answeredFacts,
       missingEvidence,
       excludedBy: mandatoryFailed.map(toExplanation),
       daysToDeadline,
@@ -224,6 +241,7 @@ export function computeMatch(input: MatchInput): MatchResultComputed {
     mandatoryPassRate,
     explanation,
     missingFacts,
+    answeredFacts,
     missingEvidence,
     excludedBy: [],
     daysToDeadline,
