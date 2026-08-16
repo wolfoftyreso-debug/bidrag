@@ -89,7 +89,9 @@ describe('granskning inför inlämning', () => {
         : f.type === 'date_range' ? ['2026-10-01', '2026-10-14']
         : f.type === 'select' ? f.options?.[0]?.value ?? 'a'
         : f.type === 'multiselect' ? [f.options?.[0]?.value ?? 'a']
-        : 'Ett konkret och verifierbart svar för granskningstestet.';
+        // Unikt per fält — korrekturvarvet flaggar (korrekt!) identiska
+        // meningar i flera fält, så fixturen får inte vara lat.
+        : `Ett konkret och verifierbart svar för fältet ${f.key} i granskningstestet.`;
     }
     await api(app, user, 'PATCH', `/v1/applications/${caseId}`, { answers });
 

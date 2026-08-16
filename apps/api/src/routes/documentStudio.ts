@@ -14,7 +14,7 @@
  */
 import type { FastifyInstance } from 'fastify';
 import { and, count, eq, sql } from 'drizzle-orm';
-import { DOCUMENT_TEMPLATES, answerLanguageFindings, getTemplate, prefillAnswers, renderDocument, validateDocumentAnswers, type DocAnswers } from '@bidrag/core';
+import { DOCUMENT_TEMPLATES, answerLanguageFindings, getTemplate, prefillAnswers, renderDocument, repetitionFindings, validateDocumentAnswers, type DocAnswers } from '@bidrag/core';
 import { db } from '../db/client.ts';
 import { applicantProfiles, fundingAuthorities, fundingOpportunities, generatedDocuments, payments, projects, users } from '../db/schema.ts';
 import { audit } from '../audit.ts';
@@ -282,12 +282,16 @@ export async function documentStudioRoutes(app: FastifyInstance) {
         after: { templateKey: template.key, opportunitySlug: body.opportunitySlug ?? null },
       });
       const after = await creditState(tenantId, id);
-      // Ödmjukhetsprotokollet (konstitutionen §12–13): sökandens formuleringar
-      // flaggas rådgivande — dokumentet skapas ändå, texten skrivs aldrig om.
+      // Ödmjukhetsprotokollet (§12–13) + korrekturvarvet: sökandens
+      // formuleringar och upprepningar i det färdiga dokumentet flaggas
+      // rådgivande — dokumentet skapas ändå, texten skrivs aldrig om.
       return reply.code(201).send({
         document: row,
         creditsRemaining: after.remaining,
-        languageFindings: answerLanguageFindings(body.answers),
+        languageFindings: [
+          ...answerLanguageFindings(body.answers),
+          ...repetitionFindings(rendered.text).map((f) => ({ ...f, fieldKey: '_dokumentet' })),
+        ],
       });
     },
   );

@@ -7,6 +7,7 @@ import { and, eq, sql } from 'drizzle-orm';
 import {
   EXTERNAL_EVIDENCE_KINDS,
   answerLanguageFindings,
+  repetitionFindings,
   assertTransition,
   evaluateAll,
   findNumericConflicts,
@@ -358,6 +359,19 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
       severity: 'MEDIUM',
       area: 'language',
       message: `Formuleringen "${f.term}" i fältet ${f.fieldKey} kommer att granskas kritiskt: ${f.excerpt}`,
+      action: f.suggestion,
+      requiresFactualChange: false,
+    });
+  }
+  // Korrekturvarvet: samma mening i flera fält (kvarglömt klipp-och-klistra)
+  // eller dubblerade ord. Rådgivande — texten ägs av sökanden.
+  const joinedText = Object.values(answers).filter((v): v is string => typeof v === 'string').join('\n');
+  for (const [i, f] of repetitionFindings(joinedText).slice(0, 3).entries()) {
+    gaps.push({
+      id: `language-repetition-${i}`,
+      severity: 'MEDIUM',
+      area: 'language',
+      message: `Upprepning i ansökan: ${f.excerpt}`,
       action: f.suggestion,
       requiresFactualChange: false,
     });

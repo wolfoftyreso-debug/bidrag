@@ -29,7 +29,7 @@ export const DOCUMENT_TEMPLATES: DocumentTemplate[] = [
       { key: 'hasChildren', label: 'Har du barn som bor hos dig?', type: 'boolean', required: true },
       { key: 'childrenCount', label: 'Hur många barn?', type: 'number', showIf: { key: 'hasChildren', equals: true } },
       { key: 'childrenAges', label: 'Barnens åldrar (t.ex. 6 och 9 år)', type: 'text', showIf: { key: 'hasChildren', equals: true } },
-      { key: 'whatFor', label: 'Vad söker du stöd för?', type: 'textarea', required: true, guidance: 'Beskriv konkret: t.ex. hyra för mars, vinterkläder till barnen, en fritidsaktivitet.' },
+      { key: 'whatFor', label: 'Vad söker du stöd för?', type: 'textarea', required: true, guidance: 'Beskriv konkret: t.ex. hyra för mars, vinterkläder till barnen, en fritidsaktivitet. Skriv med egna ord — det som är särskilt i just din situation är det som gör ansökan trovärdig.' },
       { key: 'whyNeeded', label: 'Varför behövs stödet just nu?', type: 'textarea', required: true, guidance: 'Kort och sakligt — vad har hänt och varför räcker inte ekonomin?' },
     ],
     sections: [
@@ -61,7 +61,7 @@ export const DOCUMENT_TEMPLATES: DocumentTemplate[] = [
       { key: 'situationNote', label: 'Något mer om er ekonomiska situation?', type: 'textarea', guidance: 'T.ex. inkomst som varierar, nyligen ändrade förhållanden.' },
     ],
     sections: [
-      { title: 'Avser', lines: ['{{fullName}}'] },
+      { title: 'Uppgifterna gäller', lines: ['{{fullName}}'] },
       {
         title: 'Inkomster per månad',
         lines: ['Arbete: {{incomeWork}} kr', 'Ersättningar och bidrag: {{incomeBenefits}} kr', 'Övrigt: {{incomeOther}} kr'],
@@ -88,12 +88,12 @@ export const DOCUMENT_TEMPLATES: DocumentTemplate[] = [
       ] },
       { key: 'childName', label: 'Barnets förnamn och ålder', type: 'text', showIf: { key: 'whoFor', equals: 'barn' } },
       { key: 'needWhat', label: 'Vad är behovet?', type: 'textarea', required: true, guidance: 'T.ex. "glasögon", "avgift och utrustning för fotboll", "kostnad för klassresa i maj".' },
-      { key: 'needWhy', label: 'Vad händer om behovet inte kan tillgodoses?', type: 'textarea', required: true, guidance: 'Beskriv sakligt vad det betyder i vardagen — t.ex. att barnet inte kan delta med sin klass.' },
+      { key: 'needWhy', label: 'Vad händer om behovet inte kan tillgodoses?', type: 'textarea', required: true, guidance: 'Beskriv sakligt vad det betyder i er vardag — t.ex. att barnet inte kan delta med sin klass. Din egen berättelse säger mer än standardformuleringar.' },
       { key: 'needCost', label: 'Ungefärlig kostnad (kr)', type: 'number' },
       { key: 'needWhen', label: 'När behövs det?', type: 'text', guidance: 'T.ex. "före terminsstart", "senast i maj".' },
     ],
     sections: [
-      { title: 'Avser', lines: ['{{fullName}}', 'Behovet gäller: {{whoFor}} {{childName}}'] },
+      { title: 'Uppgifterna gäller', lines: ['{{fullName}}', 'Behovet gäller: {{whoFor}} {{childName}}'] },
       { title: 'Behovet', lines: ['{{needWhat}}', 'Ungefärlig kostnad: {{needCost}} kr', 'Tidpunkt: {{needWhen}}'] },
       { title: 'Konsekvens om behovet inte tillgodoses', lines: ['{{needWhy}}'] },
     ],
@@ -107,14 +107,14 @@ export const DOCUMENT_TEMPLATES: DocumentTemplate[] = [
       { key: 'fullName', label: 'Ditt fullständiga namn', type: 'text', required: true },
       { key: 'circumstance', label: 'Vilken omständighet vill du förklara?', type: 'textarea', required: true, guidance: 'T.ex. sjukskrivning, separation, en oväntad utgift, inkomst som förändrats.' },
       { key: 'since', label: 'Sedan när gäller detta?', type: 'text' },
-      { key: 'impact', label: 'Hur påverkar det er ekonomi och vardag?', type: 'textarea', required: true },
+      { key: 'impact', label: 'Hur påverkar det er ekonomi och vardag?', type: 'textarea', required: true, guidance: 'Berätta som det är, med egna ord — konkreta exempel ur vardagen väger tyngre än allmänna fraser.' },
       { key: 'steps', label: 'Vad har du själv gjort eller planerar att göra?', type: 'textarea', guidance: 'T.ex. sökt arbete, kontaktat hyresvärd, ansökt om andra ersättningar.' },
       // §28: FACT → IMPACT → MITIGATION → EVIDENCE — det som kan styrkas
       // väger tyngre, och en öppen redovisning slår alltid en dold brist.
       { key: 'evidenceNote', label: 'Vilket underlag styrker det du beskriver?', type: 'textarea', guidance: 'T.ex. läkarintyg, beslut, uppsägning, avtal — sådant du kan bifoga eller visa om handläggaren frågar.' },
     ],
     sections: [
-      { title: 'Avser', lines: ['{{fullName}}'] },
+      { title: 'Uppgifterna gäller', lines: ['{{fullName}}'] },
       { title: 'Omständighet', lines: ['{{circumstance}}', 'Gäller sedan: {{since}}'] },
       { title: 'Påverkan', lines: ['{{impact}}'] },
       { title: 'Egna åtgärder', lines: ['{{steps}}'] },

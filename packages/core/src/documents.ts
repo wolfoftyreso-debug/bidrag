@@ -98,7 +98,10 @@ function renderLine(line: string, answers: DocAnswers): string | null {
     return formatValue(v);
   });
   if (sawPlaceholder && !sawValue) return null;
-  return out;
+  // Korrekturhygien: dubbla mellanslag (t.ex. efter en tom platshållare mitt i
+  // raden) och hängande blanktecken städas. Hårda mellanslag (belopp) rörs
+  // aldrig, och användarens ordval ändras aldrig — bara ren typografi.
+  return out.replace(/ {2,}/g, ' ').replace(/[ \t]+$/g, '').trimEnd();
 }
 
 export interface RenderedDocument {

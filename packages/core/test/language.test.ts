@@ -53,6 +53,55 @@ describe('humilityFindings — §13 absoluta utfallslöften', () => {
   });
 });
 
+describe('humilityFindings — §21 GENERIC_CONTENT: standardfraser som gör ansökan anonym', () => {
+  it('flags application boilerplate with a pointer toward the specific', () => {
+    const text =
+      'Härmed ansöker vi om stöd. I dagens samhälle föreligger ett stort behov av mötesplatser. Vi brinner för frågan och ser fram emot ett positivt besked.';
+    const generic = humilityFindings(text).filter((f) => f.kind === 'GENERIC_CONTENT');
+    const terms = generic.map((f) => f.term.toLowerCase());
+    expect(terms).toContain('härmed ansöker');
+    expect(terms).toContain('i dagens samhälle');
+    expect(terms).toContain('föreligger ett stort behov');
+    expect(terms).toContain('brinner för');
+    expect(terms).toContain('ser fram emot ett positivt besked');
+    for (const f of generic) expect(f.suggestion.length).toBeGreaterThan(20);
+  });
+
+  it('leaves specific, personal language alone', () => {
+    const text =
+      'Vera började i laget i augusti och tränar två kvällar i veckan. Avgiften på 1 200 kr för vårterminen ryms inte i vår budget sedan min sjukskrivning i mars.';
+    expect(humilityFindings(text).filter((f) => f.kind === 'GENERIC_CONTENT')).toEqual([]);
+  });
+});
+
+describe('repetitionFindings — korrekturvarvet: upprepningar får inte förekomma', async () => {
+  const { repetitionFindings } = await import('../src/index.js');
+
+  it('flags a sentence that appears twice, with the count', () => {
+    const text = [
+      'Utan stödet kan Vera inte fortsätta i laget tillsammans med sina klasskamrater.',
+      'Avgiften gäller vårterminen.',
+      'Utan stödet kan Vera inte fortsätta i laget tillsammans med sina klasskamrater.',
+    ].join('\n');
+    const f = repetitionFindings(text);
+    expect(f).toHaveLength(1);
+    expect(f[0]!.kind).toBe('REPETITION');
+    expect(f[0]!.suggestion).toContain('2 gånger');
+  });
+
+  it('flags doubled words but ignores short labels and unique prose', () => {
+    expect(repetitionFindings('Vi vill att att avgiften täcks.')).toHaveLength(1);
+    // Korta rubriker/etiketter jämförs aldrig; unik text är tyst.
+    const clean = 'Behovet\nAvgift för fotboll under höstterminen.\nBehovet\nUtan stödet missar Vera träningarna.';
+    expect(repetitionFindings(clean)).toEqual([]);
+  });
+
+  it('is advisory data only — deterministic and side-effect free', () => {
+    const text = 'Samma långa mening om verksamhetens behov upprepas här. Samma långa mening om verksamhetens behov upprepas här.';
+    expect(repetitionFindings(text)).toEqual(repetitionFindings(text));
+  });
+});
+
 describe('answerLanguageFindings — skannar bara fritext', () => {
   it('maps findings to field keys and skips non-strings', () => {
     const found = answerLanguageFindings({
