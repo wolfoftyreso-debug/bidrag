@@ -381,9 +381,30 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
   const [email, setEmail] = useState(session?.user.email ?? '');
   const [payment, setPayment] = useState<{
     paymentId: string;
-    instructions: { method: string; message?: string; mockConfirmable?: boolean };
+    instructions: { method: string; message?: string; mockConfirmable?: boolean; deepLink?: string; qrAvailable?: boolean };
   } | null>(null);
   const [confirmed, setConfirmed] = useState<{ receiptNumber: string; email: string | null } | null>(null);
+
+  // Swish: betalningen bekräftas av banken, inte av klienten — vi pollar
+  // status tills servern (som själv verifierar mot Swish) säger confirmed.
+  useEffect(() => {
+    if (!payment || payment.instructions.method !== 'swish' || confirmed) return;
+    let stopped = false;
+    const tick = async () => {
+      try {
+        const res = await get<{ state: string; receipt?: { receiptNumber: string; email: string | null } | null }>(
+          `/v1/payments/${payment.paymentId}/status`,
+        );
+        if (stopped) return;
+        if (res.state === 'confirmed' && res.receipt) setConfirmed(res.receipt);
+        else if (res.state === 'failed') setError('Betalningen genomfördes inte. Du kan försöka igen — inget har debiterats.');
+      } catch {
+        /* tillfälligt nätverksfel — nästa poll försöker igen */
+      }
+    };
+    const iv = setInterval(tick, 2500);
+    return () => { stopped = true; clearInterval(iv); };
+  }, [payment, confirmed]);
   const [lateEmail, setLateEmail] = useState('');
   const [lateSent, setLateSent] = useState(false);
 
@@ -531,7 +552,26 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
           </button>
         </div>
       )}
-      {payment && payment.instructions.method !== 'mock' && payment.instructions.message && (
+      {payment && payment.instructions.method === 'swish' && (
+        <div style={{ textAlign: 'center', padding: '0.8rem 0' }}>
+          <h3 style={{ margin: '0 0 0.4rem' }}>Betala med Swish</h3>
+          {payment.instructions.qrAvailable && (
+            <img
+              src={`/v1/payments/${payment.paymentId}/qr`}
+              alt="Swish QR-kod — skanna med Swish-appen"
+              width={220}
+              height={220}
+              style={{ display: 'block', margin: '0.5rem auto', borderRadius: 8 }}
+            />
+          )}
+          <p className="guidance">Skanna QR-koden med Swish-appen{payment.instructions.deepLink ? ', eller öppna Swish direkt på mobilen:' : '.'}</p>
+          {payment.instructions.deepLink && (
+            <p><a className="btn" href={payment.instructions.deepLink}>Öppna Swish</a></p>
+          )}
+          <p className="meta-line">Väntar på betalning… Sidan uppdateras automatiskt när banken har bekräftat.</p>
+        </div>
+      )}
+      {payment && payment.instructions.method !== 'mock' && payment.instructions.method !== 'swish' && payment.instructions.message && (
         <div className="alert warning">{payment.instructions.message}</div>
       )}
 

@@ -92,6 +92,24 @@ export const refreshTokens = pgTable(
   (t) => [index('refresh_tokens_user_idx').on(t.userId)],
 );
 
+/**
+ * Lösenordsåterställning ("innan riktiga kronor"-kravet): engångstoken,
+ * lagrad hashad (SHA-256), 60 min TTL. Vid använd återställning återkallas
+ * alla refresh-tokens — en kapad session överlever inte ett lösenordsbyte.
+ */
+export const passwordResetTokens = pgTable(
+  'password_reset_tokens',
+  {
+    id: id(),
+    userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    tokenHash: text('token_hash').notNull().unique(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    usedAt: timestamp('used_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [index('password_reset_tokens_user_idx').on(t.userId)],
+);
+
 // ── Applicant world (tenant-owned) ───────────────────────────────────────────
 
 export const applicantProfiles = pgTable(
@@ -542,6 +560,8 @@ export const payments = pgTable(
     provider: text('provider').notNull(), // 'swish' | 'mock' | ...
     state: text('state', { enum: ['pending', 'confirmed', 'failed', 'cancelled'] }).notNull().default('pending'),
     providerReference: text('provider_reference'),
+    /** Providerns hemliga token (Swish: QR-/app-token). Exponeras aldrig i listor. */
+    providerToken: text('provider_token'),
     /** Dit kvittot skickas — samlas in före betalningen, kan kompletteras efteråt. */
     receiptEmail: text('receipt_email'),
     createdAt: createdAt(),

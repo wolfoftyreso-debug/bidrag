@@ -2,18 +2,25 @@ import { useState } from 'react';
 import { ApiError, post } from '../api';
 
 export default function LoginPage({ onLogin }: { onLogin: () => Promise<void> }) {
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setInfo(null);
     setBusy(true);
     try {
+      if (mode === 'forgot') {
+        await post('/v1/auth/request-password-reset', { email });
+        setInfo('Om adressen finns hos oss har vi skickat en återställningslänk. Kolla din inkorg (länken gäller i 60 minuter).');
+        return;
+      }
       if (mode === 'register') {
         await post('/v1/auth/register', { email, password, displayName });
       } else {
@@ -34,7 +41,10 @@ export default function LoginPage({ onLogin }: { onLogin: () => Promise<void> })
         Berätta vad du behöver hjälp med — vi tar reda på vad du kan ha rätt till, och hjälper dig hela vägen till ansökan.
       </p>
       <div className="card">
-        <h2>{mode === 'login' ? 'Logga in' : 'Skapa konto'}</h2>
+        <h2>{mode === 'login' ? 'Logga in' : mode === 'register' ? 'Skapa konto' : 'Återställ lösenord'}</h2>
+        {mode === 'forgot' && (
+          <p className="guidance">Ange din e-postadress så skickar vi en länk för att välja ett nytt lösenord.</p>
+        )}
         <form onSubmit={submit}>
           {mode === 'register' && (
             <>
@@ -44,25 +54,35 @@ export default function LoginPage({ onLogin }: { onLogin: () => Promise<void> })
           )}
           <label htmlFor="email">E-post</label>
           <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
-          <label htmlFor="password">Lösenord</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={10}
-            autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-          />
+          {mode !== 'forgot' && (
+            <>
+              <label htmlFor="password">Lösenord</label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={10}
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              />
+            </>
+          )}
           {mode === 'register' && <p className="guidance">Minst 10 tecken.</p>}
           {error && <div className="alert error">{error}</div>}
-          <div style={{ marginTop: '1.1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          {info && <div className="alert success">{info}</div>}
+          <div style={{ marginTop: '1.1rem', display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <button type="submit" disabled={busy}>
-              {mode === 'login' ? 'Logga in' : 'Skapa konto'}
+              {mode === 'login' ? 'Logga in' : mode === 'register' ? 'Skapa konto' : 'Skicka återställningslänk'}
             </button>
-            <button type="button" className="subtle" onClick={() => setMode(mode === 'login' ? 'register' : 'login')}>
+            <button type="button" className="subtle" onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(null); setInfo(null); }}>
               {mode === 'login' ? 'Ny här? Skapa konto' : 'Har du redan konto? Logga in'}
             </button>
+            {mode === 'login' && (
+              <button type="button" className="subtle" onClick={() => { setMode('forgot'); setError(null); setInfo(null); }}>
+                Glömt lösenord?
+              </button>
+            )}
           </div>
         </form>
       </div>

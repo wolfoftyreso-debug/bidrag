@@ -90,7 +90,27 @@ curl -s https://bidrag.se/v1/internal/cron/retention  # 404 (hemlighet krävs)
 # konfigurerad) → kvitto → analys. Ladda upp + ned ett dokument (Storage-vägen).
 ```
 
-## 6. Hemligheter
+## 6. Swish-milstolpen (körs när avtal + certifikat finns)
+
+1. Handelsavtal (Swish Handel) via banken → hämta ut kommerscertifikatet.
+2. Koda om till base64 och lägg i Vercel-miljön: `SWISH_MERCHANT_ALIAS`,
+   `SWISH_CERT_BASE64`, `SWISH_KEY_BASE64` (+ ev. `SWISH_KEY_PASSPHRASE`).
+   Callback-URL:en är `https://<domän>/v1/webhooks/payments/swish` — måste
+   vara https på port 443 (Vercel uppfyller det).
+3. **MSS-test först** (Swish testmiljö med testcertifikat):
+   `SWISH_API_BASE=https://mss.cpc.getswish.net` i preview →
+   `BASE_URL=https://<preview> node scripts/swish-readiness.mjs`
+   — verifierar mTLS-handskakningen, payment request, QR, verifierad status,
+   kvitto och upplåsning.
+4. **Produktionstest med en riktig 39 kr-betalning**: samma skript mot
+   produktionsdomänen, betala med Swish-appen, verifiera kvittomailet,
+   återbetala i Swish-portalen.
+5. Säkerhetsmodellen (byggd och testad): callbacken är osignerad och används
+   bara som väckning — bekräftelse sker enbart efter statushämtning
+   server-till-server över mTLS med beloppskontroll. Tappade callbacks
+   räddas av verify-on-read i statuspollingen.
+
+## 7. Hemligheter
 
 - Inga hemligheter i Git — `.env.example` innehåller bara namn. En hemlighet
   som råkat committas ÄR komprometterad: rotera den, städa inte bara historiken.

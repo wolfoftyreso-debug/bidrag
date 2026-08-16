@@ -1,11 +1,12 @@
 import type { FastifyInstance } from 'fastify';
 import { and, eq, isNull } from 'drizzle-orm';
 import { db } from '../db/client.ts';
-import { memberships, refreshTokens, tenants, users } from '../db/schema.ts';
+import { memberships, passwordResetTokens, refreshTokens, tenants, users } from '../db/schema.ts';
 import { hashPassword, verifyPassword } from '../auth/password.ts';
 import { generateRefreshToken, hashRefreshToken, signAccessToken } from '../auth/tokens.ts';
 import { audit } from '../audit.ts';
 import { config } from '../config.ts';
+import { sendEmail } from '../services/email.ts';
 
 const cookieOpts = {
   httpOnly: true,
@@ -142,6 +143,109 @@ export async function authRoutes(app: FastifyInstance) {
     reply.clearCookie('bidrag_access', { path: '/' }).clearCookie('bidrag_refresh', { path: '/v1/auth' });
     return { ok: true };
   });
+
+  /**
+   * Lösenordsåterställning ("innan riktiga kronor"). Svaret är alltid
+   * detsamma oavsett om adressen finns — ingen kontouppräkning. Token är
+   * engångs, hashad i vila, 60 min TTL; mail via Resend/SMTP-adaptern.
+   */
+  app.post(
+    '/v1/auth/request-password-reset',
+    {
+      config: { rateLimit: { max: 5, timeWindow: '1 minute' } },
+      schema: {
+        tags: ['auth'],
+        body: {
+          type: 'object',
+          required: ['email'],
+          properties: { email: { type: 'string', format: 'email', maxLength: 320 } },
+          additionalProperties: false,
+        },
+      },
+    },
+    async (request) => {
+      const email = (request.body as { email: string }).email.trim().toLowerCase();
+      const [user] = await db.select({ id: users.id }).from(users).where(eq(users.email, email)).limit(1);
+      if (user) {
+        const { token, tokenHash } = generateRefreshToken(); // samma kryptografi: 32 slumpbyte + SHA-256
+        await db.insert(passwordResetTokens).values({
+          userId: user.id,
+          tokenHash,
+          expiresAt: new Date(Date.now() + 60 * 60_000),
+        });
+        await sendEmail({
+          to: email,
+          subject: 'Återställ ditt lösenord — Bidrag.se',
+          text:
+            `Du (eller någon annan) har begärt att återställa lösenordet för det här kontot på Bidrag.se.\n\n` +
+            `Återställ här (länken gäller i 60 minuter och kan bara användas en gång):\n\n` +
+            `${config.publicBaseUrl}/aterstall/${token}\n\n` +
+            `Om du inte begärde detta kan du bortse från mailet — lösenordet är oförändrat.`,
+        });
+        await audit({
+          tenantId: null,
+          actorType: 'user',
+          actorUserId: user.id,
+          action: 'auth.password_reset_requested',
+          entityType: 'user',
+          entityId: user.id,
+        });
+      }
+      return { ok: true };
+    },
+  );
+
+  app.post(
+    '/v1/auth/reset-password',
+    {
+      config: { rateLimit: { max: 10, timeWindow: '1 minute' } },
+      schema: {
+        tags: ['auth'],
+        body: {
+          type: 'object',
+          required: ['token', 'password'],
+          properties: {
+            token: { type: 'string', minLength: 20, maxLength: 200 },
+            password: { type: 'string', minLength: 10, maxLength: 200 },
+          },
+          additionalProperties: false,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { token, password } = request.body as { token: string; password: string };
+      const tokenHash = hashRefreshToken(token);
+      const now = new Date();
+
+      // Engångsanvändning atomiskt: used_at sätts i samma UPDATE som villkoret
+      // — två samtidiga försök med samma token kan aldrig båda lyckas.
+      const claimed = await db
+        .update(passwordResetTokens)
+        .set({ usedAt: now })
+        .where(and(eq(passwordResetTokens.tokenHash, tokenHash), isNull(passwordResetTokens.usedAt)))
+        .returning();
+      const row = claimed[0];
+      if (!row || row.expiresAt < now) {
+        return reply.code(422).send({
+          error: 'invalid_token',
+          message: 'Länken är ogiltig eller har gått ut. Begär en ny återställningslänk.',
+        });
+      }
+
+      await db.update(users).set({ passwordHash: await hashPassword(password) }).where(eq(users.id, row.userId));
+      // Lösenordsbyte dödar alla sessioner — en kapad session överlever inte.
+      await db.update(refreshTokens).set({ revokedAt: now }).where(eq(refreshTokens.userId, row.userId));
+      await audit({
+        tenantId: null,
+        actorType: 'user',
+        actorUserId: row.userId,
+        action: 'auth.password_reset_completed',
+        entityType: 'user',
+        entityId: row.userId,
+      });
+      return { ok: true };
+    },
+  );
 
   app.get('/v1/auth/me', { preHandler: [app.requireAuth], schema: { tags: ['auth'] } }, async (request) => {
     const auth = request.auth!;

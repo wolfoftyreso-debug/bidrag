@@ -70,5 +70,24 @@ export const config = {
    * finns i miljön. Utan satt hemlighet är endpointsen avstängda (404).
    */
   cronSecret: env.CRON_SECRET ?? null,
+  /**
+   * Swish Handel (Commerce API, mTLS). Klientcertifikat + nyckel som
+   * base64-PEM i miljövariabler — serverless har inget filsystem för
+   * certifikatfiler. SWISH_API_BASE byts till MSS-simulatorn i test/preview
+   * (https://mss.cpc.getswish.net) och till den lokala testservern i CI.
+   */
+  // Läses vid anropstillfället (getters): integrationstester genererar
+  // certifikat i runtime, och certrotation i drift kräver ingen omstart av
+  // konfigurationsmodulen. I produktion är värdena i praktiken statiska.
+  swish: {
+    get merchantAlias() { return process.env.SWISH_MERCHANT_ALIAS ?? null; },
+    get certPemBase64() { return process.env.SWISH_CERT_BASE64 ?? null; },
+    get keyPemBase64() { return process.env.SWISH_KEY_BASE64 ?? null; },
+    get keyPassphrase() { return process.env.SWISH_KEY_PASSPHRASE ?? null; },
+    /** Extra CA (PEM base64) för att lita på Swish-serverkedjan; krävs i test. */
+    get caPemBase64() { return process.env.SWISH_CA_BASE64 ?? null; },
+    get apiBase() { return process.env.SWISH_API_BASE ?? 'https://cpc.getswish.net'; },
+    get qrBase() { return process.env.SWISH_QR_BASE ?? 'https://mpc.getswish.net'; },
+  },
   logLevel: env.LOG_LEVEL ?? 'info',
 };

@@ -140,16 +140,26 @@ email goes through Resend (`RESEND_API_KEY`), falls back to SMTP, and is
 otherwise honestly recorded as skipped. Receipts survive GDPR tenant erasure
 (bookkeeping obligation, GDPR art. 17(3)(b)) with the email address scrubbed.
 
-What is honestly missing: a real payment provider, and confirmed VAT
-treatment. The Swish adapter refuses with 503 until `SWISH_MERCHANT_ALIAS`
-and `SWISH_CERT_PATH` (merchant agreement + mTLS certificates from the bank)
-are configured — it never pretends to charge. The VAT rate is configurable
-(`VAT_RATE_BPS`, default 25.00 %) and seller identity comes from
+**Swish Handel is implemented** (Commerce API over mTLS, certificates as
+base64 PEM in `SWISH_CERT_BASE64`/`SWISH_KEY_BASE64` — no filesystem
+dependency): idempotent payment-request creation (PUT with an instruction id
+derived from our payment id), QR served through the API, `swish://` deep
+link, and a security model where the unsigned Swish callback is never
+trusted — every confirmation is preceded by a server-to-server status fetch
+over mTLS with amount/currency checks. Status polling verifies-on-read, so a
+lost callback can never strand a paid customer. The whole chain is
+integration-tested against a real local mTLS server (client-certificate
+required), including a forged-callback attack test.
+
+What is honestly missing: the merchant agreement and bank-issued
+certificates, and a run of `scripts/swish-readiness.mjs` against MSS
+(`SWISH_API_BASE=https://mss.cpc.getswish.net`) and then against production
+with one real 39 kr payment. The VAT rate is configurable (`VAT_RATE_BPS`,
+default 25.00 %) and seller identity comes from
 `SELLER_NAME`/`SELLER_ORG_NUMBER`/`SELLER_VAT_NUMBER`, but the actual VAT
 classification of the service must be confirmed with the company's
 accountant before production — 39 kr × many transactions quickly becomes a
 large ledger, so this must be right from day one. The mock provider used by
 tests and the demo is disabled in production by construction
-(`PAYMENTS_MOCK_ENABLED` is ignored when `NODE_ENV=production`). Adding a
-provider touches only `services/paymentProviders.ts`; the engine, receipt
-and unlock flow are unchanged.
+(`PAYMENTS_MOCK_ENABLED` is ignored when `NODE_ENV=production`), and it is
+never selected when Swish is configured.

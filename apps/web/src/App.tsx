@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { get, getActiveTenant, post, setActiveTenant } from './api';
 import LoginPage from './pages/Login';
+import ResetPasswordPage from './pages/ResetPassword';
 import OnboardingPage from './pages/Onboarding';
 import CalendarPage from './pages/Calendar';
 import InvitePage from './pages/Invite';
@@ -51,7 +52,14 @@ export default function App() {
 
   return (
     <SessionContext.Provider value={{ session, reload }}>
-      {session ? <Shell /> : <LoginPage onLogin={reload} />}
+      {session ? (
+        <Shell />
+      ) : (
+        <Routes>
+          <Route path="/aterstall/:token" element={<ResetPasswordPage />} />
+          <Route path="*" element={<LoginPage onLogin={reload} />} />
+        </Routes>
+      )}
     </SessionContext.Provider>
   );
 }

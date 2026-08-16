@@ -8,18 +8,23 @@
  * providern finns för utveckling/test och kan aldrig aktiveras i produktion.
  */
 import { config } from '../config.ts';
+import { appLink, createPaymentRequest, swishConfigured } from './integrations/swish.ts';
 
 export interface CreatePaymentResult {
   /** Vad klienten behöver för att slutföra betalningen. */
   instructions: {
     method: string;            // 'swish' | 'mock'
-    /** Swish: swish://paymentrequest?token=... eller QR-underlag. */
+    /** Swish mobil: swish://paymentrequest?token=... */
     deepLink?: string;
+    /** Swish desktop: QR hämtas via GET /v1/payments/:id/qr. */
+    qrAvailable?: boolean;
     message: string;           // klartext till användaren
     /** Mock: bekräfta via POST /v1/payments/:id/mock-confirm. */
     mockConfirmable?: boolean;
   };
   providerReference: string | null;
+  /** Provider-hemlighet som behövs senare (Swish: QR-token). Lagras, exponeras aldrig rått. */
+  providerToken?: string | null;
 }
 
 export interface PaymentProvider {
@@ -28,16 +33,31 @@ export interface PaymentProvider {
   create(payment: { id: string; amountMinor: number; currency: string; message: string }): Promise<CreatePaymentResult>;
 }
 
+/**
+ * Swish Handel (m-commerce): payment request skapas idempotent (PUT med
+ * instruktions-id härlett ur betalnings-id), token blir QR/app-länk, och
+ * bekräftelsen sker ALDRIG här — bara verifierad status över mTLS kan
+ * bekräfta (services/payments.ts).
+ */
 const swishProvider: PaymentProvider = {
   id: 'swish',
-  available: () => Boolean(process.env.SWISH_MERCHANT_ALIAS && process.env.SWISH_CERT_PATH),
-  async create() {
-    // Integrationspunkt: Swish Commerce API (createPaymentRequest) med mTLS.
-    // Utan avtal/certifikat vägrar vi hellre än att fejka.
-    throw Object.assign(
-      new Error('Swish är inte konfigurerat (kräver handelsavtal, SWISH_MERCHANT_ALIAS och klientcertifikat).'),
-      { statusCode: 503 },
-    );
+  available: swishConfigured,
+  async create(p) {
+    const { instructionUUID, token } = await createPaymentRequest({
+      paymentId: p.id,
+      amountMinor: p.amountMinor,
+      currency: p.currency,
+      message: p.message,
+    });
+    return {
+      instructions: {
+        method: 'swish',
+        ...(token ? { deepLink: appLink(token), qrAvailable: true } : {}),
+        message: 'Öppna Swish och godkänn betalningen. Sidan uppdateras när betalningen är bekräftad.',
+      },
+      providerReference: instructionUUID,
+      providerToken: token,
+    };
   },
 };
 

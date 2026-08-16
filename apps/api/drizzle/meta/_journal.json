@@ -43,6 +43,13 @@
       "when": 1786867257173,
       "tag": "0005_rls_deny_all",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1786870208032,
+      "tag": "0006_magenta_lockjaw",
+      "breakpoints": true
     }
   ]
 }
