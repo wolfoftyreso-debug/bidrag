@@ -126,10 +126,30 @@ visible, names/sources/questions withheld until a confirmed payment), 402 on
 the funding stack, idempotent re-purchase protection, and an unauthenticated
 webhook surface for server-to-server callbacks.
 
-What is honestly missing: a real payment provider. The Swish adapter refuses
-with 503 until `SWISH_MERCHANT_ALIAS` and `SWISH_CERT_PATH` (merchant
-agreement + mTLS certificates from the bank) are configured — it never
-pretends to charge. The mock provider used by tests and the demo is disabled
-in production by construction (`PAYMENTS_MOCK_ENABLED` is ignored when
-`NODE_ENV=production`). Adding a provider touches only
-`services/paymentProviders.ts`; the engine and unlock flow are unchanged.
+The purchase pipeline is provider-independent: the confirmed payment is the
+authoritative event, and the chain is always *payment confirmed → transaction
+recorded → receipt issued → unlock* (never "user clicked pay → unlock").
+Receipts are real verification records issued in the same database
+transaction as the confirmation (duplicate callbacks can never produce two):
+sequential receipt numbers from a dedicated sequence (`BS-YYYY-NNNNNN`),
+gross/net/VAT amounts frozen in öre, VAT rate, payment method, product,
+purchase ID, refund status and seller details. The receipt email address is
+collected just before payment with a stated purpose, can be added afterwards,
+and the receipt can be re-sent — self-service instead of support. Transactional
+email goes through Resend (`RESEND_API_KEY`), falls back to SMTP, and is
+otherwise honestly recorded as skipped. Receipts survive GDPR tenant erasure
+(bookkeeping obligation, GDPR art. 17(3)(b)) with the email address scrubbed.
+
+What is honestly missing: a real payment provider, and confirmed VAT
+treatment. The Swish adapter refuses with 503 until `SWISH_MERCHANT_ALIAS`
+and `SWISH_CERT_PATH` (merchant agreement + mTLS certificates from the bank)
+are configured — it never pretends to charge. The VAT rate is configurable
+(`VAT_RATE_BPS`, default 25.00 %) and seller identity comes from
+`SELLER_NAME`/`SELLER_ORG_NUMBER`/`SELLER_VAT_NUMBER`, but the actual VAT
+classification of the service must be confirmed with the company's
+accountant before production — 39 kr × many transactions quickly becomes a
+large ledger, so this must be right from day one. The mock provider used by
+tests and the demo is disabled in production by construction
+(`PAYMENTS_MOCK_ENABLED` is ignored when `NODE_ENV=production`). Adding a
+provider touches only `services/paymentProviders.ts`; the engine, receipt
+and unlock flow are unchanged.

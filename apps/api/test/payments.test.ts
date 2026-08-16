@@ -65,9 +65,9 @@ describe('teaser före betalning', () => {
   });
 });
 
-describe('betalning → bekräftelse → upplåsning', () => {
-  it('creates a pending payment with mock instructions', async () => {
-    const res = await api(app, user, 'POST', `/v1/projects/${projectId}/analysis-unlock`);
+describe('betalning → bekräftelse → kvitto → upplåsning', () => {
+  it('creates a pending payment with mock instructions and a receipt email', async () => {
+    const res = await api(app, user, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { email: 'kvitto@test.example' });
     expect(res.statusCode).toBe(201);
     const body = res.json() as { paymentId: string; amountMinor: number; instructions: { method: string; mockConfirmable: boolean; message: string } };
     paymentId = body.paymentId;
@@ -82,9 +82,12 @@ describe('betalning → bekräftelse → upplåsning', () => {
     expect(res.statusCode).toBe(404);
   });
 
-  it('confirmation unlocks the full analysis', async () => {
+  it('confirmation unlocks the full analysis and issues a receipt', async () => {
     const confirm = await api(app, user, 'POST', `/v1/payments/${paymentId}/mock-confirm`);
     expect(confirm.statusCode).toBe(200);
+    const confirmBody = confirm.json() as { unlocked: boolean; receipt: { receiptNumber: string; email: string } };
+    expect(confirmBody.receipt.receiptNumber).toMatch(/^BS-\d{4}-\d{6}$/);
+    expect(confirmBody.receipt.email).toBe('kvitto@test.example');
 
     const res = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
     const body = res.json() as { matches?: { slug: string; sourceUrl: string }[]; locked?: boolean };
@@ -115,5 +118,92 @@ describe('betalning → bekräftelse → upplåsning', () => {
   it('payment webhooks refuse honestly until a real provider is configured', async () => {
     const res = await app.inject({ method: 'POST', url: '/v1/webhooks/payments/swish', payload: {} });
     expect(res.statusCode).toBe(503);
+  });
+});
+
+describe('kvitto/verifikationsunderlag', () => {
+  it('freezes correct Swedish VAT math: 39,00 = 31,20 netto + 7,80 moms (25 %)', async () => {
+    const res = await api(app, user, 'GET', `/v1/projects/${projectId}/receipt`);
+    expect(res.statusCode).toBe(200);
+    const { receipt, document } = res.json() as {
+      receipt: {
+        receiptNumber: string; paymentRef: string; amountGrossMinor: number; amountNetMinor: number;
+        vatAmountMinor: number; vatRateBps: number; paymentMethod: string; paymentStatus: string;
+        refundStatus: string; email: string; sellerName: string;
+      };
+      document: string;
+    };
+    expect(receipt.amountGrossMinor).toBe(3900);
+    expect(receipt.amountNetMinor).toBe(3120);
+    expect(receipt.vatAmountMinor).toBe(780);
+    expect(receipt.amountNetMinor + receipt.vatAmountMinor).toBe(receipt.amountGrossMinor);
+    expect(receipt.vatRateBps).toBe(2500);
+    expect(receipt.paymentRef).toBe(paymentId);
+    expect(receipt.paymentStatus).toBe('confirmed');
+    expect(receipt.refundStatus).toBe('none');
+
+    // Ett riktigt verifikationsdokument — inte ett "tack för betalningen"-mail.
+    for (const expected of ['KVITTO', 'Kvittonummer', 'Köp-ID', 'Moms (25,00 %)', '31,20 kr', '7,80 kr', '39,00 kr', 'Betalningsmetod', 'Återbetalning']) {
+      expect(document, `dokumentet saknar "${expected}"`).toContain(expected);
+    }
+  });
+
+  it('a duplicate confirmation can never issue a second receipt', async () => {
+    // Dubbel callback: betalningen är inte längre pending → no-op, ett kvitto.
+    const res = await api(app, user, 'POST', `/v1/payments/${paymentId}/mock-confirm`);
+    expect(res.statusCode).toBe(404);
+    const receiptRes = await api(app, user, 'GET', `/v1/projects/${projectId}/receipt`);
+    expect(receiptRes.statusCode).toBe(200);
+  });
+
+  it('purchase without email: receipt issued as pending, email added afterwards, then resend works', async () => {
+    // Nytt projekt, köp utan e-post ("jag missade fältet").
+    const profiles = await api(app, user, 'GET', '/v1/profiles');
+    const profileId = (profiles.json() as { profiles: { id: string }[] }).profiles[0]!.id;
+    const projectRes = await api(app, user, 'POST', '/v1/projects', { profileId, title: 'Utan e-post', intent: 'test' });
+    const pid = (projectRes.json() as { project: { id: string } }).project.id;
+
+    const create = await api(app, user, 'POST', `/v1/projects/${pid}/analysis-unlock`);
+    expect(create.statusCode).toBe(201);
+    const newPaymentId = (create.json() as { paymentId: string }).paymentId;
+    await api(app, user, 'POST', `/v1/payments/${newPaymentId}/mock-confirm`);
+
+    // Omskick utan adress: ärligt 422, inte tyst ingenting.
+    const resendFail = await api(app, user, 'POST', `/v1/payments/${newPaymentId}/resend-receipt`);
+    expect(resendFail.statusCode).toBe(422);
+    expect((resendFail.json() as { error: string }).error).toBe('no_email');
+
+    // Komplettera adressen i efterhand → sparas på kvittot.
+    const setEmail = await api(app, user, 'POST', `/v1/payments/${newPaymentId}/receipt-email`, { email: 'Sent.Ifylld@Test.Example' });
+    expect(setEmail.statusCode).toBe(200);
+    const receipt = await api(app, user, 'GET', `/v1/projects/${pid}/receipt`);
+    expect((receipt.json() as { receipt: { email: string } }).receipt.email).toBe('sent.ifylld@test.example');
+
+    // Nu går omskicket igenom (utan mailprovider i test: ärligt "skipped").
+    const resend = await api(app, user, 'POST', `/v1/payments/${newPaymentId}/resend-receipt`);
+    expect(resend.statusCode).toBe(200);
+    expect(['sent', 'skipped']).toContain((resend.json() as { emailOutcome: string }).emailOutcome);
+  });
+
+  it('receipt numbers are sequential and never reused', async () => {
+    const r1 = await api(app, user, 'GET', `/v1/projects/${projectId}/receipt`);
+    const n1 = (r1.json() as { receipt: { receiptNumber: string } }).receipt.receiptNumber;
+    const profiles = await api(app, user, 'GET', '/v1/profiles');
+    const profileId = (profiles.json() as { profiles: { id: string }[] }).profiles[0]!.id;
+    const projectRes = await api(app, user, 'POST', '/v1/projects', { profileId, title: 'Serie', intent: 'test' });
+    const pid = (projectRes.json() as { project: { id: string } }).project.id;
+    const create = await api(app, user, 'POST', `/v1/projects/${pid}/analysis-unlock`, { email: 'serie@test.example' });
+    const p2 = (create.json() as { paymentId: string }).paymentId;
+    await api(app, user, 'POST', `/v1/payments/${p2}/mock-confirm`);
+    const r2 = await api(app, user, 'GET', `/v1/projects/${pid}/receipt`);
+    const n2 = (r2.json() as { receipt: { receiptNumber: string } }).receipt.receiptNumber;
+    expect(n2).not.toBe(n1);
+    expect(Number(n2.slice(-6))).toBeGreaterThan(Number(n1.slice(-6)));
+  });
+
+  it('other tenants can never read the receipt', async () => {
+    const other = await registerUser(app, 'Utomstående');
+    const res = await api(app, other, 'GET', `/v1/projects/${projectId}/receipt`);
+    expect(res.statusCode).toBe(404);
   });
 });

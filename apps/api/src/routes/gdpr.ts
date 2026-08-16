@@ -23,6 +23,7 @@ import {
   notifications,
   paymentMilestones,
   projects,
+  receipts,
   reportingRequirements,
   submissionReceipts,
   submissions,
@@ -74,6 +75,7 @@ export async function gdprRoutes(app: FastifyInstance) {
         reportingRequirements: await db.select().from(reportingRequirements).where(eq(reportingRequirements.tenantId, tenantId)),
         paymentMilestones: await db.select().from(paymentMilestones).where(eq(paymentMilestones.tenantId, tenantId)),
         notifications: await db.select().from(notifications).where(eq(notifications.tenantId, tenantId)),
+        purchaseReceipts: await db.select().from(receipts).where(eq(receipts.tenantId, tenantId)),
       };
 
       await audit({
@@ -139,6 +141,10 @@ export async function gdprRoutes(app: FastifyInstance) {
         entityId: tenantId,
         before: { documentsDeleted: docs.length },
       });
+
+      // Kvitton är bokföringsunderlag och bevaras (BFL, undantag i GDPR art.
+      // 17.3 b) — men e-postadressen är en personuppgift och skrubbas här.
+      await db.update(receipts).set({ email: null }).where(eq(receipts.tenantId, tenantId));
 
       await db.delete(memberships).where(eq(memberships.tenantId, tenantId));
       await db.delete(tenants).where(eq(tenants.id, tenantId));

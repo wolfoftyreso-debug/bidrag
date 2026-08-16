@@ -40,9 +40,21 @@ export const config = {
   clamavAddress: env.CLAMAV_ADDRESS ?? null,
   /** Global per-IP rate limit per minute (auth endpoints have stricter own limits). */
   rateLimitMax: Number(env.RATE_LIMIT_MAX ?? 300),
-  /** Engångspris för att låsa upp bidragsanalysen, i ören. */
+  /** Engångspris för att låsa upp bidragsanalysen, i ören (inkl. moms). */
   analysisPriceMinor: Number(env.ANALYSIS_PRICE_MINOR ?? 3900),
   /** Mockbetalningar för utveckling/test — kan aldrig aktiveras i produktion. */
   paymentsMockEnabled: env.PAYMENTS_MOCK_ENABLED === 'true' && env.NODE_ENV !== 'production',
+  /**
+   * Momssats i baspunkter (2500 = 25,00 %). Sätts utifrån bolagets faktiska
+   * momsregistrering och vad tjänsten klassas som — stäm av med redovisningen
+   * innan produktion.
+   */
+  vatRateBps: Number(env.VAT_RATE_BPS ?? 2500),
+  /** Säljaruppgifter som fryses på varje kvitto/verifikation. */
+  sellerName: env.SELLER_NAME ?? 'Bidrag.se',
+  sellerOrgNumber: env.SELLER_ORG_NUMBER ?? null,
+  sellerVatNumber: env.SELLER_VAT_NUMBER ?? null,
+  /** Resend för transaktionsmail (kvitton). Faller tillbaka på SMTP_URL, annars ärligt hoppat. */
+  resendApiKey: env.RESEND_API_KEY ?? null,
   logLevel: env.LOG_LEVEL ?? 'info',
 };

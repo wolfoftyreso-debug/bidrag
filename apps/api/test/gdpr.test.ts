@@ -4,6 +4,9 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
+import { eq } from 'drizzle-orm';
+import { db } from '../src/db/client.ts';
+import { receipts } from '../src/db/schema.ts';
 import { api, createProfileAndProject, registerUser, testServer, uploadPdf, type TestUser } from './helpers.ts';
 
 let app: FastifyInstance;
@@ -38,13 +41,21 @@ describe('GDPR self-service', () => {
     expect(res.statusCode).toBe(422);
   });
 
-  it('erases the tenant and cascades all owned data', async () => {
+  it('erases the tenant and cascades all owned data — except bookkeeping receipts', async () => {
     const res = await api(app, user, 'DELETE', '/v1/tenant', { confirm: 'RADERA' });
     expect(res.statusCode).toBe(200);
 
     // The session's tenant membership is gone — requests are unauthenticated.
     const after = await api(app, user, 'GET', '/v1/projects');
     expect(after.statusCode).toBe(401);
+
+    // Kvittot (verifikationen) bevaras enligt bokföringslagen, men
+    // e-postadressen — en personuppgift — är skrubbad.
+    const rows = await db.select().from(receipts).where(eq(receipts.tenantId, user.tenantId));
+    expect(rows.length).toBeGreaterThanOrEqual(1);
+    expect(rows.every((r) => r.email === null)).toBe(true);
+    expect(rows[0]!.paymentId).toBeNull(); // betalningsraden kaskaderades bort
+    expect(rows[0]!.paymentRef).toMatch(/^[0-9a-f-]{36}$/); // men köp-ID:t är fryst
   });
 
   it('another tenant cannot invoke erasure on someone else via headers', async () => {

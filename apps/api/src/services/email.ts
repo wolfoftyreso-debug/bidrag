@@ -1,6 +1,7 @@
 /**
- * Email delivery adapter (§53, closes LIMITATIONS #4). Activated by SMTP_URL;
- * without it, delivery is skipped and honestly recorded. Failures never break
+ * Email delivery adapter (§53, closes LIMITATIONS #4). Provider order:
+ * Resend (RESEND_API_KEY) för transaktionsmail, annars SMTP (SMTP_URL),
+ * annars hoppas leveransen över och det bokförs ärligt. Failures never break
  * the caller — email is best-effort on top of the in-app notification, and
  * every outcome (sent/failed/skipped) is auditable.
  */
@@ -28,25 +29,38 @@ export interface EmailInput {
   tenantId?: string | null;
 }
 
+async function sendViaResend(input: EmailInput): Promise<void> {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${config.resendApiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: config.emailFrom, to: [input.to], subject: input.subject, text: input.text }),
+  });
+  if (!res.ok) throw new Error(`Resend ${res.status}: ${(await res.text()).slice(0, 300)}`);
+}
+
 export async function sendEmail(input: EmailInput): Promise<'sent' | 'skipped' | 'failed'> {
   const t = getTransporter();
-  if (!t) {
+  if (!config.resendApiKey && !t) {
     await audit({
       tenantId: input.tenantId ?? null,
       actorType: 'system',
-      action: 'email.skipped_no_smtp',
+      action: 'email.skipped_no_provider',
       entityType: 'email',
       after: { subject: input.subject },
     });
     return 'skipped';
   }
   try {
-    await t.sendMail({
-      from: config.emailFrom,
-      to: input.to,
-      subject: input.subject,
-      text: `${input.text}\n\n—\nBidrag.se · Du kan hantera dina notiser när du är inloggad.`,
-    });
+    if (config.resendApiKey) {
+      await sendViaResend(input);
+    } else {
+      await t!.sendMail({
+        from: config.emailFrom,
+        to: input.to,
+        subject: input.subject,
+        text: input.text,
+      });
+    }
     return 'sent';
   } catch (err) {
     await audit({

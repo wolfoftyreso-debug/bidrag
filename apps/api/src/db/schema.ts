@@ -15,6 +15,7 @@ import {
   index,
   integer,
   jsonb,
+  pgSequence,
   pgTable,
   text,
   timestamp,
@@ -541,10 +542,59 @@ export const payments = pgTable(
     provider: text('provider').notNull(), // 'swish' | 'mock' | ...
     state: text('state', { enum: ['pending', 'confirmed', 'failed', 'cancelled'] }).notNull().default('pending'),
     providerReference: text('provider_reference'),
+    /** Dit kvittot skickas — samlas in före betalningen, kan kompletteras efteråt. */
+    receiptEmail: text('receipt_email'),
     createdAt: createdAt(),
     confirmedAt: timestamp('confirmed_at', { withTimezone: true }),
   },
   (t) => [index('payments_project_idx').on(t.projectId, t.state), index('payments_tenant_idx').on(t.tenantId)],
+);
+
+/** Löpande kvittonummer — verifikationsserie, aldrig återanvänd. */
+export const receiptNumberSeq = pgSequence('receipt_number_seq', { startWith: 1, increment: 1 });
+
+/**
+ * Kvitton (verifikationsunderlag). Ett kvitto per bekräftad betalning,
+ * genererat i samma transaktion som bekräftelsen — betalningen är den
+ * auktoritativa händelsen, kvittot dess bokföringsspår. Beloppen fryses
+ * här (öre) tillsammans med momssats och säljaruppgifter vid utfärdandet.
+ *
+ * Bokföringslagen kräver att verifikationer bevaras (7 år) — därför har
+ * tenantId ingen FK (kvittot överlever kontoradering) och paymentId släpps
+ * till null om betalningsraden försvinner; köp-ID:t är fryst i paymentRef.
+ * Vid GDPR-radering skrubbas e-postadressen men verifikationen består.
+ */
+export const receipts = pgTable(
+  'receipts',
+  {
+    id: id(),
+    tenantId: uuid('tenant_id').notNull(),
+    paymentId: uuid('payment_id').references(() => payments.id, { onDelete: 'set null' }),
+    /** Köp-ID, fryst vid utfärdandet — trycks på kvittot och överlever betalningsraden. */
+    paymentRef: text('payment_ref').notNull(),
+    receiptNumber: text('receipt_number').notNull(),
+    productDescription: text('product_description').notNull(),
+    amountGrossMinor: integer('amount_gross_minor').notNull(),
+    amountNetMinor: integer('amount_net_minor').notNull(),
+    vatAmountMinor: integer('vat_amount_minor').notNull(),
+    vatRateBps: integer('vat_rate_bps').notNull(),
+    currency: text('currency').notNull().default('SEK'),
+    paymentMethod: text('payment_method').notNull(),
+    paymentStatus: text('payment_status').notNull().default('confirmed'),
+    refundStatus: text('refund_status', { enum: ['none', 'requested', 'refunded'] }).notNull().default('none'),
+    sellerName: text('seller_name').notNull(),
+    sellerOrgNumber: text('seller_org_number'),
+    sellerVatNumber: text('seller_vat_number'),
+    email: text('email'),
+    emailStatus: text('email_status', { enum: ['pending', 'sent', 'skipped', 'failed'] }).notNull().default('pending'),
+    emailSentAt: timestamp('email_sent_at', { withTimezone: true }),
+    issuedAt: timestamp('issued_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('receipts_payment_uq').on(t.paymentId),
+    uniqueIndex('receipts_number_uq').on(t.receiptNumber),
+    index('receipts_tenant_idx').on(t.tenantId),
+  ],
 );
 
 // ── Notifications & reminders (§53, §36) ─────────────────────────────────────
