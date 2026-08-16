@@ -25,10 +25,42 @@ const TEASER_CATEGORY: Record<string, string> = {
   stipend: 'Stipendium',
 };
 
+/**
+ * Sannolikhetsnivån (F3 + kuratorsbeslut a, 30-simuleringen): "hög" kräver
+ * att även de viktande kriterierna talar för — en familj med hög inkomst som
+ * svarat ja på skolutflyktsfrågan ser Majblomman som "möjlig", inte "hög".
+ * Nivån är alltid en bedömning, aldrig ett beslut.
+ */
 function likelihoodOf(m: MatchRow): 'high' | 'possible' | 'needs_info' {
-  if (m.eligibilityStatus === 'eligible' && m.result.confidence === 'high') return 'high';
-  if (m.eligibilityStatus === 'eligible') return 'possible';
-  return 'needs_info';
+  if (m.eligibilityStatus !== 'eligible') return 'needs_info';
+  if (m.result.confidence !== 'high') return 'possible';
+  const weightedAgainst = m.result.explanation.some((e) => e.kind === 'weighted' && e.outcome === 'fail');
+  return weightedAgainst ? 'possible' : 'high';
+}
+
+/**
+ * Spårmedveten relevans (F1, 30-simuleringen): en person som utreder sin
+ * privatekonomi ska inte räknas mot 15 obesvarade projektbidrag — och en
+ * förening ska inte se bostadsbidragsfrågor. Ett stöd utanför spåret visas
+ * bara om det faktiskt bedömts aktuellt (eligible).
+ */
+const PERSONAL_INSTRUMENTS = new Set(['social_benefit', 'educational_support']);
+
+export function detectTrack(facts: Record<string, unknown>): 'personal' | 'project' | 'all' {
+  const keys = Object.keys(facts ?? {});
+  if (keys.some((k) => k.startsWith('project.') || k.startsWith('organisation.'))) return 'project';
+  if (keys.some((k) => k.startsWith('person.') && k !== 'person.professionalArtist')) return 'personal';
+  return 'all';
+}
+
+export function relevantForTrack(rows: MatchRow[], track: 'personal' | 'project' | 'all'): MatchRow[] {
+  if (track === 'personal') {
+    return rows.filter((m) => PERSONAL_INSTRUMENTS.has(m.instrumentType) || m.eligibilityStatus === 'eligible');
+  }
+  if (track === 'project') {
+    return rows.filter((m) => !PERSONAL_INSTRUMENTS.has(m.instrumentType) || m.eligibilityStatus === 'eligible');
+  }
+  return rows;
 }
 
 function buildTeaser(rows: MatchRow[]) {
@@ -49,6 +81,19 @@ function buildTeaser(rows: MatchRow[]) {
     rows: teaserRows,
     excludedCount: rows.length - relevant.length,
   };
+}
+
+/** Matchningar för projektet, filtrerade till spårets relevans (F1). */
+async function trackRelevantMatches(tenantId: string, projectId: string): Promise<MatchRow[]> {
+  const [row] = await db
+    .select({ projectFacts: projects.facts, profileFacts: applicantProfiles.facts })
+    .from(projects)
+    .innerJoin(applicantProfiles, eq(projects.profileId, applicantProfiles.id))
+    .where(and(eq(projects.id, projectId), eq(projects.tenantId, tenantId)))
+    .limit(1);
+  const merged = { ...((row?.profileFacts as Record<string, unknown>) ?? {}), ...((row?.projectFacts as Record<string, unknown>) ?? {}) };
+  const rows = await listMatchesForProject(tenantId, projectId);
+  return relevantForTrack(rows, detectTrack(merged));
 }
 
 const projectBody = {
@@ -198,7 +243,7 @@ export async function projectRoutes(app: FastifyInstance) {
           entityId: id,
           after: { count },
         });
-        const rows = await listMatchesForProject(request.auth!.tenantId, id);
+        const rows = await trackRelevantMatches(request.auth!.tenantId, id);
         if (!(await isProjectUnlocked(request.auth!.tenantId, id))) {
           return { computed: count, ...buildTeaser(rows) };
         }
@@ -222,7 +267,7 @@ export async function projectRoutes(app: FastifyInstance) {
         .where(and(eq(projects.id, id), eq(projects.tenantId, request.auth!.tenantId)))
         .limit(1);
       if (!project) return reply.code(404).send({ error: 'not_found' });
-      const rows = await listMatchesForProject(request.auth!.tenantId, id);
+      const rows = await trackRelevantMatches(request.auth!.tenantId, id);
       if (!(await isProjectUnlocked(request.auth!.tenantId, id))) {
         return buildTeaser(rows);
       }

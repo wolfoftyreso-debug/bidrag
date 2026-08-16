@@ -41,6 +41,11 @@ interface Answers {
   bringsKnowledgeBack?: boolean;
   targetsYouth?: boolean;
   budget?: string;
+  // föreningsgrenen (kuratorsbeslut b, 30-simuleringen)
+  orgDemocratic?: boolean;
+  orgSportsFederation?: boolean;
+  orgYouthShare?: boolean;
+  orgNationalSpread?: boolean;
 }
 
 const initial: Answers = { freeIntent: '', extraContext: '', activityTypes: [] };
@@ -51,7 +56,9 @@ type StepId =
   | 'p-child-school' | 'p-child-costs' | 'p-child-leisure' | 'p-child-glasses' | 'p-child-travel'
   | 'p-age' | 'p-employment' | 'p-capacity'
   | 'p-income' | 'p-savings' | 'p-housing' | 'p-housing-cost' | 'p-extra'
-  | 'pr-intent' | 'pr-who' | 'pr-municipality' | 'pr-artist' | 'pr-sector' | 'pr-activities'
+  | 'pr-intent' | 'pr-who' | 'pr-municipality' | 'pr-artist' | 'pr-sector'
+  | 'pr-org-democratic' | 'pr-org-sports' | 'pr-org-youthshare' | 'pr-org-spread'
+  | 'pr-activities'
   | 'pr-international' | 'pr-knowledge' | 'pr-youth' | 'pr-budget';
 
 /** Nästa steg beror på svaren — frågor som inte ändrar resultatet hoppas över. */
@@ -81,7 +88,17 @@ function nextStep(current: StepId, a: Answers): StepId | 'done' {
     case 'pr-municipality':
       return a.applicantType === 'individual' || a.applicantType === 'informal_group' ? 'pr-artist' : 'pr-sector';
     case 'pr-artist': return 'pr-sector';
-    case 'pr-sector': return 'pr-activities';
+    case 'pr-sector':
+      // Föreningsgrenen: org-fakta som RF-/MUCF-stöden faktiskt kräver — utan
+      // dem hamnar varje förening i "behöver utredas" (30-simuleringens fynd).
+      return a.applicantType === 'association' ? 'pr-org-democratic' : 'pr-activities';
+    case 'pr-org-democratic':
+      if (a.sector === 'sports') return 'pr-org-sports';
+      if (a.sector === 'youth' || a.sector === 'civil_society') return 'pr-org-youthshare';
+      return 'pr-activities';
+    case 'pr-org-sports': return 'pr-activities';
+    case 'pr-org-youthshare': return 'pr-org-spread';
+    case 'pr-org-spread': return 'pr-activities';
     case 'pr-activities': return 'pr-international';
     case 'pr-international': return a.international ? 'pr-knowledge' : 'pr-youth';
     case 'pr-knowledge': return 'pr-youth';
@@ -194,6 +211,10 @@ export default function OnboardingPage() {
             'project.targetGroups': [...(answers.targetsYouth ? ['youth'] : []), 'professionals'],
             ...(answers.international !== undefined ? { 'project.hasInternationalComponent': answers.international } : {}),
             ...(answers.bringsKnowledgeBack !== undefined ? { 'project.bringsKnowledgeBack': answers.bringsKnowledgeBack } : {}),
+            ...(answers.orgDemocratic !== undefined ? { 'organisation.democraticStructure': answers.orgDemocratic } : {}),
+            ...(answers.orgSportsFederation !== undefined ? { 'organisation.memberOfSportsFederation': answers.orgSportsFederation } : {}),
+            ...(answers.orgYouthShare !== undefined ? { 'organisation.youthMembersShareOver60': answers.orgYouthShare } : {}),
+            ...(answers.orgNationalSpread !== undefined ? { 'organisation.hasNationalSpread': answers.orgNationalSpread } : {}),
           };
 
       const { project } = await post<{ project: { id: string } }>('/v1/projects', {
@@ -538,6 +559,30 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
           <Choice label="Utbildning" onClick={() => onAnswer({ sector: 'education' })} />
           <Choice label="Jordbruk och landsbygd" onClick={() => onAnswer({ sector: 'agriculture' })} />
           <Choice label="Föreningsliv och civilsamhälle" onClick={() => onAnswer({ sector: 'civil_society' })} />
+        </Q>
+      );
+    case 'pr-org-democratic':
+      return (
+        <Q title="Har föreningen stadgar, styrelse och årsmöte?" guidance="Demokratisk uppbyggnad är ett grundkrav i de flesta statliga föreningsstöd.">
+          <YesNo onAnswer={(v) => onAnswer({ orgDemocratic: v })} />
+        </Q>
+      );
+    case 'pr-org-sports':
+      return (
+        <Q title="Är föreningen ansluten till ett specialidrottsförbund inom Riksidrottsförbundet?" guidance="Det avgör bl.a. LOK-stödet för barn- och ungdomsidrott.">
+          <YesNo onAnswer={(v) => onAnswer({ orgSportsFederation: v })} />
+        </Q>
+      );
+    case 'pr-org-youthshare':
+      return (
+        <Q title="Är minst 60 procent av medlemmarna mellan 6 och 25 år?" guidance="Ett av MUCF:s krav för ungdomsorganisationer.">
+          <YesNo onAnswer={(v) => onAnswer({ orgYouthShare: v })} />
+        </Q>
+      );
+    case 'pr-org-spread':
+      return (
+        <Q title="Har organisationen medlemsföreningar i flera län?">
+          <YesNo onAnswer={(v) => onAnswer({ orgNationalSpread: v })} />
         </Q>
       );
     case 'pr-activities':

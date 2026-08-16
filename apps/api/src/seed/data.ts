@@ -1351,6 +1351,9 @@ export const opportunities: SeedOpportunity[] = [
     estimatedEffortDays: 1,
     criteria: [
       c('csn-sm-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Studiemedel söks av privatpersoner'),
+      // Åldersgräns (F2, 30-simuleringen): studiemedel lämnas längst t.o.m. det
+      // år du fyller 60 — pensionärer ska aldrig få studiefrågorna.
+      c('csn-sm-h2', 'hard', 'person.age66Plus', 'is_false', undefined, 'Studiemedel lämnas längst t.o.m. det år du fyller 60'),
       c('csn-sm-m1', 'mandatory', 'person.isOrPlansStudying', 'is_true', undefined, 'Du ska studera eller planera att börja studera', 'Studerar du, eller planerar du att börja studera?'),
     ],
   }),
@@ -1517,6 +1520,9 @@ export const opportunities: SeedOpportunity[] = [
     estimatedEffortDays: 3,
     criteria: [
       c('csn-oss-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Stödet söks av privatpersoner'),
+      // Åldersgräns (F2): omställningsstudiestöd kan sökas längst t.o.m. ca 62 år.
+      c('csn-oss-h2', 'hard', 'person.age66Plus', 'is_false', undefined, 'Stödet kan sökas längst t.o.m. det år du fyller 62'),
+      c('csn-oss-h3', 'hard', 'person.receivesPension', 'is_false', undefined, 'Stödet riktar sig till yrkesverksamma, inte pensionärer'),
       c('csn-oss-m1', 'mandatory', 'person.establishedInLabourMarket', 'is_true', undefined, 'Du ska ha arbetat i genomsnitt minst 16 h/vecka i minst 8 år', 'Har du arbetat minst 16 timmar i veckan i sammanlagt minst 8 år?'),
       c('csn-oss-m2', 'mandatory', 'person.isOrPlansStudying', 'is_true', undefined, 'Du ska planera studier som stärker din ställning på arbetsmarknaden', 'Planerar du studier som stärker din ställning på arbetsmarknaden?'),
     ],

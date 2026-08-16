@@ -106,10 +106,11 @@ describe('personlig rättighetsutredning', () => {
     for (const slug of ['fk-bostadsbidrag-barnfamiljer', 'fk-underhallsstod', 'kommun-forsorjningsstod']) {
       expect(['social_benefit', 'educational_support']).toContain(bySlug(matches, slug).instrumentType);
     }
-    // Projektbidrag är korrekt uteslutna eller irrelevanta för det personliga
-    // spåret — t.ex. kräver Kulturrådets resebidrag konstnärlig yrkesverksamhet.
-    const kultur = bySlug(matches, 'kulturradet-internationellt-resebidrag-musik');
-    expect(kultur.eligibilityStatus).not.toBe('eligible');
+    // F1 (30-simuleringen): i det personliga spåret förekommer projektbidrag
+    // över huvud taget inte i svaret om de inte bedömts aktuella — Kulturrådets
+    // resebidrag ska inte ens synas för en ensamstående förälder.
+    expect(matches.find((m) => m.slug === 'kulturradet-internationellt-resebidrag-musik')).toBeUndefined();
+    expect(matches.every((m) => ['social_benefit', 'educational_support'].includes(m.instrumentType) || m.eligibilityStatus === 'eligible')).toBe(true);
   });
 
   it('answering a follow-up upgrades the assessment deterministically', async () => {

@@ -41,6 +41,7 @@ interface MatchRow {
     missingFacts: MissingFact[];
     missingEvidence: { kind: string; description: string }[];
     excludedBy: { description: string }[];
+    explanation: { kind: string; outcome: string }[];
     fitScore: number;
     evidenceReadiness: number;
     executionReadiness: number;
@@ -214,7 +215,7 @@ export default function MatchesPage() {
               <div style={{ flex: 1 }}>
                 <div>
                   <Link to={`/stod/${m.slug}?projekt=${projectId}`} style={{ fontWeight: 600 }}>{m.title}</Link>{' '}
-                  <LikelihoodBadge status={m.eligibilityStatus} confidence={m.result.confidence} />
+                  <LikelihoodBadge m={m} />
                 </div>
                 <div className="meta-line">
                   {m.authorityName} · <span className="badge info">{INSTRUMENT_LABELS[m.instrumentType] ?? m.instrumentType}</span>
@@ -455,9 +456,11 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
         <strong>{teaser.total} möjliga stödformer</strong>.
       </p>
       <p style={{ fontSize: '1.05rem', margin: '0.75rem 0' }}>
-        🟢 <strong>{teaser.counts.high}</strong> med hög relevans{' · '}
-        🟡 <strong>{teaser.counts.possible}</strong> möjliga{' · '}
-        ⚪ <strong>{teaser.counts.needsInfo}</strong> kräver mer information
+        {[
+          teaser.counts.high > 0 && <span key="h">🟢 <strong>{teaser.counts.high}</strong> med hög relevans</span>,
+          teaser.counts.possible > 0 && <span key="p">🟡 <strong>{teaser.counts.possible}</strong> möjliga</span>,
+          teaser.counts.needsInfo > 0 && <span key="n">⚪ <strong>{teaser.counts.needsInfo}</strong> kräver mer information</span>,
+        ].filter(Boolean).map((el, i) => <span key={i}>{i > 0 && ' · '}{el}</span>)}
       </p>
 
       <div style={{ margin: '1rem 0' }}>
@@ -533,12 +536,14 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
 
 /**
  * Rättighetsspråket: aldrig "du är berättigad" — alltid en bedömning.
- * eligible+hög konfidens → hög sannolikhet; annars möjlig; okänt → utreds.
+ * "Hög sannolikhet" kräver att även viktande kriterier talar för (F3):
+ * en familj med hög inkomst ser Majblomman som "möjlig", inte "hög".
  */
-function LikelihoodBadge({ status, confidence }: { status: string; confidence: string }) {
-  if (status === 'eligible' && confidence === 'high') return <span className="badge success">hög sannolikhet</span>;
-  if (status === 'eligible') return <span className="badge success">möjlig</span>;
-  return <span className="badge warning">behöver utredas</span>;
+function LikelihoodBadge({ m }: { m: MatchRow }) {
+  if (m.eligibilityStatus !== 'eligible') return <span className="badge warning">behöver utredas</span>;
+  const weightedAgainst = m.result.explanation.some((e) => e.kind === 'weighted' && e.outcome === 'fail');
+  if (m.result.confidence === 'high' && !weightedAgainst) return <span className="badge success">hög sannolikhet</span>;
+  return <span className="badge success">möjlig</span>;
 }
 
 function excludedList(excluded: MatchRow[]) {
