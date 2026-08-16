@@ -17,6 +17,13 @@ före bevisat WOW.
 (avstånd, gång-/körtid) och senare RUNESTONE TRAILS — runstensjakten är
 produktens tillväxtmotor (`atlas/explore.py`, `POST /v1/explore`).
 
+**Berätta mer än det som står skrivet (ADR-0010):** varje sten får en
+historisk kontext — period, ristare, stil, skrift, seder, kristnandet —
+komponerad till en berättelse. Hård regel: varje kontextblock är märkt
+`established` (belagt om denna sten) / `interpreted` (ur inskriften) /
+`general_background` (tidsbild) så att mervärdet aldrig blir påhitt om
+den enskilda stenen.
+
 ## Två produkter, ett system
 
 1. **Runstenläsaren** — fota → läs → översätt. Det enda användaren ser i V1.

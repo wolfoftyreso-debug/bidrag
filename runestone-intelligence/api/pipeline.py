@@ -28,6 +28,7 @@ for sub in ("knowledge", "verification", "translation", "data-contracts", "model
 
 from image_quality import assess as assess_image_quality  # noqa: E402
 
+from context import build_context, compose_story  # noqa: E402
 from identity import REVIEW_THRESHOLD, decide as identity_decide  # noqa: E402
 from meaning import extract_meaning  # noqa: E402
 from presentation import render_modern  # noqa: E402
@@ -135,6 +136,15 @@ class AnalyzePipeline:
         if rendering is not None and validate_record(rendering, "rendering"):
             rendering = None
 
+        # Context Engine (ADR-0010): berattar mer an det som star skrivet.
+        # Pa Known Stone Path byggs kontexten ur den KANONISKA posten;
+        # pa Unknown Stone Path finns inga belagda stenfakta - da blir det
+        # tolknings- och bakgrundsblock, tydligt markta.
+        canonical_record = (self.index.get(verdict["identification"]["inscription_id"])
+                            if known_stone else None)
+        context = build_context(canonical_record, interpretation)
+        story = compose_story(context, rendering) if (interpretation or canonical_record) else None
+
         # Identifiering presenteras ENDAST nar verifieringen bekraftat den:
         # en LOW-match (mismatch) ar en kandidat under utredning, inte en
         # identifierad sten (plan §19).
@@ -179,6 +189,8 @@ class AnalyzePipeline:
             "identity": identity.to_dict(),
             "interpretation": interpretation,
             "rendering": rendering,
+            "context": context,
+            "story": story,
             "stage_confidence": stage_confidence,
             "uncertainties": reading.get("uncertainties", []),
             "verification": verdict.get("verification"),

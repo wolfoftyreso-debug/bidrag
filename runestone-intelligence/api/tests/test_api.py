@@ -96,6 +96,22 @@ class AnalyzeFlowTests(unittest.TestCase):
         self.assertIsNotNone(body["interpretation"])
         self.assertEqual(body["interpretation"]["basis"]["source"], "canonical")
 
+    def test_known_stone_gets_context_and_story(self):
+        p = pipeline_with(MockReader("iksimbil", 0.91))
+        body = p.analyze(IMAGE, gps=(59.8501, 17.6302))["body"]
+        kinds = {b["kind"] for b in body["context"]["blocks"]}
+        self.assertIn("established", kinds)  # belagda stenfakta pa known-path
+        self.assertIn("general_background", kinds)
+        self.assertIsNotNone(body["story"])
+        self.assertIn("950-1100", body["story"])  # tidsbilden ingar
+
+    def test_unknown_stone_context_never_claims_established_facts(self):
+        p = pipeline_with(MockReader("burkil raisti stain þinsa aftir ulf sun sin", 0.85))
+        body = p.analyze(IMAGE)["body"]
+        kinds = {b["kind"] for b in body["context"]["blocks"]}
+        self.assertNotIn("established", kinds)  # inga belagda fakta om okand sten
+        self.assertIn("Burkil", body["story"])
+
     def test_reading_path_when_no_lock(self):
         # Formellasning som inte finns i corpus: Unknown Stone Path,
         # formelbaserad L2/L3 utan scholarly-ansprak.

@@ -110,6 +110,10 @@ class CorpusIndex:
     def records(self) -> list[dict]:
         return [item["record"] for item in self._items]
 
+    def get(self, inscription_id: str) -> dict | None:
+        return next((item["record"] for item in self._items
+                     if item["record"]["inscription_id"] == inscription_id), None)
+
     @classmethod
     def from_corpus_dir(cls, corpus_dir: Path) -> "CorpusIndex":
         lines = (Path(corpus_dir) / "inscriptions.jsonl").read_text(encoding="utf-8").splitlines()
