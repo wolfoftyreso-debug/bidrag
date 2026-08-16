@@ -8,12 +8,13 @@ import { DOCUMENT_TEMPLATES, getTemplate, prefillAnswers, renderDocument, valida
 const ctx = { recipient: 'Socialtjänsten i Norrköping', opportunityTitle: 'Försörjningsstöd', date: '2026-08-16' };
 
 describe('document template engine', () => {
-  it('ships the four generic templates with valid structure', () => {
+  it('ships the five generic templates with valid structure', () => {
     expect(DOCUMENT_TEMPLATES.map((t) => t.key)).toEqual([
       'ansokan-ekonomiskt-stod',
       'bilaga-ekonomisk-situation',
       'behovsbeskrivning',
       'sarskilda-omstandigheter',
+      'projektbeskrivning',
     ]);
     for (const t of DOCUMENT_TEMPLATES) {
       expect(t.questions.length).toBeGreaterThan(2);
@@ -78,6 +79,62 @@ describe('document template engine', () => {
     const t2 = getTemplate('sarskilda-omstandigheter')!;
     const doc2 = renderDocument(t2, { fullName: 'A', circumstance: 'hyra 11250 kr', impact: 'x' }, ctx);
     expect(doc2.text).toContain('hyra 11250 kr');
+  });
+});
+
+describe('projektbeskrivningen — interventionslogik och indikatorer (§13–16, §21)', () => {
+  const base = {
+    fullName: 'Kulturföreningen Rytm',
+    projectTitle: 'Dans för unga i Rosengård',
+    problem: 'Få unga i området har tillgång till organiserad dansverksamhet.',
+    goal: 'Fler unga 13–20 år deltar regelbundet i föreningens verksamhet.',
+    activities: 'Öppna klasser två kvällar i veckan; klasserna sänker tröskeln, deltagarna rekryteras till terminsgrupper.',
+    organisation: 'Projektledare 20 %, två instruktörer 10 % vardera.',
+    longTerm: 'Terminsgrupperna införlivas i ordinarie verksamhet och bärs av medlemsavgifter från år 2.',
+  };
+
+  it('indicator questions appear only when an indicator exists — and then baseline/target/measurement are required', () => {
+    const t = getTemplate('projektbeskrivning')!;
+    const withoutIndicator = visibleQuestions(t, { ...base, hasIndicator: false });
+    expect(withoutIndicator.map((q) => q.key)).not.toContain('baseline');
+    expect(validateDocumentAnswers(t, { ...base, hasIndicator: false }).ok).toBe(true);
+
+    // Med indikator: baseline utan värde ⇒ valideringen flaggar (§14 FLAGGA).
+    const missing = validateDocumentAnswers(t, { ...base, hasIndicator: true, indicator: 'Antal aktiva medlemmar 13–20 år' });
+    expect(missing.ok).toBe(false);
+    expect(missing.missing.map((m) => m.key)).toEqual(expect.arrayContaining(['baseline', 'target', 'measurement']));
+  });
+
+  it('renders the causal chain in order and never invents an indicator section', () => {
+    const t = getTemplate('projektbeskrivning')!;
+    const doc = renderDocument(t, { ...base, hasIndicator: false }, ctx);
+    const order = ['PROBLEM OCH BEHOV', 'MÅL', 'GENOMFÖRANDE', 'ORGANISATION OCH KAPACITET', 'EFTER PROJEKTET'];
+    let last = -1;
+    for (const h of order) {
+      const i = doc.text.indexOf(h);
+      expect(i, h).toBeGreaterThan(last);
+      last = i;
+    }
+    expect(doc.text).not.toContain('INDIKATOR');
+
+    const withIndicator = renderDocument(
+      t,
+      { ...base, hasIndicator: true, indicator: 'Antal aktiva 13–20 år', baseline: '35', target: '60 vid projektslut', measurement: 'Medlemsregistret, kassören kvartalsvis' },
+      ctx,
+    );
+    expect(withIndicator.text).toContain('Indikator: Antal aktiva 13–20 år');
+    expect(withIndicator.text).toContain('Nuläge: 35');
+  });
+
+  it('§28: särskilda omständigheter carries the evidence question', () => {
+    const t = getTemplate('sarskilda-omstandigheter')!;
+    const doc = renderDocument(
+      t,
+      { fullName: 'A', circumstance: 'Sjukskrivning', impact: 'Halverad inkomst.', evidenceNote: 'Läkarintyg från 2026-03-01 kan bifogas.' },
+      ctx,
+    );
+    expect(doc.text).toContain('UNDERLAG SOM STYRKER BESKRIVNINGEN');
+    expect(doc.text).toContain('Läkarintyg');
   });
 });
 

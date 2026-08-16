@@ -109,12 +109,60 @@ export const DOCUMENT_TEMPLATES: DocumentTemplate[] = [
       { key: 'since', label: 'Sedan när gäller detta?', type: 'text' },
       { key: 'impact', label: 'Hur påverkar det er ekonomi och vardag?', type: 'textarea', required: true },
       { key: 'steps', label: 'Vad har du själv gjort eller planerar att göra?', type: 'textarea', guidance: 'T.ex. sökt arbete, kontaktat hyresvärd, ansökt om andra ersättningar.' },
+      // §28: FACT → IMPACT → MITIGATION → EVIDENCE — det som kan styrkas
+      // väger tyngre, och en öppen redovisning slår alltid en dold brist.
+      { key: 'evidenceNote', label: 'Vilket underlag styrker det du beskriver?', type: 'textarea', guidance: 'T.ex. läkarintyg, beslut, uppsägning, avtal — sådant du kan bifoga eller visa om handläggaren frågar.' },
     ],
     sections: [
       { title: 'Avser', lines: ['{{fullName}}'] },
       { title: 'Omständighet', lines: ['{{circumstance}}', 'Gäller sedan: {{since}}'] },
       { title: 'Påverkan', lines: ['{{impact}}'] },
       { title: 'Egna åtgärder', lines: ['{{steps}}'] },
+      { title: 'Underlag som styrker beskrivningen', lines: ['{{evidenceNote}}'] },
+    ],
+  },
+  {
+    /**
+     * Interventionslogiken (§13) som mall: PROBLEM → ORSAK → MÅL → AKTIVITET
+     * → RESULTAT → EFFEKT → LÅNGSIKTIGHET, med mätbara indikatorer (§14),
+     * organisation/kapacitet (§16) och konkurrensposition (§22). Frågorna
+     * kräver mekanism — "bidrar positivt" räcker aldrig — och dokumentet
+     * skriver bara det användaren faktiskt svarat.
+     */
+    key: 'projektbeskrivning',
+    title: 'Projektbeskrivning',
+    recipientLabel: 'Bilaga till ansökan',
+    description: 'Den logiska kedjan finansiärer letar efter: problem, orsak, mål, aktiviteter, mätbara resultat och vad som består efteråt.',
+    questions: [
+      { key: 'fullName', label: 'Sökandens namn (person eller organisation)', type: 'text', required: true },
+      { key: 'projectTitle', label: 'Projektets namn', type: 'text', required: true },
+      { key: 'problem', label: 'Vilket problem eller behov utgår projektet från?', type: 'textarea', required: true, guidance: 'Konkret och sakligt: vad är läget i dag, för vem, och hur vet ni det?' },
+      { key: 'cause', label: 'Vad beror problemet på?', type: 'textarea', guidance: 'Orsaken avgör om era aktiviteter är rätt valda — en utbildning löser kompetensbrist, inte pengabrist.' },
+      { key: 'goal', label: 'Vad ska vara annorlunda när projektet är klart?', type: 'textarea', required: true, guidance: 'Formulera som en förändring, inte en aktivitet: "fler unga i föreningen" — inte "vi genomför workshops".' },
+      { key: 'activities', label: 'Vad ska ni göra — och hur leder det till målet?', type: 'textarea', required: true, guidance: 'Beskriv mekanismen: aktivitet → vad den förändrar → hur det når målet. "Bidrar positivt" räcker inte.' },
+      { key: 'hasIndicator', label: 'Kan förändringen mätas med en indikator?', type: 'boolean', required: true, guidance: 'En mätbar indikator gör ansökan betydligt starkare — men hitta inte på en som inte går att följa upp.' },
+      { key: 'indicator', label: 'Vilken indikator?', type: 'text', required: true, showIf: { key: 'hasIndicator', equals: true }, guidance: 'T.ex. "antal aktiva medlemmar 13–20 år".' },
+      { key: 'baseline', label: 'Nuläge (baseline)?', type: 'text', required: true, showIf: { key: 'hasIndicator', equals: true }, guidance: 'Utan nuläge går förändringen inte att visa.' },
+      { key: 'target', label: 'Målvärde — och när ska det vara nått?', type: 'text', required: true, showIf: { key: 'hasIndicator', equals: true } },
+      { key: 'measurement', label: 'Hur och av vem mäts det?', type: 'text', required: true, showIf: { key: 'hasIndicator', equals: true }, guidance: 'Datakälla och ansvarig — t.ex. "medlemsregistret, följs upp av kassören varje kvartal".' },
+      { key: 'organisation', label: 'Vem gör vad i projektet?', type: 'textarea', required: true, guidance: 'Roller, kompetens och ungefärlig tid — det som visar att ni faktiskt kan genomföra det.' },
+      { key: 'capacityGaps', label: 'Vilka funktioner eller kompetenser saknas i dag — och hur löser ni det?', type: 'textarea', guidance: 'En öppet redovisad lucka med en plan är starkare än en dold.' },
+      { key: 'longTerm', label: 'Vad händer efter projektets slut?', type: 'textarea', required: true, guidance: '"Resultaten lever vidare" räcker inte: vem tar över, vem betalar, vad består konkret?' },
+      { key: 'whyUs', label: 'Varför just ni — och varför nu?', type: 'textarea', guidance: 'Det som skiljer er från liknande projekt. Hitta inte på fördelar — det ni faktiskt har räcker.' },
+    ],
+    sections: [
+      { title: 'Projekt', lines: ['{{projectTitle}}', 'Sökande: {{fullName}}'] },
+      { title: 'Problem och behov', lines: ['{{problem}}', 'Bakomliggande orsak: {{cause}}'] },
+      { title: 'Mål', lines: ['{{goal}}'] },
+      {
+        title: 'Indikator och uppföljning',
+        showIf: { key: 'hasIndicator', equals: true },
+        lines: ['Indikator: {{indicator}}', 'Nuläge: {{baseline}}', 'Mål: {{target}}', 'Mätning: {{measurement}}'],
+      },
+      { title: 'Genomförande', lines: ['{{activities}}'] },
+      { title: 'Organisation och kapacitet', lines: ['{{organisation}}', 'Identifierade luckor och hur de hanteras: {{capacityGaps}}'] },
+      { title: 'Efter projektet', lines: ['{{longTerm}}'] },
+      { title: 'Varför vi, varför nu', lines: ['{{whyUs}}'] },
     ],
   },
 ];
