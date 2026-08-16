@@ -100,6 +100,8 @@ describe('dokumentstudion', () => {
     expect(body.document.content).toContain('Majblommans Riksförbund');
     expect(body.document.content).toContain('Vera, 9 år');
     expect(body.document.content).not.toContain('Bidrag.se'); // sökandens handling — ingen verktygsattribution
+    // Sakligt språk ⇒ ödmjukhetsprotokollet tiger (§12).
+    expect((res.json() as { languageFindings: unknown[] }).languageFindings).toEqual([]);
   });
 
   it('missing required answers → 422 with the exact missing fields, no credit consumed', async () => {
@@ -126,9 +128,23 @@ describe('dokumentstudion', () => {
     for (let i = 0; i < 2; i++) {
       const res = await api(app, user, 'POST', `/v1/projects/${projectId}/generated-documents`, {
         templateKey: 'sarskilda-omstandigheter',
-        answers: { fullName: 'Anna Ek', circumstance: `Situation ${i}`, impact: 'Påverkar ekonomin.' },
+        answers: {
+          fullName: 'Anna Ek',
+          circumstance: `Situation ${i}`,
+          impact: i === 0 ? 'Vi garanterar att situationen påverkar ekonomin.' : 'Påverkar ekonomin.',
+        },
       });
-      expect(res.statusCode).toBe(201);
+      expect(res.statusCode).toBe(201); // flaggan blockerar aldrig
+      if (i === 0) {
+        // Ödmjukhetsprotokollet §12: "garanterar" flaggas rådgivande, texten är orörd.
+        const { document, languageFindings } = res.json() as {
+          document: { content: string };
+          languageFindings: { kind: string; term: string; fieldKey: string }[];
+        };
+        expect(languageFindings).toHaveLength(1);
+        expect(languageFindings[0]).toMatchObject({ kind: 'SUPERLATIVE', fieldKey: 'impact' });
+        expect(document.content).toContain('Vi garanterar att situationen påverkar ekonomin.');
+      }
     }
     const fourth = await api(app, user, 'POST', `/v1/projects/${projectId}/generated-documents`, {
       templateKey: 'behovsbeskrivning', answers: behovsAnswers,

@@ -27,6 +27,7 @@ interface CreditsInfo {
   prefill?: Record<string, Record<string, unknown>>;
 }
 interface GeneratedDoc { id: string; title: string; opportunityTitle: string; createdAt: string }
+interface LanguageFinding { kind: string; term: string; excerpt: string; suggestion: string; fieldKey: string }
 
 export default function DocumentStudioPage() {
   const { projectId } = useParams();
@@ -36,6 +37,7 @@ export default function DocumentStudioPage() {
   const [docs, setDocs] = useState<GeneratedDoc[]>([]);
   const [active, setActive] = useState<TemplateInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [langNotes, setLangNotes] = useState<LanguageFinding[]>([]);
 
   const load = useCallback(() => {
     if (!projectId) return;
@@ -53,6 +55,20 @@ export default function DocumentStudioPage() {
         Du svarar på frågor — vi skapar färdiga dokument: ansökan, ekonomisk bilaga, behovsbeskrivning och
         förklaringar. Dokumenten sparas på ditt konto och du skickar själv in dem via myndighetens webbplats.
       </p>
+
+      {langNotes.length > 0 && (
+        <div className="alert" style={{ marginBottom: '0.8rem' }}>
+          <strong>Dokumentet är skapat.</strong> Några formuleringar kan granskas kritiskt av en handläggare —
+          de är dina ord och vi har inte ändrat något, men överväg:
+          <ul style={{ margin: '0.4rem 0 0 1.1rem' }}>
+            {langNotes.map((f, i) => (
+              <li key={i} style={{ margin: '0.25rem 0' }}>
+                <em>"{f.term}"</em> — {f.suggestion}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {docs.length > 0 && (
         <div className="card">
@@ -96,7 +112,7 @@ export default function DocumentStudioPage() {
           template={active}
           opportunitySlug={opportunitySlug}
           prefill={info.prefill?.[active.key] ?? {}}
-          onDone={() => { setActive(null); load(); }}
+          onDone={(findings) => { setActive(null); setLangNotes(findings); load(); }}
           onCancel={() => setActive(null)}
         />
       )}
@@ -211,7 +227,7 @@ function PackRow({ label, sub, price, onBuy, busy, recommended }: { label: strin
 /** Formulär genererat ur mallens frågor — villkorade frågor visas adaptivt. */
 function DocumentForm({ projectId, template, opportunitySlug, prefill, onDone, onCancel }: {
   projectId: string; template: TemplateInfo; opportunitySlug: string | null;
-  prefill: Record<string, unknown>; onDone: () => void; onCancel: () => void;
+  prefill: Record<string, unknown>; onDone: (findings: LanguageFinding[]) => void; onCancel: () => void;
 }) {
   // Färdigifyllt + autospar: formuläret börjar med allt systemet redan vet
   // från intaget (förifyllnaden), och varje rad skrivs till webbläsarens
@@ -244,13 +260,13 @@ function DocumentForm({ projectId, template, opportunitySlug, prefill, onDone, o
     setBusy(true);
     setError(null);
     try {
-      await post(`/v1/projects/${projectId}/generated-documents`, {
+      const res = await post<{ languageFindings?: LanguageFinding[] }>(`/v1/projects/${projectId}/generated-documents`, {
         templateKey: template.key,
         answers,
         ...(opportunitySlug ? { opportunitySlug } : {}),
       });
       try { localStorage.removeItem(draftKey); } catch { /* ofarligt */ }
-      onDone();
+      onDone(res.languageFindings ?? []);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Dokumentet kunde inte skapas.');
     } finally {

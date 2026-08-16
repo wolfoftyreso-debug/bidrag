@@ -142,6 +142,25 @@ describe('granskning inför inlämning', () => {
     });
   });
 
+  it('konstitutionen §12–13: superlatives and quantified promises are flagged MEDIUM — advisory, never blocking', async () => {
+    await api(app, user, 'PATCH', `/v1/applications/${caseId}`, {
+      answers: { projekt_sammanfattning: 'Vår unika metod kommer att skapa 500 arbetstillfällen.' },
+    });
+    const review = await getReview();
+    const lang = review.gaps.filter((g) => g.area === 'language');
+    expect(lang.length).toBeGreaterThanOrEqual(2); // "unika" + utfallslöftet
+    for (const g of lang) {
+      expect(g.severity).toBe('MEDIUM'); // rådgivande — språk blockerar aldrig en ansökan
+      expect(g.requiresFactualChange).toBe(false);
+    }
+    // Saklig formulering ⇒ flaggorna försvinner; texten skrevs aldrig om av systemet.
+    await api(app, user, 'PATCH', `/v1/applications/${caseId}`, {
+      answers: { projekt_sammanfattning: 'Residens hos Kingston Dance Collective med gemensamma föreställningar.' },
+    });
+    const after = await getReview();
+    expect(after.gaps.filter((g) => g.area === 'language')).toEqual([]);
+  });
+
   it('K2: financing exceeding the budget blocks submission — both directions are contradictions', async () => {
     await api(app, user, 'PATCH', `/v1/applications/${caseId}`, {
       financing: { requestedMinor: 2600000, ownContributionMinor: 0, otherFundingMinor: 0, inKindMinor: 0 },

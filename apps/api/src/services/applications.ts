@@ -5,6 +5,7 @@
  */
 import { and, eq, sql } from 'drizzle-orm';
 import {
+  answerLanguageFindings,
   assertTransition,
   evaluateAll,
   findNumericConflicts,
@@ -54,7 +55,7 @@ export type GapSeverity = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
 export interface ReviewGap {
   id: string;
   severity: GapSeverity;
-  area: 'eligibility' | 'fields' | 'evidence' | 'budget' | 'deadline' | 'consistency' | 'coverage';
+  area: 'eligibility' | 'fields' | 'evidence' | 'budget' | 'deadline' | 'consistency' | 'coverage' | 'language';
   message: string;
   /** Vad som stänger luckan. */
   action: string;
@@ -291,6 +292,21 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
       requiresFactualChange: false,
     });
   }
+  // Ödmjukhetsprotokollet (konstitutionen §12–13, PASS 8): ogrundade superlativ
+  // och kvantifierade utfallslöften i fritextsvaren flaggas rådgivande (MEDIUM,
+  // aldrig blockerande) — ett styrkt starkt påstående får stå kvar, och texten
+  // skrivs aldrig om av systemet. Max fem flaggor så att listan förblir läsbar.
+  for (const f of answerLanguageFindings(answers).slice(0, 5)) {
+    gaps.push({
+      id: `language-${f.kind.toLowerCase()}-${f.fieldKey}`,
+      severity: 'MEDIUM',
+      area: 'language',
+      message: `Formuleringen "${f.term}" i fältet ${f.fieldKey} kommer att granskas kritiskt: ${f.excerpt}`,
+      action: f.suggestion,
+      requiresFactualChange: false,
+    });
+  }
+
   const requestedField = (schema?.fields ?? []).find((f) => f.canonicalKey === 'project.requestedAmount');
   const requestedAnswer = requestedField ? answers[requestedField.key] : undefined;
   if (typeof requestedAnswer === 'number' && financing.requestedMinor > 0 && Math.round(requestedAnswer * 100) !== financing.requestedMinor) {

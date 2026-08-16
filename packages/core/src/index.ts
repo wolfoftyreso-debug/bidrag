@@ -10,3 +10,4 @@ export * from './validation.js';
 export * from './documents.js';
 export * from './documentTemplates.js';
 export * from './consistency.js';
+export * from './language.js';
