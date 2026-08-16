@@ -47,12 +47,21 @@ afterAll(async () => {
 });
 
 describe('dokumentstudion', () => {
-  it('exposes prices and the template catalogue', async () => {
+  it('exposes prices, the template catalogue and prefilled answers from the intake', async () => {
     const res = await api(app, user, 'GET', `/v1/projects/${projectId}/document-credits`);
-    const body = res.json() as { remaining: number; prices: { single: number; pack3: number; all: number }; templates: { key: string; questions: unknown[] }[] };
+    const body = res.json() as {
+      remaining: number;
+      prices: { single: number; pack3: number; all: number };
+      templates: { key: string; questions: unknown[] }[];
+      prefill: Record<string, Record<string, unknown>>;
+    };
     expect(body.remaining).toBe(0);
     expect(body.prices).toEqual({ single: 1900, pack3: 4900, all: 7900 });
     expect(body.templates.map((t) => t.key)).toContain('behovsbeskrivning');
+    // Färdigifyllt: det systemet redan vet mappas in — inget gissas.
+    expect(body.prefill['ansokan-ekonomiskt-stod']!.fullName).toBe('Dokumentskaparen');
+    expect(body.prefill['ansokan-ekonomiskt-stod']!.hasChildren).toBe(true);
+    expect(body.prefill['ansokan-ekonomiskt-stod']).not.toHaveProperty('address');
   });
 
   it('refuses generation without credits — 402, never a free document', async () => {

@@ -122,3 +122,50 @@ export const DOCUMENT_TEMPLATES: DocumentTemplate[] = [
 export function getTemplate(key: string): DocumentTemplate | undefined {
   return DOCUMENT_TEMPLATES.find((t) => t.key === key);
 }
+
+/**
+ * Förifyllnad: alla bidragsdokument ska kunna skapas färdigifyllda med det
+ * systemet redan vet från intaget — användaren ska aldrig svara på samma
+ * fråga två gånger. Bara fakta vi FAKTISKT har mappas; inget gissas
+ * (inkomstband blir t.ex. aldrig ett påhittat kronbelopp). Användaren ser,
+ * kontrollerar och kan ändra allt innan dokumentet genereras.
+ */
+export interface PrefillContext {
+  /** Användarens registrerade namn. */
+  displayName?: string | null;
+  /** Profilens kommun. */
+  municipality?: string | null;
+  /** Sammanslagna profil- och projektfakta (person.* m.fl.). */
+  facts: Record<string, unknown>;
+}
+
+export function prefillAnswers(templateKey: string, ctx: PrefillContext): Record<string, unknown> {
+  const f = ctx.facts;
+  const out: Record<string, unknown> = {};
+  const put = (key: string, v: unknown) => {
+    if (v !== undefined && v !== null && v !== '') out[key] = v;
+  };
+
+  // Gemensamt för alla mallar som frågar efter namn/kommun.
+  put('fullName', ctx.displayName?.trim());
+  put('municipality', ctx.municipality?.trim());
+
+  const household = f['person.householdType'];
+  const hasChildren = f['person.hasChildrenAtHome'];
+  const housingCost = f['person.housingCostMonthly'];
+  const limitedSavings = f['person.limitedSavings'];
+
+  if (templateKey === 'ansokan-ekonomiskt-stod') {
+    // "Med andra vuxna" säger inte hur många — då förifylls inget.
+    if (household === 'alone') put('householdAdults', 1);
+    if (household === 'partner') put('householdAdults', 2);
+    if (typeof hasChildren === 'boolean') put('hasChildren', hasChildren);
+  }
+  if (templateKey === 'bilaga-ekonomisk-situation') {
+    if (typeof housingCost === 'number' && housingCost > 0) put('costHousing', housingCost);
+    // Intagets "begränsat sparande" är samma sakfråga som bilagans
+    // tillgångsfråga, speglad: begränsat sparande ⇒ inga användbara medel.
+    if (typeof limitedSavings === 'boolean') put('savings', !limitedSavings);
+  }
+  return out;
+}

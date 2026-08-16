@@ -68,8 +68,21 @@ export function validateDocumentAnswers(t: DocumentTemplate, answers: DocAnswers
 
 const PLACEHOLDER = /\{\{([a-zA-Z0-9_.]+)\}\}/g;
 
+/**
+ * Belopp och antal sätts med svensk tusentalsgruppering (hårt mellanslag så
+ * att "14 200" aldrig radbryts mitt i) och decimalkomma: 14200 → "14 200",
+ * 2.5 → "2,5". Text lämnas orörd — motorn skriver aldrig om användarens ord.
+ */
+function formatNumberSv(n: number): string {
+  const neg = n < 0;
+  const [int, dec] = String(Math.abs(n)).split('.');
+  const grouped = int!.replace(/\B(?=(\d{3})+(?!\d))/g, '\u00A0');
+  return `${neg ? '-' : ''}${grouped}${dec ? `,${dec}` : ''}`;
+}
+
 function formatValue(v: unknown): string {
   if (typeof v === 'boolean') return v ? 'Ja' : 'Nej';
+  if (typeof v === 'number' && Number.isFinite(v)) return formatNumberSv(v);
   if (v === undefined || v === null) return '';
   return String(v);
 }

@@ -23,6 +23,8 @@ interface CreditsInfo {
   remaining: number; total: number; used: number;
   prices: { single: number; pack3: number; all: number };
   templates: TemplateInfo[];
+  /** Förifyllda svar per mall — det systemet redan vet från intaget. */
+  prefill?: Record<string, Record<string, unknown>>;
 }
 interface GeneratedDoc { id: string; title: string; opportunityTitle: string; createdAt: string }
 
@@ -93,6 +95,7 @@ export default function DocumentStudioPage() {
           projectId={projectId}
           template={active}
           opportunitySlug={opportunitySlug}
+          prefill={info.prefill?.[active.key] ?? {}}
           onDone={() => { setActive(null); load(); }}
           onCancel={() => setActive(null)}
         />
@@ -206,11 +209,14 @@ function PackRow({ label, sub, price, onBuy, busy, recommended }: { label: strin
 }
 
 /** Formulär genererat ur mallens frågor — villkorade frågor visas adaptivt. */
-function DocumentForm({ projectId, template, opportunitySlug, onDone, onCancel }: {
-  projectId: string; template: TemplateInfo; opportunitySlug: string | null; onDone: () => void; onCancel: () => void;
+function DocumentForm({ projectId, template, opportunitySlug, prefill, onDone, onCancel }: {
+  projectId: string; template: TemplateInfo; opportunitySlug: string | null;
+  prefill: Record<string, unknown>; onDone: () => void; onCancel: () => void;
 }) {
-  // Autospar: varje rad skrivs till webbläsarens lagring medan användaren
-  // fyller i — en omladdning tappar aldrig ett halvskrivet dokumentunderlag.
+  // Färdigifyllt + autospar: formuläret börjar med allt systemet redan vet
+  // från intaget (förifyllnaden), och varje rad skrivs till webbläsarens
+  // lagring medan användaren fyller i — ett påbörjat utkast vinner över
+  // förifyllnaden, och en omladdning tappar aldrig ett halvskrivet underlag.
   // Utkastet rensas när dokumentet genererats (då äger servern innehållet).
   const draftKey = `bidrag.dok.v1.${projectId}.${template.key}`;
   const [answers, setAnswers] = useState<Record<string, unknown>>(() => {
@@ -218,10 +224,10 @@ function DocumentForm({ projectId, template, opportunitySlug, onDone, onCancel }
       const raw = localStorage.getItem(draftKey);
       if (raw) {
         const d = JSON.parse(raw) as unknown;
-        if (d && typeof d === 'object' && !Array.isArray(d)) return d as Record<string, unknown>;
+        if (d && typeof d === 'object' && !Array.isArray(d)) return { ...prefill, ...(d as Record<string, unknown>) };
       }
     } catch { /* privat läge — formuläret fungerar ändå */ }
-    return {};
+    return { ...prefill };
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -252,10 +258,18 @@ function DocumentForm({ projectId, template, opportunitySlug, onDone, onCancel }
     }
   };
 
+  const prefillCount = Object.keys(prefill).filter((k) => prefill[k] !== undefined).length;
+
   return (
     <div className="card">
       <h2>{template.title}</h2>
       <p className="guidance">{template.description}</p>
+      {prefillCount > 0 && (
+        <div className="alert success" style={{ marginTop: '0.6rem' }}>
+          Vi har förifyllt {prefillCount} {prefillCount === 1 ? 'uppgift' : 'uppgifter'} från det du redan berättat —
+          kontrollera att de stämmer och komplettera resten.
+        </div>
+      )}
       <form onSubmit={submit}>
         {visible.map((q) => (
           <div key={q.key} style={{ margin: '0.8rem 0' }}>

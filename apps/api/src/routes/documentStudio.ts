@@ -14,9 +14,9 @@
  */
 import type { FastifyInstance } from 'fastify';
 import { and, count, eq, sql } from 'drizzle-orm';
-import { DOCUMENT_TEMPLATES, getTemplate, renderDocument, validateDocumentAnswers, type DocAnswers } from '@bidrag/core';
+import { DOCUMENT_TEMPLATES, getTemplate, prefillAnswers, renderDocument, validateDocumentAnswers, type DocAnswers } from '@bidrag/core';
 import { db } from '../db/client.ts';
-import { fundingAuthorities, fundingOpportunities, generatedDocuments, payments, projects } from '../db/schema.ts';
+import { applicantProfiles, fundingAuthorities, fundingOpportunities, generatedDocuments, payments, projects, users } from '../db/schema.ts';
 import { audit } from '../audit.ts';
 import { config } from '../config.ts';
 import { WRITER_ROLES } from '../plugins/auth.ts';
@@ -70,6 +70,30 @@ export async function documentStudioRoutes(app: FastifyInstance) {
       const { id } = request.params as { id: string };
       if (!(await ownedProject(request.auth!.tenantId, id))) return reply.code(404).send({ error: 'not_found' });
       const credits = await creditState(request.auth!.tenantId, id);
+
+      // Färdigifyllda dokument: allt systemet redan vet från intaget mappas
+      // in i mallens frågor — användaren kontrollerar och kompletterar i
+      // stället för att svara på samma fråga igen. Inget gissas.
+      const [ctx] = await db
+        .select({
+          projectFacts: projects.facts,
+          profileFacts: applicantProfiles.facts,
+          municipality: applicantProfiles.municipality,
+        })
+        .from(projects)
+        .leftJoin(applicantProfiles, eq(projects.profileId, applicantProfiles.id))
+        .where(and(eq(projects.id, id), eq(projects.tenantId, request.auth!.tenantId)))
+        .limit(1);
+      const [me] = await db
+        .select({ displayName: users.displayName })
+        .from(users)
+        .where(eq(users.id, request.auth!.userId))
+        .limit(1);
+      const facts = {
+        ...((ctx?.profileFacts as Record<string, unknown>) ?? {}),
+        ...((ctx?.projectFacts as Record<string, unknown>) ?? {}),
+      };
+
       return {
         ...credits,
         prices: {
@@ -83,6 +107,12 @@ export async function documentStudioRoutes(app: FastifyInstance) {
           description: t.description,
           questions: t.questions,
         })),
+        prefill: Object.fromEntries(
+          DOCUMENT_TEMPLATES.map((t) => [
+            t.key,
+            prefillAnswers(t.key, { displayName: me?.displayName, municipality: ctx?.municipality, facts }),
+          ]),
+        ),
       };
     },
   );
