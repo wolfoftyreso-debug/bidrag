@@ -84,6 +84,39 @@ class AnalyzeFlowTests(unittest.TestCase):
         p = pipeline_with(MockReader("iksimbil"))
         self.assertEqual(p.analyze(None)["status"], 400)
 
+    def test_known_stone_path_locks_and_renders_modern(self):
+        # Exakt lasning + GPS: score >= 0.95 -> IDENTITY LOCK -> Known Stone
+        # Path med kanonisk oversattning OCH modern upplevelsetext (L3).
+        p = pipeline_with(MockReader("iksimbil", 0.91))
+        out = p.analyze(IMAGE, gps=(59.8501, 17.6302))
+        body = out["body"]
+        self.assertEqual(body["path"], "known_stone")
+        self.assertEqual(body["identity"]["mode"], "lock")
+        self.assertEqual(body["result"]["translation_sv"], "Syntetisk exempelpost 1.")
+        self.assertIsNotNone(body["interpretation"])
+        self.assertEqual(body["interpretation"]["basis"]["source"], "canonical")
+
+    def test_reading_path_when_no_lock(self):
+        # Formellasning som inte finns i corpus: Unknown Stone Path,
+        # formelbaserad L2/L3 utan scholarly-ansprak.
+        p = pipeline_with(MockReader("burkil raisti stain þinsa aftir ulf sun sin", 0.85))
+        out = p.analyze(IMAGE)
+        body = out["body"]
+        self.assertEqual(body["path"], "reading")
+        self.assertIsNone(body["result"]["stone_id"])
+        self.assertIsNotNone(body["rendering"])
+        self.assertEqual(body["rendering"]["basis"], "formulaic")
+        self.assertFalse(body["rendering"]["scholarly_grounded"])
+        self.assertIn("Burkil", body["result"]["modern_sv"])
+
+    def test_mismatch_gets_no_experience_text(self):
+        # Underkand lasning: varken oversattning eller upplevelsetext.
+        p = pipeline_with(MockReader("helt okand text har", 0.8))
+        body = p.analyze(IMAGE)["body"]
+        self.assertEqual(body["path"], "reading")
+        self.assertIsNone(body["result"]["modern_sv"])
+        self.assertIsNone(body["rendering"])
+
     def test_mismatch_never_presents_identification(self):
         # Lasning som motsager corpus: LOW match -> ingen stone_id, ingen
         # kalla, oversattning avstar (plan §19) - men 200 med verification.

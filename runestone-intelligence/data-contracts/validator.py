@@ -134,6 +134,15 @@ def domain_invariants(record: dict, schema_name: str) -> list[str]:
                 errors.append("match=matched kraver minst en icke-GPS-evidens (GPS ar signal, inte facit)")
             if not match.get("matched_stone_id"):
                 errors.append("match=matched kraver matched_stone_id")
+    if schema_name == "interpretation":
+        basis = record.get("basis", {})
+        if basis.get("source") == "canonical" and not basis.get("inscription_id"):
+            errors.append("basis.source=canonical kraver inscription_id (Level 2 maste vara sparbar till Level 1)")
+    if schema_name == "rendering":
+        if record.get("basis") == "canonical" and not record.get("scholarly_grounded"):
+            errors.append("basis=canonical kraver scholarly_grounded=true")
+        if record.get("basis") == "formulaic" and record.get("scholarly_grounded"):
+            errors.append("basis=formulaic far inte pastas vara scholarly_grounded")
     if schema_name == "stone":
         if record.get("atlas_status") == "registered_known" and not record.get("official_signum"):
             errors.append("registered_known kraver official_signum")

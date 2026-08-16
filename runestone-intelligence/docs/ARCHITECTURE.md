@@ -105,6 +105,24 @@ Varje resultat kopplas till: källdatabas, inskrift (signum), source record,
 translation source, image source, modellversion (`RuneVision v0.8`) och
 inference timestamp.
 
+## Identity Lock — Known/Unknown Stone Path (ADR-0008)
+
+Identifiering är prioritet #1. För en känd sten läses runorna inte om från
+noll — den verifierade posten hämtas och modellen blir moderniseringsmotor:
+
+```
+PHOTO → VISUAL IDENTIFICATION → KNOWN STONE?
+  ├── ≥0.95  LOCK      → FETCH VERIFIED RECORD → MODERN INTERPRETATION
+  ├── 0.70–0.95 REVIEW → jämför kandidater
+  └── <0.70  FALLBACK  → RUNIC READING → TRANSCRIPTION → INTERPRETATION
+```
+
+Tre nivåer sparas per sten: **L1 SOURCE TRUTH** (ändras aldrig av
+modellen), **L2 INTERPRETED MEANING** (strukturerad semantik, spårbar till
+L1), **L3 MODERN EXPERIENCE** (emotion first — stillagret appliceras på
+verifierad betydelse, aldrig på bilden). Kontrakt: `interpretation`,
+`rendering`; vägval: `knowledge/identity.py`.
+
 ## Atlas-flödet (parallellt med läsflödet)
 
 Varje analyserat foto skriver — med samtycke — en fältobservation:

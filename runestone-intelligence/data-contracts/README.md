@@ -16,6 +16,8 @@ någon import körs.
 | `model-registry-entry` | Reproducerbar modellmetadata + statusflöde (plan §32–33) |
 | `stone` | Atlasobjekt: position, skick, observationshistorik, kandidat/känd (ADR-0006) |
 | `field-observation` | Fältobservation: GPS, enhet, samtycke, matchningsevidens, verifieringstrappa (ADR-0007) |
+| `interpretation` | LEVEL 2 — strukturerad semantik (personer, relationer, handlingar), spårbar till Level 1 (ADR-0008) |
+| `rendering` | LEVEL 3 — modern upplevelsetext (emotion first), refererar alltid Level 2 (ADR-0008) |
 
 ## Domäninvarianter utöver schemana
 
@@ -34,6 +36,9 @@ Enforceas i `validator.domain_invariants`:
   (uttryckligt användarsamtycke per observation).
 - `registered_known`-sten kräver `official_signum`; `merged` kräver
   `merged_into`.
+- L2 med `basis=canonical` kräver `inscription_id` (spårbarhet till L1);
+  L3 med `basis=canonical` kräver `scholarly_grounded=true`, och
+  `formulaic` får aldrig påstå sig vara scholarly_grounded.
 
 ## Körning
 

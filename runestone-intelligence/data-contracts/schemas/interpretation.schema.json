@@ -1,0 +1,83 @@
+{
+  "$id": "runestone/interpretation",
+  "title": "Interpretation",
+  "description": "LEVEL 2 - INTERPRETED MEANING: strukturerad semantisk representation av en inskrift. Sparbar till Level 1 (source truth) via basis; Level 1 andras aldrig av modellen (ADR-0008). Invariant: basis.source=canonical kraver inscription_id.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["interpretation_id", "basis", "people", "relationships", "actions", "purpose", "emotional_context", "derivation"],
+  "properties": {
+    "interpretation_id": { "type": "string", "pattern": "^int-[a-z0-9-]+$" },
+    "basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "transliteration"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["canonical", "observed"],
+          "description": "canonical = fran verifierad Level 1-post; observed = fran modellens egen lasning (okand sten)."
+        },
+        "inscription_id": { "type": ["string", "null"], "pattern": "^ric-[a-z0-9-]+$" },
+        "observation_id": { "type": ["string", "null"], "pattern": "^obs-[a-z0-9-]+$" },
+        "transliteration": { "type": "string", "minLength": 1 }
+      }
+    },
+    "people": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "source_token", "position"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "source_token": { "type": "string", "minLength": 1 },
+          "position": { "type": "integer", "minimum": 0 },
+          "role": { "type": ["string", "null"], "enum": ["commissioner", "honoree", "carver", null] }
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "source_token"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["father", "mother", "son", "daughter", "brother", "sister", "husband", "wife", "kinsman"]
+          },
+          "source_token": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["memorial_stone_erected", "runes_carved", "bridge_built", "prayer_offered"]
+      }
+    },
+    "purpose": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["remembrance", "piety", "status", "unknown"] }
+    },
+    "emotional_context": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["memorial", "family", "loss", "faith", "pride"] }
+    },
+    "derivation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generator", "reviewed"],
+      "properties": {
+        "generator": { "type": "string", "minLength": 1 },
+        "reviewed": {
+          "type": "boolean",
+          "description": "false tills en manniska granskat - Level 2 ar systemets forstaelse, aldrig automatisk sanning."
+        },
+        "reviewed_by": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

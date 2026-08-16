@@ -26,6 +26,9 @@ _ROOT = Path(__file__).parents[1]
 for sub in ("knowledge", "verification", "translation", "data-contracts"):
     sys.path.insert(0, str(_ROOT / sub))
 
+from identity import REVIEW_THRESHOLD, decide as identity_decide  # noqa: E402
+from meaning import extract_meaning  # noqa: E402
+from presentation import render_modern  # noqa: E402
 from retrieval import CorpusIndex  # noqa: E402
 from translate import translate  # noqa: E402
 from validator import validate_record  # noqa: E402
@@ -74,7 +77,45 @@ class AnalyzePipeline:
         text = reading["transliteration"]
         candidates = [c.to_dict() for c in self.index.search(query_text=text, gps=gps, top_k=5)]
         verdict = verify_against_candidates(text, candidates)
-        translation = translate(text, verdict)
+
+        # IDENTITY LOCK (ADR-0008): valj Known Stone Path eller Unknown
+        # Stone Path. LOW-match bryter alltid lasningen.
+        verification_match = (verdict.get("verification") or {}).get("match")
+        identity = identity_decide(candidates, verification_match=verification_match)
+        known_stone = identity.mode == "lock" and verdict.get("status") == "verified"
+
+        # En mismatch binder bara nar kandidaten var plausibel (score i
+        # review-/lockbandet). Under det ar detta en OKAND sten - da galler
+        # Unknown Stone Path-policyn, inte motsagelse mot en langsokt kandidat.
+        top_score = next((c["score"] for c in candidates if not c.get("gps_only")), 0.0)
+        if top_score >= REVIEW_THRESHOLD:
+            translation = translate(text, verdict)
+        else:
+            translation = translate(text, {"status": "no_candidates"})
+
+        # Level 2 + Level 3: pa Known Stone Path harleds semantiken ur den
+        # KANONISKA texten (inte modellens lasning); pa Unknown Stone Path
+        # ur den observerade lasningen - och bara nar oversattningen inte
+        # avstod (en underkand lasning far ingen upplevelsetext).
+        interpretation, rendering = None, None
+        if known_stone:
+            source = verdict["source"]
+            interpretation = extract_meaning(
+                source.get("transliteration") or text, basis_source="canonical",
+                inscription_id=verdict["identification"]["inscription_id"],
+                interpretation_id=f"int-{verdict['identification']['inscription_id'].removeprefix('ric-')}")
+            rendering = render_modern(
+                interpretation,
+                canonical_translation=source.get("translation_sv"),
+                rendering_id=f"ren-{verdict['identification']['inscription_id'].removeprefix('ric-')}") or None
+        elif not translation.get("abstained"):
+            interpretation = extract_meaning(text, basis_source="observed",
+                                             interpretation_id="int-observed-unsaved")
+            rendering = render_modern(interpretation, rendering_id="ren-observed-unsaved") or None
+        if interpretation is not None and validate_record(interpretation, "interpretation"):
+            interpretation = None  # ogiltig L2 presenteras aldrig
+        if rendering is not None and validate_record(rendering, "rendering"):
+            rendering = None
 
         # Identifiering presenteras ENDAST nar verifieringen bekraftat den:
         # en LOW-match (mismatch) ar en kandidat under utredning, inte en
@@ -106,15 +147,20 @@ class AnalyzePipeline:
             })
 
         body = {
+            "path": "known_stone" if known_stone else "reading",
             "result": {
                 "stone_id": identification.get("signum") if identification else None,
                 "identification_confidence": identification.get("identification_score")
                 if identification else None,
                 "transliteration": text,
                 "translation_sv": translation.get("translation_sv"),
+                "modern_sv": rendering["text_sv"] if rendering else None,
                 "confidence": _overall_confidence(stage_confidence),
                 "scholarly_status": translation.get("scholarly_status"),
             },
+            "identity": identity.to_dict(),
+            "interpretation": interpretation,
+            "rendering": rendering,
             "stage_confidence": stage_confidence,
             "uncertainties": reading.get("uncertainties", []),
             "verification": verdict.get("verification"),

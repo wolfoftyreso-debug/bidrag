@@ -1,0 +1,30 @@
+{
+  "$id": "runestone/rendering",
+  "title": "ModernRendering",
+  "description": "LEVEL 3 - MODERN EXPERIENCE: det anvandaren laser. Refererar alltid Level 2 (interpretation_id) och darigenom Level 1; fristaende texter utan harledning far inte existera. Invariant: basis=canonical kraver scholarly_grounded=true.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["rendering_id", "interpretation_id", "basis", "style", "text_sv", "generator", "reviewed"],
+  "properties": {
+    "rendering_id": { "type": "string", "pattern": "^ren-[a-z0-9-]+$" },
+    "interpretation_id": { "type": "string", "pattern": "^int-[a-z0-9-]+$" },
+    "basis": {
+      "type": "string",
+      "enum": ["canonical", "formulaic"],
+      "description": "canonical = vilar pa verifierad kalloversattning; formulaic = vilar pa regeltolkad formel (okand sten)."
+    },
+    "style": { "type": "string", "enum": ["emotion_first", "plain_modern"] },
+    "text_sv": { "type": "string", "minLength": 1 },
+    "scholarly_grounded": {
+      "type": "boolean",
+      "description": "true nar en kallbelagd oversattning ligger till grund; styr hur texten far presenteras."
+    },
+    "generator": {
+      "type": "string",
+      "minLength": 1,
+      "description": "T.ex. 'template-v0.1' eller 'llm:<modell>@<version>' - alltid sparbart."
+    },
+    "reviewed": { "type": "boolean" },
+    "reviewed_by": { "type": ["string", "null"] }
+  }
+}
