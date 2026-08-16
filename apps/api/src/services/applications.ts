@@ -322,6 +322,28 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
     }
   }
 
+  // Partnermotsägelse (§12, CONFLICT-principen): formuläret säger att en
+  // bekräftad partner saknas medan fritexten talar om en partner. Systemet
+  // väljer aldrig åt användaren — det flaggar och ber om rättning.
+  const partnerBool = (schema?.fields ?? []).find(
+    (f) => f.type === 'boolean' && /partner/i.test(`${f.key} ${f.label ?? ''}`),
+  );
+  if (partnerBool && answers[partnerBool.key] === false) {
+    const mention = Object.entries(answers).find(
+      ([key, v]) => key !== partnerBool.key && typeof v === 'string' && /partner/i.test(v),
+    );
+    if (mention) {
+      gaps.push({
+        id: 'consistency-partner',
+        severity: 'MEDIUM',
+        area: 'consistency',
+        message: `Formuläret anger att bekräftad partner saknas, men texten i fältet ${mention[0]} nämner en partner.`,
+        action: 'Kontrollera vilket som stämmer: har ni en bekräftad partner anger du det i formuläret, annars bör texten inte tala om en partner som fanns.',
+        requiresFactualChange: false,
+      });
+    }
+  }
+
   // Ödmjukhetsprotokollet (konstitutionen §12–13, PASS 8): ogrundade superlativ
   // och kvantifierade utfallslöften i fritextsvaren flaggas rådgivande (MEDIUM,
   // aldrig blockerande) — ett styrkt starkt påstående får stå kvar, och texten

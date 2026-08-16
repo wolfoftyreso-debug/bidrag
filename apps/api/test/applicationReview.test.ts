@@ -300,6 +300,29 @@ describe('granskning inför inlämning', () => {
     expect(travel.overallStatus).toBe('READY_FOR_SUBMISSION');
   });
 
+  it('partnermotsägelsen: "ingen bekräftad partner" i formuläret men partner i texten ⇒ CONFLICT-flagga', async () => {
+    // Erasmus-schemat bär har_partner-frågan. Nytt ärende för ren uppställning.
+    const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
+    const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string }[] };
+    const erasmus = matches.find((m) => m.slug === 'erasmus-plus-ungdomsutbyten')!;
+    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: erasmus.opportunityId });
+    const idP = (created.json() as { application: { id: string } }).application.id;
+    await api(app, user, 'PATCH', `/v1/applications/${idP}`, {
+      answers: { har_partner: false, projekt_sammanfattning: 'Utbytet genomförs tillsammans med vår partnergrupp i Lissabon.' },
+    });
+    const res = await api(app, user, 'GET', `/v1/applications/${idP}/review`);
+    const review = (res.json() as { review: Review }).review;
+    const flag = review.gaps.find((g) => g.id === 'consistency-partner');
+    expect(flag, JSON.stringify(review.gaps.map((g) => g.id))).toBeDefined();
+    expect(flag!.severity).toBe('MEDIUM'); // flagga, aldrig gissning — användaren avgör vad som stämmer
+    // Bekräftad partner angiven ⇒ ingen motsägelse längre.
+    await api(app, user, 'PATCH', `/v1/applications/${idP}`, {
+      answers: { har_partner: true, partner_namn: 'Grupo Danca, Portugal' },
+    });
+    const after = await api(app, user, 'GET', `/v1/applications/${idP}/review`);
+    expect((after.json() as { review: Review }).review.gaps.some((g) => g.id === 'consistency-partner')).toBe(false);
+  });
+
   // ── Block 3: E2-koppling, statsstöd, källfärskhet, schematäckning ──────────
 
   it('§10: criteria backed by an attached linked document reach E2 — never by guesswork', async () => {

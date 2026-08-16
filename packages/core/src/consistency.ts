@@ -87,11 +87,19 @@ export function extractNumericClaims(answers: Record<string, unknown>): NumericC
  */
 const MONTHS = ['januari', 'februari', 'mars', 'april', 'maj', 'juni', 'juli', 'augusti', 'september', 'oktober', 'november', 'december'];
 const MONTH_RE = new RegExp(`\\b(${MONTHS.join('|')})\\b`, 'gi');
+/** "14 oktober", "1 februari 2027" — dag + månadsnamn, valfritt år. */
+const DAY_MONTH_RE = new RegExp(`\\b([1-9]|[12]\\d|3[01])\\s+(${MONTHS.join('|')})(?:\\s+(20\\d{2}))?\\b`, 'gi');
+const ISO_DATE_RE = /\b(20\d{2})-(\d{2})-(\d{2})\b/g;
 
 export interface PeriodConflict {
+  /** Det som texten nämner: ett månadsnamn ("januari") eller ett datum ("14 januari 2027"). */
   month: string;
   fieldKey: string;
   snippet: string;
+}
+
+function iso(y: number, m: number, d: number): string {
+  return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
 
 export function findPeriodConflicts(
@@ -101,6 +109,8 @@ export function findPeriodConflicts(
   const start = new Date(period.start);
   const end = new Date(period.end);
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || start > end) return [];
+  const startIso = period.start.slice(0, 10);
+  const endIso = period.end.slice(0, 10);
   // Månader som perioden täcker (kalendermånadsupplösning, max ett varv).
   const covered = new Set<number>();
   const cursor = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1));
@@ -108,16 +118,45 @@ export function findPeriodConflicts(
     covered.add(cursor.getUTCMonth());
     cursor.setUTCMonth(cursor.getUTCMonth() + 1);
   }
-  if (covered.size >= 12) return []; // helårsperiod — ingen månad kan motsäga den
+  const fullYear = covered.size >= 12;
 
   const conflicts: PeriodConflict[] = [];
   for (const [fieldKey, value] of Object.entries(answers)) {
     if (typeof value !== 'string') continue;
-    for (const m of value.matchAll(MONTH_RE)) {
-      const idx = MONTHS.indexOf(m[1]!.toLowerCase());
-      if (idx === -1 || covered.has(idx)) continue;
-      const from = Math.max(0, m.index! - 30);
-      conflicts.push({ month: MONTHS[idx]!, fieldKey, snippet: value.slice(from, m.index! + m[0].length + 15).trim() });
+    const clip = (index: number, len: number) => {
+      const from = Math.max(0, index - 30);
+      return value.slice(from, index + len + 15).trim();
+    };
+    // Spann som redan hanterats med dagprecision — månadsskanningen hoppar
+    // över dem så att "14 januari" aldrig ger dubbla flaggor.
+    const daySpans: [number, number][] = [];
+
+    // 1) Exakta ISO-datum: strängjämförelse räcker för åååå-mm-dd.
+    for (const m of value.matchAll(ISO_DATE_RE)) {
+      daySpans.push([m.index!, m.index! + m[0].length]);
+      if (m[0] < startIso || m[0] > endIso) conflicts.push({ month: m[0], fieldKey, snippet: clip(m.index!, m[0].length) });
+    }
+    // 2) "14 oktober (2026)": med år jämförs exakt; utan år godtas datumet om
+    //    NÅGOT av periodens år placerar det inom perioden (årsskiftessäkert).
+    for (const m of value.matchAll(DAY_MONTH_RE)) {
+      daySpans.push([m.index!, m.index! + m[0].length]);
+      const day = Number(m[1]);
+      const monthIdx = MONTHS.indexOf(m[2]!.toLowerCase());
+      const years = m[3] ? [Number(m[3])] : [...new Set([start.getUTCFullYear(), end.getUTCFullYear()])];
+      const inside = years.some((y) => {
+        const candidate = iso(y, monthIdx + 1, day);
+        return candidate >= startIso && candidate <= endIso;
+      });
+      if (!inside) conflicts.push({ month: m[0].toLowerCase(), fieldKey, snippet: clip(m.index!, m[0].length) });
+    }
+    // 3) Ensamma månadsnamn — bara utanför dagspann, och aldrig mot helår.
+    if (!fullYear) {
+      for (const m of value.matchAll(MONTH_RE)) {
+        if (daySpans.some(([a, b]) => m.index! >= a && m.index! < b)) continue;
+        const idx = MONTHS.indexOf(m[1]!.toLowerCase());
+        if (idx === -1 || covered.has(idx)) continue;
+        conflicts.push({ month: MONTHS[idx]!, fieldKey, snippet: clip(m.index!, m[0].length) });
+      }
     }
   }
   return conflicts;

@@ -93,4 +93,31 @@ describe('findPeriodConflicts — claim propagation för projektperioden (§9)',
   it('an impossible period yields no month flags (the order error is reported separately)', () => {
     expect(findPeriodConflicts({ plan: 'I januari.' }, { start: '2026-11-01', end: '2026-10-01' })).toEqual([]);
   });
+
+  it('checks exact ISO dates at day precision', () => {
+    // Perioden är 2026-10-01–2026-11-14: 2026-11-20 är i rätt "månadszon" men
+    // efter slutdatumet — bara dagprecision fångar det.
+    expect(findPeriodConflicts({ plan: 'Föreställningen ges 2026-11-20.' }, period)).toHaveLength(1);
+    expect(findPeriodConflicts({ plan: 'Slutredovisning lämnas 2027-03-01.' }, period)).toHaveLength(1);
+    expect(findPeriodConflicts({ plan: 'Avresa 2026-10-02.' }, period)).toEqual([]);
+  });
+
+  it('checks "14 oktober"-style dates, year-boundary aware, without double-flagging the month', () => {
+    // Dag + månad utan år: godtas om något av periodens år placerar datumet i perioden.
+    expect(findPeriodConflicts({ plan: 'Premiär 14 oktober.' }, period)).toEqual([]);
+    const c = findPeriodConflicts({ plan: 'Premiär 14 januari.' }, period);
+    expect(c).toHaveLength(1); // EN flagga — inte en för datumet och en för månadsnamnet
+    expect(c[0]!.month).toBe('14 januari');
+    // Årsskiftesperiod: "5 februari" hör till periodens andra år.
+    const winter = { start: '2026-12-01', end: '2027-02-28' };
+    expect(findPeriodConflicts({ plan: 'Avslutning 5 februari.' }, winter)).toEqual([]);
+    // Med explicit år jämförs exakt: rätt dag men fel år är en konflikt.
+    expect(findPeriodConflicts({ plan: 'Avslutning 5 februari 2028.' }, winter)).toHaveLength(1);
+  });
+
+  it('a full-year period silences month names but still checks explicit dates', () => {
+    const year = { start: '2026-01-01', end: '2026-12-31' };
+    expect(findPeriodConflicts({ plan: 'Aktiviteter i mars och november.' }, year)).toEqual([]);
+    expect(findPeriodConflicts({ plan: 'Konferens 2027-05-01.' }, year)).toHaveLength(1);
+  });
 });
