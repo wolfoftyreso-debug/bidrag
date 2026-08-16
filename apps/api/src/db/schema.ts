@@ -93,6 +93,31 @@ export const refreshTokens = pgTable(
 );
 
 /**
+ * Skapade dokument (§produktsteg 3): resultatet av dokumentmotorn. Innehållet
+ * fryses vid genereringen (deterministiskt ur mall + svar) och ägs av
+ * tenant/projekt — alltid åtkomligt under Mina dokument, ingen e-post.
+ */
+export const generatedDocuments = pgTable(
+  'generated_documents',
+  {
+    id: id(),
+    tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+    projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+    opportunitySlug: text('opportunity_slug'),
+    opportunityTitle: text('opportunity_title').notNull(),
+    templateKey: text('template_key').notNull(),
+    title: text('title').notNull(),
+    /** Renderad text — det faktiska dokumentet. */
+    content: text('content').notNull(),
+    /** Svaren som byggde dokumentet — för "skapa nytt utifrån detta". */
+    answers: jsonb('answers').notNull().default({}),
+    createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+  },
+  (t) => [index('generated_documents_tenant_idx').on(t.tenantId, t.projectId)],
+);
+
+/**
  * Lösenordsåterställning ("innan riktiga kronor"-kravet): engångstoken,
  * lagrad hashad (SHA-256), 60 min TTL. Vid använd återställning återkallas
  * alla refresh-tokens — en kapad session överlever inte ett lösenordsbyte.
@@ -554,7 +579,9 @@ export const payments = pgTable(
     id: id(),
     tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
     projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
-    kind: text('kind', { enum: ['analysis_unlock'] }).notNull().default('analysis_unlock'),
+    kind: text('kind', { enum: ['analysis_unlock', 'document_pack'] }).notNull().default('analysis_unlock'),
+    /** Dokumentpaket: antal dokumentkrediter köpet ger (1, 3 eller 99 = "alla för ansökan"). */
+    credits: integer('credits'),
     amountMinor: integer('amount_minor').notNull(),
     currency: text('currency').notNull().default('SEK'),
     provider: text('provider').notNull(), // 'swish' | 'mock' | ...

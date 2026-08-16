@@ -3,6 +3,7 @@ import { NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { get, getActiveTenant, post, setActiveTenant } from './api';
 import LoginPage from './pages/Login';
 import ResetPasswordPage from './pages/ResetPassword';
+import DocumentStudioPage from './pages/DocumentStudio';
 import OnboardingPage from './pages/Onboarding';
 import CalendarPage from './pages/Calendar';
 import InvitePage from './pages/Invite';
@@ -122,6 +123,7 @@ function Shell() {
           <Route path="/ansokningar/:id" element={<ApplicationPage />} />
           <Route path="/sok" element={<SearchPage />} />
           <Route path="/dokument" element={<DocumentsPage />} />
+          <Route path="/dokument/:projectId" element={<DocumentStudioPage />} />
           <Route path="/inkorg" element={<InboxPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/regler/:id" element={<RuleEditorPage />} />

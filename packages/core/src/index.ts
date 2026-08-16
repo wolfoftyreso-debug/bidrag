@@ -7,3 +7,5 @@ export * from './schema.js';
 export * from './stacking.js';
 export * from './deadlines.js';
 export * from './validation.js';
+export * from './documents.js';
+export * from './documentTemplates.js';

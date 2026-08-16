@@ -22,7 +22,15 @@ export async function isProjectUnlocked(tenantId: string, projectId: string): Pr
   const [row] = await db
     .select({ id: payments.id })
     .from(payments)
-    .where(and(eq(payments.tenantId, tenantId), eq(payments.projectId, projectId), eq(payments.state, 'confirmed')))
+    .where(
+      and(
+        eq(payments.tenantId, tenantId),
+        eq(payments.projectId, projectId),
+        eq(payments.state, 'confirmed'),
+        // Ett dokumentköp är inte en analysupplåsning — kind avgör entitlement.
+        eq(payments.kind, 'analysis_unlock'),
+      ),
+    )
     .limit(1);
   return Boolean(row);
 }

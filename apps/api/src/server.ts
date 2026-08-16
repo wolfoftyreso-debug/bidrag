@@ -27,6 +27,7 @@ import { correspondenceRoutes } from './routes/correspondence.ts';
 import { notificationRoutes } from './routes/notifications.ts';
 import { adminRoutes } from './routes/admin.ts';
 import { internalRoutes } from './routes/internal.ts';
+import { documentStudioRoutes } from './routes/documentStudio.ts';
 
 export async function buildServer(): Promise<FastifyInstance> {
   const app = Fastify({
@@ -120,6 +121,7 @@ export async function buildServer(): Promise<FastifyInstance> {
   await app.register(teamRoutes);
   await app.register(paymentRoutes);
   await app.register(paymentWebhookRoutes);
+  await app.register(documentStudioRoutes);
   await app.register(internalRoutes);
   await app.register(adminRoutes);
 

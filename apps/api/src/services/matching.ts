@@ -36,6 +36,7 @@ export interface MatchRow {
   closesAt: string | null;
   deadlineModel: string;
   sourceUrl: string;
+  applicationUrl: string | null;
   sourceQuality: string;
   verificationStatus: string;
   lastVerifiedAt: string | null;
@@ -162,6 +163,7 @@ export async function listMatchesForProject(tenantId: string, projectId: string)
       closesAt: fundingOpportunities.closesAt,
       deadlineModel: fundingOpportunities.deadlineModel,
       sourceUrl: fundingOpportunities.sourceUrl,
+      applicationUrl: fundingOpportunities.applicationUrl,
       sourceQuality: fundingOpportunities.sourceQuality,
       verificationStatus: fundingOpportunities.verificationStatus,
       lastVerifiedAt: fundingOpportunities.lastVerifiedAt,

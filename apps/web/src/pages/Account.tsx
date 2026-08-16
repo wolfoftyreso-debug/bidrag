@@ -87,6 +87,7 @@ export default function AccountPage() {
 
 interface Purchase {
   paymentId: string;
+  kind: string;
   state: string;
   amountMinor: number;
   currency: string;
@@ -140,7 +141,7 @@ function PurchasesCard() {
               <Fragment key={p.paymentId}>
                 <tr>
                   <td>{formatDate(p.confirmedAt ?? p.createdAt)}</td>
-                  <td>Bidragsanalys{p.projectTitle ? ` — ${p.projectTitle}` : ''}</td>
+                  <td>{p.kind === 'document_pack' ? 'Dokumentförberedelse' : 'Bidragsanalys'}{p.projectTitle ? ` — ${p.projectTitle}` : ''}</td>
                   <td style={{ fontVariantNumeric: 'tabular-nums' }}>{(p.amountMinor / 100).toLocaleString('sv-SE')} kr</td>
                   <td>
                     <span className={`badge ${PAYMENT_STATE_LABELS[p.state]?.tone ?? ''}`}>

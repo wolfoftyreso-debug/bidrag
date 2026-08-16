@@ -29,7 +29,14 @@ export function computeVat(grossMinor: number, rateBps: number): { netMinor: num
   return { netMinor, vatMinor: grossMinor - netMinor };
 }
 
-const PRODUCT_DESCRIPTION = 'Personlig bidragsanalys — engångsupplåsning';
+function productDescription(payment: PaymentRow): string {
+  if (payment.kind === 'document_pack') {
+    if ((payment.credits ?? 0) >= 99) return 'Dokumentförberedelse — alla dokument för en ansökan';
+    if ((payment.credits ?? 0) === 3) return 'Dokumentförberedelse — upp till 3 dokument';
+    return 'Dokumentförberedelse — ett dokument';
+  }
+  return 'Personlig bidragsanalys — engångsupplåsning';
+}
 
 /**
  * Utfärda kvitto för en bekräftad betalning, inne i bekräftelsens transaktion.
@@ -51,7 +58,7 @@ export async function issueReceipt(tx: Tx, payment: PaymentRow): Promise<Receipt
       paymentId: payment.id,
       paymentRef: payment.id,
       receiptNumber: `BS-${year}-${String(seq).padStart(6, '0')}`,
-      productDescription: PRODUCT_DESCRIPTION,
+      productDescription: productDescription(payment),
       amountGrossMinor: payment.amountMinor,
       amountNetMinor: netMinor,
       vatAmountMinor: vatMinor,

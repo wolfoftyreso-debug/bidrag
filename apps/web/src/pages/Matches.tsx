@@ -32,6 +32,7 @@ interface MatchRow {
   closesAt: string | null;
   deadlineModel: string;
   sourceUrl: string;
+  applicationUrl: string | null;
   verificationStatus: string;
   lastVerifiedAt: string | null;
   maxAmountMinor: number | null;
@@ -222,6 +223,21 @@ export default function MatchesPage() {
                 {m.result.missingFacts.length > 0 && (
                   <div className="meta-line" style={{ color: 'var(--warning)' }}>
                     För att veta säkert: {m.result.missingFacts.map((f) => f.question).slice(0, 2).join(' · ')}
+                  </div>
+                )}
+                {m.eligibilityStatus === 'eligible' && (
+                  <div style={{ marginTop: '0.4rem' }}>
+                    <div className="meta-line">Utifrån dina svar kan det här stödet vara aktuellt. Kontrollera villkoren innan du ansöker. Vad vill du göra?</div>
+                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.3rem', flexWrap: 'wrap' }}>
+                      {m.applicationUrl && (
+                        <a className="btn secondary" style={{ fontSize: '0.85rem', padding: '0.25rem 0.7rem' }} href={m.applicationUrl} target="_blank" rel="noreferrer">
+                          Ansök själv — gratis ↗
+                        </a>
+                      )}
+                      <Link className="btn secondary" style={{ fontSize: '0.85rem', padding: '0.25rem 0.7rem' }} to={`/dokument/${projectId}?stod=${m.slug}`}>
+                        Förbered min ansökan
+                      </Link>
+                    </div>
                   </div>
                 )}
               </div>
