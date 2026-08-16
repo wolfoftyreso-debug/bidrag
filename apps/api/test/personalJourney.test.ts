@@ -7,7 +7,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
-import { api, registerUser, testServer, type TestUser } from './helpers.ts';
+import { api, registerUser, testServer, unlockProject, type TestUser } from './helpers.ts';
 
 let app: FastifyInstance;
 let user: TestUser;
@@ -57,6 +57,7 @@ beforeAll(async () => {
     intent: 'Jag har svårt att få ekonomin att gå ihop.',
   });
   projectId = (projectRes.json() as { project: { id: string } }).project.id;
+  await unlockProject(app, user, projectId);
   await api(app, user, 'POST', `/v1/projects/${projectId}/matches`, {});
 });
 

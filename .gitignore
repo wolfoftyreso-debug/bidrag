@@ -12,3 +12,4 @@ apps/api/dist/
 packages/core/dist/
 uploads/
 .vite/
+test-uploads/

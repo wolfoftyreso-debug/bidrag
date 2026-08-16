@@ -52,11 +52,22 @@ interface Project {
   intent: string;
 }
 
+/** Teaser före upplåsning: antal per nivå och kategori — aldrig namn eller källor. */
+interface Teaser {
+  locked: true;
+  priceMinor: number;
+  total: number;
+  counts: { high: number; possible: number; needsInfo: number };
+  rows: { likelihood: string; category: string }[];
+  excludedCount: number;
+}
+
 export default function MatchesPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [matches, setMatches] = useState<MatchRow[]>([]);
+  const [teaser, setTeaser] = useState<Teaser | null>(null);
   const [answers, setAnswers] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -70,8 +81,16 @@ export default function MatchesPage() {
 
   const load = useCallback(() => {
     if (!projectId) return;
-    get<{ matches: MatchRow[] }>(`/v1/projects/${projectId}/matches`)
-      .then(({ matches }) => setMatches(matches))
+    get<{ matches?: MatchRow[] } | Teaser>(`/v1/projects/${projectId}/matches`)
+      .then((body) => {
+        if ('locked' in body && body.locked) {
+          setTeaser(body);
+          setMatches([]);
+        } else {
+          setTeaser(null);
+          setMatches((body as { matches: MatchRow[] }).matches);
+        }
+      })
       .finally(() => setLoaded(true));
   }, [projectId]);
 
@@ -129,6 +148,16 @@ export default function MatchesPage() {
   }
 
   if (!loaded) return <p>Laddar matchningar…</p>;
+
+  if (teaser) {
+    return (
+      <div>
+        <h1>{project?.title ?? 'Projekt'}</h1>
+        {project?.intent && <p className="meta-line" style={{ marginBottom: '1rem' }}>”{project.intent}”</p>}
+        <AnalysisPaywall projectId={projectId} teaser={teaser} onUnlocked={load} />
+      </div>
+    );
+  }
 
   const PERSONAL_INSTRUMENTS = new Set(['social_benefit', 'educational_support']);
   const relevant = matches.filter((m) => m.eligibilityStatus !== 'excluded');
@@ -269,6 +298,125 @@ export default function MatchesPage() {
           {excludedList(excluded)}
         </div>
       )}
+
+      <p className="meta-line" style={{ margin: '1rem 0.25rem' }}>
+        Detta är en vägledning och inte ett myndighetsbeslut. Slutligt beslut fattas alltid av respektive myndighet.
+      </p>
+    </div>
+  );
+}
+
+const LIKELIHOOD_TEASER: Record<string, { dot: string; label: string }> = {
+  high: { dot: '🟢', label: 'hög relevans' },
+  possible: { dot: '🟡', label: 'möjlig' },
+  needs_info: { dot: '⚪', label: 'kräver mer information' },
+};
+
+/**
+ * Betalvägg (§68): visa värdet — antal och nivåer — innan betalning, men
+ * aldrig detaljerna. Ett engångsköp låser upp den här analysen; språket är
+ * "lås upp din bidragsanalys", aldrig "köp ett bidrag".
+ */
+function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string; teaser: Teaser; onUnlocked: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [payment, setPayment] = useState<{
+    paymentId: string;
+    instructions: { method: string; message?: string; mockConfirmable?: boolean };
+  } | null>(null);
+
+  const startUnlock = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await post<{
+        alreadyUnlocked?: boolean;
+        paymentId?: string;
+        instructions?: { method: string; message?: string; mockConfirmable?: boolean };
+      }>(`/v1/projects/${projectId}/analysis-unlock`);
+      if (res.alreadyUnlocked) return onUnlocked();
+      setPayment({ paymentId: res.paymentId!, instructions: res.instructions! });
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Betalningen kunde inte startas. Försök igen.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const confirmMock = async () => {
+    if (!payment) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await post(`/v1/payments/${payment.paymentId}/mock-confirm`);
+      onUnlocked();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Bekräftelsen misslyckades.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="card" style={{ maxWidth: '40rem' }}>
+      <h2>Din preliminära bidragsanalys är klar</h2>
+      <p className="guidance">
+        Vi har gått igenom din situation mot vår kunskapsbas och identifierat{' '}
+        <strong>{teaser.total} möjliga stödformer</strong>.
+      </p>
+      <p style={{ fontSize: '1.05rem', margin: '0.75rem 0' }}>
+        🟢 <strong>{teaser.counts.high}</strong> med hög relevans{' · '}
+        🟡 <strong>{teaser.counts.possible}</strong> möjliga{' · '}
+        ⚪ <strong>{teaser.counts.needsInfo}</strong> kräver mer information
+      </p>
+
+      <div style={{ margin: '1rem 0' }}>
+        {teaser.rows.map((r, i) => {
+          const t = LIKELIHOOD_TEASER[r.likelihood] ?? LIKELIHOOD_TEASER.needs_info!;
+          return (
+            <div className="match-row" key={i} style={{ alignItems: 'center', gap: '0.6rem' }}>
+              <span>{t.dot}</span>
+              <span style={{ flex: 1, fontWeight: 600 }}>🔒 {r.category}</span>
+              <span className="meta-line">{t.label}</span>
+            </div>
+          );
+        })}
+        {teaser.excludedCount > 0 && (
+          <p className="meta-line" style={{ marginTop: '0.5rem' }}>
+            Ytterligare {teaser.excludedCount} stöd har granskats och uteslutits — även varför ingår i analysen.
+          </p>
+        )}
+      </div>
+
+      {!payment && (
+        <>
+          <button disabled={busy} onClick={startUnlock} style={{ fontSize: '1.05rem' }}>
+            {busy ? 'Startar betalning…' : `Lås upp din bidragsanalys — ${formatSek(teaser.priceMinor)}`}
+          </button>
+          <p className="guidance" style={{ marginTop: '0.75rem' }}>
+            Engångsbetalning för den här analysen — ingen prenumeration. Du får hela rapporten: vilka stöd det gäller,
+            varför de matchar din situation, vilka kriterier som kontrolleras, vad du behöver och vart du vänder dig.
+          </p>
+        </>
+      )}
+
+      {payment && payment.instructions.method === 'mock' && (
+        <div className="alert warning">
+          <p style={{ fontWeight: 700 }}>{payment.instructions.message}</p>
+          <button disabled={busy} onClick={confirmMock}>
+            {busy ? 'Bekräftar…' : 'Bekräfta betalning (simulerad)'}
+          </button>
+        </div>
+      )}
+      {payment && payment.instructions.method !== 'mock' && payment.instructions.message && (
+        <div className="alert warning">{payment.instructions.message}</div>
+      )}
+
+      {error && <div className="alert error">{error}</div>}
+
+      <p className="meta-line" style={{ marginTop: '1rem' }}>
+        Detta är en vägledning och inte ett myndighetsbeslut. Slutligt beslut fattas alltid av respektive myndighet.
+      </p>
     </div>
   );
 }

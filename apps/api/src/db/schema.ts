@@ -525,6 +525,28 @@ export const paymentMilestones = pgTable('payment_milestones', {
   createdAt: createdAt(),
 });
 
+// ── Payments: engångsupplåsning av bidragsanalysen (§68) ─────────────────────
+// Generiskt lager: Payment → Payment confirmed → Unlock. Providern (Swish,
+// kort, …) är en adapter och rör aldrig motorn. Ett köp = en analys (projekt).
+
+export const payments = pgTable(
+  'payments',
+  {
+    id: id(),
+    tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+    projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+    kind: text('kind', { enum: ['analysis_unlock'] }).notNull().default('analysis_unlock'),
+    amountMinor: integer('amount_minor').notNull(),
+    currency: text('currency').notNull().default('SEK'),
+    provider: text('provider').notNull(), // 'swish' | 'mock' | ...
+    state: text('state', { enum: ['pending', 'confirmed', 'failed', 'cancelled'] }).notNull().default('pending'),
+    providerReference: text('provider_reference'),
+    createdAt: createdAt(),
+    confirmedAt: timestamp('confirmed_at', { withTimezone: true }),
+  },
+  (t) => [index('payments_project_idx').on(t.projectId, t.state), index('payments_tenant_idx').on(t.tenantId)],
+);
+
 // ── Notifications & reminders (§53, §36) ─────────────────────────────────────
 
 export const notifications = pgTable(

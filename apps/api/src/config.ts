@@ -40,5 +40,9 @@ export const config = {
   clamavAddress: env.CLAMAV_ADDRESS ?? null,
   /** Global per-IP rate limit per minute (auth endpoints have stricter own limits). */
   rateLimitMax: Number(env.RATE_LIMIT_MAX ?? 300),
+  /** Engångspris för att låsa upp bidragsanalysen, i ören. */
+  analysisPriceMinor: Number(env.ANALYSIS_PRICE_MINOR ?? 3900),
+  /** Mockbetalningar för utveckling/test — kan aldrig aktiveras i produktion. */
+  paymentsMockEnabled: env.PAYMENTS_MOCK_ENABLED === 'true' && env.NODE_ENV !== 'production',
   logLevel: env.LOG_LEVEL ?? 'info',
 };

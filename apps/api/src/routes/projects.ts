@@ -4,8 +4,52 @@ import { proposeStack, type StackableOpportunity } from '@bidrag/core';
 import { db } from '../db/client.ts';
 import { applicantProfiles, fundingOpportunities, fundingStacks, matches, projects } from '../db/schema.ts';
 import { audit } from '../audit.ts';
+import { config } from '../config.ts';
 import { WRITER_ROLES } from '../plugins/auth.ts';
-import { listMatchesForProject, recomputeMatchesForProject } from '../services/matching.ts';
+import { listMatchesForProject, recomputeMatchesForProject, type MatchRow } from '../services/matching.ts';
+import { isProjectUnlocked } from './payments.ts';
+
+/**
+ * Teaser före upplåsning (§68): värdet ska synas — antal per nivå och
+ * stödkategori — men aldrig exakta namn, källor eller frågor. Användaren
+ * betalar för analysen, inte för att få veta om den är värd något.
+ */
+const TEASER_CATEGORY: Record<string, string> = {
+  social_benefit: 'Ekonomiskt stöd eller ersättning',
+  educational_support: 'Studiestöd',
+  travel_grant: 'Resebidrag',
+  project_grant: 'Projektbidrag',
+  public_grant: 'Offentligt bidrag',
+  eu_grant: 'EU-finansiering',
+  scholarship: 'Stipendium',
+  stipend: 'Stipendium',
+};
+
+function likelihoodOf(m: MatchRow): 'high' | 'possible' | 'needs_info' {
+  if (m.eligibilityStatus === 'eligible' && m.result.confidence === 'high') return 'high';
+  if (m.eligibilityStatus === 'eligible') return 'possible';
+  return 'needs_info';
+}
+
+function buildTeaser(rows: MatchRow[]) {
+  const relevant = rows.filter((m) => m.eligibilityStatus !== 'excluded');
+  const counts = { high: 0, possible: 0, needsInfo: 0 };
+  const teaserRows = relevant.map((m) => {
+    const likelihood = likelihoodOf(m);
+    if (likelihood === 'high') counts.high++;
+    else if (likelihood === 'possible') counts.possible++;
+    else counts.needsInfo++;
+    return { likelihood, category: TEASER_CATEGORY[m.instrumentType] ?? 'Stöd' };
+  });
+  return {
+    locked: true as const,
+    priceMinor: config.analysisPriceMinor,
+    total: relevant.length,
+    counts,
+    rows: teaserRows,
+    excludedCount: rows.length - relevant.length,
+  };
+}
 
 const projectBody = {
   type: 'object',
@@ -155,6 +199,9 @@ export async function projectRoutes(app: FastifyInstance) {
           after: { count },
         });
         const rows = await listMatchesForProject(request.auth!.tenantId, id);
+        if (!(await isProjectUnlocked(request.auth!.tenantId, id))) {
+          return { computed: count, ...buildTeaser(rows) };
+        }
         return { computed: count, matches: rows };
       } catch (err) {
         const status = (err as { statusCode?: number }).statusCode ?? 500;
@@ -175,7 +222,11 @@ export async function projectRoutes(app: FastifyInstance) {
         .where(and(eq(projects.id, id), eq(projects.tenantId, request.auth!.tenantId)))
         .limit(1);
       if (!project) return reply.code(404).send({ error: 'not_found' });
-      return { matches: await listMatchesForProject(request.auth!.tenantId, id) };
+      const rows = await listMatchesForProject(request.auth!.tenantId, id);
+      if (!(await isProjectUnlocked(request.auth!.tenantId, id))) {
+        return buildTeaser(rows);
+      }
+      return { matches: rows };
     },
   );
 
@@ -203,6 +254,10 @@ export async function projectRoutes(app: FastifyInstance) {
         .where(and(eq(projects.id, id), eq(projects.tenantId, tenantId)))
         .limit(1);
       if (!project) return reply.code(404).send({ error: 'not_found' });
+      // Finansieringsplanen avslöjar stödnamnen — den ingår i analysen.
+      if (!(await isProjectUnlocked(tenantId, id))) {
+        return reply.code(402).send({ error: 'analysis_locked', message: 'Lås upp bidragsanalysen för att se finansieringsplanen.', priceMinor: config.analysisPriceMinor });
+      }
       if (!project.totalBudgetMinor) {
         return reply.code(422).send({
           error: 'missing_budget',

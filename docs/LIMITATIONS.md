@@ -115,7 +115,21 @@ endpoint (HTTP, process, pool and domain gauges) now exist, with recommended
 alert rules in OPERATIONS.md. Remaining: dashboards and alert wiring in the
 cluster's monitoring stack, plus a rehearsed on-call path.
 
-## 10. Payments/billing not built
+## 10. Payments — generic layer built, Swish awaits merchant agreement
 
-Deliberate (§68): tenant/subscription boundaries exist in the model; billing
-should not be built before core value is proven.
+The commercial model is a one-time 39 kr unlock of the personal analysis
+(`ANALYSIS_PRICE_MINOR`, default 3900 öre) — never a subscription, and never
+"buying a grant". The generic layer (payment → confirmation → unlock) is
+implemented and tested end to end: a `payments` table with per-project state,
+a provider registry, teaser gating of match results (counts and categories
+visible, names/sources/questions withheld until a confirmed payment), 402 on
+the funding stack, idempotent re-purchase protection, and an unauthenticated
+webhook surface for server-to-server callbacks.
+
+What is honestly missing: a real payment provider. The Swish adapter refuses
+with 503 until `SWISH_MERCHANT_ALIAS` and `SWISH_CERT_PATH` (merchant
+agreement + mTLS certificates from the bank) are configured — it never
+pretends to charge. The mock provider used by tests and the demo is disabled
+in production by construction (`PAYMENTS_MOCK_ENABLED` is ignored when
+`NODE_ENV=production`). Adding a provider touches only
+`services/paymentProviders.ts`; the engine and unlock flow are unchanged.

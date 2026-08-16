@@ -59,7 +59,17 @@ export async function api(
   });
 }
 
-/** Standard fixture: profile + Jamaica dancehall project with complete facts. */
+/** Lås upp analysen via mock-betalningen (testar samtidigt köpflödet). */
+export async function unlockProject(app: FastifyInstance, user: TestUser, projectId: string): Promise<void> {
+  const create = await api(app, user, 'POST', `/v1/projects/${projectId}/analysis-unlock`);
+  if (create.statusCode === 200 && (create.json() as { alreadyUnlocked?: boolean }).alreadyUnlocked) return;
+  if (create.statusCode !== 201) throw new Error(`unlock create failed: ${create.statusCode} ${create.body}`);
+  const { paymentId } = create.json() as { paymentId: string };
+  const confirm = await api(app, user, 'POST', `/v1/payments/${paymentId}/mock-confirm`);
+  if (confirm.statusCode !== 200) throw new Error(`mock confirm failed: ${confirm.statusCode} ${confirm.body}`);
+}
+
+/** Standard fixture: profile + Jamaica dancehall project, analysis unlocked. */
 export async function createProfileAndProject(app: FastifyInstance, user: TestUser) {
   const profileRes = await api(app, user, 'POST', '/v1/profiles', {
     kind: 'person',
@@ -85,6 +95,7 @@ export async function createProfileAndProject(app: FastifyInstance, user: TestUs
     },
   });
   const project = (projectRes.json() as { project: { id: string } }).project;
+  await unlockProject(app, user, project.id);
   return { profile, project };
 }
 
