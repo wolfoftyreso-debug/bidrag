@@ -57,15 +57,25 @@ decision vocabulary) and auto-matches to cases via submission references —
 with human override. The architecture normalises everything to
 `correspondence_events`, so a mailbox connector is additive.
 
-## 4. Email delivery — closed
+## 4. Email — deliberately NOT a production dependency
 
-Nodemailer SMTP adapter (`services/email.ts`) activates on `SMTP_URL`;
-notifications email the relevant user (or the tenant's owners/applicants).
-Every outcome — sent, skipped (no SMTP configured), failed — is recorded in
-the audit trail; delivery is best-effort on top of the always-reliable
-in-app notification and never breaks the caller. Covered by tests with an
-injected transport. Remaining: point `SMTP_URL` at the real relay in the
-cluster and verify one end-to-end delivery.
+Per product decision: no external email service is required for production.
+Receipts are a first-class feature of the authenticated account
+(`GET /v1/purchases`, `GET /v1/payments/:id/receipt`, "Mina köp" in the UI),
+notifications live in the in-app inbox, and team invites produce shareable
+links. The adapter in `services/email.ts` remains as an optional best-effort
+channel (Resend key or `SMTP_URL`) — when unconfigured every send is honestly
+recorded as `skipped` and no flow depends on it.
+
+**Open product decision — password recovery.** The only flow that genuinely
+requires an out-of-band channel is password reset. Without a configured
+email channel the endpoint fails closed (503 `recovery_unavailable`, honest
+message in the UI) rather than pretending to send a link. There is no safe
+replacement in the current auth model (no phone numbers, no BankID). Before
+real customers: decide between (a) configuring an email channel solely for
+recovery, (b) BankID-based recovery (future), or (c) documented manual
+support routine. Until decided, a user who forgets their password cannot
+recover the account self-service.
 
 ## 5. Malware scanning optional
 
@@ -133,11 +143,10 @@ Receipts are real verification records issued in the same database
 transaction as the confirmation (duplicate callbacks can never produce two):
 sequential receipt numbers from a dedicated sequence (`BS-YYYY-NNNNNN`),
 gross/net/VAT amounts frozen in öre, VAT rate, payment method, product,
-purchase ID, refund status and seller details. The receipt email address is
-collected just before payment with a stated purpose, can be added afterwards,
-and the receipt can be re-sent — self-service instead of support. Transactional
-email goes through Resend (`RESEND_API_KEY`), falls back to SMTP, and is
-otherwise honestly recorded as skipped. Receipts survive GDPR tenant erasure
+purchase ID, refund status and seller details. Receipts are first-class in
+the authenticated account ("Mina köp"): listed, viewable and permanently
+accessible without any email involved — email delivery is an optional
+best-effort extra (see §4). Receipts survive GDPR tenant erasure
 (bookkeeping obligation, GDPR art. 17(3)(b)) with the email address scrubbed.
 
 **Swish Handel is implemented** (Commerce API over mTLS, certificates as

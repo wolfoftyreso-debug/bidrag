@@ -1,9 +1,13 @@
 /**
- * Email delivery adapter (§53, closes LIMITATIONS #4). Provider order:
- * Resend (RESEND_API_KEY) för transaktionsmail, annars SMTP (SMTP_URL),
- * annars hoppas leveransen över och det bokförs ärligt. Failures never break
- * the caller — email is best-effort on top of the in-app notification, and
- * every outcome (sent/failed/skipped) is auditable.
+ * Email delivery adapter — VALFRI i produktion, aldrig ett produktkrav.
+ * Kvitton är förstaklass i det autentiserade kontot (Mina köp), notiser
+ * finns i Inkorgen och inbjudningar har delbara länkar; mail är enbart en
+ * best-effort-dublett när en kanal är konfigurerad (Resend-nyckel eller
+ * SMTP_URL), annars bokförs utskicket ärligt som 'skipped'.
+ *
+ * Undantaget är lösenordsåterställning, som KRÄVER en kanal — den ytan
+ * stänger fail-closed (503) när emailConfigured() är false i stället för
+ * att låtsas skicka något (se routes/auth.ts).
  */
 import nodemailer, { type Transporter } from 'nodemailer';
 import { config } from '../config.ts';
@@ -27,6 +31,11 @@ export interface EmailInput {
   subject: string;
   text: string;
   tenantId?: string | null;
+}
+
+/** Läses lazily: tester och drift kan slå av/på kanalen utan processomstart. */
+export function emailConfigured(): boolean {
+  return Boolean(process.env.RESEND_API_KEY || process.env.SMTP_URL);
 }
 
 async function sendViaResend(input: EmailInput): Promise<void> {

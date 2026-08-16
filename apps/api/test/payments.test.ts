@@ -179,10 +179,11 @@ describe('kvitto/verifikationsunderlag', () => {
     const receipt = await api(app, user, 'GET', `/v1/projects/${pid}/receipt`);
     expect((receipt.json() as { receipt: { email: string } }).receipt.email).toBe('sent.ifylld@test.example');
 
-    // Nu går omskicket igenom (utan mailprovider i test: ärligt "skipped").
+    // Omskicket svarar ärligt med utfallet — i testmiljön är kanalen en
+    // avsiktligt död SMTP (failed). Kvittot är oavsett åtkomligt i kontot.
     const resend = await api(app, user, 'POST', `/v1/payments/${newPaymentId}/resend-receipt`);
     expect(resend.statusCode).toBe(200);
-    expect(['sent', 'skipped']).toContain((resend.json() as { emailOutcome: string }).emailOutcome);
+    expect(['sent', 'skipped', 'failed']).toContain((resend.json() as { emailOutcome: string }).emailOutcome);
   });
 
   it('receipt numbers are sequential and never reused', async () => {
@@ -205,5 +206,39 @@ describe('kvitto/verifikationsunderlag', () => {
     const other = await registerUser(app, 'Utomstående');
     const res = await api(app, other, 'GET', `/v1/projects/${projectId}/receipt`);
     expect(res.statusCode).toBe(404);
+  });
+});
+
+describe('Mina köp — kvittot är förstaklass i kontot (ingen e-post krävs)', () => {
+  it('lists own purchases with receipt numbers and states', async () => {
+    const res = await api(app, user, 'GET', '/v1/purchases');
+    expect(res.statusCode).toBe(200);
+    const { purchases } = res.json() as {
+      purchases: { paymentId: string; state: string; amountMinor: number; receiptNumber: string | null; projectTitle: string | null }[];
+    };
+    expect(purchases.length).toBeGreaterThanOrEqual(3);
+    const confirmed = purchases.filter((p) => p.state === 'confirmed');
+    expect(confirmed.length).toBeGreaterThanOrEqual(3);
+    expect(confirmed.every((p) => /^BS-\d{4}-\d{6}$/.test(p.receiptNumber ?? ''))).toBe(true);
+    expect(confirmed.every((p) => p.amountMinor === 3900)).toBe(true);
+  });
+
+  it('serves the receipt document per payment, ownership checked server-side', async () => {
+    const res = await api(app, user, 'GET', `/v1/payments/${paymentId}/receipt`);
+    expect(res.statusCode).toBe(200);
+    const { document } = res.json() as { document: string };
+    expect(document).toContain('KVITTO');
+    expect(document).toContain('Moms (25,00 %)');
+  });
+
+  it('IDOR: another tenant sees an empty purchase list and 404 on a known payment id', async () => {
+    const other = await registerUser(app, 'Nyfiken');
+    const list = await api(app, other, 'GET', '/v1/purchases');
+    expect((list.json() as { purchases: unknown[] }).purchases).toHaveLength(0);
+    // Känt betalnings-id från annan tenant: existerar inte (404, inte 403).
+    const receipt = await api(app, other, 'GET', `/v1/payments/${paymentId}/receipt`);
+    expect(receipt.statusCode).toBe(404);
+    const status = await api(app, other, 'GET', `/v1/payments/${paymentId}/status`);
+    expect(status.statusCode).toBe(404);
   });
 });

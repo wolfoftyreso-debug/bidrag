@@ -10,6 +10,10 @@ export default defineConfig({
       UPLOAD_DIR: './test-uploads',
       PAYMENTS_MOCK_ENABLED: 'true',
       CRON_SECRET: 'test-cron-secret',
+      // E-postkanal "konfigurerad" (leveransen misslyckas ofarligt) så att
+      // återställningsflödet kan testas; fail-closed testas genom att
+      // variabeln tas bort i det testet (emailConfigured läser lazily).
+      SMTP_URL: 'smtp://127.0.0.1:1',
       LOG_LEVEL: 'silent',
     },
     fileParallelism: false,

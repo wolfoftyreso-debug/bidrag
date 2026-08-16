@@ -6,7 +6,7 @@ import { hashPassword, verifyPassword } from '../auth/password.ts';
 import { generateRefreshToken, hashRefreshToken, signAccessToken } from '../auth/tokens.ts';
 import { audit } from '../audit.ts';
 import { config } from '../config.ts';
-import { sendEmail } from '../services/email.ts';
+import { emailConfigured, sendEmail } from '../services/email.ts';
 
 const cookieOpts = {
   httpOnly: true,
@@ -163,7 +163,17 @@ export async function authRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request) => {
+    async (request, reply) => {
+      // Fail-closed: utan e-postkanal finns ingen säker återställningsväg i
+      // auth-modellen — vi låtsas ALDRIG att en länk skickats. (Produkt-
+      // beslut krävs för kanal-lös återställning; se docs/LIMITATIONS.md.)
+      if (!emailConfigured()) {
+        return reply.code(503).send({
+          error: 'recovery_unavailable',
+          message:
+            'Lösenordsåterställning är inte tillgänglig i den här miljön. Kontakta support så hjälper vi dig.',
+        });
+      }
       const email = (request.body as { email: string }).email.trim().toLowerCase();
       const [user] = await db.select({ id: users.id }).from(users).where(eq(users.email, email)).limit(1);
       if (user) {

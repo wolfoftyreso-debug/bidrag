@@ -285,6 +285,52 @@ export async function paymentRoutes(app: FastifyInstance) {
     },
   );
 
+  /**
+   * Mina köp (§release-gate 2 & 4): kvittot är en förstaklassfunktion i det
+   * autentiserade kontot — ingen e-post krävs för att komma åt sitt kvitto.
+   * Tenant-scopat i varje query; främmande köp existerar inte (404/tom lista).
+   */
+  app.get('/v1/purchases', { schema: { tags: ['payments'] } }, async (request) => {
+    const tenantId = request.auth!.tenantId;
+    const rows = await db
+      .select({
+        paymentId: payments.id,
+        kind: payments.kind,
+        state: payments.state,
+        amountMinor: payments.amountMinor,
+        currency: payments.currency,
+        provider: payments.provider,
+        projectId: payments.projectId,
+        projectTitle: projects.title,
+        createdAt: payments.createdAt,
+        confirmedAt: payments.confirmedAt,
+        receiptNumber: receipts.receiptNumber,
+        refundStatus: receipts.refundStatus,
+      })
+      .from(payments)
+      .leftJoin(receipts, eq(receipts.paymentId, payments.id))
+      .leftJoin(projects, eq(projects.id, payments.projectId))
+      .where(eq(payments.tenantId, tenantId))
+      .orderBy(desc(payments.createdAt));
+    return { purchases: rows };
+  });
+
+  /** Kvitto per köp — ownership kontrolleras server-side (tenant + betalning). */
+  app.get(
+    '/v1/payments/:id/receipt',
+    { schema: { tags: ['payments'], params: { type: 'object', properties: { id: { type: 'string', format: 'uuid' } }, required: ['id'] } } },
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      const [row] = await db
+        .select()
+        .from(receipts)
+        .where(and(eq(receipts.paymentId, id), eq(receipts.tenantId, request.auth!.tenantId)))
+        .limit(1);
+      if (!row) return reply.code(404).send({ error: 'not_found' });
+      return { receipt: row, document: receiptDocument(row) };
+    },
+  );
+
   /** Kvittot för projektets upplåsning — visning och verifikationstext. */
   app.get(
     '/v1/projects/:id/receipt',

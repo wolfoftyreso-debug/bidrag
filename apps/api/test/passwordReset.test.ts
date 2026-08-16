@@ -35,6 +35,18 @@ async function plantToken(email: string, opts: { expired?: boolean } = {}): Prom
 }
 
 describe('lösenordsåterställning', () => {
+  it('fails closed (503) when no email channel is configured — never pretends to send', async () => {
+    const saved = process.env.SMTP_URL;
+    delete process.env.SMTP_URL;
+    try {
+      const res = await api(app, null, 'POST', '/v1/auth/request-password-reset', { email: user.email });
+      expect(res.statusCode).toBe(503);
+      expect((res.json() as { error: string }).error).toBe('recovery_unavailable');
+    } finally {
+      process.env.SMTP_URL = saved;
+    }
+  });
+
   it('answers identically for existing and unknown addresses — no enumeration', async () => {
     const known = await api(app, null, 'POST', '/v1/auth/request-password-reset', { email: user.email });
     const unknown = await api(app, null, 'POST', '/v1/auth/request-password-reset', { email: 'finnsinte@test.example' });

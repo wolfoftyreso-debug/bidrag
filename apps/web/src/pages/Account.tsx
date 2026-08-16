@@ -2,7 +2,7 @@
  * Konto & data: GDPR-självservice (export/radering) och organisationens
  * medlemmar och inbjudningar (§26).
  */
-import { useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ApiError, api, downloadFile, formatDate, get, post, setActiveTenant } from '../api';
 import { useSession } from '../App';
@@ -44,6 +44,8 @@ export default function AccountPage() {
       <h1>Konto och data</h1>
       <p className="meta-line">{session?.user.email}</p>
 
+      <PurchasesCard />
+
       <div className="card">
         <h2>Hämta ut din data</h2>
         <p>
@@ -78,6 +80,95 @@ export default function AccountPage() {
         >
           {busy ? 'Raderar…' : 'Radera kontot och all data'}
         </button>
+      </div>
+    </div>
+  );
+}
+
+interface Purchase {
+  paymentId: string;
+  state: string;
+  amountMinor: number;
+  currency: string;
+  provider: string;
+  projectTitle: string | null;
+  createdAt: string;
+  confirmedAt: string | null;
+  receiptNumber: string | null;
+  refundStatus: string | null;
+}
+
+const PAYMENT_STATE_LABELS: Record<string, { label: string; tone: string }> = {
+  confirmed: { label: 'Betald', tone: 'success' },
+  pending: { label: 'Ej slutförd', tone: 'warning' },
+  failed: { label: 'Misslyckad', tone: 'danger' },
+  cancelled: { label: 'Avbruten', tone: '' },
+};
+
+/**
+ * Mina köp: kvittot är en förstaklassfunktion i kontot — alltid åtkomligt
+ * efter inloggning, ingen e-post inblandad. Servern kontrollerar ägarskap.
+ */
+function PurchasesCard() {
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [openReceipt, setOpenReceipt] = useState<{ paymentId: string; document: string } | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    get<{ purchases: Purchase[] }>('/v1/purchases')
+      .then(({ purchases }) => setPurchases(purchases))
+      .finally(() => setLoaded(true));
+  }, []);
+
+  const showReceipt = async (paymentId: string) => {
+    if (openReceipt?.paymentId === paymentId) return setOpenReceipt(null);
+    const { document } = await get<{ document: string }>(`/v1/payments/${paymentId}/receipt`);
+    setOpenReceipt({ paymentId, document });
+  };
+
+  if (!loaded || purchases.length === 0) return null;
+
+  return (
+    <div className="card">
+      <h2>Mina köp</h2>
+      <p className="guidance">Dina betalningar och kvitton — kvittot är alltid tillgängligt här.</p>
+      <div style={{ overflowX: 'auto' }}>
+        <table className="data">
+          <thead><tr><th>Datum</th><th>Avser</th><th>Belopp</th><th>Status</th><th>Kvitto</th></tr></thead>
+          <tbody>
+            {purchases.map((p) => (
+              <Fragment key={p.paymentId}>
+                <tr>
+                  <td>{formatDate(p.confirmedAt ?? p.createdAt)}</td>
+                  <td>Bidragsanalys{p.projectTitle ? ` — ${p.projectTitle}` : ''}</td>
+                  <td style={{ fontVariantNumeric: 'tabular-nums' }}>{(p.amountMinor / 100).toLocaleString('sv-SE')} kr</td>
+                  <td>
+                    <span className={`badge ${PAYMENT_STATE_LABELS[p.state]?.tone ?? ''}`}>
+                      {PAYMENT_STATE_LABELS[p.state]?.label ?? p.state}
+                    </span>
+                    {p.refundStatus === 'refunded' && <span className="badge info"> återbetald</span>}
+                  </td>
+                  <td>
+                    {p.receiptNumber ? (
+                      <button className="secondary" style={{ padding: '0.15rem 0.6rem', fontSize: '0.8rem' }} onClick={() => showReceipt(p.paymentId)}>
+                        {openReceipt?.paymentId === p.paymentId ? 'Dölj' : p.receiptNumber}
+                      </button>
+                    ) : (
+                      <span className="meta-line">—</span>
+                    )}
+                  </td>
+                </tr>
+                {openReceipt?.paymentId === p.paymentId && (
+                  <tr>
+                    <td colSpan={5}>
+                      <pre style={{ background: 'var(--bg)', padding: '0.8rem', borderRadius: 8, overflowX: 'auto', fontSize: '0.8rem', margin: 0 }}>{openReceipt.document}</pre>
+                    </td>
+                  </tr>
+                )}
+              </Fragment>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -6,7 +6,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ApiError, ELIGIBILITY_LABELS, INSTRUMENT_LABELS, formatDate, formatSek, get, patch, post } from '../api';
-import { useSession } from '../App';
 
 interface StackPlan {
   items: { opportunityId: string; title: string; plannedContributionMinor: number; compatibility: string; compatibilityNote: string }[];
@@ -310,51 +309,28 @@ export default function MatchesPage() {
 }
 
 /**
- * Kvittot för upplåsningen: alltid åtkomligt, alltid omskickbart —
- * självservice i stället för "jag fick aldrig mitt kvitto"-support.
+ * Kvittot för upplåsningen: förstaklass i kontot — visas här och finns
+ * alltid under Konto & data → Mina köp. Ingen e-post inblandad.
  */
 function ReceiptLine({ projectId }: { projectId: string }) {
-  const [receipt, setReceipt] = useState<{ paymentRef: string; receiptNumber: string; email: string | null } | null>(null);
+  const [receipt, setReceipt] = useState<{ receiptNumber: string } | null>(null);
   const [doc, setDoc] = useState<string>('');
-  const [msg, setMsg] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    get<{ receipt: { paymentRef: string; receiptNumber: string; email: string | null }; document: string }>(
-      `/v1/projects/${projectId}/receipt`,
-    )
+    get<{ receipt: { receiptNumber: string }; document: string }>(`/v1/projects/${projectId}/receipt`)
       .then((r) => { setReceipt(r.receipt); setDoc(r.document); })
       .catch(() => setReceipt(null));
   }, [projectId]);
 
   if (!receipt) return null;
 
-  const resend = async () => {
-    setBusy(true);
-    setMsg(null);
-    try {
-      const r = await post<{ sent: boolean; emailOutcome: string }>(`/v1/payments/${receipt.paymentRef}/resend-receipt`);
-      setMsg(r.sent ? `Kvittot är skickat till ${receipt.email}.` : 'Mailleverans är inte konfigurerad i den här miljön — kvittot finns sparat här.');
-    } catch (err) {
-      setMsg(err instanceof ApiError ? err.message : 'Kunde inte skicka kvittot.');
-    } finally {
-      setBusy(false);
-    }
-  };
-
   return (
     <div className="meta-line" style={{ margin: '0 0.25rem 1rem' }}>
-      Kvitto {receipt.receiptNumber}
-      {receipt.email && <> · skickas till {receipt.email}</>}
-      {' · '}
-      <button className="secondary" style={{ padding: '0.1rem 0.5rem', fontSize: '0.8rem' }} disabled={busy} onClick={resend}>
-        Skicka om kvittot
-      </button>
+      Kvitto {receipt.receiptNumber} · sparat under <Link to="/konto">Mina köp</Link>
       <details style={{ marginTop: '0.4rem' }}>
         <summary style={{ cursor: 'pointer' }}>Visa kvitto</summary>
         <pre style={{ background: 'var(--card-bg, #f8f8f8)', padding: '0.8rem', borderRadius: 8, overflowX: 'auto', fontSize: '0.8rem' }}>{doc}</pre>
       </details>
-      {msg && <div style={{ marginTop: '0.3rem' }}>{msg}</div>}
     </div>
   );
 }
@@ -375,10 +351,8 @@ const LIKELIHOOD_TEASER: Record<string, { dot: string; label: string }> = {
  * kompletteras på bekräftelseskärmen om den missades.
  */
 function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string; teaser: Teaser; onUnlocked: () => void }) {
-  const { session } = useSession();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [email, setEmail] = useState(session?.user.email ?? '');
   const [payment, setPayment] = useState<{
     paymentId: string;
     instructions: { method: string; message?: string; mockConfirmable?: boolean; deepLink?: string; qrAvailable?: boolean };
@@ -405,9 +379,6 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
     const iv = setInterval(tick, 2500);
     return () => { stopped = true; clearInterval(iv); };
   }, [payment, confirmed]);
-  const [lateEmail, setLateEmail] = useState('');
-  const [lateSent, setLateSent] = useState(false);
-
   const startUnlock = async () => {
     setBusy(true);
     setError(null);
@@ -416,7 +387,7 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
         alreadyUnlocked?: boolean;
         paymentId?: string;
         instructions?: { method: string; message?: string; mockConfirmable?: boolean };
-      }>(`/v1/projects/${projectId}/analysis-unlock`, email.trim() ? { email: email.trim() } : undefined);
+      }>(`/v1/projects/${projectId}/analysis-unlock`);
       if (res.alreadyUnlocked) return onUnlocked();
       setPayment({ paymentId: res.paymentId!, instructions: res.instructions! });
     } catch (err) {
@@ -442,47 +413,18 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
     }
   };
 
-  const sendLateEmail = async () => {
-    if (!payment || !lateEmail.trim()) return;
-    setBusy(true);
-    setError(null);
-    try {
-      await post(`/v1/payments/${payment.paymentId}/receipt-email`, { email: lateEmail.trim() });
-      setConfirmed((c) => (c ? { ...c, email: lateEmail.trim() } : c));
-      setLateSent(true);
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Adressen kunde inte sparas.');
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  // Betalning genomförd — kvittobekräftelse före rapporten.
+  // Betalning genomförd — kvittobekräftelse före rapporten. Kvittot är en
+  // förstaklassfunktion i kontot: alltid åtkomligt under Mina köp, ingen
+  // e-post inblandad.
   if (confirmed) {
     return (
       <div className="card" style={{ maxWidth: '32rem' }}>
         <h2>Betalning genomförd ✓</h2>
         <p style={{ fontSize: '1.05rem' }}>Din bidragsanalys är nu upplåst.</p>
-        {confirmed.email ? (
-          <p className="guidance">
-            Kvitto <strong>{confirmed.receiptNumber}</strong> skickas till: <strong>{confirmed.email}</strong>
-            {lateSent && ' ✓'}
-          </p>
-        ) : (
-          <div style={{ margin: '0.8rem 0' }}>
-            <p className="guidance">Vill du ha ett kvitto på köpet? Ange din e-postadress så skickar vi det.</p>
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              <input
-                type="email"
-                value={lateEmail}
-                onChange={(e) => setLateEmail(e.target.value)}
-                placeholder="namn@example.com"
-                style={{ flex: 1, minWidth: '14rem' }}
-              />
-              <button className="secondary" disabled={busy || !lateEmail.trim()} onClick={sendLateEmail}>Skicka kvitto</button>
-            </div>
-          </div>
-        )}
+        <p className="guidance">
+          Kvitto <strong>{confirmed.receiptNumber}</strong> är sparat på ditt konto — du hittar det när som helst under{' '}
+          <Link to="/konto">Konto &amp; data → Mina köp</Link>.
+        </p>
         {error && <div className="alert error">{error}</div>}
         <button onClick={onUnlocked} style={{ fontSize: '1.05rem', marginTop: '0.5rem' }}>Visa min analys</button>
       </div>
@@ -522,24 +464,13 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
 
       {!payment && (
         <>
-          <div style={{ margin: '0.8rem 0' }}>
-            <label htmlFor="receipt-email" style={{ fontWeight: 600 }}>Vart vill du ha ditt kvitto?</label>
-            <input
-              id="receipt-email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="namn@example.com"
-              style={{ display: 'block', width: '100%', maxWidth: '22rem', marginTop: '0.3rem' }}
-            />
-            <p className="meta-line" style={{ marginTop: '0.3rem' }}>Vi skickar ett kvitto på ditt köp till denna adress.</p>
-          </div>
           <button disabled={busy} onClick={startUnlock} style={{ fontSize: '1.05rem' }}>
             {busy ? 'Startar betalning…' : `Lås upp din bidragsanalys — ${formatSek(teaser.priceMinor)}`}
           </button>
           <p className="guidance" style={{ marginTop: '0.75rem' }}>
             Engångsbetalning för den här analysen — ingen prenumeration. Du får hela rapporten: vilka stöd det gäller,
             varför de matchar din situation, vilka kriterier som kontrolleras, vad du behöver och vart du vänder dig.
+            Kvittot sparas på ditt konto under Mina köp.
           </p>
         </>
       )}

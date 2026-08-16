@@ -50,8 +50,12 @@ git push → GitHub → Vercel build → Preview/Production
    `DATABASE_URL` (poolad!), `DIRECT_DATABASE_URL`, `AUTH_SECRET`,
    `FIELD_ENCRYPTION_KEY`, `STORAGE_DRIVER=supabase`, `SUPABASE_URL`,
    `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET`, `PUBLIC_BASE_URL`,
-   `CORS_ORIGIN`, `PG_POOL_MAX=2`, `RESEND_API_KEY`, `EMAIL_FROM`,
+   `CORS_ORIGIN`, `PG_POOL_MAX=2`,
    `SELLER_NAME`/`SELLER_ORG_NUMBER`/`SELLER_VAT_NUMBER`.
+   E-post är INTE ett produktionskrav: kvitton är förstaklass i kontot
+   (Mina köp), notiser finns i Inkorgen och inbjudningar har delbara länkar.
+   Utan konfigurerad kanal är lösenordsåterställningen avstängd fail-closed
+   (503) — se docs/LIMITATIONS.md för det öppna produktbeslutet.
 3. Peka produktionsdomänen (bidrag.se) på projektet; sätt `PUBLIC_BASE_URL`
    och `CORS_ORIGIN` till `https://bidrag.se`.
 4. Vercel Cron (definierad i `vercel.json`) anropar jobben med
@@ -114,11 +118,12 @@ curl -s https://bidrag.se/v1/internal/cron/retention  # 404 (hemlighet krävs)
 
 - Inga hemligheter i Git — `.env.example` innehåller bara namn. En hemlighet
   som råkat committas ÄR komprometterad: rotera den, städa inte bara historiken.
-- `SUPABASE_SERVICE_ROLE_KEY` och `RESEND_API_KEY` får aldrig nå webbläsaren;
-  de läses enbart i API-funktionen. SPA:n har inga `VITE_`-hemligheter alls —
-  den pratar bara med `/v1` på samma origin.
+- `SUPABASE_SERVICE_ROLE_KEY` (och ev. mailkanal-hemligheter om en kanal
+  senare konfigureras) får aldrig nå webbläsaren; de läses enbart i
+  API-funktionen. SPA:n har inga `VITE_`-hemligheter alls — den pratar bara
+  med `/v1` på samma origin.
 - Rotationsordning vid läckage: AUTH_SECRET → alla sessioner ogiltiga (avsett);
-  service-nyckel roteras i Supabase-konsolen; RESEND-nyckel i Resend.
+  service-nyckel roteras i Supabase-konsolen; Swish-cert via banken.
 
 ## Alternativ väg: container (behållen, ej primär)
 
