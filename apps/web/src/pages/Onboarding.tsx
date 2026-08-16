@@ -4,9 +4,10 @@
  * vilket stöd som finns eller vilken kategori det tillhör — dialogen avgör
  * vilka frågor som behöver ställas, och systemet gör första utgrävningen.
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ApiError, post } from '../api';
+import { useSession } from '../App';
 
 type Track = 'personal' | 'project';
 
@@ -60,6 +61,39 @@ type StepId =
   | 'pr-org-democratic' | 'pr-org-sports' | 'pr-org-youthshare' | 'pr-org-spread'
   | 'pr-activities'
   | 'pr-international' | 'pr-knowledge' | 'pr-youth' | 'pr-budget';
+
+/**
+ * Autospar: varje sida och varje rad. Varje svar och varje stegbyte skrivs
+ * omedelbart till webbläsarens lagring (per konto), så en omladdning, krasch
+ * eller stängd flik aldrig tappar ett svar — användaren fortsätter där den
+ * var. Utkastet rensas när intaget slutförts; från den punkten äger servern
+ * all data (profil, projekt, fakta).
+ */
+const STEP_IDS = new Set<string>([
+  'entry',
+  'p-household', 'p-children', 'p-separated',
+  'p-child-school', 'p-child-costs', 'p-child-leisure', 'p-child-glasses', 'p-child-travel',
+  'p-age', 'p-employment', 'p-capacity',
+  'p-income', 'p-savings', 'p-housing', 'p-housing-cost', 'p-extra',
+  'pr-intent', 'pr-who', 'pr-municipality', 'pr-artist', 'pr-sector',
+  'pr-org-democratic', 'pr-org-sports', 'pr-org-youthshare', 'pr-org-spread',
+  'pr-activities', 'pr-international', 'pr-knowledge', 'pr-youth', 'pr-budget',
+]);
+
+interface IntakeDraft { v: 1; step: StepId; history: StepId[]; a: Answers }
+
+function loadIntakeDraft(key: string): IntakeDraft | null {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const d = JSON.parse(raw) as IntakeDraft;
+    if (d.v !== 1 || !STEP_IDS.has(d.step) || !Array.isArray(d.history) || !d.history.every((s) => STEP_IDS.has(s))) return null;
+    if (!d.a || typeof d.a !== 'object') return null;
+    return { ...d, a: { ...initial, ...d.a, activityTypes: Array.isArray(d.a.activityTypes) ? d.a.activityTypes : [] } };
+  } catch {
+    return null;
+  }
+}
 
 /** Nästa steg beror på svaren — frågor som inte ändrar resultatet hoppas över. */
 function nextStep(current: StepId, a: Answers): StepId | 'done' {
@@ -167,11 +201,24 @@ function personalFacts(a: Answers): Record<string, unknown> {
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
-  const [step, setStep] = useState<StepId>('entry');
-  const [history, setHistory] = useState<StepId[]>([]);
-  const [a, setA] = useState<Answers>(initial);
+  const { session } = useSession();
+  const draftKey = `bidrag.intag.v1.${session?.user.id ?? 'anon'}`;
+  const [draft] = useState(() => loadIntakeDraft(draftKey));
+  const [step, setStep] = useState<StepId>(draft?.step ?? 'entry');
+  const [history, setHistory] = useState<StepId[]>(draft?.history ?? []);
+  const [a, setA] = useState<Answers>(draft?.a ?? initial);
+  const [resumed, setResumed] = useState(Boolean(draft && draft.history.length > 0));
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // Varje svar och varje stegbyte sparas i samma ögonblick det sker.
+  useEffect(() => {
+    try {
+      localStorage.setItem(draftKey, JSON.stringify({ v: 1, step, history, a } satisfies IntakeDraft));
+    } catch {
+      // Privat läge/full lagring: dialogen fungerar ändå, bara utan utkast.
+    }
+  }, [draftKey, step, history, a]);
 
   const stepNumber = history.length + 1;
 
@@ -226,6 +273,8 @@ export default function OnboardingPage() {
       });
 
       await post(`/v1/projects/${project.id}/matches`, {});
+      // Slutfört: svaren är nu profil-/projektfakta på servern — utkastet är klart.
+      try { localStorage.removeItem(draftKey); } catch { /* ofarligt */ }
       navigate(`/projekt/${project.id}`);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Något gick fel.');
@@ -262,6 +311,20 @@ export default function OnboardingPage() {
         <span className="done" style={{ flex: progress }} />
         <span style={{ flex: 1 - progress }} />
       </div>
+      {resumed && (
+        <div className="alert success" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+          <span>Dina svar sparas löpande — du fortsätter där du var.</span>
+          <button
+            className="subtle"
+            onClick={() => {
+              try { localStorage.removeItem(draftKey); } catch { /* ofarligt */ }
+              setStep('entry'); setHistory([]); setA(initial); setResumed(false);
+            }}
+          >
+            Börja om från början
+          </button>
+        </div>
+      )}
       {history.length > 0 && (
         <button className="subtle" onClick={back} style={{ marginBottom: '0.5rem' }}>← Tillbaka</button>
       )}

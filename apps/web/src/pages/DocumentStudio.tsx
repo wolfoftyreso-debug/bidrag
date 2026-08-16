@@ -209,9 +209,26 @@ function PackRow({ label, sub, price, onBuy, busy, recommended }: { label: strin
 function DocumentForm({ projectId, template, opportunitySlug, onDone, onCancel }: {
   projectId: string; template: TemplateInfo; opportunitySlug: string | null; onDone: () => void; onCancel: () => void;
 }) {
-  const [answers, setAnswers] = useState<Record<string, unknown>>({});
+  // Autospar: varje rad skrivs till webbläsarens lagring medan användaren
+  // fyller i — en omladdning tappar aldrig ett halvskrivet dokumentunderlag.
+  // Utkastet rensas när dokumentet genererats (då äger servern innehållet).
+  const draftKey = `bidrag.dok.v1.${projectId}.${template.key}`;
+  const [answers, setAnswers] = useState<Record<string, unknown>>(() => {
+    try {
+      const raw = localStorage.getItem(draftKey);
+      if (raw) {
+        const d = JSON.parse(raw) as unknown;
+        if (d && typeof d === 'object' && !Array.isArray(d)) return d as Record<string, unknown>;
+      }
+    } catch { /* privat läge — formuläret fungerar ändå */ }
+    return {};
+  });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    try { localStorage.setItem(draftKey, JSON.stringify(answers)); } catch { /* ofarligt */ }
+  }, [draftKey, answers]);
 
   const visible = template.questions.filter((q) => !q.showIf || answers[q.showIf.key] === q.showIf.equals);
   const set = (key: string, v: unknown) => setAnswers((a) => ({ ...a, [key]: v }));
@@ -226,6 +243,7 @@ function DocumentForm({ projectId, template, opportunitySlug, onDone, onCancel }
         answers,
         ...(opportunitySlug ? { opportunitySlug } : {}),
       });
+      try { localStorage.removeItem(draftKey); } catch { /* ofarligt */ }
       onDone();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Dokumentet kunde inte skapas.');
