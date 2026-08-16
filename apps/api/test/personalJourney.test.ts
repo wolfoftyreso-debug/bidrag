@@ -127,3 +127,61 @@ describe('personlig rättighetsutredning', () => {
     expect(bySlug(updated, 'kommun-forsorjningsstod').eligibilityStatus).toBe('eligible');
   });
 });
+
+describe('företagarspåret (F-EGEN): löftet om genomlysning av företagandet infrias', () => {
+  let bizMatches: MatchRow[];
+
+  beforeAll(async () => {
+    const biz = await registerUser(app, 'Egenföretagaren');
+    const profileRes = await api(app, biz, 'POST', '/v1/profiles', {
+      kind: 'person',
+      displayName: 'Min situation',
+      applicantType: 'individual',
+      country: 'SE',
+      municipality: 'Tyresö',
+      facts: {
+        'person.householdType': 'alone',
+        'person.hasChildrenAtHome': true,
+        'person.ageBand': '29-65',
+        'person.employmentStatus': 'self_employed',
+        'person.selfEmployed': true,
+        'person.businessForm': 'sole_trader',
+        'person.registeredUnemployed': false,
+        'person.receivesPension': false,
+        'person.lowHouseholdIncome': true,
+        'person.paysHousingCost': true,
+      },
+    });
+    const profile = (profileRes.json() as { profile: { id: string } }).profile;
+    const projectRes = await api(app, biz, 'POST', '/v1/projects', {
+      profileId: profile.id,
+      title: 'Min situation',
+      intent: 'Egenföretagare med svår ekonomi.',
+    });
+    const pid = (projectRes.json() as { project: { id: string } }).project.id;
+    await unlockProject(app, biz, pid);
+    await api(app, biz, 'POST', `/v1/projects/${pid}/matches`, {});
+    const res = await api(app, biz, 'GET', `/v1/projects/${pid}/matches`);
+    bizMatches = (res.json() as { matches: MatchRow[] }).matches;
+  });
+
+  it('business supports enter the report — with real follow-up questions, never silently dropped', () => {
+    // Individuellt sökbara företagsstöd genomlyses med öppna frågor.
+    const jv = bySlug(bizMatches, 'jordbruksverket-startstod-unga');
+    expect(jv.eligibilityStatus).toBe('unknown');
+    expect(jv.result.missingFacts.length).toBeGreaterThan(0);
+  });
+
+  it('company-only supports are shown honestly as excluded with the reason, not hidden', () => {
+    const vin = bySlug(bizMatches, 'vinnova-innovativa-startups');
+    expect(vin.eligibilityStatus).toBe('excluded'); // profilen är en person, inte ett aktiebolag
+  });
+
+  it('non-self-employed users never see the business supports (track stays clean)', async () => {
+    // Den ensamstående föräldern ovan (inte egenföretagare) har dem inte alls.
+    const res = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
+    const control = (res.json() as { matches: MatchRow[] }).matches;
+    expect(control.find((m) => m.slug === 'jordbruksverket-startstod-unga')).toBeUndefined();
+    expect(control.find((m) => m.slug === 'vinnova-innovativa-startups')).toBeUndefined();
+  });
+});

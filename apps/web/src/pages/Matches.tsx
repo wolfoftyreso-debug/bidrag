@@ -198,7 +198,22 @@ export default function MatchesPage() {
   const relevant = matches.filter((m) => m.eligibilityStatus !== 'excluded');
   const excluded = matches.filter((m) => m.eligibilityStatus === 'excluded');
   const personal = relevant.filter((m) => PERSONAL_INSTRUMENTS.has(m.instrumentType));
-  const funding = relevant.filter((m) => !PERSONAL_INSTRUMENTS.has(m.instrumentType));
+  // Företagarspåret (F-EGEN): den som driver eget har lovats genomlysning av
+  // företagsstöden. De får en egen sektion och sammanfattas aldrig bort, även
+  // när frågor återstår. Speglar API:ts BUSINESS_RELEVANT_SLUGS.
+  const BUSINESS_SLUGS = new Set([
+    'af-stod-start-naringsverksamhet',
+    'vinnova-innovativa-startups',
+    'tillvaxtverket-affarsutvecklingscheckar',
+    'tillvaxtverket-regionalt-investeringsstod',
+    'jordbruksverket-startstod-unga',
+    'jordbruksverket-investeringsstod',
+  ]);
+  const isSelfEmployed = facts['person.selfEmployed'] === true;
+  const businessForm = facts['person.businessForm'];
+  const business = isSelfEmployed ? relevant.filter((m) => BUSINESS_SLUGS.has(m.slug)) : [];
+  const excludedBusiness = isSelfEmployed ? excluded.filter((m) => BUSINESS_SLUGS.has(m.slug)) : [];
+  const funding = relevant.filter((m) => !PERSONAL_INSTRUMENTS.has(m.instrumentType) && !(isSelfEmployed && BUSINESS_SLUGS.has(m.slug)));
 
   return (
     <div>
@@ -300,6 +315,43 @@ export default function MatchesPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {isSelfEmployed && (business.length > 0 || excludedBusiness.length > 0) && (
+        <div className="card">
+          <h2>Stöd som rör ditt företagande ({business.length})</h2>
+          <p className="guidance">
+            {businessForm === 'sole_trader'
+              ? 'Med enskild firma söker du företagsstöden som person — de ingår i din genomlysning här.'
+              : businessForm === 'limited_company'
+                ? 'Ett aktiebolags stöd söks av bolaget, inte av dig som person. Stöd som kräver aktiebolag listas under "Uppfyller inte kraven" nedan — vill du gå vidare med dem gör du en egen genomlysning för bolaget (nytt projekt med bolaget som sökande).'
+                : 'Vilka företagsstöd som är aktuella beror på driftsformen — enskild firma söker som person, aktiebolagets stöd söks av bolaget.'}
+          </p>
+          {business.map((m) => (
+            <div className="match-row" key={m.matchId}>
+              <div style={{ flex: 1 }}>
+                <div>
+                  <Link to={`/stod/${m.slug}?projekt=${projectId}`} style={{ fontWeight: 600 }}>{m.title}</Link>{' '}
+                  <LikelihoodBadge m={m} />
+                </div>
+                <div className="meta-line">
+                  {m.authorityName} · <span className="badge info">{INSTRUMENT_LABELS[m.instrumentType] ?? m.instrumentType}</span>
+                </div>
+                {m.result.missingFacts.length > 0 && (
+                  <div className="meta-line" style={{ color: 'var(--warning)' }}>
+                    För att veta säkert: {m.result.missingFacts.map((f) => f.question).slice(0, 2).join(' · ')}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+          {excludedBusiness.length > 0 && (
+            <p className="meta-line">
+              {excludedBusiness.length} företagsstöd uppfyller du inte kraven för just nu — de listas med skäl under
+              ”Uppfyller inte kraven”.
+            </p>
+          )}
         </div>
       )}
 

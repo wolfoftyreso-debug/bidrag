@@ -46,6 +46,22 @@ function likelihoodOf(m: MatchRow): 'high' | 'possible' | 'needs_info' {
  */
 const PERSONAL_INSTRUMENTS = new Set(['social_benefit', 'educational_support']);
 
+/**
+ * Företagarspåret (red team-fynd): intaget lovar den som driver eget att
+ * "vi tittar på både stöd till dig som person och stöd som rör företagandet".
+ * Det löftet infrias här — kurerade företagsstöd ingår i genomlysningen när
+ * personen driver eget. Stöd som kräver aktiebolag redovisas ärligt under
+ * "uppfyller inte kraven" med skälet, i stället för att tyst utelämnas.
+ */
+const BUSINESS_RELEVANT_SLUGS = new Set([
+  'af-stod-start-naringsverksamhet',
+  'vinnova-innovativa-startups',
+  'tillvaxtverket-affarsutvecklingscheckar',
+  'tillvaxtverket-regionalt-investeringsstod',
+  'jordbruksverket-startstod-unga',
+  'jordbruksverket-investeringsstod',
+]);
+
 export function detectTrack(facts: Record<string, unknown>): 'personal' | 'project' | 'all' {
   const keys = Object.keys(facts ?? {});
   if (keys.some((k) => k.startsWith('project.') || k.startsWith('organisation.'))) return 'project';
@@ -53,9 +69,18 @@ export function detectTrack(facts: Record<string, unknown>): 'personal' | 'proje
   return 'all';
 }
 
-export function relevantForTrack(rows: MatchRow[], track: 'personal' | 'project' | 'all'): MatchRow[] {
+export function relevantForTrack(
+  rows: MatchRow[],
+  track: 'personal' | 'project' | 'all',
+  opts?: { selfEmployed?: boolean },
+): MatchRow[] {
   if (track === 'personal') {
-    return rows.filter((m) => PERSONAL_INSTRUMENTS.has(m.instrumentType) || m.eligibilityStatus === 'eligible');
+    return rows.filter(
+      (m) =>
+        PERSONAL_INSTRUMENTS.has(m.instrumentType) ||
+        m.eligibilityStatus === 'eligible' ||
+        (opts?.selfEmployed === true && BUSINESS_RELEVANT_SLUGS.has(m.slug)),
+    );
   }
   if (track === 'project') {
     return rows.filter((m) => !PERSONAL_INSTRUMENTS.has(m.instrumentType) || m.eligibilityStatus === 'eligible');
@@ -96,7 +121,10 @@ async function trackRelevantMatches(
     .limit(1);
   const merged = { ...((row?.profileFacts as Record<string, unknown>) ?? {}), ...((row?.projectFacts as Record<string, unknown>) ?? {}) };
   const rows = await listMatchesForProject(tenantId, projectId);
-  return { rows: relevantForTrack(rows, detectTrack(merged)), facts: merged };
+  return {
+    rows: relevantForTrack(rows, detectTrack(merged), { selfEmployed: merged['person.selfEmployed'] === true }),
+    facts: merged,
+  };
 }
 
 const projectBody = {

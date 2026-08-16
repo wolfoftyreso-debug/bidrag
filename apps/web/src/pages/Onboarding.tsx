@@ -26,6 +26,7 @@ interface Answers {
   childTravelHard?: boolean;
   ageBand?: 'under20' | '20-28' | '29-65' | '66plus';
   employment?: 'working' | 'unemployed' | 'sick' | 'studying' | 'retired' | 'self_employed';
+  businessForm?: 'sole_trader' | 'limited_company' | 'other';
   reducedCapacity?: boolean;
   incomeBand?: 'under15' | '15-25' | '25-40' | 'over40';
   limitedSavings?: boolean;
@@ -55,7 +56,7 @@ type StepId =
   | 'entry'
   | 'p-household' | 'p-children' | 'p-separated'
   | 'p-child-school' | 'p-child-costs' | 'p-child-leisure' | 'p-child-glasses' | 'p-child-travel'
-  | 'p-age' | 'p-employment' | 'p-capacity'
+  | 'p-age' | 'p-employment' | 'p-biz-form' | 'p-capacity'
   | 'p-income' | 'p-savings' | 'p-housing' | 'p-housing-cost' | 'p-extra'
   | 'pr-intent' | 'pr-who' | 'pr-municipality' | 'pr-artist' | 'pr-sector'
   | 'pr-org-democratic' | 'pr-org-sports' | 'pr-org-youthshare' | 'pr-org-spread'
@@ -73,7 +74,7 @@ const STEP_IDS = new Set<string>([
   'entry',
   'p-household', 'p-children', 'p-separated',
   'p-child-school', 'p-child-costs', 'p-child-leisure', 'p-child-glasses', 'p-child-travel',
-  'p-age', 'p-employment', 'p-capacity',
+  'p-age', 'p-employment', 'p-biz-form', 'p-capacity',
   'p-income', 'p-savings', 'p-housing', 'p-housing-cost', 'p-extra',
   'pr-intent', 'pr-who', 'pr-municipality', 'pr-artist', 'pr-sector',
   'pr-org-democratic', 'pr-org-sports', 'pr-org-youthshare', 'pr-org-spread',
@@ -110,7 +111,9 @@ function nextStep(current: StepId, a: Answers): StepId | 'done' {
     case 'p-child-glasses': return a.childSchool !== 'none' ? 'p-child-travel' : 'p-age';
     case 'p-child-travel': return 'p-age';
     case 'p-age': return 'p-employment';
-    case 'p-employment': return a.employment === 'sick' ? 'p-capacity' : 'p-income';
+    case 'p-employment':
+      return a.employment === 'sick' ? 'p-capacity' : a.employment === 'self_employed' ? 'p-biz-form' : 'p-income';
+    case 'p-biz-form': return 'p-income';
     case 'p-capacity': return 'p-income';
     case 'p-income': return a.incomeBand === 'under15' ? 'p-savings' : 'p-housing';
     case 'p-savings': return 'p-housing';
@@ -186,6 +189,9 @@ function personalFacts(a: Answers): Record<string, unknown> {
     // "Driver eget" är en datapunkt i situationen — inte en huvudkategori.
     facts['person.selfEmployed'] = a.employment === 'self_employed';
   }
+  // Företagarspåret: driftsformen avgör vem som kan söka företagsstöden —
+  // enskild firma söker som person, aktiebolagets stöd söks av bolaget.
+  if (a.businessForm) facts['person.businessForm'] = a.businessForm;
   if (a.reducedCapacity !== undefined) facts['person.reducedWorkCapacityLongTerm'] = a.reducedCapacity;
   if (a.incomeBand) {
     facts['person.monthlyIncomeBand'] = a.incomeBand;
@@ -513,6 +519,17 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
           <Choice label="Studerar" onClick={() => onAnswer({ employment: 'studying' })} />
           <Choice label="Driver eget företag" sub="Vi tittar på både stöd till dig som person och stöd som rör företagandet." onClick={() => onAnswer({ employment: 'self_employed' })} />
           <Choice label="Pensionär" onClick={() => onAnswer({ employment: 'retired' })} />
+        </Q>
+      );
+    case 'p-biz-form':
+      return (
+        <Q
+          title="Hur driver du verksamheten?"
+          guidance="Driftsformen avgör vilka företagsstöd som är aktuella och vem som söker dem — enskild firma söker du som person, ett aktiebolags stöd söks av bolaget."
+        >
+          <Choice label="Enskild firma" onClick={() => onAnswer({ businessForm: 'sole_trader' })} />
+          <Choice label="Aktiebolag" onClick={() => onAnswer({ businessForm: 'limited_company' })} />
+          <Choice label="Annat eller osäker" onClick={() => onAnswer({ businessForm: 'other' })} />
         </Q>
       );
     case 'p-capacity':
