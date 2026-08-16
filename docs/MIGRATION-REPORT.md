@@ -106,8 +106,9 @@ domän. Därefter: `git push` = deploy; schemaändring = migrering i Git +
 2. **Verifiera Supabase Storage-drivern mot ett riktigt projekt** — koden är
    skriven mot Storage-API:et men har inte kunnat integrationstestas utan
    riktiga nycklar (disk-drivern är fullt testad).
-3. **Swish-handelsavtal + certifikat** och **momsklassning med redovisningen**
-   — betalflödet är annars komplett (mock-vägen är avstängd i produktion).
+3. **Swish-handelsavtal + certifikat** — betalflödet är annars komplett
+   (mock-vägen är avstängd i produktion). Momsen är avgjord: fast 25 %
+   standardsats (elektroniskt levererad tjänst till konsument).
 4. **Resend-nyckel + avsändardomän** (SPF/DKIM) för riktiga kvittomail.
 
 ## 11. Känd teknisk skuld

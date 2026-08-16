@@ -163,12 +163,13 @@ required), including a forged-callback attack test.
 What is honestly missing: the merchant agreement and bank-issued
 certificates, and a run of `scripts/swish-readiness.mjs` against MSS
 (`SWISH_API_BASE=https://mss.cpc.getswish.net`) and then against production
-with one real 39 kr payment. The VAT rate is configurable (`VAT_RATE_BPS`,
-default 25.00 %) and seller identity comes from
-`SELLER_NAME`/`SELLER_ORG_NUMBER`/`SELLER_VAT_NUMBER`, but the actual VAT
-classification of the service must be confirmed with the company's
-accountant before production — 39 kr × many transactions quickly becomes a
-large ledger, so this must be right from day one. The mock provider used by
-tests and the demo is disabled in production by construction
+with one real 39 kr payment. VAT is fixed at the Swedish standard rate of
+25 % — both products (analysis unlock, document preparation) are
+electronically supplied services to consumers in Sweden, which carry the
+standard rate; the rate is deliberately not configurable so a bad
+environment variable can never produce incorrect receipts. Seller identity
+comes from `SELLER_NAME`/`SELLER_ORG_NUMBER`/`SELLER_VAT_NUMBER` and must
+be set to the real company details before production. The mock provider
+used by tests and the demo is disabled in production by construction
 (`PAYMENTS_MOCK_ENABLED` is ignored when `NODE_ENV=production`), and it is
 never selected when Swish is configured.

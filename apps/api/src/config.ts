@@ -54,11 +54,12 @@ export const config = {
   /** Mockbetalningar för utveckling/test — kan aldrig aktiveras i produktion. */
   paymentsMockEnabled: env.PAYMENTS_MOCK_ENABLED === 'true' && env.NODE_ENV !== 'production',
   /**
-   * Momssats i baspunkter (2500 = 25,00 %). Sätts utifrån bolagets faktiska
-   * momsregistrering och vad tjänsten klassas som — stäm av med redovisningen
-   * innan produktion.
+   * Momssats i baspunkter. Analysupplåsningen och dokumentförberedelsen är
+   * elektroniskt levererade tjänster till konsument i Sverige — standardmoms
+   * 25 % (ML 7 kap. 1 §). Medvetet inte en miljövariabel: en felkonfigurerad
+   * sats skulle ge felaktiga kvitton och fel i momsredovisningen.
    */
-  vatRateBps: Number(env.VAT_RATE_BPS ?? 2500),
+  vatRateBps: 2500,
   /** Säljaruppgifter som fryses på varje kvitto/verifikation. */
   sellerName: env.SELLER_NAME ?? 'Bidrag.se',
   sellerOrgNumber: env.SELLER_ORG_NUMBER ?? null,
