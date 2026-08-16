@@ -4,8 +4,6 @@
  * and removes stored upload files before the database cascade.
  */
 import type { FastifyInstance } from 'fastify';
-import { rm } from 'node:fs/promises';
-import path from 'node:path';
 import { eq } from 'drizzle-orm';
 import { db } from '../db/client.ts';
 import {
@@ -30,7 +28,7 @@ import {
   tenants,
 } from '../db/schema.ts';
 import { audit } from '../audit.ts';
-import { config } from '../config.ts';
+import { getStorage } from '../services/storage.ts';
 
 export async function gdprRoutes(app: FastifyInstance) {
   app.addHook('preHandler', app.requireAuth);
@@ -126,10 +124,11 @@ export async function gdprRoutes(app: FastifyInstance) {
         .select({ storagePath: documents.storagePath })
         .from(documents)
         .where(eq(documents.tenantId, tenantId));
+      const storage = getStorage();
       for (const d of docs) {
-        await rm(path.join(config.uploadDir, d.storagePath), { force: true }).catch(() => undefined);
+        await storage.remove(d.storagePath);
       }
-      await rm(path.join(config.uploadDir, tenantId), { recursive: true, force: true }).catch(() => undefined);
+      await storage.removePrefix(tenantId);
 
       // Erasure proof survives the cascade: no tenant FK on the audit row.
       await audit({

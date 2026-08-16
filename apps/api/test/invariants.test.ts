@@ -6,7 +6,16 @@
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { pool } from '../src/db/client.ts';
+import { runMigrations } from '../src/db/migrate.ts';
+
+beforeAll(async () => {
+  await runMigrations();
+});
+afterAll(async () => {
+  await pool.end();
+});
 
 const SRC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src');
 
@@ -40,5 +49,24 @@ describe('domain invariants', () => {
       const content = await readFile(file, 'utf8');
       expect(content.toLowerCase().includes('redis'), path.relative(SRC, file)).toBe(false);
     }
+  });
+
+  /**
+   * Supabase-invariant: PostgREST exponerar public-schemat för innehavare av
+   * anon-nyckeln. Varje tabell MÅSTE ha RLS aktiverat (deny-all utan
+   * policies) — en ny tabell utan RLS är ett öppet API mot dess data.
+   */
+  it('every public table has row level security enabled', async () => {
+    const { rows } = await pool.query<{ relname: string }>(
+      `select c.relname
+         from pg_class c
+         join pg_namespace n on n.oid = c.relnamespace
+        where n.nspname = 'public' and c.relkind = 'r' and not c.relrowsecurity
+        order by c.relname`,
+    );
+    expect(
+      rows.map((r) => r.relname),
+      'tabeller utan RLS — lägg till ENABLE ROW LEVEL SECURITY i tabellens migration',
+    ).toEqual([]);
   });
 });

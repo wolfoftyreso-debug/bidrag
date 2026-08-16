@@ -1,14 +1,13 @@
 import type { FastifyInstance } from 'fastify';
 import { and, eq } from 'drizzle-orm';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { db } from '../db/client.ts';
 import { documents } from '../db/schema.ts';
 import { audit } from '../audit.ts';
-import { config } from '../config.ts';
 import { WRITER_ROLES } from '../plugins/auth.ts';
 import { checkUpload, scanBuffer, sha256 } from '../services/uploads.ts';
+import { getStorage } from '../services/storage.ts';
 
 export async function documentRoutes(app: FastifyInstance) {
   app.addHook('preHandler', app.requireAuth);
@@ -64,9 +63,7 @@ export async function documentRoutes(app: FastifyInstance) {
       const digest = sha256(content);
       // Tenant-scoped storage path with opaque name (§27).
       const relPath = path.join(tenantId, `${randomUUID()}${path.extname(file.filename.toLowerCase())}`);
-      const absPath = path.join(config.uploadDir, relPath);
-      await mkdir(path.dirname(absPath), { recursive: true });
-      await writeFile(absPath, content);
+      await getStorage().put(relPath, content);
 
       const [row] = await db
         .insert(documents)
@@ -113,7 +110,7 @@ export async function documentRoutes(app: FastifyInstance) {
         .where(and(eq(documents.id, id), eq(documents.tenantId, request.auth!.tenantId)))
         .limit(1);
       if (!row) return reply.code(404).send({ error: 'not_found' });
-      const content = await readFile(path.join(config.uploadDir, row.storagePath));
+      const content = await getStorage().get(row.storagePath);
       return reply
         .header('Content-Type', row.contentType)
         .header('Content-Disposition', `attachment; filename="${encodeURIComponent(row.filename)}"`)

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "npm run build -w packages/core && npm run build -w apps/web",
+  "outputDirectory": "apps/web/dist",
+  "installCommand": "npm ci --no-audit --no-fund",
+  "functions": {
+    "api/index.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
+  },
+  "rewrites": [
+    { "source": "/v1/:path*", "destination": "/api/index" },
+    { "source": "/healthz", "destination": "/api/index" },
+    { "source": "/((?!api/|assets/|favicon).*)", "destination": "/index.html" }
+  ],
+  "crons": [
+    { "path": "/v1/internal/cron/source-fetch", "schedule": "0 */6 * * *" },
+    { "path": "/v1/internal/cron/deadline-scan", "schedule": "0 6 * * *" },
+    { "path": "/v1/internal/cron/stale-match-recalc", "schedule": "*/15 * * * *" },
+    { "path": "/v1/internal/cron/retention", "schedule": "30 4 * * *" }
+  ]
+}

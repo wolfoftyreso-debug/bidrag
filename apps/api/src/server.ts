@@ -26,6 +26,7 @@ import { documentRoutes } from './routes/documents.ts';
 import { correspondenceRoutes } from './routes/correspondence.ts';
 import { notificationRoutes } from './routes/notifications.ts';
 import { adminRoutes } from './routes/admin.ts';
+import { internalRoutes } from './routes/internal.ts';
 
 export async function buildServer(): Promise<FastifyInstance> {
   const app = Fastify({
@@ -119,6 +120,7 @@ export async function buildServer(): Promise<FastifyInstance> {
   await app.register(teamRoutes);
   await app.register(paymentRoutes);
   await app.register(paymentWebhookRoutes);
+  await app.register(internalRoutes);
   await app.register(adminRoutes);
 
   // Serve the built SPA when co-deployed (WEB_DIST) with an SPA fallback.

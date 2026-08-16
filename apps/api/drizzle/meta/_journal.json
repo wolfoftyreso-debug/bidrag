@@ -36,6 +36,13 @@
       "when": 1786867256173,
       "tag": "0004_faithful_stark_industries",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1786867257173,
+      "tag": "0005_rls_deny_all",
+      "breakpoints": true
     }
   ]
 }

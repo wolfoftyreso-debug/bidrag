@@ -71,11 +71,17 @@ npm test                              # core unit + api integration suites
 
 ## Production
 
-One container image (API + worker + built SPA), deployed with the manifests in
-`deploy/k8s/`. Migrations run automatically at startup and are deterministic
-(committed SQL, verified in CI). See `docs/ARCHITECTURE.md` for the full
-picture and `docs/LIMITATIONS.md` for the current, honest list of what is and
-is not integrated.
+**Primär väg: Vercel + Supabase** — GitHub är källan till sanning, `git push`
+bygger och deployar (SPA statiskt + hela API:t som en serverless-funktion),
+Supabase står för PostgreSQL (RLS deny-all mot PostgREST), privat
+dokumentlagring och poolade anslutningar; Vercel Cron kör bakgrundsjobben.
+Hela proceduren: `docs/DEPLOYMENT.md`. Miljövariabler: `.env.example` —
+committa aldrig värden.
+
+Alternativ (behållen, ej primär): en containerimage (API + pg-boss-worker +
+byggd SPA) med manifesten i `deploy/k8s/`. Se `docs/ARCHITECTURE.md` för
+helheten och `docs/LIMITATIONS.md` för den ärliga listan över vad som är och
+inte är integrerat.
 
 ## Product principles (non-negotiable)
 

@@ -56,5 +56,19 @@ export const config = {
   sellerVatNumber: env.SELLER_VAT_NUMBER ?? null,
   /** Resend för transaktionsmail (kvitton). Faller tillbaka på SMTP_URL, annars ärligt hoppat. */
   resendApiKey: env.RESEND_API_KEY ?? null,
+  /**
+   * Objektlagring: 'disk' (default — lokal utveckling/test/container) eller
+   * 'supabase' (krav på Vercel: funktioner saknar beständigt filsystem).
+   */
+  storageDriver: (env.STORAGE_DRIVER ?? 'disk') as 'disk' | 'supabase',
+  supabaseUrl: env.SUPABASE_URL ?? null,
+  supabaseServiceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY ?? null,
+  supabaseStorageBucket: env.SUPABASE_STORAGE_BUCKET ?? 'documents',
+  /**
+   * Skyddar de interna cron-endpointsen (/v1/internal/cron/:job). Vercel Cron
+   * skickar automatiskt "Authorization: Bearer $CRON_SECRET" när variabeln
+   * finns i miljön. Utan satt hemlighet är endpointsen avstängda (404).
+   */
+  cronSecret: env.CRON_SECRET ?? null,
   logLevel: env.LOG_LEVEL ?? 'info',
 };

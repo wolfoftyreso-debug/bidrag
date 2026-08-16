@@ -9,6 +9,7 @@ export default defineConfig({
       FIELD_ENCRYPTION_KEY: '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f',
       UPLOAD_DIR: './test-uploads',
       PAYMENTS_MOCK_ENABLED: 'true',
+      CRON_SECRET: 'test-cron-secret',
       LOG_LEVEL: 'silent',
     },
     fileParallelism: false,

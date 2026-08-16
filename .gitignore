@@ -13,3 +13,5 @@ packages/core/dist/
 uploads/
 .vite/
 test-uploads/
+.vercel/
+.env.local
