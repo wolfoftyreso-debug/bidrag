@@ -149,6 +149,12 @@ export const DOCUMENT_TEMPLATES: DocumentTemplate[] = [
       { key: 'capacityGaps', label: 'Vilka funktioner eller kompetenser saknas i dag — och hur löser ni det?', type: 'textarea', guidance: 'En öppet redovisad lucka med en plan är starkare än en dold.' },
       { key: 'longTerm', label: 'Vad händer efter projektets slut?', type: 'textarea', required: true, guidance: '"Resultaten lever vidare" räcker inte: vem tar över, vem betalar, vad består konkret?' },
       { key: 'whyUs', label: 'Varför just ni — och varför nu?', type: 'textarea', guidance: 'Det som skiljer er från liknande projekt. Hitta inte på fördelar — det ni faktiskt har räcker.' },
+      // §20 Horisontella principer: frivilliga, men aldrig kosmetiska —
+      // frågorna kräver samma mekanism som resten av kedjan. Obesvarade
+      // frågor utelämnas ur dokumentet i stället för att fyllas med fraser.
+      { key: 'equality', label: 'Hur arbetar projektet konkret med jämställdhet?', type: 'textarea', guidance: 'Bara om utlysningen efterfrågar det eller det är relevant. Konkret: vad i målgrupp, aktiviteter eller organisation — inte en allmän avsiktsförklaring.' },
+      { key: 'accessibility', label: 'Hur görs verksamheten tillgänglig för personer med funktionsnedsättning?', type: 'textarea', guidance: 'T.ex. lokaler, kommunikation, anpassningar — det ni faktiskt gör eller planerar.' },
+      { key: 'environment', label: 'Hur hanterar projektet miljö- och klimatpåverkan?', type: 'textarea', guidance: 'Konkreta val — t.ex. resor, material, lokaler. Skriv inget om det inte är relevant för projektet.' },
     ],
     sections: [
       { title: 'Projekt', lines: ['{{projectTitle}}', 'Sökande: {{fullName}}'] },
@@ -163,6 +169,10 @@ export const DOCUMENT_TEMPLATES: DocumentTemplate[] = [
       { title: 'Organisation och kapacitet', lines: ['{{organisation}}', 'Identifierade luckor och hur de hanteras: {{capacityGaps}}'] },
       { title: 'Efter projektet', lines: ['{{longTerm}}'] },
       { title: 'Varför vi, varför nu', lines: ['{{whyUs}}'] },
+      {
+        title: 'Horisontella perspektiv',
+        lines: ['Jämställdhet: {{equality}}', 'Tillgänglighet: {{accessibility}}', 'Miljö och klimat: {{environment}}'],
+      },
     ],
   },
 ];

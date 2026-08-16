@@ -22,7 +22,7 @@ rör ansökningsberedning får byggas i strid med principerna här.
 | §17 Budget engine | **Implementerad** | `packages/core/src/budget.ts`: öre-exakta heltal, stödandel, medfinansiering, kategoritak/-krav/-uteslutning, finansieringsbalans |
 | §18 Double funding | **Implementerad (v1)** | Granskningen: annan offentlig finansiering mot en stödordning som utesluter den ⇒ HIGH_RISK + blockerande lucka (`requiresFactualChange` — döljs aldrig); parallella ansökningar i samma projekt ⇒ POTENTIAL_OVERLAP-notis |
 | §19 Statsstöd | **Implementerad (fail-safe)** | Granskningen: personlig ersättning till privatperson ⇒ NOT_APPLICABLE; allt annat ⇒ STATE_AID_UNKNOWN-flagga med uppmaning att kontrollera med finansiären — systemet gissar aldrig |
-| §20–22 Horisontella principer, långsiktighet, konkurrens | Delvis | §21 långsiktighet ("vem tar över, vem betalar, vad består" — mekanism krävs) och §22 varför-vi/varför-nu ingår i projektbeskrivningsmallen; §20 horisontella principer återstår |
+| §20–22 Horisontella principer, långsiktighet, konkurrens | **Implementerad (som mall)** | Projektbeskrivningsmallen: §20 jämställdhet/tillgänglighet/miljö som frivilliga frågor med mekanik-krav ("konkret, inte avsiktsförklaring") — obesvarade utelämnas i stället för kosmetiska fraser; §21 långsiktighet och §22 varför-vi/varför-nu med mekanismkrav |
 | §23–24 Handläggarperspektiv, kompletteringsrisk | **Implementerad (v1)** | Prioriterade luckor CRITICAL/HIGH/MEDIUM/LOW + diligence: troliga kompletteringsbegäranden härleds ur saknad bevisning, E1-baserade icke-kompensatoriska kriterier och motstridiga uppgifter |
 | §25–27 Language compiler, teckengränser, no-hallucination | **Implementerad (för dokumentmotorn)** | `packages/core/src/documents.ts`: obesvarade rader utelämnas — dokumentet ljuger aldrig; ingen LLM-textgenerering finns i v1 |
 | §28 Negative-fact detection | **Implementerad (som mall)** | Särskilda omständigheter följer FACT→IMPACT→MITIGATION→EVIDENCE: omständighet, påverkan, egna åtgärder och frågan "vilket underlag styrker det du beskriver?" — öppen redovisning i stället för döljande |
@@ -30,7 +30,7 @@ rör ansökningsberedning får byggas i strid med principerna här.
 | §30 Final Application Gate | **Implementerad** | `reviewCase` i `apps/api/src/services/applications.ts`; tillståndsövergången till READY_TO_SUBMIT vaktar på HELA granskningen. Efter slutrevisionen: UNKNOWN-behörighet blockerar, finansiering ≠ budget blockerar åt båda hållen (inkl. sökt > totalbudget = stödandel över 100 %), och stöd utan digitaliserat formulär flaggas öppet i stället för att tyst godkännas (§18 fail-safe) |
 | §31 Final Review Mode | **Implementerad (v1)** | `GET /v1/applications/:id/review` + "Granskning inför inlämning" i ansökningsvyn |
 | §32 Generation mode (BEFORE/REASON/AFTER) | Planerad | Gäller när textförbättring byggs; kräver spårbar motivering per ändring |
-| §33 Output contract | Planerad | Granskningssvaret är första delmängden |
+| §33 Output contract | **Implementerad** | Granskningsendpointen levererar även spec:ens kontraktsform (grant_fingerprint … recommended_actions); ej implementerade delar markeras ärligt `not_implemented` — aldrig tomma men kompletta-utseende objekt |
 | §34 Absoluta regler | **Bärande designprincip** | Se nedan |
 | §35 Interna mål | **Bärande designprincip** | Optimering mot verifierbarhet och handläggningsbarhet, aldrig mot språkyta |
 

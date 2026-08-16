@@ -259,7 +259,54 @@ export async function applicationRoutes(app: FastifyInstance) {
   app.get('/v1/applications/:id/review', { schema: { tags: ['applications'], params: uuidParam } }, async (request, reply) => {
     const caseRow = await loadCase(request.auth!.tenantId, (request.params as { id: string }).id);
     if (!caseRow) return reply.code(404).send({ error: 'not_found' });
-    return { review: await reviewCase(caseRow) };
+    const review = await reviewCase(caseRow);
+
+    // §33 Output contract: samma granskning i spec:ens kontraktsform. Delar
+    // som inte är implementerade markeras ärligt "not_implemented" — de fylls
+    // aldrig med tomma platshållare som ser kompletta ut.
+    const snapshot = caseRow.opportunitySnapshot as {
+      opportunity?: Record<string, unknown> | null;
+      ruleVersion?: { version?: number } | null;
+      capturedAt?: string;
+    };
+    const opp = snapshot.opportunity ?? {};
+    const contract = {
+      grant_fingerprint: {
+        slug: opp.slug ?? null,
+        title: opp.title ?? null,
+        max_amount_minor: opp.maxAmountMinor ?? null,
+        min_amount_minor: opp.minAmountMinor ?? null,
+        max_funding_share_percent: opp.maxFundingSharePercent ?? null,
+        excludes_other_public_funding: opp.excludesOtherPublicFunding ?? null,
+        deadline: review.deadline.deadlineAt,
+        source_url: opp.sourceUrl ?? null,
+        verification_status: opp.verificationStatus ?? null,
+        program_version: snapshot.ruleVersion?.version ?? null,
+        captured_at: snapshot.capturedAt ?? null,
+      },
+      eligibility: review.eligibility,
+      requirements: { field_issues: review.fields.issues, schema_digitised: !review.gaps.some((g) => g.id === 'coverage-no-schema') },
+      evaluation_matrix: review.criteria,
+      claims: 'not_implemented',
+      evidence: review.evidence,
+      consistency: review.gaps.filter((g) => g.area === 'consistency'),
+      budget: review.budget,
+      state_aid: review.stateAid,
+      double_funding: review.doubleFunding,
+      horizontal_principles: 'not_implemented',
+      implementation: 'not_implemented',
+      competitive_position: 'not_implemented',
+      diligence: review.likelyComplementRequests,
+      completion_risk: review.gaps,
+      generated_answers: 'not_implemented',
+      submission_gate: {
+        status: review.overallStatus,
+        blocking_gaps: review.gaps.filter((g) => g.severity === 'CRITICAL' || g.severity === 'HIGH').length,
+      },
+      recommended_actions: review.gaps.map((g) => ({ severity: g.severity, action: g.action })),
+    };
+
+    return { review, contract };
   });
 
   // ── Budget lines ────────────────────────────────────────────────────────────

@@ -305,6 +305,27 @@ describe('granskning inför inlämning', () => {
     await db.update(applicationCases).set({ opportunitySnapshot: snapshot }).where(eq(applicationCases.id, caseId));
   });
 
+  it('§33: the review is also delivered in the output-contract shape with honest not_implemented markers', async () => {
+    const res = await api(app, user, 'GET', `/v1/applications/${caseId}/review`);
+    const { contract } = res.json() as { contract: Record<string, unknown> };
+    for (const key of [
+      'grant_fingerprint', 'eligibility', 'requirements', 'evaluation_matrix', 'claims', 'evidence',
+      'consistency', 'budget', 'state_aid', 'double_funding', 'horizontal_principles', 'implementation',
+      'competitive_position', 'diligence', 'completion_risk', 'generated_answers', 'submission_gate', 'recommended_actions',
+    ]) {
+      expect(contract, key).toHaveProperty(key);
+    }
+    // Ej implementerade delar markeras ärligt — aldrig tomma men kompletta-utseende objekt.
+    expect(contract.claims).toBe('not_implemented');
+    expect(contract.generated_answers).toBe('not_implemented');
+    const fp = contract.grant_fingerprint as { slug: string; program_version: number };
+    expect(fp.slug).toBe('kulturradet-internationellt-resebidrag-musik');
+    expect(fp.program_version).toBeGreaterThanOrEqual(1);
+    const gate = contract.submission_gate as { status: string; blocking_gaps: number };
+    expect(gate.status).toBe('READY_FOR_SUBMISSION');
+    expect(gate.blocking_gaps).toBe(0);
+  });
+
   it('K3 residual: the newly curated schemas exist for Nordisk kulturfond and MUCF', async () => {
     const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
     const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string }[] };
