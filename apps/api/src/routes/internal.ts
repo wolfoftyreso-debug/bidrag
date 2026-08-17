@@ -7,8 +7,13 @@
  */
 import type { FastifyInstance } from 'fastify';
 import { timingSafeEqual } from 'node:crypto';
+import Anthropic from '@anthropic-ai/sdk';
+import { sql } from 'drizzle-orm';
 import { config } from '../config.ts';
+import { db } from '../db/client.ts';
 import { CRON_TASKS } from '../jobs/tasks.ts';
+import { emailConfigured } from '../services/email.ts';
+import { swishConfigured } from '../services/integrations/swish.ts';
 
 function authorized(header: string | undefined): boolean {
   if (!config.cronSecret || !header?.startsWith('Bearer ')) return false;
@@ -45,4 +50,89 @@ export async function internalRoutes(app: FastifyInstance) {
       }
     },
   });
+
+  /**
+   * Aktiveringsberedskap: en endpoint som gör varje driftsättning verifierbar.
+   * Utan ?probe=true görs inga externa anrop — bara konfigurationsstatus.
+   * Med ?probe=true görs ofarliga läsanrop mot Resend (GET /domains) och
+   * Anthropic (GET /v1/models/claude-opus-5) för att bevisa att nycklarna
+   * faktiskt fungerar. Skyddas av CRON_SECRET precis som cron-ytan.
+   */
+  app.get(
+    '/v1/internal/readiness',
+    {
+      config: { rateLimit: { max: 30, timeWindow: '1 minute' } },
+      schema: {
+        tags: ['internal'],
+        querystring: { type: 'object', properties: { probe: { type: 'string', enum: ['true', 'false'] } }, additionalProperties: false },
+      },
+    },
+    async (request, reply) => {
+      if (!config.cronSecret) return reply.code(404).send({ error: 'not_found' });
+      if (!authorized(request.headers.authorization)) return reply.code(401).send({ error: 'unauthorized' });
+      const probe = (request.query as { probe?: string }).probe === 'true';
+
+      const checks: Record<string, { status: 'ready' | 'not_configured' | 'mock' | 'error'; detail: string }> = {};
+
+      try {
+        await db.execute(sql`select 1`);
+        checks.database = { status: 'ready', detail: 'Databasen svarar.' };
+      } catch (err) {
+        checks.database = { status: 'error', detail: `Databasen svarar inte: ${(err as Error).message}` };
+      }
+
+      checks.payments_swish = swishConfigured()
+        ? { status: 'ready', detail: 'Swish-certifikat och handelsalias är konfigurerade.' }
+        : config.paymentsMockEnabled
+          ? { status: 'mock', detail: 'Mockbetalningar aktiva (endast utanför produktion). Aktivering kräver SWISH_MERCHANT_ALIAS + SWISH_CERT_BASE64 + SWISH_KEY_BASE64.' }
+          : { status: 'not_configured', detail: 'Ingen betalväg. Aktivering kräver Swish Handel-avtal + certifikat (se docs/ACTIVATION.md).' };
+
+      if (!emailConfigured()) {
+        checks.email_resend = { status: 'not_configured', detail: 'Ingen e-postkanal. Aktivering kräver RESEND_API_KEY + EMAIL_FROM med verifierad domän. Kvitton i kontot och återställningskoder fungerar ändå; länk-återställning är avstängd (fail-closed).' };
+      } else if (probe && config.resendApiKey) {
+        try {
+          const res = await fetch('https://api.resend.com/domains', {
+            headers: { Authorization: `Bearer ${config.resendApiKey}` },
+          });
+          checks.email_resend = res.ok
+            ? { status: 'ready', detail: `Resend-nyckeln fungerar (GET /domains → ${res.status}). Kontrollera att ${config.emailFrom} ligger på en verifierad domän.` }
+            : { status: 'error', detail: `Resend-nyckeln avvisades (GET /domains → ${res.status}).` };
+        } catch (err) {
+          checks.email_resend = { status: 'error', detail: `Resend nåddes inte: ${(err as Error).message}` };
+        }
+      } else {
+        checks.email_resend = { status: 'ready', detail: `E-postkanal konfigurerad (${config.resendApiKey ? 'Resend' : 'SMTP'}). Kör ?probe=true för att verifiera nyckeln mot Resend.` };
+      }
+
+      if (!config.anthropicApiKey) {
+        checks.generation_anthropic = config.generationMockEnabled
+          ? { status: 'mock', detail: 'Deterministisk generation-mock aktiv (endast utanför produktion). Aktivering kräver ANTHROPIC_API_KEY.' }
+          : { status: 'not_configured', detail: 'Språkförslag avstängda (503). Aktivering kräver ANTHROPIC_API_KEY; modell claude-opus-5.' };
+      } else if (probe) {
+        try {
+          const anthropic = new Anthropic({ apiKey: config.anthropicApiKey });
+          const model = await anthropic.models.retrieve('claude-opus-5');
+          checks.generation_anthropic = { status: 'ready', detail: `Anthropic-nyckeln fungerar; ${model.id} är tillgänglig.` };
+        } catch (err) {
+          checks.generation_anthropic =
+            err instanceof Anthropic.APIError
+              ? { status: 'error', detail: `Anthropic-nyckeln avvisades (${err.status}).` }
+              : { status: 'error', detail: `Anthropic nåddes inte: ${(err as Error).message}` };
+        }
+      } else {
+        checks.generation_anthropic = { status: 'ready', detail: 'ANTHROPIC_API_KEY satt (modell claude-opus-5). Kör ?probe=true för att verifiera nyckeln.' };
+      }
+
+      const blockers = Object.entries(checks)
+        .filter(([, c]) => c.status === 'not_configured' || c.status === 'mock' || c.status === 'error')
+        .map(([k]) => k);
+      return {
+        ok: blockers.length === 0,
+        probed: probe,
+        environment: process.env.NODE_ENV ?? 'development',
+        checks,
+        blockers,
+      };
+    },
+  );
 }

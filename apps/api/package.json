@@ -16,6 +16,7 @@
     "openapi": "node --experimental-strip-types src/openapi-export.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.117.1",
     "@bidrag/core": "*",
     "@fastify/cookie": "^10.0.1",
     "@fastify/cors": "^10.0.1",

@@ -16,6 +16,7 @@
  * av ANTHROPIC_API_KEY i driftmiljön; mocken är deterministisk och fungerar
  * aldrig i produktion.
  */
+import Anthropic from '@anthropic-ai/sdk';
 import { config } from '../config.ts';
 
 export interface SuggestionRequest {
@@ -52,23 +53,33 @@ const SYSTEM_PROMPT = [
   'Absoluta regler: hitta aldrig på siffror, namn, källor eller sakuppgifter; ta inte bort sakinnehåll;',
   'inga superlativ eller standardfraser ("härmed ansöker", "brinner för", "unik", "garanterar");',
   'ingen hänvisning till AI eller verktyg; behåll sökandens ton — saklig, konkret, ödmjuk utan att försvagas.',
-  'Svara ENBART med JSON: {"improved": "...", "reason": "..."} där reason på en mening sakligt beskriver vad som ändrades och varför.',
+  'improved är den förbättrade texten; reason beskriver på en mening sakligt vad som ändrades och varför.',
 ].join(' ');
 
+/** Strukturerad utdata: svaret valideras mot schemat av API:t — aldrig fritolkad JSON. */
+const SUGGESTION_SCHEMA = {
+  type: 'object' as const,
+  properties: {
+    improved: { type: 'string' as const, description: 'Den förbättrade fälttexten, komplett.' },
+    reason: { type: 'string' as const, description: 'En mening: vad som ändrades och varför.' },
+  },
+  required: ['improved', 'reason'],
+  additionalProperties: false,
+};
+
 function anthropicProvider(apiKey: string): GenerationProvider {
+  const client = new Anthropic({ apiKey });
   return {
     id: 'anthropic',
     async suggest({ fieldLabel, guidance, before }) {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-5',
-          max_tokens: 1024,
+      let response: Anthropic.Message;
+      try {
+        response = await client.messages.create({
+          model: 'claude-opus-5',
+          // Tänkande är på som standard på claude-opus-5 och räknas in i
+          // max_tokens — därav marginalen. Kort språkuppgift ⇒ låg effort.
+          max_tokens: 8192,
+          output_config: { effort: 'low', format: { type: 'json_schema', schema: SUGGESTION_SCHEMA } },
           system: SYSTEM_PROMPT,
           messages: [
             {
@@ -76,14 +87,25 @@ function anthropicProvider(apiKey: string): GenerationProvider {
               content: `Fält: ${fieldLabel}\n${guidance ? `Fältets vägledning: ${guidance}\n` : ''}Sökandens text:\n"""\n${before}\n"""`,
             },
           ],
-        }),
-      });
-      if (!res.ok) {
-        throw Object.assign(new Error(`generation provider error (${res.status})`), { statusCode: 502 });
+        });
+      } catch (err) {
+        if (err instanceof Anthropic.APIError) {
+          throw Object.assign(new Error(`generation provider error (${err.status ?? 'network'})`), { statusCode: 502 });
+        }
+        throw err;
       }
-      const body = (await res.json()) as { content?: { type: string; text?: string }[] };
-      const text = body.content?.find((c) => c.type === 'text')?.text ?? '';
-      const parsed = JSON.parse(text) as { improved?: string; reason?: string };
+      // Säkerhetsklassificerarna kan avböja (HTTP 200, stop_reason 'refusal') —
+      // hanteras ärligt som otillgängligt förslag, aldrig som tom text.
+      if (response.stop_reason === 'refusal') {
+        throw Object.assign(new Error('generation provider declined the request'), { statusCode: 502 });
+      }
+      const text = response.content.find((c): c is Anthropic.TextBlock => c.type === 'text')?.text ?? '';
+      let parsed: { improved?: string; reason?: string };
+      try {
+        parsed = JSON.parse(text) as { improved?: string; reason?: string };
+      } catch {
+        throw Object.assign(new Error('generation provider returned malformed suggestion'), { statusCode: 502 });
+      }
       if (typeof parsed.improved !== 'string' || typeof parsed.reason !== 'string') {
         throw Object.assign(new Error('generation provider returned malformed suggestion'), { statusCode: 502 });
       }
