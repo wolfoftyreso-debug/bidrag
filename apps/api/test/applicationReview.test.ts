@@ -218,8 +218,10 @@ describe('granskning inför inlämning', () => {
   it('K3: a support without a digitised form is flagged openly as unverifiable coverage (§18)', async () => {
     const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
     const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string; eligibilityStatus: string }[] };
-    // Arbetsstipendiet: behörig för personan men saknar digitaliserat schema.
-    const noSchema = matches.find((m) => m.slug === 'konstnarsnamnden-arbetsstipendium')!;
+    // Formas öppna utlysning: varje omgång har eget formulär hos finansiären,
+    // så ett generiskt schema vore missvisande — den hålls medvetet schemalös
+    // och är vaktposten för fail-safe-flaggan.
+    const noSchema = matches.find((m) => m.slug === 'formas-oppna-utlysningen')!;
     const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: noSchema.opportunityId });
     const idN = (created.json() as { application: { id: string } }).application.id;
     const caseRes = await api(app, user, 'GET', `/v1/applications/${idN}`);

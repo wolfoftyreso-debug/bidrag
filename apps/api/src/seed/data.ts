@@ -2814,4 +2814,350 @@ export const applicationSchemaDefs: { opportunitySlug: string; def: unknown }[] 
       ],
     },
   },
+ // ── Kureringspass 6 (slutpasset): resterande stöd — Formas öppna utlysning
+  // hålls MEDVETET schemalös: varje utlysningsomgång har eget formulär hos
+  // finansiären, och ett generiskt schema vore missvisande. Den är samtidigt
+  // vaktposten för fail-safe-flaggan (K3-regressionstestet).
+  {
+    opportunitySlug: 'konstnarsnamnden-arbetsstipendium',
+    def: {
+      id: 'konstnarsnamnden-arbetsstipendium-v1',
+      version: 1,
+      title: 'Ansökan — Arbetsstipendium (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'verksamhet', title: 'Din konstnärliga verksamhet' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'konstform', canonicalKey: 'applicant.professionalField', type: 'text', label: 'Konstområde', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'verksamhet_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv din konstnärliga verksamhet och dina planer', guidance: 'Stipendiet bedöms på konstnärlig kvalitet och aktivitet — konkreta verk, uppdrag och planer väger tyngre än ambitioner.', required: true, maxLength: 5000, section: 'verksamhet' },
+        { key: 'meriter', type: 'long_text', label: 'Viktigaste verk och uppdrag (senaste åren)', required: true, maxLength: 3000, section: 'verksamhet' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'konstnarsnamnden-kulturbryggan',
+    def: {
+      id: 'konstnarsnamnden-kulturbryggan-v1',
+      version: 1,
+      title: 'Ansökan — Kulturbryggan (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Sökande' },
+        { key: 'projekt', title: 'Projektet' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Sökandens namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'projekt_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv projektet och vad som är nyskapande', guidance: 'Kulturbryggan finansierar det oprövade — beskriv vad som skiljer projektet från befintlig praxis, inte bara att det är nytt för er.', required: true, maxLength: 5000, section: 'projekt' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'projekt' },
+        { key: 'ovriga_finansiarer', type: 'long_text', label: 'Övriga finansiärer (sökta eller beviljade)', guidance: 'Kulturbryggan ser gärna fler finansieringskällor — redovisa öppet vad som är sökt respektive beviljat.', required: false, maxLength: 2000, section: 'projekt' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', required: true, min: 1, section: 'projekt' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'erasmus-mobilitet-skola-vuxen',
+    def: {
+      id: 'erasmus-mobilitet-skola-vuxen-v1',
+      version: 1,
+      title: 'Ansökan — Erasmus+ mobilitet (förberedelse)',
+      sections: [
+        { key: 'org', title: 'Organisationen' },
+        { key: 'mobilitet', title: 'Mobiliteterna' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'org_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Organisationens namn', required: true, maxLength: 200, section: 'org' },
+        { key: 'org_oid', canonicalKey: 'organisation.oid', type: 'text', label: 'OID (Organisation ID)', guidance: 'Registreras i EU:s Organisation Registration System — utan OID kan ansökan inte lämnas in.', required: true, maxLength: 20, section: 'org' },
+        { key: 'mobilitet_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv mobiliteterna och deras syfte', guidance: 'Vilka åker, vart, och hur tas lärdomarna om hand i organisationen efteråt?', required: true, maxLength: 4000, section: 'mobilitet' },
+        { key: 'antal_deltagare', type: 'number', label: 'Antal deltagare', required: true, min: 1, max: 500, section: 'mobilitet' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'mobilitet' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'erasmus-ka2-smaskaliga-partnerskap',
+    def: {
+      id: 'erasmus-ka2-smaskaliga-partnerskap-v1',
+      version: 1,
+      title: 'Ansökan — Erasmus+ småskaliga partnerskap (förberedelse)',
+      sections: [
+        { key: 'org', title: 'Organisationen' },
+        { key: 'partnerskap', title: 'Partnerskapet' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'org_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Organisationens namn', required: true, maxLength: 200, section: 'org' },
+        { key: 'org_oid', canonicalKey: 'organisation.oid', type: 'text', label: 'OID (Organisation ID)', required: true, maxLength: 20, section: 'org' },
+        { key: 'partner_namn', canonicalKey: 'project.partnerName', type: 'text', label: 'Partnerorganisation och land', guidance: 'Minst en partner i ett annat programland krävs.', required: true, maxLength: 300, section: 'partnerskap' },
+        { key: 'projekt_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv samarbetet', guidance: 'Småskaliga partnerskap är instegsformatet — enklare aktiviteter, lägre budget, men samma krav på tydligt syfte.', required: true, maxLength: 4000, section: 'partnerskap' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'partnerskap' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'kreativa-europa-samarbetsprojekt',
+    def: {
+      id: 'kreativa-europa-samarbetsprojekt-v1',
+      version: 1,
+      title: 'Ansökan — Kreativa Europa samarbetsprojekt (förberedelse)',
+      sections: [
+        { key: 'org', title: 'Organisationen' },
+        { key: 'projekt', title: 'Projektet och partnerskapet' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'org_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Organisationens namn', required: true, maxLength: 200, section: 'org' },
+        { key: 'org_oid', canonicalKey: 'organisation.oid', type: 'text', label: 'OID (Organisation ID)', required: true, maxLength: 20, section: 'org' },
+        { key: 'partnerskap_beskrivning', type: 'long_text', label: 'Partnerskapet (organisationer och länder)', guidance: 'Minst tre organisationer från tre olika länder krävs — ange samtliga med land.', required: true, maxLength: 2000, section: 'projekt' },
+        { key: 'projekt_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv projektet och dess europeiska dimension', guidance: 'Vad tillför samarbetet som inte hade hänt nationellt? EU-mervärdet är ett bedömningskriterium, inte en formalitet.', required: true, maxLength: 5000, section: 'projekt' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'projekt' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', required: true, min: 1, section: 'projekt' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'vinnova-planeringsbidrag-eu',
+    def: {
+      id: 'vinnova-planeringsbidrag-eu-v1',
+      version: 1,
+      title: 'Ansökan — Planeringsbidrag EU-ansökan (förberedelse)',
+      sections: [
+        { key: 'org', title: 'Organisationen' },
+        { key: 'eu', title: 'EU-ansökan som planeras' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'org_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Organisationens namn', required: true, maxLength: 200, section: 'org' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', required: true, maxLength: 20, section: 'org' },
+        { key: 'eu_utlysning', type: 'text', label: 'Vilken EU-utlysning avser ni att söka?', guidance: 'Program och utlysningsnamn — planeringsbidraget kräver ett konkret mål.', required: true, maxLength: 300, section: 'eu' },
+        { key: 'planering_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Vad ska planeringsarbetet omfatta?', guidance: 'Konsortiebyggande, ansökningsskrivning, resor — det bidraget faktiskt får användas till.', required: true, maxLength: 3000, section: 'eu' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', required: true, min: 1, section: 'eu' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'mucf-solidaritetskaren-volontarprojekt',
+    def: {
+      id: 'mucf-solidaritetskaren-v1',
+      version: 1,
+      title: 'Ansökan — Europeiska solidaritetskåren (förberedelse)',
+      sections: [
+        { key: 'org', title: 'Organisationen' },
+        { key: 'volontar', title: 'Volontärprojektet' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'org_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Organisationens namn', required: true, maxLength: 200, section: 'org' },
+        { key: 'org_oid', canonicalKey: 'organisation.oid', type: 'text', label: 'OID (Organisation ID)', required: true, maxLength: 20, section: 'org' },
+        { key: 'har_kvalitetsmarkning', type: 'boolean', label: 'Har organisationen giltig Quality Label?', guidance: 'Kvalitetsmärkningen söks separat och måste finnas innan volontärprojekt kan beviljas.', required: true, section: 'org' },
+        { key: 'projekt_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv volontärprojektet', guidance: 'Vad gör volontärerna, vilket stöd får de, och vilken nytta skapar projektet lokalt?', required: true, maxLength: 4000, section: 'volontar' },
+        { key: 'antal_volontarer', type: 'number', label: 'Antal volontärer', required: true, min: 1, max: 100, section: 'volontar' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'volontar' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'esf-kompetensutveckling',
+    def: {
+      id: 'esf-kompetensutveckling-v1',
+      version: 1,
+      title: 'Ansökan — ESF kompetensutveckling (förberedelse)',
+      sections: [
+        { key: 'org', title: 'Organisationen' },
+        { key: 'insats', title: 'Kompetensinsatsen' },
+        { key: 'ekonomi', title: 'Ekonomi' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'org_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Organisationens namn', required: true, maxLength: 200, section: 'org' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', required: true, maxLength: 20, section: 'org' },
+        { key: 'malgrupp_beskrivning', type: 'long_text', label: 'Vilka anställda/deltagare omfattas, och vad behöver de?', guidance: 'ESF bedömer kopplingen till arbetsmarknadens behov — konkret kompetensgap, inte allmän utbildning.', required: true, maxLength: 4000, section: 'insats' },
+        { key: 'insats_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv insatserna', required: true, maxLength: 4000, section: 'insats' },
+        { key: 'kan_forfinansiera', type: 'boolean', label: 'Kan organisationen förfinansiera kostnaderna?', guidance: 'ESF betalar ut i efterskott mot redovisning — likviditeten måste bära projektet under tiden.', required: true, section: 'ekonomi' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'insats' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'si-creative-force',
+    def: {
+      id: 'si-creative-force-v1',
+      version: 1,
+      title: 'Ansökan — Creative Force (förberedelse)',
+      sections: [
+        { key: 'org', title: 'Organisationen' },
+        { key: 'projekt', title: 'Projektet och partnern' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'org_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Organisationens namn', required: true, maxLength: 200, section: 'org' },
+        { key: 'partner_namn', canonicalKey: 'project.partnerName', type: 'text', label: 'Partnerorganisation och land', guidance: 'Ett etablerat partnerskap i mållandet är kärnan i programmet.', required: true, maxLength: 300, section: 'projekt' },
+        { key: 'projekt_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv projektet', guidance: 'Hur stärker projektet demokrati, yttrandefrihet eller mänskliga rättigheter genom kultur eller media? Mekanismen bedöms, inte avsikten.', required: true, maxLength: 5000, section: 'projekt' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'projekt' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', required: true, min: 1, section: 'projekt' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'vr-projektbidrag',
+    def: {
+      id: 'vr-projektbidrag-v1',
+      version: 1,
+      title: 'Ansökan — Vetenskapsrådet projektbidrag (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Forskaren' },
+        { key: 'forskning', title: 'Forskningsplanen' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'har_doktorsexamen', type: 'boolean', label: 'Har du doktorsexamen?', guidance: 'Behörighetskrav — examensår kan påverka vilka bidragsformer som är öppna.', required: true, section: 'sokande' },
+        { key: 'larosate', type: 'text', label: 'Medelsförvaltande lärosäte', guidance: 'Bidraget förvaltas av ett svenskt lärosäte — det ska bekräfta åtagandet.', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'forskningsplan', canonicalKey: 'project.summary', type: 'long_text', label: 'Forskningsplanens kärna', guidance: 'Frågeställning, metod och förväntade resultat — sakkunniggranskningen bedömer originalitet och genomförbarhet.', required: true, maxLength: 6000, section: 'forskning' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'forskning' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', required: true, min: 1, section: 'forskning' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'energimyndigheten-energieffektivisering',
+    def: {
+      id: 'energimyndigheten-energieffektivisering-v1',
+      version: 1,
+      title: 'Ansökan — Stöd till energieffektivisering (förberedelse)',
+      sections: [
+        { key: 'org', title: 'Organisationen' },
+        { key: 'atgard', title: 'Åtgärden' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'org_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Organisationens namn', required: true, maxLength: 200, section: 'org' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', required: true, maxLength: 20, section: 'org' },
+        { key: 'atgard_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv energiåtgärden', guidance: 'Vilken energianvändning minskas, med vilken teknik, och vad är beräknad besparing i kWh?', required: true, maxLength: 4000, section: 'atgard' },
+        { key: 'besparing_kwh', type: 'number', label: 'Beräknad energibesparing (kWh/år)', guidance: 'En energikartläggning eller leverantörsberäkning styrker siffran.', required: true, min: 1, max: 100000000, section: 'atgard' },
+        { key: 'kostnad', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Beräknad kostnad (kr)', required: true, min: 1, section: 'atgard' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'energimyndigheten-industriklivet',
+    def: {
+      id: 'energimyndigheten-industriklivet-v1',
+      version: 1,
+      title: 'Ansökan — Industriklivet (förberedelse)',
+      sections: [
+        { key: 'org', title: 'Organisationen' },
+        { key: 'projekt', title: 'Projektet' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'org_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Organisationens namn', required: true, maxLength: 200, section: 'org' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', required: true, maxLength: 20, section: 'org' },
+        { key: 'projekt_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv projektet och utsläppsminskningen', guidance: 'Industriklivet finansierar åtgärder mot processutsläpp — kvantifiera minskningen i CO2-ekvivalenter och beskriv teknikens mognadsgrad.', required: true, maxLength: 5000, section: 'projekt' },
+        { key: 'utslappsminskning_ton', type: 'number', label: 'Beräknad utsläppsminskning (ton CO2e/år)', required: true, min: 0, max: 100000000, section: 'projekt' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'projekt' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', required: true, min: 1, section: 'projekt' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'naturvardsverket-klimatklivet',
+    def: {
+      id: 'naturvardsverket-klimatklivet-v1',
+      version: 1,
+      title: 'Ansökan — Klimatklivet (förberedelse)',
+      sections: [
+        { key: 'org', title: 'Sökande' },
+        { key: 'atgard', title: 'Klimatåtgärden' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'org_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Sökandens namn', required: true, maxLength: 200, section: 'org' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', required: true, maxLength: 20, section: 'org' },
+        { key: 'atgard_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv åtgärden', guidance: 'Klimatklivet rangordnar på klimatnytta per investerad krona — utsläppsminskningen ska vara beräknad och beräkningen redovisbar.', required: true, maxLength: 4000, section: 'atgard' },
+        { key: 'utslappsminskning_ton', type: 'number', label: 'Beräknad utsläppsminskning (ton CO2e/år)', required: true, min: 0, max: 10000000, section: 'atgard' },
+        { key: 'kostnad', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Investeringskostnad (kr)', required: true, min: 1, section: 'atgard' },
+        { key: 'ej_paborjad', type: 'declaration', label: 'Jag intygar att åtgärden inte påbörjats före ansökan', required: true, section: 'atgard' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'naturvardsverket-lona',
+    def: {
+      id: 'naturvardsverket-lona-v1',
+      version: 1,
+      title: 'Ansökan — LONA lokala naturvårdssatsningen (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Sökande' },
+        { key: 'projekt', title: 'Naturvårdsprojektet' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Sökandens namn', guidance: 'LONA söks via kommunen — föreningar deltar som initiativtagare.', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'kommun', type: 'text', label: 'Kommun som står bakom ansökan', required: true, maxLength: 100, section: 'sokande' },
+        { key: 'projekt_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv naturvårdsinsatsen', guidance: 'Vad görs, var, och vilken naturvårds- eller friluftsnytta skapas lokalt?', required: true, maxLength: 4000, section: 'projekt' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'projekt' },
+        { key: 'kostnad', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Beräknad kostnad (kr)', guidance: 'LONA täcker högst halva kostnaden.', required: true, min: 1, section: 'projekt' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'kulturradet-inkopsstod-bibliotek',
+    def: {
+      id: 'kulturradet-inkopsstod-bibliotek-v1',
+      version: 1,
+      title: 'Ansökan — Inköpsstöd till folkbibliotek (förberedelse)',
+      sections: [
+        { key: 'kommun', title: 'Kommunen' },
+        { key: 'inkop', title: 'Inköpen' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'kommun_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Kommunens namn', required: true, maxLength: 200, section: 'kommun' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', required: true, maxLength: 20, section: 'kommun' },
+        { key: 'inkop_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Hur ska stödet användas?', guidance: 'Inköp av litteratur för barn och unga prioriteras; stödet får inte ersätta kommunens egen medieanslag — egeninsatsen ska bestå.', required: true, maxLength: 3000, section: 'inkop' },
+        { key: 'eget_anslag', type: 'currency', label: 'Kommunens eget medieanslag i år (kr)', required: true, min: 0, section: 'inkop' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', required: true, min: 1, section: 'inkop' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'kulturradet-litteraturstod',
+    def: {
+      id: 'kulturradet-litteraturstod-v1',
+      version: 1,
+      title: 'Ansökan — Litteraturstöd (förberedelse)',
+      sections: [
+        { key: 'forlag', title: 'Förlaget' },
+        { key: 'titel', title: 'Titeln' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'forlag_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Förlagets namn', required: true, maxLength: 200, section: 'forlag' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', required: true, maxLength: 20, section: 'forlag' },
+        { key: 'titel', canonicalKey: 'project.title', type: 'text', label: 'Titel och författare', required: true, maxLength: 300, section: 'titel' },
+        { key: 'titel_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv utgivningen', guidance: 'Litteraturstödet söks efter utgivning och bedöms på kvalitet — beskriv verket sakligt, inte säljande.', required: true, maxLength: 3000, section: 'titel' },
+        { key: 'upplaga', type: 'number', label: 'Upplaga (exemplar)', required: true, min: 1, max: 1000000, section: 'titel' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
 ];
