@@ -111,7 +111,7 @@ export default function MatchesPage() {
   const PERSONAL_Q = new Set(['social_benefit', 'educational_support']);
   // Varje fråga bär sin kontext: vilka stöd den avgör. Utan den etiketten är
   // "Har du sparpengar…?" obegriplig mitt i en lista.
-  const openQuestions = new Map<string, { question: string; forTitles: string[] }>();
+  const openQuestions = new Map<string, { question: string; forTitles: string[]; unknowns: number; personal: boolean }>();
   const ordered = [...matches].sort(
     (a, b) => Number(PERSONAL_Q.has(b.instrumentType)) - Number(PERSONAL_Q.has(a.instrumentType)),
   );
@@ -122,11 +122,24 @@ export default function MatchesPage() {
       const entry = openQuestions.get(f.factPath);
       if (entry) {
         if (!entry.forTitles.includes(shortTitle)) entry.forTitles.push(shortTitle);
+        if (m.eligibilityStatus === 'unknown') entry.unknowns += 1;
+        entry.personal ||= PERSONAL_Q.has(m.instrumentType);
       } else {
-        openQuestions.set(f.factPath, { question: f.question, forTitles: [shortTitle] });
+        openQuestions.set(f.factPath, {
+          question: f.question,
+          forTitles: [shortTitle],
+          unknowns: m.eligibilityStatus === 'unknown' ? 1 : 0,
+          personal: PERSONAL_Q.has(m.instrumentType),
+        });
       }
     }
   }
+  // Informationsvärde (§7): frågan som kan AVGÖRA flest stöd ställs först —
+  // personliga rättigheter före projektbidrag, sedan flest oavgjorda stöd,
+  // sedan flest berörda totalt. Aldrig frågor bara för att bygga profil.
+  const openList = [...openQuestions.entries()].sort(([, a], [, b]) =>
+    Number(b.personal) - Number(a.personal) || b.unknowns - a.unknowns || b.forTitles.length - a.forTitles.length,
+  );
 
   const submitAnswers = async () => {
     if (!projectId || Object.keys(answers).length === 0) return;
@@ -233,7 +246,7 @@ export default function MatchesPage() {
         <div className="card" style={{ borderColor: 'var(--warning)' }}>
           <h2>Några frågor kvar</h2>
           <p className="guidance">Dina svar avgör vilka stöd du faktiskt kan söka.</p>
-          {[...openQuestions.entries()].slice(0, 6).map(([factPath, q]) => (
+          {openList.slice(0, 6).map(([factPath, q]) => (
             <div key={factPath} style={{ margin: '0.75rem 0' }}>
               <div className="meta-line" style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
                 Gäller {q.forTitles.slice(0, 2).join(' och ')}{q.forTitles.length > 2 ? ` + ${q.forTitles.length - 2} till` : ''}
