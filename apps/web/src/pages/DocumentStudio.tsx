@@ -3,7 +3,7 @@
  * hjälp — paket i stället för att varje knapp kostar 19 kr till. Frågorna
  * ställs en sektion i taget, dokumentet genereras server-side av domänmotorn
  * och hamnar under Mina dokument (PDF + redigerbar text). Användaren skickar
- * själv in via myndighetens kanal — Bidrag.se beslutar aldrig.
+ * själv in via myndighetens kanal — Bidragskoll.se beslutar aldrig.
  */
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';

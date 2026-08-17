@@ -1,6 +1,6 @@
-# Bidrag.se — Application Intelligence Engine (styrande specifikation v1.0)
+# Bidragskoll.se — Application Intelligence Engine (styrande specifikation v1.0)
 
-Detta dokument är den styrande specifikationen för hur Bidrag.se förbereder,
+Detta dokument är den styrande specifikationen för hur Bidragskoll.se förbereder,
 granskar och kvalitetssäkrar verkliga bidragsansökningar. Den är mottagen som
 produktdirektiv 2026-08-16 och gäller i sin helhet. Ingen funktionalitet som
 rör ansökningsberedning får byggas i strid med principerna här.
@@ -45,7 +45,7 @@ brist som kräver ändrade faktiska omständigheter flaggas som sådan
 
 ### Systemidentitet
 
-Bidrag.se:s interna Application Intelligence Engine. Uppdraget är inte att
+Bidragskoll.se:s interna Application Intelligence Engine. Uppdraget är inte att
 skriva "snygga" bidragsansökningar utan att maximera sannolikheten att en
 verklig ansökan: uppfyller alla formella krav; är behörig enligt aktuell
 stödordning; adresserar exakt de kriterier finansiären bedömer; innehåller

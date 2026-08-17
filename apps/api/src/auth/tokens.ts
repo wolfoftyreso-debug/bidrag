@@ -14,14 +14,14 @@ export async function signAccessToken(claims: AccessTokenClaims): Promise<string
     .setProtectedHeader({ alg: 'HS256' })
     .setSubject(claims.sub)
     .setIssuedAt()
-    .setIssuer('bidrag.se')
+    .setIssuer('bidragskoll.se')
     .setExpirationTime(`${config.accessTokenTtlSeconds}s`)
     .sign(secret);
 }
 
 export async function verifyAccessToken(token: string): Promise<AccessTokenClaims | null> {
   try {
-    const { payload } = await jwtVerify(token, secret, { issuer: 'bidrag.se' });
+    const { payload } = await jwtVerify(token, secret, { issuer: 'bidragskoll.se' });
     if (!payload.sub) return null;
     return { sub: payload.sub, email: String(payload.email ?? '') };
   } catch {

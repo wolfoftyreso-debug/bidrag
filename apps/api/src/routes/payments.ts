@@ -115,7 +115,7 @@ export async function paymentRoutes(app: FastifyInstance) {
           id: payment!.id,
           amountMinor: config.analysisPriceMinor,
           currency: 'SEK',
-          message: 'Bidrag.se — bidragsanalys',
+          message: 'Bidragskoll.se — bidragsanalys',
         });
         if (created.providerReference || created.providerToken) {
           await db

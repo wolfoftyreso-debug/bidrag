@@ -49,7 +49,7 @@ extraction for document-based sources.
 ## 3. Digital post / mailbox integrations not connected
 
 **Blocker**: Digg's digital-post infrastructure serves public actors and
-accredited mailbox operators; Bidrag.se holds neither role today.
+accredited mailbox operators; Bidragskoll.se holds neither role today.
 
 **Fallback implemented**: the unified inbox accepts uploads, forwarded text
 and manual entries, classifies message types deterministically (Swedish

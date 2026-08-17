@@ -190,9 +190,9 @@ export async function authRoutes(app: FastifyInstance) {
         });
         await sendEmail({
           to: email,
-          subject: 'Återställ ditt lösenord — Bidrag.se',
+          subject: 'Återställ ditt lösenord — Bidragskoll.se',
           text:
-            `Du (eller någon annan) har begärt att återställa lösenordet för det här kontot på Bidrag.se.\n\n` +
+            `Du (eller någon annan) har begärt att återställa lösenordet för det här kontot på Bidragskoll.se.\n\n` +
             `Återställ här (länken gäller i 60 minuter och kan bara användas en gång):\n\n` +
             `${config.publicBaseUrl}/aterstall/${token}\n\n` +
             `Om du inte begärde detta kan du bortse från mailet — lösenordet är oförändrat.`,

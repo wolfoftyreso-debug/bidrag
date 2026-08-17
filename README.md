@@ -1,4 +1,4 @@
-# Bidrag.se
+# Bidragskoll.se
 
 **En personlig rättighets- och stödutredning**: berätta vad du behöver hjälp med,
 så tar systemet reda på vad du kan ha rätt till — bostadsbidrag, försörjningsstöd,

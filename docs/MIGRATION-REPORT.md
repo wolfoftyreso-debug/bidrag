@@ -1,4 +1,4 @@
-# Bidrag.se — Arkitekturrapport: migrering till Vercel + Supabase
+# Bidragskoll.se — Arkitekturrapport: migrering till Vercel + Supabase
 
 Datum: 2026-08-16 · Status: kodmigrering klar och verifierad; plattformskoppling
 (Supabase-projekt, Vercel-projekt, domän) återstår som konfigurationssteg.

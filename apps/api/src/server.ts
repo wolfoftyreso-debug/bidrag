@@ -68,7 +68,7 @@ export async function buildServer(): Promise<FastifyInstance> {
     openapi: {
       openapi: '3.1.0',
       info: {
-        title: 'Bidrag.se API',
+        title: 'Bidragskoll.se API',
         description: 'Funding discovery, eligibility, application and case-management platform.',
         version: '1.0.0',
       },

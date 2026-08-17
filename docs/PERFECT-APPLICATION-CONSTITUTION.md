@@ -1,6 +1,6 @@
-# Bidrag.se — Perfect Application Constitution (styrande direktiv v1.0)
+# Bidragskoll.se — Perfect Application Constitution (styrande direktiv v1.0)
 
-Mottaget som produktdirektiv 2026-08-16. Detta dokument styr hur Bidrag.se
+Mottaget som produktdirektiv 2026-08-16. Detta dokument styr hur Bidragskoll.se
 hjälper en verklig sökande att själv lämna in en exceptionellt väl
 genomarbetad, professionell, ödmjuk, tydlig, trovärdig, komplett och
 kriterieoptimerad ansökan. Det kompletterar `APPLICATION-INTELLIGENCE.md`
@@ -16,7 +16,7 @@ finansiären — det ska göra ansökan så bra att den inte behöver det.**
 | 1 | Skapa beslutsunderlag, inte text — arbeta baklänges från finansiärens beslutslogik | **Bärande designprincip** | Hela motorn: kriterier → krav → bevis → frågor → dokument; språk är alltid sista steget |
 | 2 | Definition av perfektion (relevant, specifik, verifierbar, konsistent, …, beslutsbar) | **Bärande designprincip** | Granskningens luckor mäter exakt dessa dimensioner |
 | 3 | Sökanden äger ansökan — systemet strukturerar/frågar/kontrollerar, skriver aldrig om | **Implementerad** | Dokumentmotorn återger sökandens ord ordagrant (`packages/core/src/documents.ts`); språkkontrollen flaggar, ändrar aldrig (`language.ts`) |
-| 4 | No meta-trace: inga hänvisningar till Bidrag.se, AI, systemet eller interna värden i inlämnat underlag | **Implementerad + testad** | `renderDocument` bär ingen attribution/friskrivning; test asserterar `not.toContain('Bidrag.se')` i core + api; INTERNAL_ESTIMATE visas bara i granskningens UI, aldrig i dokument |
+| 4 | No meta-trace: inga hänvisningar till Bidragskoll.se, AI, systemet eller interna värden i inlämnat underlag | **Implementerad + testad** | `renderDocument` bär ingen attribution/friskrivning; test asserterar `not.toContain('Bidragskoll.se')` i core + api; INTERNAL_ESTIMATE visas bara i granskningens UI, aldrig i dokument |
 | 5 | Frågor före formulering — luckor fylls aldrig med generisk text | **Implementerad** | Obligatoriska frågor valideras (422 med exakta fält); obesvarat utelämnas ur dokumentet i stället för att gissas |
 | 6 | Adaptiv intervju med löpande modell av sökanden | Delvis | Villkorade frågor (`showIf`) + följdfrågor i matchningen som uppgraderar bedömningen live; fullt adaptiv informationsvärdes-styrd intervju kräver generation mode |
 | 7 | Information value — nästa fråga = störst kvalitetsvinst | Planerad (generation mode) | Deterministisk föregångare: luckorna sorteras CRITICAL→LOW och diligence pekar ut vad handläggaren begär först |
@@ -88,7 +88,7 @@ behöva gissa).
 
 Systemet strukturerar, analyserar, frågar, formulerar, kontrollerar,
 förbättrar och verifierar — men sökanden ansvarar för innehållet och lämnar
-själv in. Genererad text får aldrig innehålla: hänvisning till Bidrag.se,
+själv in. Genererad text får aldrig innehålla: hänvisning till Bidragskoll.se,
 systemet eller denna prompt; att texten genererats; intern systemterminologi;
 AI-formuleringar; tekniska metadata; interna scoringvärden; interna
 kommentarer; instruktioner till handläggaren.
@@ -298,4 +298,4 @@ argumentet bra: gör det maximalt övertygande utan att överdriva. Är ansökan
 redan bra: förbättra den inte för förbättringens skull.
 
 PERFEKTION = MAXIMAL KVALITET, TROVÄRDIGHET, RELEVANS OCH VERIFIERBARHET
-UTIFRÅN DE FAKTISKA FÖRUTSÄTTNINGARNA. Det är Bidrag.se:s standard.
+UTIFRÅN DE FAKTISKA FÖRUTSÄTTNINGARNA. Det är Bidragskoll.se:s standard.

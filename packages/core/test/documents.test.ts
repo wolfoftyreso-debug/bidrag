@@ -49,7 +49,7 @@ describe('document template engine', () => {
     expect(doc.text).toContain('Vera, 9 år');
     expect(doc.text).not.toContain('Ungefärlig kostnad'); // obesvarat ⇒ utelämnat, aldrig gissat
     // Sökandens handling till myndigheten: ingen verktygsattribution, inga friskrivningar.
-    expect(doc.text).not.toContain('Bidrag.se');
+    expect(doc.text).not.toContain('Bidragskoll.se');
     expect(renderDocument(t, answers, ctx).text).toBe(doc.text); // deterministisk
   });
 

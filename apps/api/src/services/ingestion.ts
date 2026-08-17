@@ -91,7 +91,7 @@ export async function fetchSource(sourceId: string): Promise<FetchOutcome> {
       const res = await fetch(url, {
         signal: controller.signal,
         redirect: 'follow',
-        headers: { 'User-Agent': 'Bidrag.se source monitor (+https://bidrag.se)' },
+        headers: { 'User-Agent': 'Bidragskoll.se source monitor (+https://bidragskoll.se)' },
       });
       httpStatus = res.status;
       contentType = res.headers.get('content-type');

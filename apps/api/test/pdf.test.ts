@@ -55,7 +55,7 @@ describe('textToPdf', () => {
     'MOTIVERING',
     'Ett stycke med åäö, "citat", tankstreck – och minus −2,5.',
     '—',
-    'Dokumentet är förberett med stöd av Bidrag.se.',
+    'Dokumentet är förberett med stöd av Bidragskoll.se.',
   ].join('\n');
 
   it('is deterministic and structurally valid', () => {

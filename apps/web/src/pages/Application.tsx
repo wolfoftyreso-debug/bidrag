@@ -400,7 +400,7 @@ export default function ApplicationPage() {
           <h2>Slutför inlämningen hos myndigheten</h2>
           <p>
             Din ansökan är komplett förberedd här. Den slutliga inlämningen gör du i den officiella tjänsten — ha dina svar
-            och bilagor från Bidrag.se till hands.
+            och bilagor från Bidragskoll.se till hands.
           </p>
           <p>{opp.applicationMethod}</p>
           {submitPrep.officialUrl && (

@@ -55,7 +55,7 @@ export default function DashboardPage() {
   if (projects.length === 0) {
     return (
       <div style={{ maxWidth: 640 }}>
-        <h1>Välkommen till Bidrag.se</h1>
+        <h1>Välkommen till Bidragskoll.se</h1>
         <div className="card">
           <h2>Vad behöver du hjälp med?</h2>
           <p>

@@ -99,7 +99,7 @@ describe('dokumentstudion', () => {
     expect(body.document.content).toContain('BESKRIVNING AV BEHOV');
     expect(body.document.content).toContain('Majblommans Riksförbund');
     expect(body.document.content).toContain('Vera, 9 år');
-    expect(body.document.content).not.toContain('Bidrag.se'); // sökandens handling — ingen verktygsattribution
+    expect(body.document.content).not.toContain('Bidragskoll.se'); // sökandens handling — ingen verktygsattribution
     // Sakligt språk ⇒ ödmjukhetsprotokollet tiger (§12).
     expect((res.json() as { languageFindings: unknown[] }).languageFindings).toEqual([]);
   });

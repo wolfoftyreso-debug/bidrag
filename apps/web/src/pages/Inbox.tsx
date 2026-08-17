@@ -73,7 +73,7 @@ export default function InboxPage() {
       <h1>Inkorg</h1>
       <p className="guidance" style={{ maxWidth: 640 }}>
         Samla svar från myndigheter och stiftelser på ett ställe. Registrera brev och e-post du fått — systemet kopplar dem
-        till rätt ansökan och tolkar vad de betyder. Bidrag.se loggar aldrig in på myndigheters portaler åt dig.
+        till rätt ansökan och tolkar vad de betyder. Bidragskoll.se loggar aldrig in på myndigheters portaler åt dig.
       </p>
 
       <div className="card">

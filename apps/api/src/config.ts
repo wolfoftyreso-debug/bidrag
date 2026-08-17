@@ -32,7 +32,7 @@ export const config = {
   maxUploadBytes: Number(env.MAX_UPLOAD_BYTES ?? 20 * 1024 * 1024),
   /** Optional SMTP URL; when absent, email notifications are recorded as skipped. */
   smtpUrl: env.SMTP_URL ?? null,
-  emailFrom: env.EMAIL_FROM ?? 'no-reply@bidrag.se',
+  emailFrom: env.EMAIL_FROM ?? 'no-reply@bidragskoll.se',
   /** Public base URL used in links. */
   publicBaseUrl: env.PUBLIC_BASE_URL ?? 'http://localhost:5173',
   corsOrigin: env.CORS_ORIGIN ?? 'http://localhost:5173',
@@ -68,7 +68,7 @@ export const config = {
    */
   vatRateBps: 2500,
   /**
-   * Säljaruppgifter som fryses på varje kvitto/verifikation. Bidrag.se drivs
+   * Säljaruppgifter som fryses på varje kvitto/verifikation. Bidragskoll.se drivs
    * av Landvex AB (org.nr 559141-7042, Tyresö); momsregistreringsnumret är
    * standardhärlett (SE + orgnr + 01). Env-variablerna finns kvar som
    * override om bolagsuppgifterna ändras.

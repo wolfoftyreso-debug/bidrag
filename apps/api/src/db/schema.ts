@@ -1,5 +1,5 @@
 /**
- * Bidrag.se relational schema.
+ * Bidragskoll.se relational schema.
  *
  * Invariants:
  *  - Tenant-owned tables carry tenant_id; every query filters on it.

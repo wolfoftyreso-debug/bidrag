@@ -11,7 +11,7 @@ async function main() {
   const boss = enableWorker ? await startWorker() : null;
 
   await app.listen({ port: config.port, host: config.host });
-  app.log.info(`Bidrag.se API listening on ${config.host}:${config.port} (worker: ${enableWorker})`);
+  app.log.info(`Bidragskoll.se API listening on ${config.host}:${config.port} (worker: ${enableWorker})`);
 
   const shutdown = async (signal: string) => {
     app.log.info(`Received ${signal}, shutting down`);

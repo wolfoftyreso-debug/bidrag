@@ -35,7 +35,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="auth-page">
-      <h1 style={{ color: 'var(--primary-dark)' }}>Bidrag.se</h1>
+      <h1 style={{ color: 'var(--primary-dark)' }}>Bidragskoll.se</h1>
       <div className="card">
         {done ? (
           <>

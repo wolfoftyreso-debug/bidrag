@@ -1,5 +1,5 @@
 /**
- * Shared domain vocabulary for Bidrag.se.
+ * Shared domain vocabulary for Bidragskoll.se.
  *
  * These types are deliberately country-agnostic: Sweden is the first market,
  * but countries, authorities, programmes, languages and currencies are data,

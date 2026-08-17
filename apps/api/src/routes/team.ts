@@ -111,7 +111,7 @@ export async function teamRoutes(app: FastifyInstance) {
       const inviteUrl = `${config.publicBaseUrl}/inbjudan/${token}`;
       await sendEmail({
         to: normalized,
-        subject: `Du har bjudits in till ${tenant?.name ?? 'en organisation'} på Bidrag.se`,
+        subject: `Du har bjudits in till ${tenant?.name ?? 'en organisation'} på Bidragskoll.se`,
         text: `Du har bjudits in som ${role}. Acceptera inbjudan här (giltig ${INVITE_TTL_DAYS} dagar):\n\n${inviteUrl}`,
         tenantId,
       });

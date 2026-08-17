@@ -45,7 +45,7 @@ export default function LoginPage({ onLogin }: { onLogin: () => Promise<void> })
 
   return (
     <div className="auth-page">
-      <h1 style={{ color: 'var(--primary-dark)' }}>Bidrag.se</h1>
+      <h1 style={{ color: 'var(--primary-dark)' }}>Bidragskoll.se</h1>
       <p className="meta-line" style={{ marginBottom: '1.5rem' }}>
         Berätta vad du behöver hjälp med — vi tar reda på vad du kan ha rätt till, och hjälper dig hela vägen till ansökan.
       </p>

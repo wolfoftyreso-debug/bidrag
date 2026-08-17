@@ -103,7 +103,7 @@ export function receiptDocument(r: ReceiptRow): string {
     `Moms (${vatPercent} %):   ${kr(r.vatAmountMinor)}`,
     `Totalt (${r.currency}):      ${kr(r.amountGrossMinor)}`,
     '',
-    'Detta kvitto gäller en digitalt levererad tjänst på Bidrag.se.',
+    'Detta kvitto gäller en digitalt levererad tjänst på Bidragskoll.se.',
     'Analysen är en vägledning och inte ett myndighetsbeslut.',
   ];
   return lines.join('\n');
@@ -120,7 +120,7 @@ export async function sendReceiptEmail(receiptId: string): Promise<'sent' | 'ski
 
   const outcome = await sendEmail({
     to: r.email,
-    subject: `Kvitto ${r.receiptNumber} — Bidrag.se`,
+    subject: `Kvitto ${r.receiptNumber} — Bidragskoll.se`,
     text: receiptDocument(r),
     tenantId: r.tenantId,
   });

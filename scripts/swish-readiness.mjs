@@ -9,7 +9,7 @@
  *   payment=confirmed → kvitto med löpnummer → upplåsning → kvittomail
  *
  * Användning:
- *   BASE_URL=https://preview.bidrag.se EMAIL=du@ex.se PASSWORD=... node scripts/swish-readiness.mjs
+ *   BASE_URL=https://preview.bidragskoll.se EMAIL=du@ex.se PASSWORD=... node scripts/swish-readiness.mjs
  *
  * Skriptet skapar konto/fixture via publika API:t, startar en riktig
  * Swish-betalning och pollar tills betalningen bekräftats eller timeout.

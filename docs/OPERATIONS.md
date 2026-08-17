@@ -1,6 +1,6 @@
 # Operations runbook
 
-Practical procedures for running Bidrag.se. Every procedure here must be
+Practical procedures for running Bidragskoll.se. Every procedure here must be
 *rehearsed* in the real cluster before public launch — an untested backup is
 not a backup.
 

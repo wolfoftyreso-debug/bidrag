@@ -60,8 +60,8 @@ git push → GitHub → Vercel build → Preview/Production
    och lösenordsåterställning fungerar via engångs-återställningskoder
    (Konto & data). Länk-vägen för återställning kräver en kanal och är
    annars avstängd fail-closed (503) — se docs/LIMITATIONS.md §4.
-3. Peka produktionsdomänen (bidrag.se) på projektet; sätt `PUBLIC_BASE_URL`
-   och `CORS_ORIGIN` till `https://bidrag.se`.
+3. Peka produktionsdomänen (bidragskoll.se) på projektet; sätt `PUBLIC_BASE_URL`
+   och `CORS_ORIGIN` till `https://bidragskoll.se`.
 4. Vercel Cron (definierad i `vercel.json`) anropar jobben med
    `Authorization: Bearer $CRON_SECRET` automatiskt. Utan satt `CRON_SECRET`
    är cron-ytan avstängd (404).
@@ -92,8 +92,8 @@ git push → GitHub → Vercel build → Preview/Production
 ## 5. Verifiering efter deploy
 
 ```bash
-curl -s https://bidrag.se/healthz                     # {"ok":true}
-curl -s https://bidrag.se/v1/internal/cron/retention  # 404 (hemlighet krävs)
+curl -s https://bidragskoll.se/healthz                     # {"ok":true}
+curl -s https://bidragskoll.se/v1/internal/cron/retention  # 404 (hemlighet krävs)
 # Registrera testkonto i UI:t, kör hela flödet: intake → teaser → (Swish när
 # konfigurerad) → kvitto → analys. Ladda upp + ned ett dokument (Storage-vägen).
 ```

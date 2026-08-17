@@ -1,5 +1,5 @@
 /**
- * Dokumentstudion (§produktsteg 3): Bidrag.se förbereder dokument — ett
+ * Dokumentstudion (§produktsteg 3): Bidragskoll.se förbereder dokument — ett
  * konkret resultat, inte "hjälp att fylla i formulär i största allmänhet".
  *
  * Affärslogik:
@@ -166,7 +166,7 @@ export async function documentStudioRoutes(app: FastifyInstance) {
           id: payment!.id,
           amountMinor: spec.price(),
           currency: 'SEK',
-          message: `Bidrag.se — dokument (${spec.label.toLowerCase()})`,
+          message: `Bidragskoll.se — dokument (${spec.label.toLowerCase()})`,
         });
         if (created.providerReference || created.providerToken) {
           await db

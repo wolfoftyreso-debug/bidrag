@@ -86,7 +86,7 @@ function Shell() {
   return (
     <div className="app-shell">
       <nav className="sidebar">
-        <div className="brand">Bidrag.se</div>
+        <div className="brand">Bidragskoll.se</div>
         {(session?.tenants.length ?? 0) > 1 && (
           <select
             aria-label="Aktiv organisation"

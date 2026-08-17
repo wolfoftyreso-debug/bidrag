@@ -118,7 +118,7 @@ export default function OpportunityPage() {
           <dd>{opp.applicationMethod}</dd>
         </dl>
         <div className="alert info" style={{ marginTop: '1rem' }}>
-          Den slutliga inlämningen görs i myndighetens officiella tjänst. Bidrag.se förbereder hela ansökan, håller ordning på
+          Den slutliga inlämningen görs i myndighetens officiella tjänst. Bidragskoll.se förbereder hela ansökan, håller ordning på
           underlag och deadlines, och hjälper dig hela vägen — men vi påstår aldrig att något är inlämnat utan kvitto.
         </div>
       </div>

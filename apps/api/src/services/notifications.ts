@@ -41,8 +41,8 @@ export async function notify(input: NotifyInput): Promise<void> {
   for (const r of recipients) {
     await sendEmail({
       to: r.email,
-      subject: `Bidrag.se: ${input.title}`,
-      text: `${input.body ?? input.title}\n\n—\nBidrag.se · Du kan hantera dina notiser när du är inloggad.`,
+      subject: `Bidragskoll.se: ${input.title}`,
+      text: `${input.body ?? input.title}\n\n—\nBidragskoll.se · Du kan hantera dina notiser när du är inloggad.`,
       tenantId: input.tenantId,
     });
   }
