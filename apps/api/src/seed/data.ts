@@ -2296,4 +2296,143 @@ export const applicationSchemaDefs: { opportunitySlug: string; def: unknown }[] 
       ],
     },
   },
+
+  // ── Kureringspass 3: studiestöd, ersättningar och kommunala bidrag ──
+  {
+    opportunitySlug: 'csn-studiemedel',
+    def: {
+      id: 'csn-studiemedel-v1',
+      version: 1,
+      title: 'Ansökan — Studiemedel (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'studier', title: 'Studierna' },
+        { key: 'ekonomi', title: 'Bidrag och lån' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'utbildning', type: 'text', label: 'Utbildning och skola', guidance: 'T.ex. "Sjuksköterskeprogrammet, Umeå universitet".', required: true, maxLength: 300, section: 'studier' },
+        { key: 'studietakt', type: 'select', label: 'Studietakt', required: true, section: 'studier', options: [
+          { value: '100', label: 'Heltid (100 %)' }, { value: '75', label: '75 %' }, { value: '50', label: 'Halvtid (50 %)' },
+        ] },
+        { key: 'studie_period', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Studieperiod du söker för', required: true, section: 'studier' },
+        { key: 'vill_lana', type: 'boolean', label: 'Vill du även ta studielån (utöver bidraget)?', guidance: 'Lånedelen är frivillig och kan väljas per vecka — det går att ångra sig senare.', required: true, section: 'ekonomi' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'fk-aktivitetsersattning',
+    def: {
+      id: 'fk-aktivitetsersattning-v1',
+      version: 1,
+      title: 'Ansökan — Aktivitetsersättning (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'halsa', title: 'Arbetsförmågan' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'nedsattning_beskrivning', type: 'long_text', label: 'Beskriv hur arbetsförmågan är nedsatt', guidance: 'Med egna ord: vad klarar du inte i dag som ett arbete kräver? Försäkringskassan gör alltid den medicinska prövningen — din beskrivning ska stämma med läkarintyget, inte ersätta det.', required: true, maxLength: 4000, section: 'halsa' },
+        { key: 'har_lakarintyg', type: 'boolean', label: 'Finns ett aktuellt läkarintyg eller läkarutlåtande?', guidance: 'Läkarutlåtandet är det centrala underlaget — ansökan utan det leder nästan alltid till komplettering.', required: true, section: 'halsa' },
+        { key: 'pagaende_insatser', type: 'long_text', label: 'Pågående vård eller insatser', guidance: 'T.ex. behandling, rehabilitering, daglig verksamhet. Lämna tomt om inget pågår.', required: false, maxLength: 2000, section: 'halsa' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'pm-aldreforsorjningsstod',
+    def: {
+      id: 'pm-aldreforsorjningsstod-v1',
+      version: 1,
+      title: 'Ansökan — Äldreförsörjningsstöd (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'ekonomi', title: 'Ekonomi per månad' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'pension_manad', type: 'currency', label: 'Pension per månad före skatt (kr)', guidance: 'Alla pensioner sammanlagt — även utländsk pension räknas.', required: true, min: 0, section: 'ekonomi' },
+        { key: 'ovriga_inkomster', type: 'currency', label: 'Övriga inkomster per månad (kr)', required: false, min: 0, section: 'ekonomi' },
+        { key: 'boendekostnad', canonicalKey: 'person.housingCostMonthly', type: 'currency', label: 'Boendekostnad per månad (kr)', required: true, min: 0, section: 'ekonomi' },
+        { key: 'har_tillgangar', type: 'boolean', label: 'Har du sparade medel eller tillgångar?', guidance: 'Tillgångar påverkar prövningen — öppen redovisning undviker återkrav.', required: true, section: 'ekonomi' },
+        {
+          key: 'tillgangar_beskrivning',
+          type: 'long_text',
+          label: 'Beskriv tillgångarna kort',
+          required: true,
+          maxLength: 1000,
+          section: 'ekonomi',
+          visibleWhen: [{ factPath: 'har_tillgangar', op: 'is_true' }],
+        },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'kommun-elevresor-gymnasiet',
+    def: {
+      id: 'kommun-elevresor-gymnasiet-v1',
+      version: 1,
+      title: 'Ansökan — Elevresor gymnasiet (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'eleven', title: 'Eleven och resvägen' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn (elev eller vårdnadshavare)', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'skola', type: 'text', label: 'Gymnasieskolans namn och ort', required: true, maxLength: 200, section: 'eleven' },
+        { key: 'avstand_km', type: 'number', label: 'Resväg hem–skola (km)', guidance: 'Gränsen är normalt sex kilometer närmaste väg.', required: true, min: 0, max: 300, section: 'eleven' },
+        { key: 'har_studiehjalp', type: 'boolean', label: 'Har eleven studiehjälp från CSN?', guidance: 'Elevresestödet förutsätter studiehjälp — den kommer automatiskt för de flesta gymnasieelever under 20.', required: true, section: 'eleven' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'kommun-bostadsanpassningsbidrag',
+    def: {
+      id: 'kommun-bostadsanpassningsbidrag-v1',
+      version: 1,
+      title: 'Ansökan — Bostadsanpassningsbidrag (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'behov', title: 'Behovet och anpassningen' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'funktionsnedsattning', type: 'long_text', label: 'Beskriv funktionsnedsättningen och hur den påverkar boendet', guidance: 'Konkret ur vardagen: trösklar, trappor, badrum. Intyg från arbetsterapeut eller läkare styrker behovet.', required: true, maxLength: 3000, section: 'behov' },
+        { key: 'anpassning', type: 'long_text', label: 'Vilken anpassning söker du bidrag för?', guidance: 'T.ex. ramp vid entrén, borttagna trösklar, dörrautomatik, anpassat badrum.', required: true, maxLength: 2000, section: 'behov' },
+        { key: 'kostnad', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Beräknad kostnad (kr)', guidance: 'Offert från entreprenör räcker — kommunen kan begära fler.', required: true, min: 1, section: 'behov' },
+        { key: 'har_intyg', type: 'boolean', label: 'Finns intyg från arbetsterapeut, läkare eller annan sakkunnig?', required: true, section: 'behov' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'csn-omstallningsstudiestod',
+    def: {
+      id: 'csn-omstallningsstudiestod-v1',
+      version: 1,
+      title: 'Ansökan — Omställningsstudiestöd (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'arbetsliv', title: 'Ditt arbetsliv' },
+        { key: 'studier', title: 'Studierna' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'arbetsliv_ar', type: 'number', label: 'Ungefär hur många år har du arbetat (minst 16 h/vecka)?', guidance: 'Kravet är i genomsnitt minst 16 timmar i veckan under minst 8 år.', required: true, min: 0, max: 50, section: 'arbetsliv' },
+        { key: 'utbildning', type: 'text', label: 'Utbildning du planerar', required: true, maxLength: 300, section: 'studier' },
+        { key: 'starkning_beskrivning', type: 'long_text', label: 'Hur stärker utbildningen din ställning på arbetsmarknaden?', guidance: 'Det här är prövningens kärna: koppla utbildningen till faktisk efterfrågan — en bransch som rekryterar, en roll din arbetsgivare behöver. Söktrycket är högt och generiska motiveringar sållas bort.', required: true, maxLength: 4000, section: 'studier' },
+        { key: 'studie_period', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Planerad studieperiod', required: true, section: 'studier' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
 ];
