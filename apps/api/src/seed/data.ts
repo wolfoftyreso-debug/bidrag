@@ -52,6 +52,7 @@ export const authorities: SeedAuthority[] = [
   { key: 'lansstyrelsen', name: 'Länsstyrelsen i ditt län', country: 'SE', kind: 'region', website: 'https://www.lansstyrelsen.se' },
   { key: 'region', name: 'Din region', country: 'SE', kind: 'region', website: 'https://www.1177.se' },
   { key: 'majblomman', name: 'Majblommans Riksförbund', country: 'SE', kind: 'foundation', website: 'https://majblomman.se' },
+  { key: 'migrationsverket', name: 'Migrationsverket', country: 'SE', kind: 'state_agency', website: 'https://www.migrationsverket.se' },
 ];
 
 export interface SeedSource {
@@ -88,6 +89,7 @@ export const seedSources: SeedSource[] = [
   { key: 'skolverket-skolskjuts', authorityKey: 'kommun', name: 'Skolverket — Skolskjuts', url: 'https://www.skolverket.se/', method: 'html', quality: 'A' },
   { key: 'riksdagen-elevresor', authorityKey: 'kommun', name: 'Lag (1991:1110) om kommunernas skyldighet att svara för vissa elevresor', url: 'https://www.riksdagen.se/sv/dokument-och-lagar/', method: 'html', quality: 'A' },
   { key: 'af-stod', authorityKey: 'af', name: 'Arbetsförmedlingen — Stöd och bidrag', url: 'https://arbetsformedlingen.se/', method: 'html', quality: 'A' },
+  { key: 'migrationsverket-atervandring', authorityKey: 'migrationsverket', name: 'Migrationsverket — Återvandring', url: 'https://www.migrationsverket.se/', method: 'html', quality: 'A' },
   { key: 'raa-bidrag', authorityKey: 'raa', name: 'Riksantikvarieämbetet — Bidrag', url: 'https://www.raa.se/', method: 'html', quality: 'A' },
   { key: 'si-program', authorityKey: 'si', name: 'Svenska institutet — Utlysningar', url: 'https://si.se/', method: 'html', quality: 'A' },
   { key: 'nkf-stod', authorityKey: 'nkf', name: 'Nordisk kulturfond — Støtte', url: 'https://www.nordiskkulturfond.org/', method: 'html', quality: 'A' },
@@ -1885,6 +1887,86 @@ export const opportunities: SeedOpportunity[] = [
       c('ls-bm-m2', 'mandatory', 'project.benefitsCommunity', 'is_true', undefined, 'Projektet ska vara till allmän nytta för bygden', 'Är projektet till nytta för bygden i stort (inte enskilda)?'),
     ],
   }),
+  // ── Utvandringsspåret: de stöd som FAKTISKT finns när flytten går utomlands.
+  // Något allmänt "emigrationsbidrag" existerar inte — det säger kunskaps-
+  // basen ärligt genom skarpa behörighetskrav i stället för att låtsas.
+  def({
+    slug: 'migrationsverket-atervandringsbidrag',
+    authorityKey: 'migrationsverket',
+    sourceKey: 'migrationsverket-atervandring',
+    programmeName: 'Frivillig återvandring',
+    title: 'Migrationsverket — Stöd vid frivillig återvandring',
+    summary: 'Ekonomiskt stöd för den som har skyddsrelaterat uppehållstillstånd och frivilligt vill flytta tillbaka till sitt ursprungsland permanent.',
+    description:
+      'Den som har uppehållstillstånd som flykting eller skyddsbehövande (samt vissa anhöriga) och frivilligt vill återvandra permanent kan ansöka om bidrag till resa och återetablering. Schablonbeloppen är beslutade att höjas väsentligt från 2026 — kontrollera aktuella belopp och villkor hos Migrationsverket innan beslut. Beslutet att återvandra är oåterkalleligt i bidragshänseende: uppehållstillståndet återkallas normalt.',
+    objective: 'Möjliggöra frivillig, värdig återvandring för den som själv vill.',
+    instrumentType: 'social_benefit',
+    applicantTypes: ['individual'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Ansökan görs hos Migrationsverket före utresan.',
+    applicationUrl: 'https://www.migrationsverket.se/',
+    sourceUrl: 'https://www.migrationsverket.se/',
+    estimatedEffortDays: 3,
+    criteria: [
+      c('mv-av-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Stödet söks av privatpersoner'),
+      c('mv-av-m0', 'mandatory', 'person.consideringMovingAbroad', 'is_true', undefined, 'Stödet är aktuellt vid flytt utomlands', 'Funderar du på att flytta utomlands (för jobb, studier eller återvandring)?'),
+      c('mv-av-m1', 'mandatory', 'person.planningReturnMigration', 'is_true', undefined, 'Du ska frivilligt planera att flytta tillbaka till ditt ursprungsland permanent', 'Planerar du att frivilligt flytta tillbaka till ditt ursprungsland permanent?'),
+      c('mv-av-m2', 'mandatory', 'person.protectionBasedResidence', 'is_true', undefined, 'Du ska ha uppehållstillstånd som flykting eller skyddsbehövande (eller vara nära anhörig till någon som har det)', 'Har du uppehållstillstånd i Sverige som flykting eller skyddsbehövande (eller är du nära anhörig till någon som har det)?'),
+    ],
+  }),
+
+  def({
+    slug: 'af-eures-targeted-mobility',
+    authorityKey: 'af',
+    sourceKey: 'af-stod',
+    programmeName: 'EURES',
+    title: 'EURES — Targeted Mobility Scheme (jobb i annat EU-land)',
+    summary: 'EU-finansierat stöd för arbetssökande som tar jobb i ett annat EU-/EES-land: ersättning för intervjuresa, flyttkostnader och språkkurs.',
+    description:
+      'EU:s riktade rörlighetsprogram hjälper arbetssökande från 18 år att ta anställning i ett annat EU-/EES-land. Stödet kan omfatta bidrag till intervjuresa, flytt, språkkurs och erkännande av kvalifikationer — beloppen är schabloner per insats och land och varierar per programperiod. Vägen in är EURES-rådgivarna hos Arbetsförmedlingen.',
+    objective: 'Rörlighet på den europeiska arbetsmarknaden.',
+    instrumentType: 'social_benefit',
+    applicantTypes: ['individual'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Kontakta en EURES-rådgivare via Arbetsförmedlingen — ansökan görs innan flytten/resan.',
+    applicationUrl: 'https://arbetsformedlingen.se/',
+    sourceUrl: 'https://arbetsformedlingen.se/',
+    estimatedEffortDays: 2,
+    criteria: [
+      c('eures-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Stödet söks av privatpersoner'),
+      c('eures-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Du ska vara bosatt i ett EU-land (här: Sverige)'),
+      c('eures-m0', 'mandatory', 'person.consideringMovingAbroad', 'is_true', undefined, 'Stödet är aktuellt vid flytt utomlands', 'Funderar du på att flytta utomlands (för jobb, studier eller återvandring)?'),
+      c('eures-m1', 'mandatory', 'person.seekingJobInOtherEuCountry', 'is_true', undefined, 'Du ska söka eller ha fått jobb i ett annat EU-/EES-land', 'Söker du jobb, eller har du fått ett jobberbjudande, i ett annat EU- eller EES-land?'),
+    ],
+  }),
+
+  def({
+    slug: 'csn-utlandsstudier',
+    authorityKey: 'csn',
+    sourceKey: 'csn-studiemedel',
+    programmeName: 'Studiemedel',
+    title: 'CSN — Studiemedel för utlandsstudier',
+    summary: 'Bidrag och lån för studier utomlands, med extra merkostnadslån för t.ex. terminsavgifter och resor.',
+    description:
+      'Studiemedel kan tas med till studier utomlands på utbildningar som uppfyller CSN:s krav. Utöver ordinarie bidrag och lån finns merkostnadslån för undervisningsavgifter, resor och försäkring. Utbildningen och skolan ska vara godkänd — kontrollera i CSN:s tjänst innan du tackar ja till en plats.',
+    objective: 'Göra utlandsstudier möjliga oavsett privatekonomi.',
+    instrumentType: 'educational_support',
+    applicantTypes: ['individual'],
+    sectors: ['education'],
+    deadlineModel: 'recurring',
+    applicationMethod: 'Ansökan görs hos CSN med e-legitimation.',
+    applicationUrl: 'https://www.csn.se/',
+    sourceUrl: 'https://www.csn.se/',
+    authenticationMethod: 'eid',
+    estimatedEffortDays: 2,
+    criteria: [
+      c('csn-us-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Studiemedel söks av privatpersoner'),
+      c('csn-us-h2', 'hard', 'person.age66Plus', 'is_false', undefined, 'Studiemedel lämnas längst t.o.m. ca 60 års ålder'),
+      c('csn-us-m0', 'mandatory', 'person.consideringMovingAbroad', 'is_true', undefined, 'Stödet är aktuellt vid flytt utomlands', 'Funderar du på att flytta utomlands (för jobb, studier eller återvandring)?'),
+      c('csn-us-m1', 'mandatory', 'person.isOrPlansStudying', 'is_true', undefined, 'Du ska studera eller planera att börja studera', 'Studerar du, eller planerar du att börja studera?'),
+      c('csn-us-m2', 'mandatory', 'person.plansStudyAbroad', 'is_true', undefined, 'Studierna ska bedrivas utomlands', 'Planerar du att studera utomlands?'),
+    ],
+  }),
 ];
 
 /**
@@ -3212,6 +3294,73 @@ export const applicationSchemaDefs: { opportunitySlug: string; def: unknown }[] 
         { key: 'titel', canonicalKey: 'project.title', type: 'text', label: 'Titel och författare', required: true, maxLength: 300, section: 'titel' },
         { key: 'titel_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv utgivningen', guidance: 'Litteraturstödet söks efter utgivning och bedöms på kvalitet — beskriv verket sakligt, inte säljande.', required: true, maxLength: 3000, section: 'titel' },
         { key: 'upplaga', type: 'number', label: 'Upplaga (exemplar)', required: true, min: 1, max: 1000000, section: 'titel' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  // ── Utvandringsspårets formulär ──
+  {
+    opportunitySlug: 'migrationsverket-atervandringsbidrag',
+    def: {
+      id: 'migrationsverket-atervandringsbidrag-v1',
+      version: 1,
+      title: 'Ansökan — Stöd vid frivillig återvandring (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'atervandring', title: 'Återvandringen' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'ursprungsland', type: 'text', label: 'Land du planerar att återvandra till', required: true, maxLength: 100, section: 'atervandring' },
+        { key: 'hushall_antal', type: 'number', label: 'Antal personer i hushållet som återvandrar', required: true, min: 1, max: 20, section: 'atervandring' },
+        { key: 'planerad_utresa', type: 'date', label: 'Planerad utresa', required: true, section: 'atervandring' },
+        { key: 'situation_beskrivning', type: 'long_text', label: 'Beskriv din plan för återetableringen', guidance: 'Boende, försörjning och nätverk i ursprungslandet. OBS: beslutet är oåterkalleligt i bidragshänseende — uppehållstillståndet återkallas normalt. Ta det lugnt med beslutet och kontrollera aktuella belopp hos Migrationsverket.', required: true, maxLength: 3000, section: 'atervandring' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'af-eures-targeted-mobility',
+    def: {
+      id: 'af-eures-targeted-mobility-v1',
+      version: 1,
+      title: 'Ansökan — EURES Targeted Mobility (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'jobbet', title: 'Jobbet och flytten' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'mal_land', canonicalKey: 'project.destinationCountry', type: 'text', label: 'Land där jobbet finns', required: true, maxLength: 100, section: 'jobbet' },
+        { key: 'jobb_status', type: 'select', label: 'Var i processen är du?', required: true, section: 'jobbet', options: [
+          { value: 'interview', label: 'Kallad till intervju' },
+          { value: 'offer', label: 'Har jobberbjudande' },
+          { value: 'searching', label: 'Söker aktivt' },
+        ] },
+        { key: 'insats_beskrivning', type: 'long_text', label: 'Vilket stöd behöver du?', guidance: 'Intervjuresa, flyttkostnad, språkkurs eller erkännande av examen — beloppen är schabloner per insats. EURES-rådgivaren bekräftar vad som gäller din programperiod.', required: true, maxLength: 2000, section: 'jobbet' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'csn-utlandsstudier',
+    def: {
+      id: 'csn-utlandsstudier-v1',
+      version: 1,
+      title: 'Ansökan — Studiemedel för utlandsstudier (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'studier', title: 'Studierna utomlands' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'studie_land', canonicalKey: 'project.destinationCountry', type: 'text', label: 'Studieland', required: true, maxLength: 100, section: 'studier' },
+        { key: 'utbildning', type: 'text', label: 'Utbildning och lärosäte', guidance: 'Kontrollera att utbildningen är godkänd för studiemedel i CSN:s tjänst INNAN du tackar ja till platsen.', required: true, maxLength: 300, section: 'studier' },
+        { key: 'studie_period', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Studieperiod', required: true, section: 'studier' },
+        { key: 'terminsavgift', type: 'currency', label: 'Terminsavgift om sådan finns (kr)', guidance: 'Merkostnadslån kan täcka undervisningsavgifter — lämna tomt om avgift saknas.', required: false, min: 0, section: 'studier' },
         { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
       ],
     },

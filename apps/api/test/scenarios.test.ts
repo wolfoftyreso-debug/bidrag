@@ -33,6 +33,7 @@ function personalFacts(a: Answers): Facts {
   if (a.household) f['person.householdType'] = a.household;
   if (a.children) f['person.hasChildrenAtHome'] = a.children !== 'no';
   if (a.separated !== undefined) f['person.separatedParent'] = a.separated;
+  f['person.consideringMovingAbroad'] = a.movingAbroad ?? false;
   if (a.age) {
     f['person.ageBand'] = a.age;
     f['person.ageUnder29'] = a.age === 'under20' || a.age === '20-28';
@@ -229,6 +230,22 @@ describe('scenariomatris — personliga situationer', () => {
     // …och egenföretagaren får inte AF-frågan om att vara inskriven arbetssökande.
     const questions = allQuestions(r);
     expect(questions.some((q) => q.includes('arbetssökande'))).toBe(false);
+  });
+
+  it('13. Utvandringsspåret: gated bakom upptäcktsfrågan — tyst för alla andra', () => {
+    // Utan uttalad flyttfundering: alla tre utlandsstöden är uteslutna och tysta.
+    const base = run(personalFacts({ household: 'alone', children: 'no', age: '20-28', employment: 'working', income: '25-40', paysHousing: true }));
+    expect(base.get('csn-utlandsstudier')!.eligibilityStatus).toBe('excluded');
+    expect(base.get('af-eures-targeted-mobility')!.eligibilityStatus).toBe('excluded');
+    expect(base.get('migrationsverket-atervandringsbidrag')!.eligibilityStatus).toBe('excluded');
+    expect(allQuestions(base).some((q) => q.includes('utomlands') || q.includes('ursprungsland'))).toBe(false);
+
+    // Med flyttfundering: spåret öppnas med riktiga följdfrågor.
+    const moving = run(personalFacts({ household: 'alone', children: 'no', age: '20-28', employment: 'studying', income: 'under15', limitedSavings: true, paysHousing: true, movingAbroad: true }));
+    expect(moving.get('csn-utlandsstudier')!.eligibilityStatus).toBe('unknown');
+    const qs = allQuestions(moving);
+    expect(qs.some((q) => q.includes('studera utomlands'))).toBe(true);
+    expect(qs.some((q) => q.includes('EU- eller EES-land'))).toBe(true);
   });
 });
 
