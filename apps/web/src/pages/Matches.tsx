@@ -108,7 +108,7 @@ export default function MatchesPage() {
   // outcome — hard-excluded opportunities stay excluded regardless of answers.
   // Questions from personal entitlements come first: in a rights
   // investigation, "uteblir underhållet?" matters before "äger du jordbruk?".
-  const PERSONAL_Q = new Set(['social_benefit', 'educational_support']);
+  const PERSONAL_Q = new Set(['social_benefit', 'educational_support', 'loan']);
   // Varje fråga bär sin kontext: vilka stöd den avgör. Utan den etiketten är
   // "Har du sparpengar…?" obegriplig mitt i en lista.
   const openQuestions = new Map<string, { question: string; forTitles: string[]; unknowns: number; personal: boolean }>();
@@ -207,7 +207,7 @@ export default function MatchesPage() {
     );
   }
 
-  const PERSONAL_INSTRUMENTS = new Set(['social_benefit', 'educational_support']);
+  const PERSONAL_INSTRUMENTS = new Set(['social_benefit', 'educational_support', 'loan']);
   const relevant = matches.filter((m) => m.eligibilityStatus !== 'excluded');
   const excluded = matches.filter((m) => m.eligibilityStatus === 'excluded');
   const personal = relevant.filter((m) => PERSONAL_INSTRUMENTS.has(m.instrumentType));

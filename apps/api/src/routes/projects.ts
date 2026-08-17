@@ -44,7 +44,7 @@ function likelihoodOf(m: MatchRow): 'high' | 'possible' | 'needs_info' {
  * förening ska inte se bostadsbidragsfrågor. Ett stöd utanför spåret visas
  * bara om det faktiskt bedömts aktuellt (eligible).
  */
-const PERSONAL_INSTRUMENTS = new Set(['social_benefit', 'educational_support']);
+const PERSONAL_INSTRUMENTS = new Set(['social_benefit', 'educational_support', 'loan']);
 
 /**
  * Företagarspåret (red team-fynd): intaget lovar den som driver eget att

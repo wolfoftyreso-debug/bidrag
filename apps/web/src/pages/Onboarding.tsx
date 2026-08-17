@@ -29,6 +29,7 @@ interface Answers {
   businessForm?: 'sole_trader' | 'limited_company' | 'other';
   reducedCapacity?: boolean;
   movingAbroad?: boolean;
+  disabilityInFamily?: boolean;
   incomeBand?: 'under15' | '15-25' | '25-40' | 'over40';
   limitedSavings?: boolean;
   paysHousing?: boolean;
@@ -58,7 +59,7 @@ type StepId =
   | 'p-household' | 'p-children' | 'p-separated'
   | 'p-child-school' | 'p-child-costs' | 'p-child-leisure' | 'p-child-glasses' | 'p-child-travel'
   | 'p-age' | 'p-employment' | 'p-biz-form' | 'p-capacity'
-  | 'p-income' | 'p-savings' | 'p-housing' | 'p-housing-cost' | 'p-moving-abroad' | 'p-extra'
+  | 'p-income' | 'p-savings' | 'p-housing' | 'p-housing-cost' | 'p-moving-abroad' | 'p-disability' | 'p-extra'
   | 'pr-intent' | 'pr-who' | 'pr-municipality' | 'pr-artist' | 'pr-sector'
   | 'pr-org-democratic' | 'pr-org-sports' | 'pr-org-youthshare' | 'pr-org-spread'
   | 'pr-activities'
@@ -76,7 +77,7 @@ const STEP_IDS = new Set<string>([
   'p-household', 'p-children', 'p-separated',
   'p-child-school', 'p-child-costs', 'p-child-leisure', 'p-child-glasses', 'p-child-travel',
   'p-age', 'p-employment', 'p-biz-form', 'p-capacity',
-  'p-income', 'p-savings', 'p-housing', 'p-housing-cost', 'p-moving-abroad', 'p-extra',
+  'p-income', 'p-savings', 'p-housing', 'p-housing-cost', 'p-moving-abroad', 'p-disability', 'p-extra',
   'pr-intent', 'pr-who', 'pr-municipality', 'pr-artist', 'pr-sector',
   'pr-org-democratic', 'pr-org-sports', 'pr-org-youthshare', 'pr-org-spread',
   'pr-activities', 'pr-international', 'pr-knowledge', 'pr-youth', 'pr-budget',
@@ -120,7 +121,8 @@ function nextStep(current: StepId, a: Answers): StepId | 'done' {
     case 'p-savings': return 'p-housing';
     case 'p-housing': return a.paysHousing ? 'p-housing-cost' : 'p-moving-abroad';
     case 'p-housing-cost': return 'p-moving-abroad';
-    case 'p-moving-abroad': return 'p-extra';
+    case 'p-moving-abroad': return 'p-disability';
+    case 'p-disability': return 'p-extra';
     case 'p-extra': return 'done';
     case 'pr-intent': return 'pr-who';
     case 'pr-who': return 'pr-municipality';
@@ -204,6 +206,9 @@ function personalFacts(a: Answers): Record<string, unknown> {
   // Utvandringsspåret: alltid explicit ja/nej så att frågorna aldrig spammar
   // den som inte funderar på flytt.
   if (a.movingAbroad !== undefined) facts['person.consideringMovingAbroad'] = a.movingAbroad;
+  // Funktionsnedsättnings- och omsorgsspåret: samma gate-mönster — ett nej
+  // håller omvårdnads-, merkostnads-, bilstöds- och närståendefrågorna borta.
+  if (a.disabilityInFamily !== undefined) facts['person.disabilityOrLongTermIllnessInFamily'] = a.disabilityInFamily;
   if (a.limitedSavings !== undefined) facts['person.limitedSavings'] = a.limitedSavings;
   if (a.paysHousing !== undefined) facts['person.paysHousingCost'] = a.paysHousing;
   if (a.housingCost) facts['person.housingCostMonthly'] = Number(a.housingCost);
@@ -588,6 +593,15 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
           guidance="För jobb, studier eller återvandring — det finns stöd även för den vägen. Svaret öppnar bara följdfrågor om det är ja."
         >
           <YesNo onAnswer={(v) => onAnswer({ movingAbroad: v })} />
+        </Q>
+      );
+    case 'p-disability':
+      return (
+        <Q
+          title="Har du eller någon nära anhörig en funktionsnedsättning eller en långvarig eller allvarlig sjukdom?"
+          guidance="Frågan öppnar stöd som många missar — omvårdnadsbidrag, merkostnadsersättning, bilstöd och närståendepenning. Ett nej betyder att inga sådana följdfrågor ställs."
+        >
+          <YesNo onAnswer={(v) => onAnswer({ disabilityInFamily: v })} />
         </Q>
       );
     case 'p-extra':

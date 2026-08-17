@@ -110,7 +110,7 @@ describe('personlig rättighetsutredning', () => {
     // över huvud taget inte i svaret om de inte bedömts aktuella — Kulturrådets
     // resebidrag ska inte ens synas för en ensamstående förälder.
     expect(matches.find((m) => m.slug === 'kulturradet-internationellt-resebidrag-musik')).toBeUndefined();
-    expect(matches.every((m) => ['social_benefit', 'educational_support'].includes(m.instrumentType) || m.eligibilityStatus === 'eligible')).toBe(true);
+    expect(matches.every((m) => ['social_benefit', 'educational_support', 'loan'].includes(m.instrumentType) || m.eligibilityStatus === 'eligible')).toBe(true);
   });
 
   it('answering a follow-up upgrades the assessment deterministically', async () => {

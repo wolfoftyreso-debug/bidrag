@@ -24,7 +24,10 @@ type Answers = Partial<{
   capacity: boolean;
   income: 'under15' | '15-25' | '25-40' | 'over40';
   savings: boolean;
+  limitedSavings: boolean;
   paysHousing: boolean;
+  movingAbroad: boolean;
+  disabilityInFamily: boolean;
 }>;
 
 /** Speglar intagshärledningarna i Onboarding/demo — hålls i synk medvetet. */
@@ -34,6 +37,7 @@ function personalFacts(a: Answers): Facts {
   if (a.children) f['person.hasChildrenAtHome'] = a.children !== 'no';
   if (a.separated !== undefined) f['person.separatedParent'] = a.separated;
   f['person.consideringMovingAbroad'] = a.movingAbroad ?? false;
+  f['person.disabilityOrLongTermIllnessInFamily'] = a.disabilityInFamily ?? false;
   if (a.age) {
     f['person.ageBand'] = a.age;
     f['person.ageUnder29'] = a.age === 'under20' || a.age === '20-28';
@@ -72,6 +76,7 @@ function personalFacts(a: Answers): Facts {
     if (a.income === 'over40') f['person.incomeInsufficientForBasicNeeds'] = false;
   }
   if (a.savings !== undefined) f['person.limitedSavings'] = a.savings;
+  if (a.limitedSavings !== undefined) f['person.limitedSavings'] = a.limitedSavings;
   if (a.paysHousing !== undefined) f['person.paysHousingCost'] = a.paysHousing;
   return f;
 }
@@ -246,6 +251,42 @@ describe('scenariomatris — personliga situationer', () => {
     const qs = allQuestions(moving);
     expect(qs.some((q) => q.includes('studera utomlands'))).toBe(true);
     expect(qs.some((q) => q.includes('EU- eller EES-land'))).toBe(true);
+  });
+
+  it('14. Funktionsnedsättningsspåret: gated bakom upptäcktsfrågan — tyst för alla andra', () => {
+    // Utan funktionsnedsättning/sjukdom i familjen: alla fyra stöden uteslutna och tysta.
+    const base = run(personalFacts({ household: 'partner', children: 'yes', separated: false, age: '29-65', employment: 'working', income: '25-40', paysHousing: true }));
+    for (const slug of ['fk-omvardnadsbidrag', 'fk-merkostnadsersattning', 'fk-bilstod', 'fk-narstaendepenning']) {
+      expect(base.get(slug)!.eligibilityStatus, slug).toBe('excluded');
+    }
+    expect(allQuestions(base).some((q) => q.includes('funktionsnedsättning') || q.includes('omvårdnad'))).toBe(false);
+
+    // Med ja på upptäcktsfrågan: spåret öppnas med riktiga följdfrågor.
+    const open = run(personalFacts({ household: 'partner', children: 'yes', separated: false, age: '29-65', employment: 'working', income: '25-40', paysHousing: true, disabilityInFamily: true }));
+    expect(open.get('fk-omvardnadsbidrag')!.eligibilityStatus).toBe('unknown');
+    expect(open.get('fk-narstaendepenning')!.eligibilityStatus).toBe('unknown');
+    const qs = allQuestions(open);
+    expect(qs.some((q) => q.includes('mer omvårdnad eller tillsyn'))).toBe(true);
+    expect(qs.some((q) => q.includes('hot mot livet'))).toBe(true);
+    expect(qs.some((q) => q.includes('buss och tåg'))).toBe(true);
+  });
+
+  it('15. Nyanländspåret: en gemensam upptäcktsfråga avgör etableringsersättning och hemutrustningslån', () => {
+    const r = run(personalFacts({ household: 'alone', children: 'no', age: '29-65', employment: 'unemployed', income: 'under15', savings: true, paysHousing: true }));
+    // Båda stöden väntar på samma gate-fråga — en fråga, två stöd avgjorda.
+    expect(r.get('af-etableringsersattning')!.eligibilityStatus).toBe('unknown');
+    expect(r.get('csn-hemutrustningslan')!.eligibilityStatus).toBe('unknown');
+    const gateQ = 'Har du under de senaste åren fått uppehållstillstånd i Sverige, t.ex. som skyddsbehövande eller som anhörig?';
+    expect(r.get('af-etableringsersattning')!.missingFacts.some((f) => f.question === gateQ)).toBe(true);
+    expect(r.get('csn-hemutrustningslan')!.missingFacts.some((f) => f.question === gateQ)).toBe(true);
+
+    // Studiestartsstödet är också en arbetslöshetsfråga — öppet med följdfrågor.
+    expect(r.get('csn-studiestartsstod')!.eligibilityStatus).toBe('unknown');
+
+    // Den som arbetar ser inget av detta.
+    const working = run(personalFacts({ household: 'alone', children: 'no', age: '29-65', employment: 'working', income: '25-40', paysHousing: true }));
+    expect(working.get('af-etableringsersattning')!.eligibilityStatus).toBe('excluded');
+    expect(working.get('csn-studiestartsstod')!.eligibilityStatus).toBe('excluded');
   });
 });
 
