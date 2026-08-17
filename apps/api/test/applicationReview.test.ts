@@ -325,6 +325,27 @@ describe('granskning inför inlämning', () => {
     expect((after.json() as { review: Review }).review.gaps.some((g) => g.id === 'consistency-partner')).toBe(false);
   });
 
+  it('§16 budgeten som bevis: poster utan aktivitetskoppling flaggas rådgivande, aldrig blockerande', async () => {
+    // Fixturens enda rad saknar aktivitet ⇒ samlad MEDIUM-uppmaning.
+    const before = await getReview();
+    const collected = before.gaps.find((g) => g.id === 'budget-activity-links');
+    expect(collected).toBeDefined();
+    expect(collected!.severity).toBe('MEDIUM');
+    expect(before.overallStatus).toBe('READY_FOR_SUBMISSION'); // rådgivande — blockerar inte
+
+    // En rad får aktivitet ⇒ den stora olänkade posten pekas ut specifikt.
+    const added = await api(app, user, 'POST', `/v1/applications/${caseId}/budget-lines`, {
+      category: 'travel', description: 'Lokala resor i Kingston', activity: 'Residenset', quantity: 1, unitCostMinor: 40000,
+    });
+    expect(added.statusCode).toBe(201);
+    const lineId = (added.json() as { budgetLine: { id: string } }).budgetLine.id;
+    const after = await getReview();
+    expect(after.gaps.some((g) => g.id === 'budget-activity-links')).toBe(false);
+    expect(after.gaps.some((g) => g.id.startsWith('budget-activity-') && g.message.includes('Flyg'))).toBe(true);
+    // Städa: ta bort extra raden (fixturens balans ska bestå för övriga tester).
+    await api(app, user, 'DELETE', `/v1/applications/${caseId}/budget-lines/${lineId}`);
+  });
+
   // ── Block 3: E2-koppling, statsstöd, källfärskhet, schematäckning ──────────
 
   it('§10: attached linked documents lift criteria to E2, externally issued ones to E3 — never by guesswork', async () => {

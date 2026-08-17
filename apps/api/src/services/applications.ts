@@ -255,6 +255,38 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
   const financingTotalMinor =
     financing.requestedMinor + financing.ownContributionMinor + financing.otherFundingMinor + financing.inKindMinor;
 
+  // Budgeten som bevis (§16/§19): en handläggare som inte litar på texten ska
+  // kunna läsa projektet ur budgeten. Större poster (>10 % av totalen) utan
+  // aktivitetskoppling flaggas rådgivande; en helt olänkad budget får en
+  // samlad uppmaning. Aldrig blockerande — kopplingen är frivillig.
+  if (lines.length > 0 && totalMinor > 0) {
+    const linked = lines.filter((l) => (l.activity ?? '').trim() !== '');
+    if (linked.length === 0) {
+      gaps.push({
+        id: 'budget-activity-links',
+        severity: 'MEDIUM',
+        area: 'budget',
+        message: 'Ingen budgetpost är kopplad till en aktivitet i projektplanen.',
+        action: 'Ange för varje större post vilken aktivitet den finansierar — "var kommer den kostnaden ifrån?" är handläggarens första fråga till budgeten.',
+        requiresFactualChange: false,
+      });
+    } else {
+      for (const l of lines) {
+        const lineTotal = Math.round(l.quantity * l.unitCostMinor);
+        if ((l.activity ?? '').trim() === '' && lineTotal > totalMinor / 10) {
+          gaps.push({
+            id: `budget-activity-${l.id}`,
+            severity: 'MEDIUM',
+            area: 'budget',
+            message: `Budgetposten "${l.description}" (${(lineTotal / 100).toLocaleString('sv-SE')} kr) saknar koppling till en aktivitet.`,
+            action: 'Ange vilken aktivitet kostnaden hör till, eller motivera posten i projektbeskrivningen.',
+            requiresFactualChange: false,
+          });
+        }
+      }
+    }
+  }
+
   // Revisionsfynd K2: sökt stöd som ensamt överstiger hela budgeten är en
   // stödandel över 100 % — en motsägelse oavsett om stödet saknar explicit
   // andelsregel.

@@ -324,6 +324,7 @@ export async function applicationRoutes(app: FastifyInstance) {
           properties: {
             category: { type: 'string', minLength: 1, maxLength: 50 },
             description: { type: 'string', minLength: 1, maxLength: 500 },
+            activity: { type: 'string', minLength: 1, maxLength: 200 },
             quantity: { type: 'integer', minimum: 1 },
             unitCostMinor: { type: 'integer', minimum: 0 },
             currency: { type: 'string', minLength: 3, maxLength: 3 },
@@ -337,7 +338,7 @@ export async function applicationRoutes(app: FastifyInstance) {
       const tenantId = request.auth!.tenantId;
       const caseRow = await loadCase(tenantId, id);
       if (!caseRow) return reply.code(404).send({ error: 'not_found' });
-      const body = request.body as { category: string; description: string; quantity: number; unitCostMinor: number; currency?: string };
+      const body = request.body as { category: string; description: string; activity?: string; quantity: number; unitCostMinor: number; currency?: string };
       const [line] = await db
         .insert(budgetLines)
         .values({ tenantId, caseId: id, ...body, currency: body.currency ?? 'SEK' })

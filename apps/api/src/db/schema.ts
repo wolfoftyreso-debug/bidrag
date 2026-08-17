@@ -432,6 +432,12 @@ export const budgetLines = pgTable(
     caseId: uuid('case_id').notNull().references(() => applicationCases.id, { onDelete: 'cascade' }),
     category: text('category').notNull(),
     description: text('description').notNull(),
+    /**
+     * Budgeten som bevis (§16/§19): vilken aktivitet i projektplanen kostnaden
+     * hör till. Frivillig — men en större post utan koppling flaggas
+     * rådgivande i granskningen, för det är den frågan handläggaren ställer.
+     */
+    activity: text('activity'),
     quantity: integer('quantity').notNull().default(1),
     unitCostMinor: integer('unit_cost_minor').notNull(),
     currency: text('currency').notNull().default('SEK'),

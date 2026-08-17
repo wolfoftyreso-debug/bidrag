@@ -48,6 +48,7 @@ interface BudgetLine {
   category: string;
   description: string;
   quantity: number;
+  activity?: string | null;
   unitCostMinor: number;
 }
 interface CaseDoc {
@@ -232,9 +233,11 @@ export default function ApplicationPage() {
   const addBudgetLine = async (form: HTMLFormElement) => {
     const fd = new FormData(form);
     const kr = Number(fd.get('unitCost'));
+    const activity = String(fd.get('activity') ?? '').trim();
     await post(`/v1/applications/${app.id}/budget-lines`, {
       category: String(fd.get('category')),
       description: String(fd.get('description')),
+      ...(activity ? { activity } : {}),
       quantity: Number(fd.get('quantity')),
       unitCostMinor: Math.round(kr * 100),
     });
@@ -476,7 +479,10 @@ export default function ApplicationPage() {
               {data.budgetLines.map((l) => (
                 <tr key={l.id}>
                   <td>{CATEGORY_LABELS[l.category] ?? l.category}</td>
-                  <td>{l.description}</td>
+                  <td>
+                    {l.description}
+                    {l.activity && <div className="meta-line">Aktivitet: {l.activity}</div>}
+                  </td>
                   <td>{l.quantity}</td>
                   <td>{formatSek(l.unitCostMinor)}</td>
                   <td>{formatSek(l.quantity * l.unitCostMinor)}</td>
@@ -488,7 +494,7 @@ export default function ApplicationPage() {
         )}
         {editable && (
           <form
-            style={{ display: 'grid', gridTemplateColumns: '1.2fr 2fr 0.7fr 1fr auto', gap: '0.5rem', alignItems: 'end', marginTop: '0.9rem' }}
+            style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.6fr 1.6fr 0.7fr 1fr auto', gap: '0.5rem', alignItems: 'end', marginTop: '0.9rem' }}
             onSubmit={(e) => {
               e.preventDefault();
               void addBudgetLine(e.currentTarget);
@@ -499,6 +505,7 @@ export default function ApplicationPage() {
               <select name="category">{BUDGET_CATEGORIES.map((c) => <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>)}</select>
             </div>
             <div><label>Beskrivning</label><input name="description" required maxLength={200} /></div>
+            <div><label>Aktivitet (vilken del av projektet?)</label><input name="activity" maxLength={200} placeholder="t.ex. Öppna klasser" /></div>
             <div><label>Antal</label><input name="quantity" type="number" min={1} defaultValue={1} required /></div>
             <div><label>À-pris (kr)</label><input name="unitCost" type="number" min={0} step="0.01" required /></div>
             <button type="submit">Lägg till</button>
