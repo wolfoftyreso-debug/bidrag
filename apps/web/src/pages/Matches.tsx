@@ -333,13 +333,16 @@ export default function MatchesPage() {
 
       {isSelfEmployed && (business.length > 0 || excludedBusiness.length > 0) && (
         <div className="card">
-          <h2>Stöd som rör ditt företagande ({business.length})</h2>
+          <h2>Stöd som rör ditt företagande ({business.length + excludedBusiness.length})</h2>
+          {/* F-FÖRETAG (användarfynd): intaget och rapporten ska säga samma sak —
+              för aktiebolag görs bolagets genomlysning separat, och stöden visas
+              här med skäl i stället för att gömmas längre ner. */}
           <p className="guidance">
             {businessForm === 'sole_trader'
               ? 'Med enskild firma söker du företagsstöden som person — de ingår i din genomlysning här.'
               : businessForm === 'limited_company'
-                ? 'Ett aktiebolags stöd söks av bolaget, inte av dig som person. Stöd som kräver aktiebolag listas under "Uppfyller inte kraven" nedan — vill du gå vidare med dem gör du en egen genomlysning för bolaget (nytt projekt med bolaget som sökande).'
-                : 'Vilka företagsstöd som är aktuella beror på driftsformen — enskild firma söker som person, aktiebolagets stöd söks av bolaget.'}
+                ? 'Ett aktiebolags stöd söks av bolaget, inte av dig som person — genomlysningen för bolaget görs därför separat (nytt projekt med bolaget som sökande). Här ser du ändå vilka stöd som finns för verksamheten och vad de kräver.'
+                : 'Vilka företagsstöd som är aktuella beror på driftsformen — enskild firma söker som person, aktiebolagets stöd söks av bolaget och genomlyses separat.'}
           </p>
           {business.map((m) => (
             <div className="match-row" key={m.matchId}>
@@ -359,12 +362,20 @@ export default function MatchesPage() {
               </div>
             </div>
           ))}
-          {excludedBusiness.length > 0 && (
-            <p className="meta-line">
-              {excludedBusiness.length} företagsstöd uppfyller du inte kraven för just nu — de listas med skäl under
-              ”Uppfyller inte kraven”.
-            </p>
-          )}
+          {excludedBusiness.map((m) => (
+            <div className="match-row" key={m.matchId} style={{ opacity: 0.75 }}>
+              <div style={{ flex: 1 }}>
+                <div>
+                  <Link to={`/stod/${m.slug}?projekt=${projectId}`} style={{ fontWeight: 600 }}>{m.title}</Link>{' '}
+                  <span className="badge">uppfyller inte kraven</span>
+                </div>
+                <div className="meta-line">
+                  {(m.result.excludedBy ?? []).map((e) => e.description).join(' · ') ||
+                    'Uppfyller inte de publicerade kraven.'}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -430,13 +441,16 @@ export default function MatchesPage() {
 
       {personal.length === 0 && relevant.length > 1 && <StackPlanner projectId={projectId} />}
 
-      {excluded.length > 0 && (
+      {(() => {
+        // Företagsstöd som inte uppfylls visas redan inne i företagssektionen.
+        const excludedRest = isSelfEmployed ? excluded.filter((m) => !BUSINESS_SLUGS.has(m.slug)) : excluded;
+        return excludedRest.length > 0 && (
         <div className="card">
-          <h2>Uppfyller inte kraven ({excluded.length})</h2>
-          {excludedList(excluded)}
+          <h2>Uppfyller inte kraven ({excludedRest.length})</h2>
+          {excludedList(excludedRest)}
         </div>
-      )}
-
+        );
+      })()}
       <p className="meta-line" style={{ margin: '1rem 0.25rem' }}>
         Detta är en vägledning och inte ett myndighetsbeslut. Slutligt beslut fattas alltid av respektive myndighet.
       </p>

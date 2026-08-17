@@ -522,7 +522,7 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
           <Choice label="Arbetslös" onClick={() => onAnswer({ employment: 'unemployed' })} />
           <Choice label="Sjukskriven eller nedsatt arbetsförmåga" onClick={() => onAnswer({ employment: 'sick' })} />
           <Choice label="Studerar" onClick={() => onAnswer({ employment: 'studying' })} />
-          <Choice label="Driver eget företag" sub="Vi tittar på både stöd till dig som person och stöd som rör företagandet." onClick={() => onAnswer({ employment: 'self_employed' })} />
+          <Choice label="Driver eget företag" sub="Stöd till dig som person ingår alltid. Enskild firma: företagsstöden ingår också här. Aktiebolag: bolagets stöd genomlyses separat — vi visar vilka de är." onClick={() => onAnswer({ employment: 'self_employed' })} />
           <Choice label="Pensionär" onClick={() => onAnswer({ employment: 'retired' })} />
         </Q>
       );
