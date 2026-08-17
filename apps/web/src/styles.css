@@ -123,3 +123,7 @@ table.data td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); 
   .main { padding: 1.25rem 1rem; }
   .kv { grid-template-columns: 1fr; }
 }
+
+/* Teaserns "blurrade namn": en fast platshållarmask — riktiga namn lämnar
+   aldrig servern före betalning, det som blurras bär noll information. */
+.blurred-name { filter: blur(4.5px); user-select: none; -webkit-user-select: none; opacity: 0.85; }

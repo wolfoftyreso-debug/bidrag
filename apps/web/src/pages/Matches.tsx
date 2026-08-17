@@ -585,10 +585,9 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
 
   return (
     <div className="card" style={{ maxWidth: '40rem' }}>
-      <h2>Din preliminära bidragsanalys är klar</h2>
+      <h2>Vi hittade {teaser.total} stöd som matchar din situation</h2>
       <p className="guidance">
-        Vi har gått igenom din situation mot vår kunskapsbas och identifierat{' '}
-        <strong>{teaser.total} möjliga stödformer</strong>.
+        Dina svar har körts mot hela kunskapsbasen. Bidragens namn och hur du går vidare visas när rapporten är upplåst.
       </p>
       <p style={{ fontSize: '1.05rem', margin: '0.75rem 0' }}>
         {[
@@ -601,16 +600,25 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
       <div style={{ margin: '1rem 0' }}>
         {teaser.rows.map((r, i) => {
           const t = LIKELIHOOD_TEASER[r.likelihood] ?? LIKELIHOOD_TEASER.needs_info!;
+          // Fast platshållarmask som blurras — namnen lämnar aldrig servern
+          // före betalning, så det som blurras bär noll information.
+          const mask = ['Xxxxxxxxxxxxxxx — Xxxxxxxxxxx xxxx xxxxxxxxx', 'Xxxxxxxx — Xxxxxxxxxxxx xxx xxxxxx', 'Xxxxxxxxxxxx — Xxxxxxxx xxxxxxxxxxx'][i % 3]!;
           return (
             <div className="match-row" key={i} style={{ alignItems: 'center', gap: '0.6rem' }}>
               <span>{t.dot}</span>
-              <span style={{ flex: 1, fontWeight: 600 }}>🔒 {r.category}</span>
+              <span style={{ flex: 1 }}>
+                <span style={{ fontWeight: 600 }}>🔒 <span className="blurred-name" aria-hidden="true">{mask}</span></span>
+                <span className="meta-line" style={{ display: 'block' }}>{r.category}</span>
+              </span>
               <span className="meta-line">{t.label}</span>
             </div>
           );
         })}
+        <p className="meta-line" style={{ marginTop: '0.5rem' }}>
+          För att se namnen och gå vidare med ansökan låser du upp rapporten.
+        </p>
         {teaser.excludedCount > 0 && (
-          <p className="meta-line" style={{ marginTop: '0.5rem' }}>
+          <p className="meta-line">
             Ytterligare {teaser.excludedCount} stöd har granskats och uteslutits — även varför ingår i analysen.
           </p>
         )}

@@ -57,29 +57,33 @@ decision vocabulary) and auto-matches to cases via submission references —
 with human override. The architecture normalises everything to
 `correspondence_events`, so a mailbox connector is additive.
 
-## 4. Email — deliberately NOT a production dependency
+## 4. Email — Resend is the coupled channel (product decision 2026-08-17)
 
-Per product decision: no external email service is required for production.
-Receipts are a first-class feature of the authenticated account
-(`GET /v1/purchases`, `GET /v1/payments/:id/receipt`, "Mina köp" in the UI),
-notifications live in the in-app inbox, and team invites produce shareable
-links. The adapter in `services/email.ts` remains as an optional best-effort
-channel (Resend key or `SMTP_URL`) — when unconfigured every send is honestly
-recorded as `skipped` and no flow depends on it.
+Per product decision: Resend is the production email channel
+(`RESEND_API_KEY` + `EMAIL_FROM` with a verified sender domain; `SMTP_URL`
+remains as an alternative for self-hosted operation). The channel is used
+for password-reset links and for sending receipts ("Skicka kvittot via
+e-post" in Mina köp). The system still degrades honestly without a key:
+receipts remain first-class in the authenticated account
+(`GET /v1/purchases`, `GET /v1/payments/:id/receipt`, downloadable as PDF
+via `GET /v1/payments/:id/receipt.pdf`), notifications live in the in-app
+inbox, team invites produce shareable links, and every unsent email is
+recorded as `skipped` — no flow silently pretends to have sent anything.
 
-**Password recovery — decided: one-time recovery codes.** Self-service
-recovery no longer depends on any channel. Users generate eight one-time
-recovery codes under Konto & data (shown exactly once, stored only as
-SHA-256 hashes of the normalized form, ~73 bits of entropy each); a code
-plus the account email sets a new password via
-`POST /v1/auth/recover-with-code`, with the same guarantees as the link
-path: atomic single-use claim, all sessions revoked, constant response with
-no account enumeration, strict rate limit. Regenerating replaces the whole
-set. The email link path remains as a convenience when a channel is
-configured; without one it still fails closed (503) and the UI points to
-recovery codes. A user who forgets their password *and* has no saved codes
-still needs support — that residual case is inherent to not holding any
-out-of-band identity (no phone, no BankID).
+**Password recovery — email link is the primary path.** The link flow
+(`POST /v1/auth/request-password-reset` → one-time token, 60 min TTL,
+hashed at rest, atomic single-use claim, all sessions revoked, constant
+response with no account enumeration) requires the email channel and fails
+closed (503) without one. One-time recovery codes remain as the
+channel-less fallback: eight codes generated under Konto & data (shown
+exactly once, stored only as SHA-256 hashes, ~73 bits of entropy each),
+redeemed via `POST /v1/auth/recover-with-code` with the same guarantees.
+A user who forgets their password, has no saved codes *and* no reachable
+email still needs support — that residual case is inherent to not holding
+any other out-of-band identity (no phone, no BankID).
+
+External blocker for production: the operator's Resend account with a
+verified sender domain.
 
 ## 5. Malware scanning optional
 
