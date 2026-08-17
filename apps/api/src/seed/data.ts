@@ -2435,4 +2435,162 @@ export const applicationSchemaDefs: { opportunitySlug: string; def: unknown }[] 
       ],
     },
   },
+
+  // ── Kureringspass 4: företagarspårets alla stöd + två höga volymer ──
+  {
+    opportunitySlug: 'vinnova-innovativa-startups',
+    def: {
+      id: 'vinnova-innovativa-startups-v1',
+      version: 1,
+      title: 'Ansökan — Vinnova Innovativa startups (förberedelse)',
+      sections: [
+        { key: 'bolag', title: 'Bolaget' },
+        { key: 'losning', title: 'Lösningen' },
+        { key: 'marknad', title: 'Marknad och team' },
+        { key: 'budget', title: 'Budget' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'bolag_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Bolagets namn', required: true, maxLength: 200, section: 'bolag' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', required: true, maxLength: 20, section: 'bolag' },
+        { key: 'losning_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv lösningen och vad som är nyskapande', guidance: 'Vad finns i dag, och vad gör er lösning väsentligt bättre? Vinnova jämför mot faktiska alternativ — belägg väger tyngre än vision.', required: true, maxLength: 5000, section: 'losning' },
+        { key: 'kundbevis', type: 'long_text', label: 'Vilka belägg finns för efterfrågan?', guidance: 'Kunddialoger, piloter, avsiktsförklaringar, betalande användare — det ni faktiskt har.', required: true, maxLength: 3000, section: 'marknad' },
+        { key: 'team_beskrivning', type: 'long_text', label: 'Teamet och dess förmåga att genomföra', guidance: 'Roller, relevant erfarenhet och hur mycket tid nyckelpersonerna lägger.', required: true, maxLength: 2000, section: 'marknad' },
+        { key: 'projekt_datum', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Projektperiod', required: true, section: 'budget' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', required: true, min: 1, max: 300000, section: 'budget' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'tillvaxtverket-affarsutvecklingscheckar',
+    def: {
+      id: 'tillvaxtverket-affarsutvecklingscheckar-v1',
+      version: 1,
+      title: 'Ansökan — Affärsutvecklingscheck (förberedelse)',
+      sections: [
+        { key: 'foretag', title: 'Företaget' },
+        { key: 'insats', title: 'Utvecklingsinsatsen' },
+        { key: 'budget', title: 'Kostnad och finansiering' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'foretag_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Företagets namn', required: true, maxLength: 200, section: 'foretag' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', required: true, maxLength: 20, section: 'foretag' },
+        { key: 'antal_anstallda', type: 'number', label: 'Antal anställda', guidance: 'Checkarna riktar sig typiskt till företag med 2–49 anställda — regionens villkor styr.', required: true, min: 0, max: 500, section: 'foretag' },
+        { key: 'insats_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv utvecklingsinsatsen', guidance: 'Vad ska den externa kompetensen göra, och vad ska vara annorlunda i företaget efteråt?', required: true, maxLength: 4000, section: 'insats' },
+        { key: 'extern_leverantor', type: 'text', label: 'Extern leverantör/konsult (om känd)', required: false, maxLength: 200, section: 'insats' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', guidance: 'Checken täcker normalt högst hälften av kostnaden — resten är egen insats.', required: true, min: 1, section: 'budget' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'tillvaxtverket-regionalt-investeringsstod',
+    def: {
+      id: 'tillvaxtverket-regionalt-investeringsstod-v1',
+      version: 1,
+      title: 'Ansökan — Regionalt investeringsstöd (förberedelse)',
+      sections: [
+        { key: 'foretag', title: 'Företaget' },
+        { key: 'investering', title: 'Investeringen' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'foretag_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Företagets namn', required: true, maxLength: 200, section: 'foretag' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', required: true, maxLength: 20, section: 'foretag' },
+        { key: 'verksamhetsort', type: 'text', label: 'Verksamhetsort (kommun)', guidance: 'Orten avgör stödområdestillhörigheten (A/B) och därmed stödnivån.', required: true, maxLength: 100, section: 'foretag' },
+        { key: 'investering_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv investeringen', guidance: 'Byggnader, maskiner eller inventarier — och hur investeringen ökar sysselsättningen eller konkurrenskraften på orten.', required: true, maxLength: 4000, section: 'investering' },
+        { key: 'ej_paborjad', type: 'declaration', label: 'Jag intygar att investeringen inte påbörjas före ansökan', guidance: 'En påbörjad investering diskvalificerar hela ansökan — beställ inget förrän ansökan är inne.', required: true, section: 'investering' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', required: true, min: 1, section: 'investering' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'jordbruksverket-startstod-unga',
+    def: {
+      id: 'jordbruksverket-startstod-unga-v1',
+      version: 1,
+      title: 'Ansökan — Startstöd unga jordbrukare (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Om dig' },
+        { key: 'foretaget', title: 'Företaget du startar eller tar över' },
+        { key: 'plan', title: 'Affärsplanen' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'verksamhet_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv verksamheten', guidance: 'Inriktning (växtodling, djurhållning, trädgård, rennäring), omfattning och om du startar nytt eller tar över.', required: true, maxLength: 4000, section: 'foretaget' },
+        { key: 'overtagande_datum', type: 'date', label: 'Datum för start eller övertagande', required: true, section: 'foretaget' },
+        { key: 'utbildning_erfarenhet', type: 'long_text', label: 'Din utbildning och erfarenhet inom området', guidance: 'Naturbruksutbildning, kurser eller praktisk erfarenhet — kravet kan uppfyllas på flera sätt.', required: true, maxLength: 2000, section: 'plan' },
+        { key: 'har_affarsplan', type: 'boolean', label: 'Finns en skriftlig affärsplan?', guidance: 'Affärsplanen är obligatorisk bilaga hos Jordbruksverket.', required: true, section: 'plan' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'jordbruksverket-investeringsstod',
+    def: {
+      id: 'jordbruksverket-investeringsstod-v1',
+      version: 1,
+      title: 'Ansökan — Investeringsstöd jordbruk (förberedelse)',
+      sections: [
+        { key: 'sokande', title: 'Sökande' },
+        { key: 'investering', title: 'Investeringen' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Sökandens namn (person eller företag)', required: true, maxLength: 200, section: 'sokande' },
+        { key: 'investering_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv investeringen', guidance: 'Vad ska byggas eller köpas, och hur stärker det verksamheten (produktion, djurvälfärd, miljö, energi)?', required: true, maxLength: 4000, section: 'investering' },
+        { key: 'kostnad', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Beräknad investeringskostnad (kr)', guidance: 'Offerter styrker kalkylen — stödandelen räknas på faktiska kostnader.', required: true, min: 1, section: 'investering' },
+        { key: 'ej_paborjad', type: 'declaration', label: 'Jag intygar att investeringen inte påbörjats före ansökan', required: true, section: 'investering' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'rf-lok-stod',
+    def: {
+      id: 'rf-lok-stod-v1',
+      version: 1,
+      title: 'Ansökan — LOK-stöd (förberedelse)',
+      sections: [
+        { key: 'forening', title: 'Föreningen' },
+        { key: 'verksamhet', title: 'Aktiviteterna' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'forening_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Föreningens namn', required: true, maxLength: 200, section: 'forening' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', required: true, maxLength: 20, section: 'forening' },
+        { key: 'forbund', type: 'text', label: 'Specialidrottsförbund', guidance: 'T.ex. Svenska Fotbollförbundet — anslutningen är ett krav.', required: true, maxLength: 200, section: 'forening' },
+        { key: 'antal_aktiviteter', type: 'number', label: 'Ungefärligt antal gruppaktiviteter per termin (deltagare 7–25 år)', guidance: 'LOK-stödet räknas per genomförd gruppaktivitet och deltagare — närvaroregistrering i IdrottOnline är underlaget.', required: true, min: 1, max: 10000, section: 'verksamhet' },
+        { key: 'registrerar_narvaro', type: 'boolean', label: 'Registrerar föreningen närvaro digitalt (t.ex. IdrottOnline)?', guidance: 'Utan närvaroregistrering kan stödet inte betalas ut — börja registrera innan perioden ansöks.', required: true, section: 'verksamhet' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
+  {
+    opportunitySlug: 'kulturradet-skapande-skola',
+    def: {
+      id: 'kulturradet-skapande-skola-v1',
+      version: 1,
+      title: 'Ansökan — Skapande skola (förberedelse)',
+      sections: [
+        { key: 'huvudman', title: 'Huvudmannen' },
+        { key: 'insatser', title: 'Kulturinsatserna' },
+        { key: 'budget', title: 'Budget' },
+        { key: 'intyg', title: 'Intyg' },
+      ],
+      fields: [
+        { key: 'huvudman_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Huvudmannens namn', required: true, maxLength: 200, section: 'huvudman' },
+        { key: 'org_nummer', canonicalKey: 'organisation.orgNumber', type: 'text', label: 'Organisationsnummer', required: true, maxLength: 20, section: 'huvudman' },
+        { key: 'antal_elever', type: 'number', label: 'Antal elever som omfattas', required: true, min: 1, max: 100000, section: 'insatser' },
+        { key: 'insats_beskrivning', canonicalKey: 'project.summary', type: 'long_text', label: 'Beskriv kulturinsatserna', guidance: 'Vilka professionella kulturaktörer, vilka konstformer, och hur eleverna är delaktiga — inte bara publik.', required: true, maxLength: 5000, section: 'insatser' },
+        { key: 'lasar_period', canonicalKey: 'project.dateRange', type: 'date_range', label: 'Period (läsår)', required: true, section: 'insatser' },
+        { key: 'sokt_belopp', canonicalKey: 'project.requestedAmount', type: 'currency', label: 'Sökt belopp (kr)', required: true, min: 1, section: 'budget' },
+        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
+      ],
+    },
+  },
 ];
