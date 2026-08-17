@@ -54,6 +54,13 @@ export const config = {
   /** Mockbetalningar för utveckling/test — kan aldrig aktiveras i produktion. */
   paymentsMockEnabled: env.PAYMENTS_MOCK_ENABLED === 'true' && env.NODE_ENV !== 'production',
   /**
+   * Generation mode (AI-spec §32): textförslag via LLM, alltid bakom de
+   * deterministiska vakterna i @bidrag/core. Anthropic-nyckeln aktiverar i
+   * drift; mocken fungerar ALDRIG i produktion (samma regel som betalmocken).
+   */
+  anthropicApiKey: env.ANTHROPIC_API_KEY ?? null,
+  generationMockEnabled: env.GENERATION_MOCK_ENABLED === 'true' && env.NODE_ENV !== 'production',
+  /**
    * Momssats i baspunkter. Analysupplåsningen och dokumentförberedelsen är
    * elektroniskt levererade tjänster till konsument i Sverige — standardmoms
    * 25 % (ML 7 kap. 1 §). Medvetet inte en miljövariabel: en felkonfigurerad

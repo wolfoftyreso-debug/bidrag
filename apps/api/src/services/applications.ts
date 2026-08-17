@@ -359,6 +359,38 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
     }
   }
 
+  // Additionalitet (§17): "genomförs ändå som planerat" är svaret finansiärer
+  // avslår på — stödet ska göra skillnad. Flaggas ärligt; kan inte skrivas
+  // bort med bättre text, bara med ändrade faktiska omständigheter eller ett
+  // sanningsenligt annat svar.
+  const additionalityField = (schema?.fields ?? []).find((f) => f.canonicalKey === 'project.additionality');
+  if (additionalityField && answers[additionalityField.key] === 'anyway') {
+    gaps.push({
+      id: 'additionality-weak',
+      severity: 'MEDIUM',
+      area: 'coverage',
+      message: 'Du har angett att projektet genomförs ändå som planerat även utan stöd — svag additionalitet är en vanlig avslagsgrund.',
+      action: 'Om stödet i verkligheten påverkar omfattning, tidplan eller kvalitet: ändra svaret så att det stämmer. Blir projektet faktiskt av oförändrat är det här stödet sannolikt fel väg.',
+      requiresFactualChange: true,
+    });
+  }
+
+  // De minimis (§statsstöd): taket är 300 000 euro per treårsperiod. Systemet
+  // fäller ingen juridisk dom — men en deklarerad summa som kan närma sig
+  // taket flaggas för kontroll i euro innan ansökan lämnas.
+  const deMinimisField = (schema?.fields ?? []).find((f) => f.canonicalKey === 'organisation.deMinimisTotal');
+  const deMinimisTotal = deMinimisField ? answers[deMinimisField.key] : undefined;
+  if (typeof deMinimisTotal === 'number' && deMinimisTotal >= 2_500_000) {
+    gaps.push({
+      id: 'state-aid-de-minimis-ceiling',
+      severity: 'HIGH',
+      area: 'coverage',
+      message: `Deklarerat de minimis-stöd (${deMinimisTotal.toLocaleString('sv-SE')} kr under tre år) kan ligga nära eller över taket på 300 000 euro.`,
+      action: 'Räkna om summan i euro (beloppen står i respektive stödbeslut) och stäm av med finansiären innan ansökan — stöd över taket är otillåtet och återkrävs.',
+      requiresFactualChange: true,
+    });
+  }
+
   // Partnermotsägelse (§12, CONFLICT-principen): formuläret säger att en
   // bekräftad partner saknas medan fritexten talar om en partner. Systemet
   // väljer aldrig åt användaren — det flaggar och ber om rättning.

@@ -95,6 +95,7 @@ interface CaseData {
   decisions: Decision[];
   reportingRequirements: ReportingRequirement[];
   validation: Validation;
+  generationAvailable?: boolean;
 }
 
 const BUDGET_CATEGORIES = ['travel', 'accommodation', 'personnel', 'equipment', 'subcontractor', 'overhead', 'other'];
@@ -448,6 +449,18 @@ export default function ApplicationPage() {
                       }}
                     />
                     {issueFor(field.key) && <p className="meta-line" style={{ color: 'var(--danger)' }}>{issueFor(field.key)}</p>}
+                    {data.generationAvailable && editable && (field.type === 'long_text' || field.type === 'text') &&
+                      typeof answers[field.key] === 'string' && (answers[field.key] as string).trim().length >= 20 && (
+                      <SuggestImprovement
+                        caseId={app.id}
+                        fieldKey={field.key}
+                        onAccept={(text) => {
+                          setAnswers({ ...answers, [field.key]: text });
+                          setTouched((t) => ({ ...t, [field.key]: true }));
+                          setDirty(true);
+                        }}
+                      />
+                    )}
                   </div>
                 ))}
               </section>
@@ -775,6 +788,48 @@ function AttachmentsCard({
           <Link to="/dokument">Ladda upp nytt ↗</Link>
         </div>
       )}
+    </div>
+  );
+}
+
+
+/**
+ * Generation mode (förslag-och-godkänn): förslaget visas bredvid originalet
+ * och sparas ALDRIG av systemet — "Använd förslaget" lägger bara in texten i
+ * formuläret, och sökanden sparar själv. Vakterna har redan granskat det.
+ */
+function SuggestImprovement({ caseId, fieldKey, onAccept }: { caseId: string; fieldKey: string; onAccept: (text: string) => void }) {
+  const [state, setState] = useState<{ busy: boolean; suggestion?: { before: string; suggestion: string; reason: string }; error?: string }>({ busy: false });
+  const fetchSuggestion = async () => {
+    setState({ busy: true });
+    try {
+      const res = await post<{ before: string; suggestion: string; reason: string }>(`/v1/applications/${caseId}/suggest-field`, { fieldKey });
+      setState({ busy: false, suggestion: res });
+    } catch (err) {
+      setState({ busy: false, error: err instanceof ApiError ? err.message : 'Kunde inte hämta förslag.' });
+    }
+  };
+  if (state.suggestion) {
+    return (
+      <div className="alert" style={{ marginTop: '0.4rem' }}>
+        <strong>Förslag (inget är sparat):</strong>
+        <p style={{ margin: '0.3rem 0', whiteSpace: 'pre-wrap' }}>{state.suggestion.suggestion}</p>
+        <p className="meta-line">{state.suggestion.reason}</p>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button type="button" className="secondary" onClick={() => { onAccept(state.suggestion!.suggestion); setState({ busy: false }); }}>
+            Använd förslaget
+          </button>
+          <button type="button" className="secondary" onClick={() => setState({ busy: false })}>Behåll min text</button>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div style={{ marginTop: '0.3rem' }}>
+      <button type="button" className="secondary" style={{ fontSize: '0.82rem', padding: '0.2rem 0.6rem' }} disabled={state.busy} onClick={() => void fetchSuggestion()}>
+        {state.busy ? 'Hämtar förslag…' : 'Föreslå språklig förbättring'}
+      </button>
+      {state.error && <span className="meta-line" style={{ marginLeft: '0.5rem', color: 'var(--danger)' }}>{state.error}</span>}
     </div>
   );
 }

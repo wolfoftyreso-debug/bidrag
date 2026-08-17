@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { and, desc, eq } from 'drizzle-orm';
-import { InvalidTransitionError, type ApplicationState } from '@bidrag/core';
+import { InvalidTransitionError, generationGuards, type ApplicationState } from '@bidrag/core';
 import { db } from '../db/client.ts';
 import {
   applicationCases,
@@ -17,6 +17,7 @@ import {
 import { audit } from '../audit.ts';
 import { WRITER_ROLES } from '../plugins/auth.ts';
 import { createCase, getCaseSchema, reviewCase, saveAnswers, transitionCase, validateCase } from '../services/applications.ts';
+import { activeGenerationProvider } from '../services/generation.ts';
 import { findAdapter, hashPayload, type SubmissionPayload } from '../services/submission.ts';
 
 const uuidParam = {
@@ -133,8 +134,90 @@ export async function applicationRoutes(app: FastifyInstance) {
       decisions: decisionRows,
       reportingRequirements: reporting,
       validation,
+      generationAvailable: activeGenerationProvider() !== null,
     };
   });
+
+  /**
+   * Generation mode (AI-spec §32): föreslå en språklig förbättring av ETT
+   * fritextfält. Förslag-och-godkänn — svaret sparas ALDRIG här; sökanden
+   * godkänner genom att själv PATCH:a in texten. Varje förslag passerar de
+   * deterministiska vakterna; ett avvisat förslag visas aldrig.
+   */
+  app.post(
+    '/v1/applications/:id/suggest-field',
+    {
+      preHandler: app.requireRole(...WRITER_ROLES),
+      schema: {
+        tags: ['applications'],
+        params: uuidParam,
+        body: {
+          type: 'object',
+          required: ['fieldKey'],
+          properties: { fieldKey: { type: 'string', maxLength: 100 } },
+          additionalProperties: false,
+        },
+      },
+    },
+    async (request, reply) => {
+      const caseRow = await loadCase(request.auth!.tenantId, (request.params as { id: string }).id);
+      if (!caseRow) return reply.code(404).send({ error: 'not_found' });
+      const provider = activeGenerationProvider();
+      if (!provider) {
+        return reply.code(503).send({
+          error: 'generation_unavailable',
+          message: 'Textförslag är inte aktiverat i den här miljön. Funktionen kräver en konfigurerad språkmodellsnyckel.',
+        });
+      }
+      const { fieldKey } = request.body as { fieldKey: string };
+      const schema = await getCaseSchema(caseRow);
+      const field = schema?.fields.find((f) => f.key === fieldKey);
+      if (!field || (field.type !== 'long_text' && field.type !== 'text')) {
+        return reply.code(422).send({ error: 'field_not_suggestable', message: 'Förslag ges bara för textfält i ansökningsformuläret.' });
+      }
+      const before = (caseRow.answers as Record<string, unknown>)[fieldKey];
+      if (typeof before !== 'string' || before.trim().length < 20) {
+        // §5: luckor fylls med frågor, aldrig med genererad text.
+        return reply.code(422).send({
+          error: 'nothing_to_improve',
+          message: 'Skriv ditt eget svar först — systemet formulerar aldrig från tomt underlag, det förbättrar bara det du själv skrivit.',
+        });
+      }
+
+      let result;
+      try {
+        result = await provider.suggest({ fieldLabel: field.label, guidance: field.guidance, before });
+      } catch (err) {
+        return reply.code(502).send({ error: 'generation_failed', message: (err as Error).message });
+      }
+      const guards = generationGuards(before, result.after);
+      await audit({
+        tenantId: request.auth!.tenantId,
+        actorType: 'user',
+        actorUserId: request.auth!.userId,
+        action: guards.passed ? 'generation.suggested' : 'generation.rejected_by_guards',
+        entityType: 'application_case',
+        entityId: caseRow.id,
+        // §32-spårbarheten: BEFORE/REASON/AFTER + vaktutfall, alltid.
+        after: { fieldKey, provider: provider.id, before, suggestion: result.after, reason: result.reason, guards },
+      });
+      if (!guards.passed) {
+        // Ett förslag som bryter mot §25 visas aldrig — inte ens "som exempel".
+        return reply.code(422).send({
+          error: 'suggestion_rejected_by_guards',
+          message: 'Förslaget avvisades av kvalitetsvakterna och visas inte.',
+          findings: guards.findings,
+        });
+      }
+      return {
+        fieldKey,
+        before,
+        suggestion: result.after,
+        reason: result.reason,
+        note: 'Detta är ett förslag. Ingenting har sparats — du godkänner genom att själv uppdatera svaret.',
+      };
+    },
+  );
 
   app.patch(
     '/v1/applications/:id',

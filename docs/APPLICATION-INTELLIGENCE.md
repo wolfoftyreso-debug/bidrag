@@ -29,7 +29,7 @@ rör ansökningsberedning får byggas i strid med principerna här.
 | §29 Decision traceability | **Implementerad (grund)** | Deterministisk motor: varje bedömning spårbar till kriterium + regelversion + källa; `answer_provenance` på ansökningssvar |
 | §30 Final Application Gate | **Implementerad** | `reviewCase` i `apps/api/src/services/applications.ts`; tillståndsövergången till READY_TO_SUBMIT vaktar på HELA granskningen. Efter slutrevisionen: UNKNOWN-behörighet blockerar, finansiering ≠ budget blockerar åt båda hållen (inkl. sökt > totalbudget = stödandel över 100 %), och stöd utan digitaliserat formulär flaggas öppet i stället för att tyst godkännas (§18 fail-safe) |
 | §31 Final Review Mode | **Implementerad (v1)** | `GET /v1/applications/:id/review` + "Granskning inför inlämning" i ansökningsvyn |
-| §32 Generation mode (BEFORE/REASON/AFTER) | Planerad | Gäller när textförbättring byggs; kräver spårbar motivering per ändring |
+| §32 Generation mode (BEFORE/REASON/AFTER) | **Implementerad (skalet)** | Förslag-och-godkänn per fält bakom deterministiska vakter (uppfunna siffror/meta-spår/införda superlativ avvisas maskinellt och visas aldrig); BEFORE/REASON/AFTER auditloggas; ingenting sparas utan sökandens egen ändring. Aktiveras av ANTHROPIC_API_KEY i drift — mock aldrig i produktion |
 | §33 Output contract | **Implementerad** | Granskningsendpointen levererar även spec:ens kontraktsform (grant_fingerprint … recommended_actions); ej implementerade delar markeras ärligt `not_implemented` — aldrig tomma men kompletta-utseende objekt |
 | §34 Absoluta regler | **Bärande designprincip** | Se nedan |
 | §35 Interna mål | **Bärande designprincip** | Optimering mot verifierbarhet och handläggningsbarhet, aldrig mot språkyta |

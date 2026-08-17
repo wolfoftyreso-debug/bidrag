@@ -3,7 +3,7 @@
  * Safe to run repeatedly: keyed on slugs/keys, existing rows are updated
  * with a new rule version only when content changed.
  */
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 import { fileURLToPath } from 'node:url';
 import { db, pool } from '../db/client.ts';
 import {
@@ -203,13 +203,18 @@ export async function runSeed(): Promise<{ opportunities: number; rulesUpdated: 
       .where(eq(fundingOpportunities.slug, s.opportunitySlug))
       .limit(1);
     if (!opp) continue;
+    // Append-only versionering, samma princip som regelversionerna: en ändrad
+    // schemadefinition blir en NY version — pågående ärenden behåller sin.
     const [existing] = await db
-      .select({ id: applicationSchemas.id })
+      .select({ id: applicationSchemas.id, version: applicationSchemas.version, def: applicationSchemas.def })
       .from(applicationSchemas)
       .where(eq(applicationSchemas.opportunityId, opp.id))
+      .orderBy(sql`${applicationSchemas.version} DESC`)
       .limit(1);
     if (!existing) {
       await db.insert(applicationSchemas).values({ opportunityId: opp.id, version: 1, def: s.def });
+    } else if (canonical(existing.def) !== canonical(s.def)) {
+      await db.insert(applicationSchemas).values({ opportunityId: opp.id, version: existing.version + 1, def: s.def });
     }
   }
 

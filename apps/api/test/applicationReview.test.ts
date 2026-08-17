@@ -348,6 +348,36 @@ describe('granskning inför inlämning', () => {
     await api(app, user, 'DELETE', `/v1/applications/${caseId}/budget-lines/${lineId}`);
   });
 
+  it('§17 additionalitet + de minimis: ärliga svar möts av ärliga flaggor', async () => {
+    const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
+    const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string }[] };
+    const tvv = matches.find((m) => m.slug === 'tillvaxtverket-affarsutvecklingscheckar')!;
+    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: tvv.opportunityId });
+    const idT = (created.json() as { application: { id: string } }).application.id;
+
+    // "Genomförs ändå som planerat" är en avslagsgrund — flaggas, kräver ändrade fakta.
+    await api(app, user, 'PATCH', `/v1/applications/${idT}`, {
+      answers: { additionalitet: 'anyway', de_minimis_mottaget: true, de_minimis_belopp: 3000000 },
+    });
+    const res = await api(app, user, 'GET', `/v1/applications/${idT}/review`);
+    const review = (res.json() as { review: Review }).review;
+    const add = review.gaps.find((g) => g.id === 'additionality-weak');
+    expect(add, JSON.stringify(review.gaps.map((g) => g.id))).toBeDefined();
+    expect(add!.requiresFactualChange).toBe(true);
+    // Deklarerat de minimis nära taket (300 000 euro/3 år) ⇒ HIGH med euro-kontroll.
+    const dm = review.gaps.find((g) => g.id === 'state-aid-de-minimis-ceiling');
+    expect(dm).toBeDefined();
+    expect(dm!.severity).toBe('HIGH');
+
+    // Stark additionalitet + låg de minimis-summa ⇒ båda flaggorna släcks.
+    await api(app, user, 'PATCH', `/v1/applications/${idT}`, {
+      answers: { additionalitet: 'not_at_all', de_minimis_belopp: 150000 },
+    });
+    const after = (await api(app, user, 'GET', `/v1/applications/${idT}/review`)).json() as { review: Review };
+    expect(after.review.gaps.some((g) => g.id === 'additionality-weak')).toBe(false);
+    expect(after.review.gaps.some((g) => g.id === 'state-aid-de-minimis-ceiling')).toBe(false);
+  });
+
   // ── Block 3: E2-koppling, statsstöd, källfärskhet, schematäckning ──────────
 
   it('§10: attached linked documents lift criteria to E2, externally issued ones to E3 — never by guesswork', async () => {
