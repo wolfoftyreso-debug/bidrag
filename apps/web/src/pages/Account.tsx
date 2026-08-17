@@ -116,6 +116,43 @@ function PurchasesCard() {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [openReceipt, setOpenReceipt] = useState<{ paymentId: string; document: string } | null>(null);
   const [loaded, setLoaded] = useState(false);
+  // Kvittot ska gå att spara och mejla — inte bara läsa på skärmen.
+  const [emailPrompt, setEmailPrompt] = useState(false);
+  const [emailAddr, setEmailAddr] = useState('');
+  const [emailMsg, setEmailMsg] = useState<string | null>(null);
+
+  const emailOutcomeText = (outcome: string, sentTo?: string | null) =>
+    outcome === 'sent'
+      ? `Kvittot är skickat${sentTo ? ` till ${sentTo}` : ''}.`
+      : outcome === 'skipped'
+        ? 'Ingen e-postkanal är konfigurerad i den här miljön — kvittot finns alltid kvar här och kan laddas ner som PDF.'
+        : 'Utskicket misslyckades just nu — kvittot finns alltid kvar här. Försök igen om en stund.';
+
+  const sendReceipt = async (paymentId: string) => {
+    setEmailMsg(null);
+    try {
+      const r = await post<{ emailOutcome: string }>(`/v1/payments/${paymentId}/resend-receipt`);
+      setEmailPrompt(false);
+      setEmailMsg(emailOutcomeText(r.emailOutcome));
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 422) {
+        setEmailPrompt(true); // ingen adress på kvittot ännu — fråga efter en
+      } else {
+        setEmailMsg('Utskicket misslyckades just nu — kvittot finns alltid kvar här.');
+      }
+    }
+  };
+
+  const sendReceiptTo = async (paymentId: string) => {
+    setEmailMsg(null);
+    try {
+      const r = await post<{ emailOutcome: string }>(`/v1/payments/${paymentId}/receipt-email`, { email: emailAddr });
+      setEmailPrompt(false);
+      setEmailMsg(emailOutcomeText(r.emailOutcome, emailAddr));
+    } catch {
+      setEmailMsg('Kunde inte spara adressen — kontrollera att den är rätt skriven.');
+    }
+  };
 
   useEffect(() => {
     get<{ purchases: Purchase[] }>('/v1/purchases')
@@ -124,6 +161,8 @@ function PurchasesCard() {
   }, []);
 
   const showReceipt = async (paymentId: string) => {
+    setEmailPrompt(false);
+    setEmailMsg(null);
     if (openReceipt?.paymentId === paymentId) return setOpenReceipt(null);
     const { document } = await get<{ document: string }>(`/v1/payments/${paymentId}/receipt`);
     setOpenReceipt({ paymentId, document });
@@ -165,6 +204,39 @@ function PurchasesCard() {
                   <tr>
                     <td colSpan={5}>
                       <pre style={{ background: 'var(--bg)', padding: '0.8rem', borderRadius: 8, overflowX: 'auto', fontSize: '0.8rem', margin: 0 }}>{openReceipt.document}</pre>
+                      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                        <button
+                          className="secondary"
+                          style={{ padding: '0.25rem 0.7rem', fontSize: '0.85rem' }}
+                          onClick={() => downloadFile(`/v1/payments/${p.paymentId}/receipt.pdf`, `kvitto-${p.receiptNumber}.pdf`)}
+                        >
+                          Ladda ner kvittot (PDF)
+                        </button>
+                        <button
+                          className="secondary"
+                          style={{ padding: '0.25rem 0.7rem', fontSize: '0.85rem' }}
+                          onClick={() => sendReceipt(p.paymentId)}
+                        >
+                          Skicka kvittot via e-post
+                        </button>
+                      </div>
+                      {emailPrompt && (
+                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                          <label htmlFor="receipt-email" className="meta-line" style={{ margin: 0 }}>Ingen adress finns på kvittot ännu — vart ska det skickas?</label>
+                          <input
+                            id="receipt-email"
+                            type="email"
+                            value={emailAddr}
+                            placeholder="din@epost.se"
+                            onChange={(e) => setEmailAddr(e.target.value)}
+                            style={{ maxWidth: '16rem' }}
+                          />
+                          <button className="secondary" style={{ padding: '0.25rem 0.7rem', fontSize: '0.85rem' }} disabled={!emailAddr.includes('@')} onClick={() => sendReceiptTo(p.paymentId)}>
+                            Skicka
+                          </button>
+                        </div>
+                      )}
+                      {emailMsg && <p className="meta-line" style={{ marginTop: '0.5rem' }}>{emailMsg}</p>}
                     </td>
                   </tr>
                 )}

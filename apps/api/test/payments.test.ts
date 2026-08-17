@@ -158,6 +158,19 @@ describe('kvitto/verifikationsunderlag', () => {
     expect(receiptRes.statusCode).toBe(200);
   });
 
+  it('the receipt can be saved: downloadable PDF, tenant-scoped', async () => {
+    const res = await api(app, user, 'GET', `/v1/payments/${paymentId}/receipt.pdf`);
+    expect(res.statusCode).toBe(200);
+    expect(res.headers['content-type']).toBe('application/pdf');
+    expect(res.headers['content-disposition']).toMatch(/^attachment; filename="kvitto-BS-\d{4}-\d{6}\.pdf"$/);
+    expect(res.rawPayload.subarray(0, 5).toString('latin1')).toBe('%PDF-');
+
+    // Främmande tenant: kvittot existerar inte (404), aldrig 403-läckage.
+    const stranger = await registerUser(app, 'Främling Kvittosson');
+    const foreign = await api(app, stranger, 'GET', `/v1/payments/${paymentId}/receipt.pdf`);
+    expect(foreign.statusCode).toBe(404);
+  });
+
   it('purchase without email: receipt issued as pending, email added afterwards, then resend works', async () => {
     // Nytt projekt, köp utan e-post ("jag missade fältet").
     const profiles = await api(app, user, 'GET', '/v1/profiles');

@@ -14,6 +14,7 @@ import { audit } from '../audit.ts';
 import { config } from '../config.ts';
 import { activeProvider } from '../services/paymentProviders.ts';
 import { receiptDocument, sendReceiptEmail } from '../services/receipts.ts';
+import { textToPdf } from '../services/pdf.ts';
 import { confirmPendingPayment, verifySwishPayment } from '../services/payments.ts';
 import { fetchQrPng, swishConfigured } from '../services/integrations/swish.ts';
 import { WRITER_ROLES } from '../plugins/auth.ts';
@@ -336,6 +337,26 @@ export async function paymentRoutes(app: FastifyInstance) {
         .limit(1);
       if (!row) return reply.code(404).send({ error: 'not_found' });
       return { receipt: row, document: receiptDocument(row) };
+    },
+  );
+
+  /** Kvittot som nedladdningsbar PDF — "spara kvittot" i Mina köp. */
+  app.get(
+    '/v1/payments/:id/receipt.pdf',
+    { schema: { tags: ['payments'], params: { type: 'object', properties: { id: { type: 'string', format: 'uuid' } }, required: ['id'] } } },
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      const [row] = await db
+        .select()
+        .from(receipts)
+        .where(and(eq(receipts.paymentId, id), eq(receipts.tenantId, request.auth!.tenantId)))
+        .limit(1);
+      if (!row) return reply.code(404).send({ error: 'not_found' });
+      const pdf = textToPdf(`Kvitto ${row.receiptNumber}`, receiptDocument(row));
+      return reply
+        .header('Content-Type', 'application/pdf')
+        .header('Content-Disposition', `attachment; filename="kvitto-${row.receiptNumber}.pdf"`)
+        .send(pdf);
     },
   );
 
