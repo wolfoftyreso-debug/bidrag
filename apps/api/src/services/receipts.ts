@@ -30,8 +30,13 @@ export function computeVat(grossMinor: number, rateBps: number): { netMinor: num
 }
 
 function productDescription(payment: PaymentRow): string {
+  if (payment.kind === 'application_unlock') {
+    return 'Förberedd ansökan i systemet — engångspris per ansökan';
+  }
   if (payment.kind === 'document_pack') {
-    if ((payment.credits ?? 0) >= 99) return 'Dokumentförberedelse — alla dokument för en ansökan';
+    // Alla dokument för en ansökan — 19 kr per ansökan (historiska köp med
+    // äldre paketnivåer behåller sin ursprungliga beskrivning på kvittot).
+    if ((payment.credits ?? 0) >= 99) return 'Förberedd ansökan — alla dokument för en ansökan';
     if ((payment.credits ?? 0) === 3) return 'Dokumentförberedelse — upp till 3 dokument';
     return 'Dokumentförberedelse — ett dokument';
   }

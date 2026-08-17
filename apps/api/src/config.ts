@@ -43,14 +43,11 @@ export const config = {
   /** Engångspris för att låsa upp bidragsanalysen, i ören (inkl. moms). */
   analysisPriceMinor: Number(env.ANALYSIS_PRICE_MINOR ?? 3900),
   /**
-   * Dokumentpaket (§produktsteg 3): ett erbjudande om hjälp, inte styckdebitering
-   * per knapp. 1 dokument / upp till 3 / alla dokument för en ansökan.
+   * Prismodellen: 39 kr låser upp analysen; att förbereda en ansökan i
+   * systemet kostar 19 kr per ansökan — alla dokument för den ansökan ingår.
+   * Aldrig styckdebitering per dokument, aldrig prenumeration.
    */
-  documentPrices: {
-    single: Number(env.DOCUMENT_PRICE_MINOR ?? 1900),
-    pack3: Number(env.DOCUMENT_PACK3_PRICE_MINOR ?? 4900),
-    all: Number(env.DOCUMENT_PACK_ALL_PRICE_MINOR ?? 7900),
-  },
+  applicationPriceMinor: Number(env.APPLICATION_PRICE_MINOR ?? 1900),
   /** Mockbetalningar för utveckling/test — kan aldrig aktiveras i produktion. */
   paymentsMockEnabled: env.PAYMENTS_MOCK_ENABLED === 'true' && env.NODE_ENV !== 'production',
   /**

@@ -1,9 +1,10 @@
 /**
- * Dokumentstudion (§produktsteg 3): "Förbered min ansökan". Ett erbjudande om
- * hjälp — paket i stället för att varje knapp kostar 19 kr till. Frågorna
- * ställs en sektion i taget, dokumentet genereras server-side av domänmotorn
- * och hamnar under Mina dokument (PDF + redigerbar text). Användaren skickar
- * själv in via myndighetens kanal — Bidragskoll.se beslutar aldrig.
+ * Dokumentstudion (§produktsteg 3): "Förbered min ansökan". Ett pris — 19 kr
+ * per ansökan, alla dokument ingår — aldrig styckdebitering per knapp.
+ * Frågorna ställs en sektion i taget, dokumentet genereras server-side av
+ * domänmotorn och hamnar under Mina dokument (PDF + redigerbar text).
+ * Användaren skickar själv in via myndighetens kanal — Bidragskoll.se
+ * beslutar aldrig.
  */
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
@@ -21,7 +22,7 @@ interface DocQuestion {
 interface TemplateInfo { key: string; title: string; description: string; questions: DocQuestion[] }
 interface CreditsInfo {
   remaining: number; total: number; used: number;
-  prices: { single: number; pack3: number; all: number };
+  prices: { application: number };
   templates: TemplateInfo[];
   /** Förifyllda svar per mall — det systemet redan vet från intaget. */
   prefill?: Record<string, Record<string, unknown>>;
@@ -133,12 +134,12 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
   const [payment, setPayment] = useState<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean } } | null>(null);
   const [confirmedNote, setConfirmedNote] = useState(false);
 
-  const buy = async (pack: 'single' | 'pack3' | 'all') => {
+  const buy = async () => {
     setBusy(true);
     setError(null);
     try {
       const res = await post<{ paymentId: string; instructions: { method: string; message?: string } }>(
-        `/v1/projects/${projectId}/document-pack`, { pack },
+        `/v1/projects/${projectId}/document-pack`, { pack: 'application' },
       );
       setPayment(res);
     } catch (err) {
@@ -199,27 +200,18 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
     <div className="card">
       <h2>Vill du ha hjälp med dokumenten?</h2>
       <p className="guidance">
-        Du kan alltid ansöka själv — det är gratis, och vi länkar dig direkt till rätt ansökan. Vill du att vi
-        förbereder dokumenten åt dig väljer du ett paket. Kvittot hamnar under Mina köp.
+        Du kan alltid ansöka själv — det är gratis, och vi länkar dig direkt till rätt ansökan. Vill du att
+        systemet förbereder ansökan åt dig kostar det {formatSek(prices.application)} per ansökan — alla
+        dokument för den ansökan ingår. Kvittot hamnar under Mina köp.
       </p>
-      <div style={{ display: 'grid', gap: '0.6rem' }}>
-        <PackRow label="Ett dokument" price={prices.single} onBuy={() => buy('single')} busy={busy} />
-        <PackRow label="Upp till 3 dokument" sub="Räcker för de flesta ansökningar: ansökan + bilaga + beskrivning." price={prices.pack3} onBuy={() => buy('pack3')} busy={busy} recommended />
-        <PackRow label="Alla dokument för en ansökan" price={prices.all} onBuy={() => buy('all')} busy={busy} />
+      <div className="match-row" style={{ alignItems: 'center', border: '1px solid var(--primary)', borderRadius: 8, padding: '0.6rem 0.8rem' }}>
+        <div style={{ flex: 1 }}>
+          <strong>Förbered ansökan — alla dokument</strong>
+          <div className="meta-line">Ansökan, ekonomisk bilaga, behovsbeskrivning och förklaringar — allt som behövs för en ansökan.</div>
+        </div>
+        <button className="secondary" disabled={busy} onClick={buy}>{formatSek(prices.application)}</button>
       </div>
       {error && <div className="alert error">{error}</div>}
-    </div>
-  );
-}
-
-function PackRow({ label, sub, price, onBuy, busy, recommended }: { label: string; sub?: string; price: number; onBuy: () => void; busy: boolean; recommended?: boolean }) {
-  return (
-    <div className="match-row" style={{ alignItems: 'center', border: recommended ? '1px solid var(--primary)' : undefined, borderRadius: 8, padding: '0.6rem 0.8rem' }}>
-      <div style={{ flex: 1 }}>
-        <strong>{label}</strong> {recommended && <span className="badge info">vanligast</span>}
-        {sub && <div className="meta-line">{sub}</div>}
-      </div>
-      <button className="secondary" disabled={busy} onClick={onBuy}>{formatSek(price)}</button>
     </div>
   );
 }

@@ -7,7 +7,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
-import { api, createProfileAndProject, registerUser, testServer, uploadPdf, type TestUser } from './helpers.ts';
+import { api, createApplication, createProfileAndProject, registerUser, testServer, uploadPdf, type TestUser } from './helpers.ts';
 
 let app: FastifyInstance;
 let user: TestUser;
@@ -55,7 +55,11 @@ describe('full journey — dancehall exchange to Jamaica', () => {
       matches: { opportunityId: string; slug: string }[];
     };
     const opp = matches.matches.find((m) => m.slug === 'kulturradet-internationellt-resebidrag-musik')!;
-    const res = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: opp.opportunityId });
+    // Prismodellen: utan betald ansökningskredit → 402 med priset, aldrig en gratis ansökan.
+    const unpaid = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: opp.opportunityId });
+    expect(unpaid.statusCode).toBe(402);
+    expect((unpaid.json() as { priceMinor: number }).priceMinor).toBe(1900);
+    const res = await createApplication(app, user, projectId, opp.opportunityId);
     expect(res.statusCode).toBe(201);
     const { application } = res.json() as { application: { id: string; state: string; opportunitySnapshot: { opportunity: { slug: string } } } };
     caseId = application.id;
@@ -183,10 +187,7 @@ describe('full journey — dancehall exchange to Jamaica', () => {
     const erasmusLike = matches.matches.find((m) => m.slug === 'erasmus-plus-ungdomsutbyten')!;
     // Even though excluded for an individual, a case can technically be drafted;
     // here we just verify the prefill machinery.
-    const res = await api(app, user, 'POST', '/v1/applications', {
-      projectId,
-      opportunityId: erasmusLike.opportunityId,
-    });
+    const res = await createApplication(app, user, projectId, erasmusLike.opportunityId);
     expect(res.statusCode).toBe(201);
     const { application } = res.json() as {
       application: { answers: Record<string, unknown>; answerProvenance: Record<string, string> };

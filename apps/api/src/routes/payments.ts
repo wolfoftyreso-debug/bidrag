@@ -7,9 +7,9 @@
  * skickas om. Providern är utbytbar; motorn påverkas aldrig av betalvägen.
  */
 import type { FastifyInstance } from 'fastify';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, count, desc, eq, sql } from 'drizzle-orm';
 import { db } from '../db/client.ts';
-import { payments, projects, receipts } from '../db/schema.ts';
+import { applicationCases, payments, projects, receipts } from '../db/schema.ts';
 import { audit } from '../audit.ts';
 import { config } from '../config.ts';
 import { activeProvider } from '../services/paymentProviders.ts';
@@ -36,6 +36,32 @@ export async function isProjectUnlocked(tenantId: string, projectId: string): Pr
   return Boolean(row);
 }
 
+/**
+ * Ansökningskrediter (19 kr per ansökan): summan av bekräftade
+ * application_unlock-köp för projektet minus antal redan skapade ansökningar.
+ * Härlett ur betalningskedjan varje gång — ingen räknare som kan glida.
+ */
+export async function applicationCredits(tenantId: string, projectId: string) {
+  const [bought] = await db
+    .select({ total: sql<number>`coalesce(sum(${payments.credits}), 0)` })
+    .from(payments)
+    .where(
+      and(
+        eq(payments.tenantId, tenantId),
+        eq(payments.projectId, projectId),
+        eq(payments.kind, 'application_unlock'),
+        eq(payments.state, 'confirmed'),
+      ),
+    );
+  const [used] = await db
+    .select({ n: count() })
+    .from(applicationCases)
+    .where(and(eq(applicationCases.tenantId, tenantId), eq(applicationCases.projectId, projectId)));
+  const total = Number(bought?.total ?? 0);
+  const usedN = Number(used?.n ?? 0);
+  return { total, used: usedN, remaining: Math.max(0, total - usedN) };
+}
+
 export async function paymentRoutes(app: FastifyInstance) {
   app.addHook('preHandler', app.requireAuth);
 
@@ -51,7 +77,96 @@ export async function paymentRoutes(app: FastifyInstance) {
         .where(and(eq(projects.id, id), eq(projects.tenantId, tenantId)))
         .limit(1);
       if (!project) return reply.code(404).send({ error: 'not_found' });
-      return { unlocked: await isProjectUnlocked(tenantId, id), priceMinor: config.analysisPriceMinor, currency: 'SEK' };
+      return {
+        unlocked: await isProjectUnlocked(tenantId, id),
+        priceMinor: config.analysisPriceMinor,
+        applicationPriceMinor: config.applicationPriceMinor,
+        currency: 'SEK',
+      };
+    },
+  );
+
+  /**
+   * Köp en ansökan i systemet (19 kr per ansökan). Samma sanningskedja som
+   * analysen: betalning bekräftad → kvitto → kredit; POST /v1/applications
+   * förbrukar en kredit per skapad ansökan (402 utan).
+   */
+  app.post(
+    '/v1/projects/:id/application-purchase',
+    {
+      preHandler: app.requireRole(...WRITER_ROLES),
+      schema: {
+        tags: ['payments'],
+        params: { type: 'object', properties: { id: { type: 'string', format: 'uuid' } }, required: ['id'] },
+        body: {
+          type: 'object',
+          properties: { email: { type: 'string', format: 'email', maxLength: 320 } },
+          additionalProperties: false,
+          nullable: true,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      const tenantId = request.auth!.tenantId;
+      const { email } = (request.body ?? {}) as { email?: string };
+      const [project] = await db
+        .select({ id: projects.id })
+        .from(projects)
+        .where(and(eq(projects.id, id), eq(projects.tenantId, tenantId)))
+        .limit(1);
+      if (!project) return reply.code(404).send({ error: 'not_found' });
+
+      const provider = activeProvider();
+      if (!provider) {
+        return reply.code(503).send({
+          error: 'no_payment_provider',
+          message: 'Betalning är inte tillgänglig just nu. Swish kräver att tjänstens handelsavtal och certifikat är konfigurerade.',
+        });
+      }
+
+      const [payment] = await db
+        .insert(payments)
+        .values({
+          tenantId,
+          projectId: id,
+          kind: 'application_unlock',
+          credits: 1,
+          amountMinor: config.applicationPriceMinor,
+          provider: provider.id,
+          state: 'pending',
+          receiptEmail: email?.trim().toLowerCase() ?? null,
+        })
+        .returning();
+
+      try {
+        const created = await provider.create({
+          id: payment!.id,
+          amountMinor: config.applicationPriceMinor,
+          currency: 'SEK',
+          message: 'Bidragskoll.se — ansökan',
+        });
+        if (created.providerReference || created.providerToken) {
+          await db
+            .update(payments)
+            .set({ providerReference: created.providerReference, providerToken: created.providerToken ?? null })
+            .where(eq(payments.id, payment!.id));
+        }
+        await audit({
+          tenantId,
+          actorType: 'user',
+          actorUserId: request.auth!.userId,
+          action: 'payment.created',
+          entityType: 'payment',
+          entityId: payment!.id,
+          after: { projectId: id, kind: 'application_unlock', amountMinor: config.applicationPriceMinor, provider: provider.id },
+        });
+        return reply.code(201).send({ paymentId: payment!.id, amountMinor: config.applicationPriceMinor, instructions: created.instructions });
+      } catch (err) {
+        await db.update(payments).set({ state: 'failed' }).where(eq(payments.id, payment!.id));
+        const status = (err as { statusCode?: number }).statusCode ?? 502;
+        return reply.code(status).send({ error: 'payment_create_failed', message: (err as Error).message });
+      }
     },
   );
 

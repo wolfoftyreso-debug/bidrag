@@ -15,7 +15,9 @@ import {
   submissions,
 } from '../db/schema.ts';
 import { audit } from '../audit.ts';
+import { config } from '../config.ts';
 import { WRITER_ROLES } from '../plugins/auth.ts';
+import { applicationCredits } from './payments.ts';
 import { createCase, getCaseSchema, reviewCase, saveAnswers, transitionCase, validateCase } from '../services/applications.ts';
 import { activeGenerationProvider } from '../services/generation.ts';
 import { findAdapter, hashPayload, type SubmissionPayload } from '../services/submission.ts';
@@ -87,6 +89,19 @@ export async function applicationRoutes(app: FastifyInstance) {
         .where(and(eq(projects.id, projectId), eq(projects.tenantId, tenantId)))
         .limit(1);
       if (!project) return reply.code(404).send({ error: 'project_not_found' });
+
+      // Prismodellen: att förbereda en ansökan i systemet kostar 19 kr per
+      // ansökan. Gaten ligger efter roll- (403) och ägarskapskontrollen (404)
+      // så att svaren aldrig läcker information om främmande projekt.
+      const credits = await applicationCredits(tenantId, projectId);
+      if (credits.remaining <= 0) {
+        return reply.code(402).send({
+          error: 'payment_required',
+          message: 'Att förbereda en ansökan i systemet kostar 19 kr per ansökan.',
+          priceMinor: config.applicationPriceMinor,
+          currency: 'SEK',
+        });
+      }
 
       try {
         const row = await createCase({ tenantId, userId: request.auth!.userId, projectId, opportunityId });

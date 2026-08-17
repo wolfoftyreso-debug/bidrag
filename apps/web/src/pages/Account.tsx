@@ -101,6 +101,12 @@ interface Purchase {
   refundStatus: string | null;
 }
 
+const KIND_LABELS: Record<string, string> = {
+  analysis_unlock: 'Bidragsanalys',
+  document_pack: 'Dokumentförberedelse',
+  application_unlock: 'Förberedd ansökan',
+};
+
 const PAYMENT_STATE_LABELS: Record<string, { label: string; tone: string }> = {
   confirmed: { label: 'Betald', tone: 'success' },
   pending: { label: 'Ej slutförd', tone: 'warning' },
@@ -182,7 +188,7 @@ function PurchasesCard() {
               <Fragment key={p.paymentId}>
                 <tr>
                   <td>{formatDate(p.confirmedAt ?? p.createdAt)}</td>
-                  <td>{p.kind === 'document_pack' ? 'Dokumentförberedelse' : 'Bidragsanalys'}{p.projectTitle ? ` — ${p.projectTitle}` : ''}</td>
+                  <td>{KIND_LABELS[p.kind] ?? p.kind}{p.projectTitle ? ` — ${p.projectTitle}` : ''}</td>
                   <td style={{ fontVariantNumeric: 'tabular-nums' }}>{(p.amountMinor / 100).toLocaleString('sv-SE')} kr</td>
                   <td>
                     <span className={`badge ${PAYMENT_STATE_LABELS[p.state]?.tone ?? ''}`}>

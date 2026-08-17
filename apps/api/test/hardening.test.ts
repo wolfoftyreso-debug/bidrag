@@ -5,7 +5,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 import { and, eq } from 'drizzle-orm';
-import { api, createProfileAndProject, registerUser, testServer, type TestUser } from './helpers.ts';
+import { api, createApplication, createProfileAndProject, registerUser, testServer, type TestUser } from './helpers.ts';
 import { db } from '../src/db/client.ts';
 import { applicationCases, fundingOpportunities, notifications, projects } from '../src/db/schema.ts';
 import { runDeadlineScan } from '../src/services/reminders.ts';
@@ -112,10 +112,7 @@ describe('deadline reminders are idempotent', () => {
       .from(fundingOpportunities)
       .where(eq(fundingOpportunities.slug, 'kulturradet-internationellt-resebidrag-musik'))
       .limit(1);
-    const caseRes = await api(app, user, 'POST', '/v1/applications', {
-      projectId: project.id,
-      opportunityId: opp!.id,
-    });
+    const caseRes = await createApplication(app, user, project.id, opp!.id);
     const caseId = (caseRes.json() as { application: { id: string } }).application.id;
     // Sätt en deadline 5 dagar bort (7-dagarsintervallet).
     await db

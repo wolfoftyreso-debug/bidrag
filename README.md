@@ -32,7 +32,7 @@ Profil → Intention → Stödutbud → Behörighet → Matchning → Finansieri
 | Production hardening | pågående — metrics, GDPR-självservice och runbook finns; verklig klusterdrift, backup-övning och lasttest återstår |
 | Kunskapstäckning | 72 kurerade stöd från 35 finansiärer, inkl. personliga ersättningar (FK, CSN, Pensionsmyndigheten, socialtjänsten, AF), funktionsnedsättnings-, nyanländ- och utvandringsspår samt lokala/regionala organisationsstöd — bevisar motorn, inte nationell täckning |
 | Integrationsmognad | låg per design — assisterad inlämning tills avtalade adaptrar finns |
-| Kommersiell modell | trestegsmodell: gratis upptäckt → 39 kr analysupplåsning → gratis "ansök själv"-länk eller dokumentförberedelse (19/49/79 kr, generisk mallmotor, PDF till Mina dokument). Kvitton med löpnummer + moms i kontot. Betalningen är den auktoritativa händelsen; Swish-adaptern väntar ärligt (503) på handelsavtal + certifikat; momsen är fast 25 % standardsats (elektroniskt levererad tjänst till konsument) |
+| Kommersiell modell | trestegsmodell: gratis upptäckt → 39 kr analysupplåsning → gratis "ansök själv"-länk eller förberedd ansökan i systemet (19 kr per ansökan — alla dokument för den ansökan ingår, generisk mallmotor, PDF till Mina dokument). Kvitton med löpnummer + moms i kontot. Betalningen är den auktoritativa händelsen; Swish-adaptern väntar ärligt (503) på handelsavtal + certifikat; momsen är fast 25 % standardsats (elektroniskt levererad tjänst till konsument) |
 | Produktarkitektur | stark; skala/härda/befolka, inte bygga om |
 
 Nästa fas är **Production Hardening + Knowledge Expansion** (se

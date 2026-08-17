@@ -69,6 +69,21 @@ export async function unlockProject(app: FastifyInstance, user: TestUser, projec
   if (confirm.statusCode !== 200) throw new Error(`mock confirm failed: ${confirm.statusCode} ${confirm.body}`);
 }
 
+/** Köp en ansökningskredit (19 kr/ansökan) via mock-betalningen. */
+export async function payForApplication(app: FastifyInstance, user: TestUser, projectId: string): Promise<void> {
+  const create = await api(app, user, 'POST', `/v1/projects/${projectId}/application-purchase`);
+  if (create.statusCode !== 201) throw new Error(`application purchase failed: ${create.statusCode} ${create.body}`);
+  const { paymentId } = create.json() as { paymentId: string };
+  const confirm = await api(app, user, 'POST', `/v1/payments/${paymentId}/mock-confirm`);
+  if (confirm.statusCode !== 200) throw new Error(`mock confirm failed: ${confirm.statusCode} ${confirm.body}`);
+}
+
+/** Betala för och skapa en ansökan — standardvägen i tester som förväntar sig 201. */
+export async function createApplication(app: FastifyInstance, user: TestUser, projectId: string, opportunityId: string) {
+  await payForApplication(app, user, projectId);
+  return api(app, user, 'POST', '/v1/applications', { projectId, opportunityId });
+}
+
 /** Standard fixture: profile + Jamaica dancehall project, analysis unlocked. */
 export async function createProfileAndProject(app: FastifyInstance, user: TestUser) {
   const profileRes = await api(app, user, 'POST', '/v1/profiles', {

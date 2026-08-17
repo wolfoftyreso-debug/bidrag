@@ -604,7 +604,7 @@ export const payments = pgTable(
     id: id(),
     tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
     projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
-    kind: text('kind', { enum: ['analysis_unlock', 'document_pack'] }).notNull().default('analysis_unlock'),
+    kind: text('kind', { enum: ['analysis_unlock', 'document_pack', 'application_unlock'] }).notNull().default('analysis_unlock'),
     /** Dokumentpaket: antal dokumentkrediter köpet ger (1, 3 eller 99 = "alla för ansökan"). */
     credits: integer('credits'),
     amountMinor: integer('amount_minor').notNull(),

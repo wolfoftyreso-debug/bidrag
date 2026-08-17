@@ -51,12 +51,12 @@ describe('dokumentstudion', () => {
     const res = await api(app, user, 'GET', `/v1/projects/${projectId}/document-credits`);
     const body = res.json() as {
       remaining: number;
-      prices: { single: number; pack3: number; all: number };
+      prices: { application: number };
       templates: { key: string; questions: unknown[] }[];
       prefill: Record<string, Record<string, unknown>>;
     };
     expect(body.remaining).toBe(0);
-    expect(body.prices).toEqual({ single: 1900, pack3: 4900, all: 7900 });
+    expect(body.prices).toEqual({ application: 1900 });
     expect(body.templates.map((t) => t.key)).toContain('behovsbeskrivning');
     // Färdigifyllt: det systemet redan vet mappas in — inget gissas.
     expect(body.prefill['ansokan-ekonomiskt-stod']!.fullName).toBe('Dokumentskaparen');
@@ -71,21 +71,21 @@ describe('dokumentstudion', () => {
     expect(res.statusCode).toBe(402);
   });
 
-  it('a confirmed pack purchase yields credits and a correct receipt', async () => {
-    await buyPack('pack3');
+  it('a confirmed purchase (19 kr) yields all-documents credits and a correct receipt', async () => {
+    await buyPack('application');
     const credits = await api(app, user, 'GET', `/v1/projects/${projectId}/document-credits`);
-    expect((credits.json() as { remaining: number }).remaining).toBe(3);
+    expect((credits.json() as { remaining: number }).remaining).toBe(99);
 
-    // Kvittot: 49,00 = 39,20 netto + 9,80 moms; produkttexten beskriver paketet.
+    // Kvittot: 19,00 = 15,20 netto + 3,80 moms; produkttexten beskriver paketet.
     const purchases = await api(app, user, 'GET', '/v1/purchases');
     const docPurchase = (purchases.json() as { purchases: { kind: string; amountMinor: number; paymentId: string }[] }).purchases
       .find((p) => p.kind === 'document_pack')!;
-    expect(docPurchase.amountMinor).toBe(4900);
+    expect(docPurchase.amountMinor).toBe(1900);
     const receipt = await api(app, user, 'GET', `/v1/payments/${docPurchase.paymentId}/receipt`);
     const { receipt: r, document } = receipt.json() as { receipt: { vatAmountMinor: number; amountNetMinor: number }; document: string };
-    expect(r.amountNetMinor).toBe(3920);
-    expect(r.vatAmountMinor).toBe(980);
-    expect(document).toContain('Dokumentförberedelse — upp till 3 dokument');
+    expect(r.amountNetMinor).toBe(1520);
+    expect(r.vatAmountMinor).toBe(380);
+    expect(document).toContain('Förberedd ansökan — alla dokument för en ansökan');
   });
 
   it('generates a document deterministically with the opportunity as recipient', async () => {
@@ -95,7 +95,7 @@ describe('dokumentstudion', () => {
     expect(res.statusCode).toBe(201);
     const body = res.json() as { document: { id: string; content: string; title: string }; creditsRemaining: number };
     documentId = body.document.id;
-    expect(body.creditsRemaining).toBe(2);
+    expect(body.creditsRemaining).toBe(98);
     expect(body.document.content).toContain('BESKRIVNING AV BEHOV');
     expect(body.document.content).toContain('Majblommans Riksförbund');
     expect(body.document.content).toContain('Vera, 9 år');
@@ -112,7 +112,7 @@ describe('dokumentstudion', () => {
     const missing = (res.json() as { missing: { key: string }[] }).missing.map((m) => m.key);
     expect(missing).toContain('whatFor');
     const credits = await api(app, user, 'GET', `/v1/projects/${projectId}/document-credits`);
-    expect((credits.json() as { remaining: number }).remaining).toBe(2);
+    expect((credits.json() as { remaining: number }).remaining).toBe(98);
   });
 
   it('downloads as a real PDF and as editable text', async () => {
@@ -124,7 +124,7 @@ describe('dokumentstudion', () => {
     expect(text.body).toContain('Vera, 9 år');
   });
 
-  it('credits run out honestly: pack of 3 → three documents, then 402', async () => {
+  it('credits are consumed per document, derived from confirmed purchases only', async () => {
     for (let i = 0; i < 2; i++) {
       const res = await api(app, user, 'POST', `/v1/projects/${projectId}/generated-documents`, {
         templateKey: 'sarskilda-omstandigheter',
@@ -146,10 +146,8 @@ describe('dokumentstudion', () => {
         expect(document.content).toContain('Vi garanterar att situationen påverkar ekonomin.');
       }
     }
-    const fourth = await api(app, user, 'POST', `/v1/projects/${projectId}/generated-documents`, {
-      templateKey: 'behovsbeskrivning', answers: behovsAnswers,
-    });
-    expect(fourth.statusCode).toBe(402);
+    const credits = await api(app, user, 'GET', `/v1/projects/${projectId}/document-credits`);
+    expect((credits.json() as { remaining: number }).remaining).toBe(96);
     const list = await api(app, user, 'GET', `/v1/projects/${projectId}/generated-documents`);
     expect((list.json() as { documents: unknown[] }).documents).toHaveLength(3);
   });
@@ -165,14 +163,14 @@ describe('dokumentstudion', () => {
     const pid = (projectRes.json() as { project: { id: string } }).project.id;
     await api(app, other, 'POST', `/v1/projects/${pid}/matches`, {});
 
-    const pack = await api(app, other, 'POST', `/v1/projects/${pid}/document-pack`, { pack: 'single' });
+    const pack = await api(app, other, 'POST', `/v1/projects/${pid}/document-pack`, { pack: 'application' });
     const { paymentId } = pack.json() as { paymentId: string };
     await api(app, other, 'POST', `/v1/payments/${paymentId}/mock-confirm`);
 
     const matches = await api(app, other, 'GET', `/v1/projects/${pid}/matches`);
     expect((matches.json() as { locked?: boolean }).locked).toBe(true); // analysen är fortfarande låst
     const credits = await api(app, other, 'GET', `/v1/projects/${pid}/document-credits`);
-    expect((credits.json() as { remaining: number }).remaining).toBe(1); // men krediten finns
+    expect((credits.json() as { remaining: number }).remaining).toBe(99); // men krediterna finns
   });
 
   it('tenant isolation: foreign documents do not exist', async () => {

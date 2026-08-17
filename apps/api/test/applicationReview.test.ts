@@ -7,7 +7,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
-import { api, createProfileAndProject, registerUser, testServer, uploadPdf, type TestUser } from './helpers.ts';
+import { api, createApplication, createProfileAndProject, registerUser, testServer, uploadPdf, type TestUser } from './helpers.ts';
 
 let app: FastifyInstance;
 let user: TestUser;
@@ -43,7 +43,7 @@ beforeAll(async () => {
   const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
   const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string }[] };
   const travel = matches.find((m) => m.slug === 'kulturradet-internationellt-resebidrag-musik')!;
-  const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: travel.opportunityId });
+  const created = await createApplication(app, user, projectId, travel.opportunityId);
   caseId = (created.json() as { application: { id: string } }).application.id;
 });
 
@@ -206,7 +206,7 @@ describe('granskning inför inlämning', () => {
     const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
     const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string; eligibilityStatus: string }[] };
     const unknown = matches.find((m) => m.eligibilityStatus === 'unknown')!;
-    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: unknown.opportunityId });
+    const created = await createApplication(app, user, projectId, unknown.opportunityId);
     const idU = (created.json() as { application: { id: string } }).application.id;
     const res = await api(app, user, 'GET', `/v1/applications/${idU}/review`);
     const review = (res.json() as { review: Review }).review;
@@ -222,7 +222,7 @@ describe('granskning inför inlämning', () => {
     // så ett generiskt schema vore missvisande — den hålls medvetet schemalös
     // och är vaktposten för fail-safe-flaggan.
     const noSchema = matches.find((m) => m.slug === 'formas-oppna-utlysningen')!;
-    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: noSchema.opportunityId });
+    const created = await createApplication(app, user, projectId, noSchema.opportunityId);
     const idN = (created.json() as { application: { id: string } }).application.id;
     const caseRes = await api(app, user, 'GET', `/v1/applications/${idN}`);
     expect((caseRes.json() as { schema: unknown }).schema).toBeNull();
@@ -236,7 +236,7 @@ describe('granskning inför inlämning', () => {
     const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
     const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string; eligibilityStatus: string }[] };
     const unknown = matches.filter((m) => m.eligibilityStatus === 'unknown')[1] ?? matches.find((m) => m.eligibilityStatus === 'unknown')!;
-    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: unknown.opportunityId });
+    const created = await createApplication(app, user, projectId, unknown.opportunityId);
     const idU = (created.json() as { application: { id: string } }).application.id;
     await api(app, user, 'POST', `/v1/applications/${idU}/transition`, { to: 'PREPARING' });
     await api(app, user, 'POST', `/v1/applications/${idU}/transition`, { to: 'READY_FOR_REVIEW' });
@@ -285,7 +285,7 @@ describe('granskning inför inlämning', () => {
     const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
     const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string }[] };
     const erasmus = matches.find((m) => m.slug === 'erasmus-plus-ungdomsutbyten')!;
-    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: erasmus.opportunityId });
+    const created = await createApplication(app, user, projectId, erasmus.opportunityId);
     const idE = (created.json() as { application: { id: string } }).application.id;
     await api(app, user, 'PATCH', `/v1/applications/${idE}`, {
       financing: { requestedMinor: 1000000, ownContributionMinor: 0, otherFundingMinor: 300000, inKindMinor: 0 },
@@ -309,7 +309,7 @@ describe('granskning inför inlämning', () => {
     const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
     const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string }[] };
     const erasmus = matches.find((m) => m.slug === 'erasmus-plus-ungdomsutbyten')!;
-    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: erasmus.opportunityId });
+    const created = await createApplication(app, user, projectId, erasmus.opportunityId);
     const idP = (created.json() as { application: { id: string } }).application.id;
     await api(app, user, 'PATCH', `/v1/applications/${idP}`, {
       answers: { har_partner: false, projekt_sammanfattning: 'Utbytet genomförs tillsammans med vår partnergrupp i Lissabon.' },
@@ -352,7 +352,7 @@ describe('granskning inför inlämning', () => {
     const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
     const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string }[] };
     const tvv = matches.find((m) => m.slug === 'tillvaxtverket-affarsutvecklingscheckar')!;
-    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: tvv.opportunityId });
+    const created = await createApplication(app, user, projectId, tvv.opportunityId);
     const idT = (created.json() as { application: { id: string } }).application.id;
 
     // "Genomförs ändå som planerat" är en avslagsgrund — flaggas, kräver ändrade fakta.
@@ -443,7 +443,7 @@ describe('granskning inför inlämning', () => {
     const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
     const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string }[] };
     const mucf = matches.find((m) => m.slug === 'mucf-projektbidrag-ungdomsorganisationer')!;
-    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: mucf.opportunityId });
+    const created = await createApplication(app, user, projectId, mucf.opportunityId);
     const idM = (created.json() as { application: { id: string } }).application.id;
     await api(app, user, 'PATCH', `/v1/applications/${idM}`, { answers: { org_nummer: '556016-0681' } });
     let res = await api(app, user, 'GET', `/v1/applications/${idM}/review`);
@@ -489,7 +489,7 @@ describe('granskning inför inlämning', () => {
     const matchesRes = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
     const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string }[] };
     const nordisk = matches.find((m) => m.slug === 'nordisk-kulturfond-projektstod')!;
-    const created = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: nordisk.opportunityId });
+    const created = await createApplication(app, user, projectId, nordisk.opportunityId);
     const idN = (created.json() as { application: { id: string } }).application.id;
     const caseRes = await api(app, user, 'GET', `/v1/applications/${idN}`);
     const schema = (caseRes.json() as { schema: { fields: { key: string }[] } | null }).schema;

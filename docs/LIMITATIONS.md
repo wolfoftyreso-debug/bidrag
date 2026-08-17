@@ -136,7 +136,9 @@ cluster's monitoring stack, plus a rehearsed on-call path.
 ## 10. Payments — generic layer built, Swish awaits merchant agreement
 
 The commercial model is a one-time 39 kr unlock of the personal analysis
-(`ANALYSIS_PRICE_MINOR`, default 3900 öre) — never a subscription, and never
+(`ANALYSIS_PRICE_MINOR`, default 3900 öre) plus 19 kr per application
+prepared in the system (`APPLICATION_PRICE_MINOR`, default 1900 öre — all
+documents for that application included) — never a subscription, and never
 "buying a grant". The generic layer (payment → confirmation → unlock) is
 implemented and tested end to end: a `payments` table with per-project state,
 a provider registry, teaser gating of match results (counts and categories

@@ -6,7 +6,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
-import { api, createProfileAndProject, registerUser, testServer, type TestUser } from './helpers.ts';
+import { api, createApplication, createProfileAndProject, registerUser, testServer, type TestUser } from './helpers.ts';
 
 let app: FastifyInstance;
 let user: TestUser;
@@ -20,7 +20,7 @@ beforeAll(async () => {
   const matchesRes = await api(app, user, 'GET', `/v1/projects/${fixture.project.id}/matches`);
   const { matches } = matchesRes.json() as { matches: { slug: string; opportunityId: string }[] };
   const travel = matches.find((m) => m.slug === 'kulturradet-internationellt-resebidrag-musik')!;
-  const created = await api(app, user, 'POST', '/v1/applications', { projectId: fixture.project.id, opportunityId: travel.opportunityId });
+  const created = await createApplication(app, user, fixture.project.id, travel.opportunityId);
   caseId = (created.json() as { application: { id: string } }).application.id;
 });
 

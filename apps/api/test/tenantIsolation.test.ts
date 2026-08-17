@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
-import { api, createProfileAndProject, registerUser, testServer, uploadPdf, type TestUser } from './helpers.ts';
+import { api, createApplication, createProfileAndProject, registerUser, testServer, uploadPdf, type TestUser } from './helpers.ts';
 
 let app: FastifyInstance;
 let alice: TestUser;
@@ -24,10 +24,7 @@ beforeAll(async () => {
     matches: { opportunityId: string; slug: string }[];
   };
   const opp = matches.matches.find((m) => m.slug === 'kulturradet-internationellt-resebidrag-musik')!;
-  const caseRes = await api(app, alice, 'POST', '/v1/applications', {
-    projectId: aliceProjectId,
-    opportunityId: opp.opportunityId,
-  });
+  const caseRes = await createApplication(app, alice, aliceProjectId, opp.opportunityId);
   aliceCaseId = (caseRes.json() as { application: { id: string } }).application.id;
 
   const docRes = await uploadPdf(app, alice, 'cv', 'cv.pdf');

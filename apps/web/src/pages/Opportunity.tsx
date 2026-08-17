@@ -62,6 +62,7 @@ export default function OpportunityPage() {
   const [data, setData] = useState<OpportunityDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [priceMinor, setPriceMinor] = useState<number | null>(null);
 
   useEffect(() => {
     if (id) get<OpportunityDetail>(`/v1/funding-opportunities/${id}`).then(setData).catch(() => setError('Stödet kunde inte hämtas.'));
@@ -75,6 +76,7 @@ export default function OpportunityPage() {
   const startApplication = async () => {
     if (!projectId) return;
     setBusy(true);
+    setError(null);
     try {
       const { application } = await post<{ application: { id: string } }>('/v1/applications', {
         projectId,
@@ -82,6 +84,13 @@ export default function OpportunityPage() {
       });
       navigate(`/ansokningar/${application.id}`);
     } catch (err) {
+      // Prismodellen: 19 kr per ansökan — 402 startar köpflödet i stället för
+      // att visas som ett fel. När betalningen bekräftats skapas ansökan.
+      if (err instanceof ApiError && err.status === 402) {
+        setPriceMinor((err.body as { priceMinor?: number }).priceMinor ?? 1900);
+        setBusy(false);
+        return;
+      }
       setError(err instanceof ApiError ? err.message : 'Kunde inte skapa ansökan.');
       setBusy(false);
     }
@@ -167,7 +176,11 @@ export default function OpportunityPage() {
         <div className="card">
           <h2>Redo att börja?</h2>
           <p>Ansökan förifylls med det du redan berättat. Du kan spara och fortsätta när du vill.</p>
-          <button disabled={busy} onClick={startApplication}>Starta ansökan</button>
+          {priceMinor === null ? (
+            <button disabled={busy} onClick={startApplication}>Förbered ansökan i systemet</button>
+          ) : (
+            <ApplicationPurchase projectId={projectId} priceMinor={priceMinor} onPaid={startApplication} />
+          )}
         </div>
       )}
 
@@ -179,6 +192,88 @@ export default function OpportunityPage() {
         <br />
         Kontrollera alltid aktuella villkor hos källan innan du skickar in.
       </div>
+    </div>
+  );
+}
+
+/**
+ * Köpflödet för en ansökan (19 kr per ansökan) — samma betalningsmönster som
+ * analysen och dokumentstudion: mock-knapp i utveckling, Swish-QR/deeplink i
+ * drift, och ansökan skapas först när betalningen är bekräftad server-side.
+ */
+function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: string; priceMinor: number; onPaid: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [payment, setPayment] = useState<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean } } | null>(null);
+  const [confirmed, setConfirmed] = useState(false);
+
+  const buy = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await post<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean } }>(
+        `/v1/projects/${projectId}/application-purchase`,
+      );
+      setPayment(res);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Köpet kunde inte startas.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const confirmMock = async () => {
+    if (!payment) return;
+    setBusy(true);
+    try {
+      await post(`/v1/payments/${payment.paymentId}/mock-confirm`);
+      setConfirmed(true);
+      onPaid();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Bekräftelsen misslyckades.');
+      setBusy(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!payment || payment.instructions.method !== 'swish' || confirmed) return;
+    const iv = setInterval(async () => {
+      const res = await get<{ state: string }>(`/v1/payments/${payment.paymentId}/status`).catch(() => null);
+      if (res?.state === 'confirmed') { setConfirmed(true); onPaid(); }
+    }, 2500);
+    return () => clearInterval(iv);
+  }, [payment, confirmed, onPaid]);
+
+  if (confirmed) return <p className="meta-line">Betalningen är bekräftad — ansökan skapas…</p>;
+
+  if (payment) {
+    return payment.instructions.method === 'mock' ? (
+      <div className="alert warning">
+        <p style={{ fontWeight: 700 }}>{payment.instructions.message}</p>
+        <button disabled={busy} onClick={confirmMock}>Bekräfta betalning (simulerad)</button>
+        {error && <div className="alert error">{error}</div>}
+      </div>
+    ) : (
+      <div style={{ textAlign: 'center' }}>
+        <h3>Betala med Swish</h3>
+        {payment.instructions.qrAvailable && (
+          <img src={`/v1/payments/${payment.paymentId}/qr`} alt="Swish QR-kod" width={220} height={220} style={{ display: 'block', margin: '0.5rem auto' }} />
+        )}
+        {payment.instructions.deepLink && <p><a className="btn" href={payment.instructions.deepLink}>Öppna Swish</a></p>}
+        <p className="meta-line">Väntar på betalning…</p>
+        {error && <div className="alert error">{error}</div>}
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <p className="guidance">
+        Att förbereda en ansökan i systemet kostar {formatSek(priceMinor)} per ansökan — alla dokument för den
+        ansökan ingår. Du kan alltid ansöka själv direkt hos myndigheten, det är gratis.
+      </p>
+      <button disabled={busy} onClick={buy}>Förbered ansökan — {formatSek(priceMinor)}</button>
+      {error && <div className="alert error">{error}</div>}
     </div>
   );
 }

@@ -23,10 +23,13 @@ import { WRITER_ROLES } from '../plugins/auth.ts';
 import { activeProvider } from '../services/paymentProviders.ts';
 import { textToPdf } from '../services/pdf.ts';
 
+/**
+ * Prismodellen (2026-08-17): ETT paket — 19 kr förbereder en ansökan och alla
+ * dess dokument ingår (99 krediter täcker mallkatalogen med god marginal).
+ * Ingen styckdebitering per dokument, inga paketnivåer.
+ */
 const PACKS = {
-  single: { credits: 1, price: () => config.documentPrices.single, label: 'Ett dokument' },
-  pack3: { credits: 3, price: () => config.documentPrices.pack3, label: 'Upp till 3 dokument' },
-  all: { credits: 99, price: () => config.documentPrices.all, label: 'Alla dokument för en ansökan' },
+  application: { credits: 99, price: () => config.applicationPriceMinor, label: 'Förbered ansökan — alla dokument' },
 } as const;
 
 async function creditState(tenantId: string, projectId: string) {
@@ -96,11 +99,7 @@ export async function documentStudioRoutes(app: FastifyInstance) {
 
       return {
         ...credits,
-        prices: {
-          single: config.documentPrices.single,
-          pack3: config.documentPrices.pack3,
-          all: config.documentPrices.all,
-        },
+        prices: { application: config.applicationPriceMinor },
         templates: DOCUMENT_TEMPLATES.map((t) => ({
           key: t.key,
           title: t.title,
@@ -117,7 +116,7 @@ export async function documentStudioRoutes(app: FastifyInstance) {
     },
   );
 
-  /** Köp dokumentpaket — exakt samma betalningskedja som analysupplåsningen. */
+  /** Köp dokumentförberedelse (19 kr/ansökan) — samma betalningskedja som analysupplåsningen. */
   app.post(
     '/v1/projects/:id/document-pack',
     {
@@ -128,7 +127,7 @@ export async function documentStudioRoutes(app: FastifyInstance) {
         body: {
           type: 'object',
           required: ['pack'],
-          properties: { pack: { type: 'string', enum: ['single', 'pack3', 'all'] } },
+          properties: { pack: { type: 'string', enum: ['application'] } },
           additionalProperties: false,
         },
       },
@@ -226,7 +225,7 @@ export async function documentStudioRoutes(app: FastifyInstance) {
         return reply.code(402).send({
           error: 'no_document_credits',
           message: 'Köp dokumentförberedelse för att skapa dokument.',
-          prices: config.documentPrices,
+          prices: { application: config.applicationPriceMinor },
         });
       }
 
