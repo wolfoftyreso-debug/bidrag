@@ -490,7 +490,7 @@ export const opportunities: SeedOpportunity[] = [
       c('kn-iku-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Bidraget söks av enskilda yrkesverksamma konstnärer'),
       c('kn-iku-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Sökande ska vara verksam i Sverige'),
       c('kn-iku-m1', 'mandatory', 'person.professionalArtist', 'is_true', undefined, 'Sökande ska vara yrkesverksam konstnär', 'Är du yrkesverksam konstnär (inte amatör eller under grundutbildning)?'),
-      c('kn-iku-m2', 'mandatory', 'project.hasInternationalComponent', 'is_true', undefined, 'Ansökan ska avse internationellt utbyte eller resa', 'Avser ansökan en internationell resa eller ett internationellt utbyte?'),
+      c('kn-iku-m2', 'mandatory', 'project.hasInternationalComponent', 'is_true', undefined, 'Ansökan ska avse internationellt utbyte eller resa', 'Avser ansökan en internationell resa eller ett internationellt utbyte?', undefined, ['invitation']),
       c('kn-iku-w1', 'weighted', 'project.sector', 'eq', 'culture', 'Konstnärligt projekt', undefined, 3),
       c('kn-iku-w2', 'weighted', 'project.activityTypes', 'intersects', ['exchange', 'training', 'performance'], 'Utbyte, fortbildning eller framträdande', undefined, 2),
     ],
@@ -552,7 +552,7 @@ export const opportunities: SeedOpportunity[] = [
       c('af-ps-m2', 'mandatory', 'project.isNovel', 'is_true', undefined, 'Projektet ska vara nyskapande i förhållande till ordinarie verksamhet', 'Är projektet nyskapande — något ni inte redan gör i ordinarie verksamhet?'),
       c('af-ps-m3', 'mandatory', 'project.targetGroupParticipates', 'is_true', undefined, 'Målgruppen ska vara delaktig i projektet', 'Är målgruppen delaktig i planering och genomförande?'),
       c('af-ps-w1', 'weighted', 'project.targetGroups', 'includes', 'youth', 'Barn och unga som målgrupp', undefined, 1),
-      c('af-ps-w2', 'weighted', 'organisation.democraticStructure', 'is_true', undefined, 'Demokratiskt uppbyggd organisation', 'Har organisationen en demokratisk uppbyggnad?', 1),
+      c('af-ps-w2', 'weighted', 'organisation.democraticStructure', 'is_true', undefined, 'Demokratiskt uppbyggd organisation', 'Har organisationen en demokratisk uppbyggnad?', 1, ['stadgar']),
     ],
     evidenceRequirements: [
       { id: 'af-ps-e1', kind: 'stadgar', description: 'Stadgar', mandatory: true },
@@ -1122,7 +1122,7 @@ export const opportunities: SeedOpportunity[] = [
     criteria: [
       c('mucf-ob-h1', 'hard', 'applicant.type', 'eq', 'association', 'Sökande ska vara en ideell förening'),
       c('mucf-ob-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Organisationen ska vara nationell och verksam i Sverige'),
-      c('mucf-ob-m1', 'mandatory', 'organisation.democraticStructure', 'is_true', undefined, 'Demokratisk uppbyggnad krävs', 'Har organisationen en demokratisk uppbyggnad?'),
+      c('mucf-ob-m1', 'mandatory', 'organisation.democraticStructure', 'is_true', undefined, 'Demokratisk uppbyggnad krävs', 'Har organisationen en demokratisk uppbyggnad?', undefined, ['stadgar']),
       c('mucf-ob-m2', 'mandatory', 'organisation.youthMembersShareOver60', 'is_true', undefined, 'Minst 60 % av medlemmarna ska vara 6–25 år', 'Är minst 60 % av medlemmarna mellan 6 och 25 år?'),
       c('mucf-ob-m3', 'mandatory', 'organisation.hasNationalSpread', 'is_true', undefined, 'Verksamhet i flera län krävs', 'Har organisationen medlemsföreningar i flera län?'),
     ],

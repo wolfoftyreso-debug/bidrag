@@ -74,6 +74,27 @@ describe('humilityFindings — §21 GENERIC_CONTENT: standardfraser som gör ans
   });
 });
 
+describe('findDestinationConflicts — geografivakten är smal med avsikt', async () => {
+  const { findDestinationConflicts } = await import('../src/index.js');
+
+  it('flags a travel mention of a different country than the destination field', () => {
+    const c = findDestinationConflicts({ plan: 'Resan till Portugal bokas i mars.' }, 'Jamaica');
+    expect(c).toHaveLength(1);
+    expect(c[0]!.place.toLowerCase()).toBe('portugal');
+  });
+
+  it('never flags partner sentences, Sweden, matching destinations, or non-travel mentions', () => {
+    // Partnern i ett annat land är legitim — inte en resmålskonflikt.
+    expect(findDestinationConflicts({ plan: 'Vår partner i Portugal ordnar lokal för utbytet.' }, 'Jamaica')).toEqual([]);
+    // Hemlandet nämns i varje ansökan.
+    expect(findDestinationConflicts({ plan: 'Sökanden är verksam i Sverige och reser i oktober.' }, 'Jamaica')).toEqual([]);
+    // Rätt resmål är ingen konflikt.
+    expect(findDestinationConflicts({ plan: 'Resan till Jamaica genomförs i oktober.' }, 'Jamaica')).toEqual([]);
+    // Utan reseord i meningen: tyst — jämförelser och omvärldsbeskrivningar är inte resmål.
+    expect(findDestinationConflicts({ plan: 'Metoden används redan i Frankrike.' }, 'Jamaica')).toEqual([]);
+  });
+});
+
 describe('repetitionFindings — korrekturvarvet: upprepningar får inte förekomma', async () => {
   const { repetitionFindings } = await import('../src/index.js');
 

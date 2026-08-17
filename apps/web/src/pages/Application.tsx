@@ -283,7 +283,7 @@ export default function ApplicationPage() {
           <div style={{ marginTop: '0.8rem' }}>
             {review.overallStatus === 'READY_FOR_SUBMISSION' ? (
               <div className="alert success">
-                <strong>Klar att lämna in.</strong> Inga kritiska brister — kontrollera varningarna nedan om några visas.
+                <strong>Klar att lämna in.</strong> Underlaget är komplett och konsekvent enligt granskningen — kontrollera varningarna nedan om några visas. Klar att lämna in betyder inte att bifall är sannolikt eller garanterat: beslutet fattas alltid av finansiären, i konkurrens med andra ansökningar.
               </div>
             ) : (
               <div className="alert warning">

@@ -10,6 +10,7 @@ import {
   repetitionFindings,
   assertTransition,
   evaluateAll,
+  findDestinationConflicts,
   findNumericConflicts,
   findPeriodConflicts,
   isValidSwedishOrgNumber,
@@ -389,6 +390,24 @@ export async function reviewCase(caseRow: typeof applicationCases.$inferSelect):
       action: 'Räkna om summan i euro (beloppen står i respektive stödbeslut) och stäm av med finansiären innan ansökan — stöd över taket är otillåtet och återkrävs.',
       requiresFactualChange: true,
     });
+  }
+
+  // Geografikonsistens: resmålet i formuläret mot landnamn i fritexten —
+  // smal med avsikt (partnermeningar och Sverige undantagna, reseordskontext
+  // krävs) så att legitima omnämnanden av andra länder aldrig spammar.
+  const destinationField = (schema?.fields ?? []).find((f) => f.canonicalKey === 'project.destinationCountry');
+  const destinationAnswer = destinationField ? answers[destinationField.key] : undefined;
+  if (typeof destinationAnswer === 'string' && destinationAnswer.trim().length >= 3) {
+    for (const c of findDestinationConflicts(answers, destinationAnswer).slice(0, 3)) {
+      gaps.push({
+        id: `consistency-destination-${c.place.toLowerCase()}`,
+        severity: 'MEDIUM',
+        area: 'consistency',
+        message: `Resmålet i formuläret är ${destinationAnswer.trim()}, men texten nämner en resa ${c.place} ("${c.snippet}").`,
+        action: 'Kontrollera vilket som stämmer — motstridiga resmål är en säker kompletteringsfråga.',
+        requiresFactualChange: false,
+      });
+    }
   }
 
   // Partnermotsägelse (§12, CONFLICT-principen): formuläret säger att en

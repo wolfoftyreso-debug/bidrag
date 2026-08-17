@@ -162,6 +162,45 @@ export function findPeriodConflicts(
   return conflicts;
 }
 
+/**
+ * Geografikonsistens (claim register): resmålet i formuläret korsjämförs mot
+ * LANDNAMN i fritexten — men bara i resesammanhang, för en ansökan nämner
+ * legitimt andra länder (partnern i Portugal, jämförelser, hemlandet).
+ * Medvetet smal: partnermeningar undantas, Sverige undantas (hemlandet är
+ * aldrig en resmålskonflikt), och utan reseord i meningen flaggas inget.
+ */
+const COUNTRIES = ['jamaica', 'portugal', 'spanien', 'frankrike', 'tyskland', 'italien', 'grekland', 'polen', 'danmark', 'norge', 'finland', 'island', 'estland', 'lettland', 'litauen', 'nederländerna', 'belgien', 'österrike', 'schweiz', 'storbritannien', 'irland', 'tjeckien', 'ungern', 'rumänien', 'bulgarien', 'kroatien', 'slovenien', 'slovakien', 'usa', 'kanada', 'mexiko', 'brasilien', 'argentina', 'chile', 'japan', 'kina', 'indien', 'sydkorea', 'australien', 'nya zeeland', 'sydafrika', 'kenya', 'ghana', 'nigeria', 'egypten', 'marocko', 'tunisien', 'turkiet', 'ukraina', 'georgien'];
+const COUNTRY_RE = new RegExp(`\\b(?:till|i|från)\\s+(${COUNTRIES.join('|')})\\b`, 'gi');
+const TRAVEL_RE = /\bres(?:a|an|or|er)?\b|\breser\b|\bavres|\bresmål|\bresiden|\bvistelse|\butbyte|\båker\b|\bturné/i;
+
+export interface PlaceConflict {
+  place: string;
+  fieldKey: string;
+  snippet: string;
+}
+
+export function findDestinationConflicts(
+  answers: Record<string, unknown>,
+  destination: string,
+): PlaceConflict[] {
+  const dest = destination.trim().toLowerCase();
+  if (dest.length < 3) return [];
+  const conflicts: PlaceConflict[] = [];
+  for (const [fieldKey, value] of Object.entries(answers)) {
+    if (typeof value !== 'string') continue;
+    for (const sentence of value.split(/(?<=[.!?])\s+|\n+/)) {
+      if (/partner|samarbet|jämför/i.test(sentence)) continue;
+      if (!TRAVEL_RE.test(sentence)) continue;
+      for (const m of sentence.matchAll(COUNTRY_RE)) {
+        const country = m[1]!.toLowerCase();
+        if (country === 'sverige' || dest.includes(country) || country.includes(dest)) continue;
+        conflicts.push({ place: m[1]!, fieldKey, snippet: sentence.trim().slice(0, 140) });
+      }
+    }
+  }
+  return conflicts;
+}
+
 export function findNumericConflicts(answers: Record<string, unknown>): ConsistencyConflict[] {
   const byUnit = new Map<string, NumericClaim[]>();
   for (const c of extractNumericClaims(answers)) {

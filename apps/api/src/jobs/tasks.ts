@@ -5,9 +5,9 @@
  * Alla jobb är idempotenta och dedupliceras i data (reminders-tabellen,
  * stale-flaggan, hashade snapshots) — dubbelkörning är alltid säker.
  */
-import { eq } from 'drizzle-orm';
+import { and, eq, gt, inArray, lt, sql } from 'drizzle-orm';
 import { db } from '../db/client.ts';
-import { matches, projects, sources } from '../db/schema.ts';
+import { fundingOpportunities, matches, memberships, notifications, projects, reviewItems, sources } from '../db/schema.ts';
 import { fetchSource } from '../services/ingestion.ts';
 import { recomputeMatchesForProject } from '../services/matching.ts';
 import { notify } from '../services/notifications.ts';
@@ -53,9 +53,62 @@ export async function runStaleMatchRecalc(): Promise<{ recomputed: number }> {
   return { recomputed: staleProjects.length };
 }
 
+/**
+ * Kuratorspåminnelser (masterrevisionens farligaste risk: kurerad regeldata
+ * som åldras i tysthet). Förfallna källgranskningar och väntande källändringar
+ * ska inte bara synas i kuratorskön — de ska knacka på. Dedupliceras per
+ * kurator och dygn; körningen är idempotent.
+ */
+export async function runCuratorReminders(): Promise<{ overdue: number; pendingReview: number; notified: number }> {
+  const now = new Date();
+  const [overdueRow] = await db
+    .select({ n: sql<number>`count(*)::int` })
+    .from(fundingOpportunities)
+    .where(and(eq(fundingOpportunities.status, 'published'), lt(fundingOpportunities.nextReviewAt, now)));
+  const [pendingRow] = await db
+    .select({ n: sql<number>`count(*)::int` })
+    .from(reviewItems)
+    .where(eq(reviewItems.status, 'pending'));
+  const overdue = Number(overdueRow?.n ?? 0);
+  const pendingReview = Number(pendingRow?.n ?? 0);
+  if (overdue === 0 && pendingReview === 0) return { overdue, pendingReview, notified: 0 };
+
+  const curators = await db
+    .select({ userId: memberships.userId, tenantId: memberships.tenantId })
+    .from(memberships)
+    .where(inArray(memberships.role, ['administrator', 'data_curator']));
+  const cutoff = new Date(now.getTime() - 20 * 3_600_000);
+  let notified = 0;
+  for (const c of curators) {
+    const [recent] = await db
+      .select({ id: notifications.id })
+      .from(notifications)
+      .where(
+        and(
+          eq(notifications.userId, c.userId),
+          eq(notifications.kind, 'curator_review_due'),
+          gt(notifications.createdAt, cutoff),
+        ),
+      )
+      .limit(1);
+    if (recent) continue;
+    await notify({
+      tenantId: c.tenantId,
+      userId: c.userId,
+      kind: 'curator_review_due',
+      title: 'Kunskapsbasen behöver kuratorsgranskning',
+      body: `${overdue} stöd har passerat sitt granskningsdatum och ${pendingReview} källändringar väntar på beslut. Inaktuella regler är systemets största kvalitetsrisk — gå till kuratorsvyn.`,
+      refType: 'admin',
+    });
+    notified++;
+  }
+  return { overdue, pendingReview, notified };
+}
+
 export const CRON_TASKS: Record<string, () => Promise<unknown>> = {
   'source-fetch': runSourceFetchAll,
   'deadline-scan': runDeadlineScan,
   'stale-match-recalc': runStaleMatchRecalc,
+  'curator-reminders': runCuratorReminders,
   retention: runRetention,
 };
