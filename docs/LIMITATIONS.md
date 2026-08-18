@@ -111,7 +111,7 @@ PRIVACY.md).
 
 ## 8. Coverage is wave-1 (expanded)
 
-55 curated opportunities across 31 financiers — state agencies, foundations,
+72 curated opportunities across 35 financiers — state agencies, foundations,
 the sports federation, EU programmes, and personal entitlements
 (Försäkringskassan, CSN, Pensionsmyndigheten, municipal social services) —
 exercise the data patterns: recurring and rolling deadlines, upcoming rounds,
@@ -186,20 +186,33 @@ used by tests and the demo is disabled in production by construction
 (`PAYMENTS_MOCK_ENABLED` is ignored when `NODE_ENV=production`), and it is
 never selected when Swish is configured.
 
-## 11. Dependency audit — clean in production, dev tooling lags
+## 11. Dependency audit — clean in production, one upstream dev advisory left
 
 `npm audit --omit=dev` reports **0 vulnerabilities**: nothing that ships to
-production is affected. The advisories `npm audit` does report (verified
-2026-08-18: 8 total, 1 critical, 1 high, 6 moderate) all come from the test
-toolchain — `vitest@2.1.9` and the `vite@5.4.21` it pulls in transitively.
-Neither is part of any build output or runtime image; the critical advisory
-concerns the Vitest UI server, which this project never starts.
+production is affected, and that is the number that matters for the service.
 
-The fix is deliberately deferred rather than silently applied: no patched
-`vite@5.4.x` exists, so closing the advisories requires a major upgrade of
-the test framework (`vitest` 2 → 3/4). The 282-test suite is this project's
-entire safety net, and migrating it is its own piece of work with its own
-verification — not a drive-by change on a release run. The web app already
-builds on `vite@6.4.3`; only the test runner is pinned to the older line.
-Planned as a standalone task: upgrade `vitest`, re-run both suites, confirm
-`--pool=forks` behaviour and the real-Postgres integration path still hold.
+The critical and high advisories that used to appear are closed. They came
+from `vitest@2.1.9` and the `vite@5.4.21` it pulled in; the test framework
+was upgraded to `vitest@4` (verified 2026-08-18), which resolves onto the
+same `vite@6.4.3` the web app already builds with. Both suites — 90 core
+unit tests and 192 API integration tests against real Postgres — pass
+unchanged on the new major, because they use only `describe`/`it`/`expect`/
+`beforeAll`/`afterAll` and no mocking API.
+
+What remains is 4 moderate advisories with a single upstream root cause:
+`drizzle-kit@0.31.10` (the latest release) still depends on the deprecated
+`@esbuild-kit/esm-loader`, which pins `esbuild@0.18.20`. The advisory
+(GHSA-67mh-4wv8-2f99) concerns esbuild's **development server** allowing
+cross-origin requests; drizzle-kit uses esbuild only to transpile
+`drizzle.config.ts` and never starts that server, and drizzle-kit itself is
+a developer command (`npm run db:generate`) that is absent from every build
+output and runtime image.
+
+Two fixes were tried and deliberately rejected. `npm audit fix --force`
+proposes `drizzle-kit@0.18.1` — a *downgrade* across many majors, which
+would break migration generation. An npm `overrides` entry forcing
+`esbuild@^0.25` does not reach the nested dependency, and forcing it would
+run drizzle-kit's transpiler against an API seven minors newer than the one
+it pins — risking the tool that produces our migrations, to silence an
+advisory about a server we never start. The honest state is: wait for
+drizzle-kit to drop `@esbuild-kit`, and re-check on each release.
