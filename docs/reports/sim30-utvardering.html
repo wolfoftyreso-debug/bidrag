@@ -1,0 +1,227 @@
+<title>30 användare genom Bidrag.se</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --surface: #ffffff; --ink: #1c2330; --ink-soft: #55617a;
+    --line: #dde1ea; --accent: #2743c7; --accent-soft: #eceffc;
+    --ok: #1a7a4a; --warn: #9a6a00; --danger: #b3341f; --code-bg: #eef0f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171e; --surface: #1b1f29; --ink: #e7eaf2; --ink-soft: #9aa5bd;
+      --line: #2c3342; --accent: #8fa3ff; --accent-soft: #232b45;
+      --ok: #4cc088; --warn: #d9a53d; --danger: #e06550; --code-bg: #232835;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171e; --surface: #1b1f29; --ink: #e7eaf2; --ink-soft: #9aa5bd;
+    --line: #2c3342; --accent: #8fa3ff; --accent-soft: #232b45;
+    --ok: #4cc088; --warn: #d9a53d; --danger: #e06550; --code-bg: #232835;
+  }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif; margin: 0; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 54rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  .kicker { color: var(--accent); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+  h1 { font-size: 2rem; line-height: 1.15; margin: 0.4rem 0 0.6rem; text-wrap: balance; letter-spacing: -0.015em; }
+  .lede { color: var(--ink-soft); margin: 0 0 0.8rem; max-width: 66ch; }
+  .meta { color: var(--ink-soft); font-size: 0.85rem; border-bottom: 1px solid var(--line); padding-bottom: 1.6rem; }
+  h2 { font-size: 1.22rem; margin: 2.6rem 0 0.7rem; letter-spacing: -0.01em; }
+  h2 .n { color: var(--accent); font-variant-numeric: tabular-nums; margin-right: 0.55rem; }
+  p { margin: 0.7rem 0; max-width: 72ch; }
+  .muted { color: var(--ink-soft); }
+  code { font: 0.85em/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 4px; }
+  .statrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: 0.7rem; margin: 1.2rem 0; }
+  .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0.8rem 1rem; }
+  .stat .v { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .stat .l { color: var(--ink-soft); font-size: 0.78rem; margin-top: 0.15rem; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); margin: 0.8rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.84rem; }
+  th, td { text-align: left; padding: 0.45rem 0.7rem; border-top: 1px solid var(--line); vertical-align: top; }
+  thead th { border-top: none; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); white-space: nowrap; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  ul { padding-left: 1.2rem; margin: 0.7rem 0; }
+  li { margin: 0.35rem 0; max-width: 70ch; }
+  .status { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; padding: 0.1rem 0.55rem; border-radius: 99px; white-space: nowrap; }
+  .status.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+  .status.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); }
+  .status.no { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); }
+  .finding { border: 1px solid var(--line); border-left: 3px solid var(--warn); background: var(--surface); border-radius: 0 8px 8px 0; padding: 0.9rem 1.1rem; margin: 1rem 0; max-width: 72ch; }
+  .finding.good { border-left-color: var(--ok); }
+  .finding h3 { margin: 0 0 0.3rem; font-size: 0.98rem; }
+  .finding p { margin: 0.35rem 0; }
+  footer { margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 0.82rem; }
+</style>
+
+<div class="page">
+  <div class="kicker">Bidrag.se · Simulering mot riktiga API:t</div>
+  <h1>30 användare genom hela flödet</h1>
+  <p class="lede">
+    Trettio personor — barnfamiljer, pensionärer, sjukskrivna, egenföretagare, studenter, föreningar,
+    företag och en kommun — körda genom hela kedjan: situationsprofil → gratis teaser → 39 kr-upplåsning
+    (simulerad betalning) → full analys → följdfrågor → dokumentköp → PDF → kvitton.
+  </p>
+  <p class="meta">2026-08-16 · utvärdering mot commit <code>85b2fc0</code> · åtgärder och omsimulering mot <code>cc6ccbb</code> + <code>90a3eb2</code> · varje persona är ett riktigt konto genom riktiga endpoints — inga mockade svar utom betalningens bekräftelsesteg</p>
+
+  <div class="statrow">
+    <div class="stat"><div class="v">30/30</div><div class="l">genomförda utan krasch</div></div>
+    <div class="stat"><div class="v">1 336 kr</div><div class="l">simulerad intäkt (30×39 + 4 dokumentpaket)</div></div>
+    <div class="stat"><div class="v">5/5</div><div class="l">dokument → giltiga PDF:er</div></div>
+    <div class="stat"><div class="v">0</div><div class="l">teaserläckor · nollresultat · felkvitton</div></div>
+    <div class="stat"><div class="v">4/4</div><div class="l">följdfrågor gav deterministisk uppgradering där reglerna sa det</div></div>
+  </div>
+
+  <h2><span class="n">0</span>Uppdatering: alla fynd åtgärdade och verifierade i omsimulering <span class="status ok">klart</span></h2>
+  <p>
+    Efter utvärderingen åtgärdades F1–F3 och båda kuratorsbesluten, och samma 30 personor kördes om
+    genom hela kedjan mot de nya reglerna: 30/30 genomförda, 0 anomalier, alla 136 API-tester gröna.
+    Så här flyttade sig siffrorna:
+  </p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Persona</th><th>Före</th><th>Efter omsimulering</th></tr></thead>
+    <tbody>
+      <tr><td>P01 Sara — ensamstående tvåbarnsmamma</td><td class="num">20 rader i teasern (🟢5 ⚪15)</td><td class="num">10 relevanta rader (🟢5 ⚪5) — projektbidragen borta ur personliga spåret</td></tr>
+      <tr><td>P05 Gunnar · P14 Birgitta · P21 Rut — pensionärer</td><td>⚪15–16 + <em>"Planerar du studier…?"</em></td><td>⚪4–5, inga studiefrågor — CSN-stöden utesluts nu på ålder</td></tr>
+      <tr><td>P11 Helena — hög inkomst, skolkostnadsstress</td><td>Majblomman <strong>🟢 hög relevans</strong></td><td>Majblomman <strong>🟡 möjlig</strong> — inkomsten väger nu ned utan att dölja stödet</td></tr>
+      <tr><td>P26 IF Kämpen — idrottsförening</td><td class="num">🟢0 (org-fakta samlades aldrig in)</td><td class="num">🟢1 LOK-stöd · 🟡1 MUCF projektbidrag</td></tr>
+      <tr><td>P28 Ung Röst — ungdomsförening</td><td class="num">🟢0</td><td class="num">🟢2 — MUCF projekt- och organisationsbidrag</td></tr>
+      <tr><td>P25 Aisha — danskonstnär</td><td class="num">⚪17 att utreda</td><td class="num">⚪2 — personstöden stör inte längre projektspåret</td></tr>
+      <tr><td>🟡-nivån "möjlig"</td><td class="num">0 träffar hos samtliga 30</td><td>används där den ska: P11, P26, P27 (2 st), P30</td></tr>
+    </tbody>
+  </table></div>
+  <div class="finding good">
+    <h3>Bonusfynd under verifieringen: seedern kunde aldrig uppdatera regler i befintliga databaser</h3>
+    <p>F2-fixen (åldersgränser på CSN-stöden) nådde först inte utvecklingsdatabasen — seedern skapade bara
+    regelversion 1 om ingen fanns och gjorde annars tyst ingenting, så kurerade regeländringar propagerade aldrig
+    till en redan seedad miljö. Seedern publicerar nu en <em>ny</em> regelversion (append-only med ändringsnot, samma
+    modell som kuratorsflödet) när det kurerade innehållet ändrats, och flaggar berörda matchningar för omräkning.
+    Jämförelsen är nyckelordnings-oberoende eftersom Postgres jsonb sorterar om nycklar — annars hade varje seed
+    skapat versionschurn. Utan 30-simuleringen hade det här hittats först i produktion.</p>
+  </div>
+
+  <h2><span class="n">1</span>Vad simuleringen bevisar <span class="status ok">fungerar</span></h2>
+
+  <div class="finding good">
+    <h3>Upptäcktslogiken levererar produktlöftet — mätbart</h3>
+    <p><strong>P02 Johan</strong> (arbetande pappa, 25–40 tkr — skulle aldrig googla "bidrag") svarade ja på skolutflyktsfrågan:
+    fick Majblomman som hög relevans och köpte dokumentförberedelse för 19 kr. <strong>P20 Maria</strong> (ok ekonomi, enbart
+    trafikfarlig skolväg): exakt ett stöd — skolskjuts. <strong>P12 Yusuf</strong> (ensamstående trebarnspappa, under 15 tkr):
+    sex höga träffar inklusive alla tre barnspåren + underhållsstöd + försörjningsstöd, köpte 79 kr-paketet och fick
+    ansökan + ekonomisk bilaga som PDF:er. Motsatsen håller också: <strong>P24 familjen Ek</strong> (samma barnsituation, nej på
+    alla upptäcktsfrågor) fick noll barnstöd — inga falska positiva.</p>
+  </div>
+  <div class="finding good">
+    <h3>Följdfrågorna uppgraderar exakt när reglerna säger det — och bara då</h3>
+    <p>P01 Sara: svar på försörjningsstödets två frågor → Försörjningsstöd blev aktuellt. P03 Amir och P08 Petra:
+    sexkilometersfrågan → Elevresor på gymnasiet. P18 och P21 svarade också på följdfrågor men fick ärligt <em>inga</em>
+    nya stöd (villkoren var redan uppfyllda respektive otillräckliga) — systemet belönar inte svar med falskt hopp.</p>
+  </div>
+  <div class="finding good">
+    <h3>Kommersiella kedjan håller ihop under 30 samtidiga kunder</h3>
+    <p>34 betalningar, 34 kvitton med korrekt moms och löpande nummer, per-typ-beskrivningar
+    ("Personlig bidragsanalys" / "Dokumentförberedelse — upp till 3 dokument"), allt åtkomligt under Mina köp.
+    Auth-rate-limiten (10 registreringar/min/IP) slog till mot simuleringens burst — rätt beteende, dokumenterat.</p>
+  </div>
+
+  <h2><span class="n">2</span>Fynd ur första körningen <span class="status ok">alla tre åtgärdade</span></h2>
+
+  <div class="finding good">
+    <h3>F1 — Teasern lovade mer än rapporten visade: ⚪-räkningen dominerades av irrelevanta projektbidrag <span class="status ok">åtgärdat</span></h3>
+    <p>Varje personlig persona fick 13–17 stöd i "kräver mer information" — men merparten är projektbidrag
+    (kultur, energi, förlag…) som bara är "okända" för att personen aldrig fått projektfrågorna. Sara ser
+    <em>"20 möjliga stödformer"</em> i teasern men möter 5–6 konkreta i rapporten (resten sammanfattas bort av UI:t).
+    Frågelistan innehåller på samma sätt "Är verksamheten professionell?" och "Är projektet ett musikprojekt?"
+    för ensamstående föräldrar (webbappen sorterar bort det värsta genom att visa max 6 personliga frågor först,
+    men datat under är brusigt).
+    <br /><strong>Rekommendation:</strong> spårmedveten relevansfiltrering i API:t — i det personliga spåret räknas och visas
+    bara instrument som kan vara aktuella (ersättningar/studiestöd + ev. öppnade spår), så teasern säger t.ex.
+    "8 stöd kan vara relevanta" i stället för 20. Störst produktförbättring per rad kod.
+    <br /><strong>Åtgärd:</strong> API:t härleder spår ur profilens fakta (<code>detectTrack</code>) och filtrerar
+    bort instrument som inte hör hemma i spåret om de inte bedömts aktuella — Sara ser nu 10 relevanta rader
+    i stället för 20, Aisha 2 att utreda i stället för 17. Verifierat i <code>personalJourney</code>-testet.</p>
+  </div>
+  <div class="finding good">
+    <h3>F2 — Studiefrågor ställdes till pensionärer (P05, P14, P21) <span class="status ok">åtgärdat</span></h3>
+    <p>"Planerar du studier som stärker din ställning på arbetsmarknaden?" nådde tre pensionärer eftersom
+    omställningsstudiestödet och studiemedlen saknar övre åldersgräns i reglerna (verkligheten: omställningsstudiestöd
+    t.o.m. ca 62 år, studiemedel har också åldersgränser).
+    <br /><strong>Åtgärd:</strong> hårda ålderskriterier på studiemedel och omställningsstudiestöd (+ pensionskriterium)
+    i den kurerade regeldatan. Omsimuleringen bekräftar: noll studiefrågor till pensionärerna, deras
+    "att utreda"-listor krympte från 15–16 till 4–5. Det var den här fixen som avslöjade seed-buggen i §0.</p>
+  </div>
+  <div class="finding good">
+    <h3>F3 — 🟡 "möjlig" användes nästan aldrig i personliga spåret <span class="status ok">åtgärdat</span></h3>
+    <p>Alla 24 personliga personor fick 🟡 = 0 — nivån "eligible med medelhög konfidens" inträffar i praktiken inte
+    med dagens konfidensberäkning, så teasern visar konsekvent "0 möjliga" mellan 🟢 och ⚪.
+    <br /><strong>Åtgärd:</strong> båda rekommendationerna genomförda — ett viktat kriterium som inte är uppfyllt ger nu
+    "möjlig" i stället för "hög relevans" (server, webb och demo), och teasern döljer nivårader med noll träffar.
+    🟡 förekommer nu där den hör hemma (P11, P26, P27, P30) och teasern visar aldrig "0 möjliga" som utfyllnad.</p>
+  </div>
+
+  <h2><span class="n">3</span>Gränsfallen — beslut och utfall <span class="status ok">avgjorda</span></h2>
+  <ul>
+    <li><strong>P11 Helena</strong> (över 40 tkr, ja på skolutflyktsfrågan): Majblomman visades som <em>hög relevans</em> trots att
+    stiftelsen riktar sig till familjer med knapp ekonomi. <strong>Beslut:</strong> den kalibrerade nivålogiken (F3) löser
+    detta utan regeländring — inkomsten är viktande, väger emot, och stödet blir <strong>🟡 möjlig</strong>: synligt men
+    utan falsk säkerhet. Verifierat i omsimuleringen.</li>
+    <li><strong>P26/P28 föreningar</strong> fick 0 höga träffar eftersom intaget aldrig samlade org-fakta. <strong>Beslut:</strong>
+    föreningsgren i projektspåret (demokratisk struktur, RF-anslutning, ungdomsandel, riksspridning) med samma
+    upptäcktskänsla som barnspåret. Utfall: IF Kämpen 🟢 LOK-stöd + 🟡 MUCF, Ung Röst 🟢 båda MUCF-bidragen.</li>
+    <li><strong>P29 informell grupp</strong>: ärligt tunt (3 att utreda, 52 uteslutna med skäl) — rätt beteende, oförändrat.</li>
+  </ul>
+
+  <h2><span class="n">4</span>Alla 30 — resultat per persona (första körningen)</h2>
+  <p class="muted">Tabellen visar utgångsläget som fynden bygger på; §0 visar hur nyckelpersonorna flyttade sig efter åtgärderna.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Persona</th><th>Teaser</th><th>🟢 Hög relevans efter upplåsning</th><th>Följdfråga</th><th>Köp</th></tr></thead>
+    <tbody>
+      <tr><td>P01 Sara — ensamstående tvåbarnsmamma, arbetslös, underhåll uteblir</td><td class="num">🟢5 ⚪15</td><td>Underhållsstöd · Bostadsbidrag · Skolskjuts · Glasögonbidrag · Majblomman</td><td>+Försörjningsstöd</td><td class="num">88 kr, 1 dok</td></tr>
+      <tr><td>P02 Johan — arbetande pappa, ok inkomst, skolutflyktsstress</td><td class="num">🟢1 ⚪14</td><td>Majblomman</td><td>—</td><td class="num">58 kr, 1 dok</td></tr>
+      <tr><td>P03 Amir — egenföretagare, barn i båda skolformer</td><td class="num">🟢3 ⚪15</td><td>Bostadsbidrag · Skolskjuts · Majblomman</td><td>+Elevresor (6 km)</td><td class="num">39 kr</td></tr>
+      <tr><td>P04 Moa — student 22 utan barn</td><td class="num">🟢3 ⚪15</td><td>Försörjningsstöd · Studiemedel · Bostadsbidrag unga</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P05 Gunnar — pensionär, mycket låg pension</td><td class="num">🟢2 ⚪15</td><td>Försörjningsstöd · Bostadstillägg pensionärer</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P06 Elin — långtidssjukskriven</td><td class="num">🟢0 ⚪16</td><td class="muted">— (sjukersättningsspåret kräver följdsvar)</td><td>—</td><td class="num">58 kr, 1 dok</td></tr>
+      <tr><td>P07 Liam — 19, utan sysselsättning, bor hemma</td><td class="num">🟢1 ⚪17</td><td>Försörjningsstöd</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P08 Petra — växelvis, gymnasiebarn 7 km</td><td class="num">🟢0 ⚪15</td><td class="muted">—</td><td>+Elevresor (6 km)</td><td class="num">39 kr</td></tr>
+      <tr><td>P09 Krister — arbetslös 45 utan barn</td><td class="num">🟢0 ⚪17</td><td class="muted">—</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P10 Cecilia &amp; Marcus — hög inkomst utan barn</td><td class="num">🟢0 ⚪15</td><td class="muted">— (ärligt)</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P11 Helena — hög inkomst + skolkostnadsstress</td><td class="num">🟢1 ⚪13</td><td>Majblomman <span class="status warn">gränsfall</span></td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P12 Yusuf — ensamstående trebarnspappa, under 15 tkr</td><td class="num">🟢6 ⚪14</td><td>Underhållsstöd · Bostadsbidrag · Glasögon · Majblomman · Skolskjuts · Försörjningsstöd</td><td>—</td><td class="num">118 kr, 2 dok</td></tr>
+      <tr><td>P13 Frida — studerande småbarnsförälder</td><td class="num">🟢3 ⚪14</td><td>Bostadsbidrag unga · Studiemedel · Bostadsbidrag barnfamiljer</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P14 Birgitta — pensionär, hygglig pension</td><td class="num">🟢0 ⚪16</td><td class="muted">— (äldreförsörjningsstöd korrekt ej grönt)</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P15 Tomas — sjukskriven, gymnasiebarn, fritids-avstått</td><td class="num">🟢3 ⚪14</td><td>Bostadsbidrag · Glasögonbidrag · Majblomman</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P16 Anna — arbetande ensamboende</td><td class="num">🟢0 ⚪16</td><td class="muted">—</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P17 Basel — egenföretagare utan barn</td><td class="num">🟢0 ⚪16</td><td class="muted">—</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P18 Nellie — ung arbetslös, egen lägenhet</td><td class="num">🟢2 ⚪17</td><td>Bostadsbidrag unga · Försörjningsstöd</td><td>0 nya (ärligt)</td><td class="num">39 kr</td></tr>
+      <tr><td>P19 Oskar &amp; Lina — förskolebarn, ok ekonomi</td><td class="num">🟢0 ⚪14</td><td class="muted">—</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P20 Maria — enbart skolvägsproblem</td><td class="num">🟢1 ⚪14</td><td>Skolskjuts</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P21 Rut — 79, garantipension</td><td class="num">🟢2 ⚪15</td><td>Bostadstillägg · Försörjningsstöd</td><td>0 nya</td><td class="num">39 kr</td></tr>
+      <tr><td>P22 Vera — 18, gymnasiestuderande</td><td class="num">🟢1 ⚪16</td><td>Studiemedel</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P23 Danijela — arbetslös med tonåring</td><td class="num">🟢1 ⚪15</td><td>Bostadsbidrag barnfamiljer</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P24 Familjen Ek — trygg ekonomi, nej på upptäcktsfrågorna</td><td class="num">🟢0 ⚪13</td><td class="muted">— (inga falska positiva)</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P25 Aisha — danskonstnär, Jamaicaprojektet</td><td class="num">🟢5 ⚪17</td><td>Projektbidrag musik ×2 · Resebidrag ×2 · Arbetsstipendium</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P26 IF Kämpen — idrottsförening, barnverksamhet</td><td class="num">🟢0 ⚪14</td><td class="muted">— (org-fakta saknas i intaget, se §3)</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P27 Grön Energi AB — klimatinvestering</td><td class="num">🟢1 🟡2 ⚪10</td><td>Investeringsstöd jordbruk · (möjliga: Klimatklivet-spår, miljöbidrag)</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P28 Ung Röst — ungdomsförening</td><td class="num">🟢0 ⚪14</td><td class="muted">— (samma org-lucka)</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P29 Kollektivet Norr — informell kulturgrupp</td><td class="num">🟢0 ⚪3</td><td class="muted">— (ärligt tunt, 52 uteslutna med skäl)</td><td>—</td><td class="num">39 kr</td></tr>
+      <tr><td>P30 Sundby kommun — energiprojekt</td><td class="num">🟢2 🟡1 ⚪8</td><td>LONA · Investeringsstöd</td><td>—</td><td class="num">39 kr</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">5</span>Sammanfattande bedömning</h2>
+  <p>
+    Kedjan håller tekniskt hela vägen för alla 30: inga krascher, inga läckor, korrekta kvitton, giltiga PDF:er,
+    deterministiska uppgraderingar. Produktlöftet — <em>"beskriv din situation så hittar vi vad du kan ha möjlighet
+    att söka"</em> — levereras bevisligen för barnfamiljerna, pensionärerna, studenterna och kulturskaparna.
+    Efter åtgärdsrundan gäller det även föreningarna, och teaserns siffror står för det rapporten sedan visar:
+    inga irrelevanta projektbidrag i personliga spåret, inga studiefrågor till pensionärer, och en 🟡-nivå som
+    faktiskt bär betydelse i köpögonblicket. Omsimuleringen gick 30/30 utan anomalier, och seed-buggen som
+    verifieringen avslöjade är den sortens fel som är billigt nu och dyrt i produktion — precis det simuleringar
+    av det här slaget är till för.
+  </p>
+
+  <footer>
+    Första simulering 2026-08-16 mot commit <code>85b2fc0</code>; åtgärder och omsimulering samma dag mot
+    <code>cc6ccbb</code> + <code>90a3eb2</code> (30/30, 0 anomalier, 136 API-tester gröna). Per körning:
+    30 riktiga konton, ~350 API-anrop, 34 betalningar, 34 kvitton, 5 genererade dokument. Rådata:
+    <code>sim30-results.json</code>. Betalningarnas bekräftelsesteg använde mock-providern (dev) — resten av
+    kedjan är produktionsvägen.
+  </footer>
+</div>

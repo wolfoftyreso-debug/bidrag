@@ -1,0 +1,327 @@
+<title>Bidrag.se Forensisk Revision</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --ink: #1c2330;
+    --ink-soft: #55617a;
+    --line: #dde1ea;
+    --accent: #2743c7;
+    --accent-soft: #eceffc;
+    --ok: #1a7a4a;
+    --warn: #9a6a00;
+    --danger: #b3341f;
+    --code-bg: #eef0f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171e; --surface: #1b1f29; --ink: #e7eaf2; --ink-soft: #9aa5bd;
+      --line: #2c3342; --accent: #8fa3ff; --accent-soft: #232b45;
+      --ok: #4cc088; --warn: #d9a53d; --danger: #e06550; --code-bg: #232835;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171e; --surface: #1b1f29; --ink: #e7eaf2; --ink-soft: #9aa5bd;
+    --line: #2c3342; --accent: #8fa3ff; --accent-soft: #232b45;
+    --ok: #4cc088; --warn: #d9a53d; --danger: #e06550; --code-bg: #232835;
+  }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif; margin: 0; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 50rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  .kicker { color: var(--accent); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+  h1 { font-size: 2rem; line-height: 1.15; margin: 0.4rem 0 0.6rem; text-wrap: balance; letter-spacing: -0.015em; }
+  .lede { color: var(--ink-soft); margin: 0 0 0.8rem; max-width: 64ch; }
+  .meta { color: var(--ink-soft); font-size: 0.85rem; border-bottom: 1px solid var(--line); padding-bottom: 1.6rem; }
+  h2 { font-size: 1.22rem; margin: 2.6rem 0 0.7rem; letter-spacing: -0.01em; text-wrap: balance; }
+  h2 .n { color: var(--accent); font-variant-numeric: tabular-nums; margin-right: 0.55rem; }
+  h3 { font-size: 0.95rem; margin: 1.4rem 0 0.4rem; }
+  p { margin: 0.7rem 0; max-width: 70ch; }
+  .muted { color: var(--ink-soft); }
+  code { font: 0.85em/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 4px; }
+  pre { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; overflow-x: auto; font: 0.8rem/1.55 ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  pre code { background: none; padding: 0; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); margin: 0.8rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.86rem; }
+  th, td { text-align: left; padding: 0.5rem 0.8rem; border-top: 1px solid var(--line); vertical-align: top; }
+  thead th { border-top: none; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); white-space: nowrap; }
+  td code { white-space: nowrap; }
+  ul { padding-left: 1.2rem; margin: 0.7rem 0; }
+  li { margin: 0.32rem 0; max-width: 68ch; }
+  .status { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; padding: 0.1rem 0.55rem; border-radius: 99px; white-space: nowrap; }
+  .status.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+  .status.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); }
+  .status.no { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); }
+  .status.info { color: var(--accent); background: var(--accent-soft); }
+  .verdict { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 1.1rem 1.3rem; margin: 1rem 0; }
+  .verdict h3 { margin-top: 0.9rem; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.09em; color: var(--ink-soft); }
+  .verdict h3:first-child { margin-top: 0; }
+  .callout { border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 8px 8px 0; padding: 0.8rem 1.1rem; margin: 1.2rem 0; max-width: 68ch; }
+  .callout p { margin: 0.3rem 0; }
+  footer { margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 0.82rem; }
+</style>
+
+<div class="page">
+  <div class="kicker">Bidrag.se · Strict mode — read only</div>
+  <h1>Forensisk arkitektur- och deployrevision</h1>
+  <p class="lede">
+    Fullständig inspektion av vad som faktiskt existerar i Bidrag.se-repot — ingen kod ändrad, inget
+    "förbättrat", inga antaganden om avsedd arkitektur. Rapporten ska räcka för att en annan ingenjör
+    ska förstå systemet utan att öppna repot.
+  </p>
+  <p class="meta">2026-08-16 · gren <code>claude/bidrag-se-production-build-hdabqp</code> @ <code>162192c</code> · verifierad mot källkod, migreringar, tester och byggen — inte mot dokumentationens påståenden</p>
+
+  <h2><span class="n">1</span>Systemidentifikation</h2>
+  <div class="tablewrap"><table><tbody>
+    <tr><td>Applikation</td><td>Bidrag.se — personlig rättighets- och stödutredning (bidrag/ersättningar/stipendier: upptäckt → behörighet → matchning → ansökan → ärende)</td></tr>
+    <tr><td>Språk / pakethanterare</td><td>TypeScript överallt · npm workspaces-monorepo · Node ≥ 22 (<code>engines</code>)</td></tr>
+    <tr><td>Frontend</td><td>React 18.3 SPA, Vite 6, react-router; ren klient — ingen SSR</td></tr>
+    <tr><td>Backend</td><td>Fastify 5.2 modulär monolit; Drizzle ORM 0.45 + <code>pg</code> 8.13; pg-boss 10 för köer</td></tr>
+    <tr><td>Databas</td><td>PostgreSQL 16 (ren Postgres — inga Supabase-API:er i koden)</td></tr>
+    <tr><td>Auth</td><td>Egenbyggd: scrypt-hashade lösenord, jose HS256 access-JWT (15 min) + roterande SHA-256-hashade refresh-tokens, httpOnly-cookies, origin-guard (CSRF)</td></tr>
+    <tr><td>Lagring</td><td>Driver-gräns: <code>disk</code> (default) eller <code>supabase</code> (Storage REST, service-nyckel server-side)</td></tr>
+    <tr><td>Betalning</td><td>Engångsupplåsning 39 kr per analys; providerregister med Swish-adapter (vägrar 503 utan avtal/cert) + produktionsspärrad mock; kvittolager med moms</td></tr>
+    <tr><td>E-post</td><td>Resend (API-nyckel) → SMTP-fallback (nodemailer) → ärligt "skipped"</td></tr>
+    <tr><td>Deploy-antaganden</td><td>Två vägar i repot: Vercel + Supabase (<code>vercel.json</code>, <code>api/index.ts</code>, primär enligt docs) och containerimage + K8s-manifest (behållen alternativväg)</td></tr>
+  </tbody></table></div>
+  <p>
+    Bidrag.se är i dag en fungerande, testad flerhyresgäst-plattform: en ren domänmotor
+    (trevärd kriterielogik, 5-lagers matchning, 16-tillstånds ärendemaskin) bakom ett Fastify-API med
+    34 Postgres-tabeller, en svenskspråkig SPA med en-fråga-per-skärm-intag, betalvägg med kvitton,
+    och en kurerad kunskapsbas om 51 stöd från 29 finansiärer. 155 tester (48 domän + 107 API) är gröna.
+  </p>
+
+  <h2><span class="n">2</span>Repository-forensik</h2>
+  <pre><code>packages/core     ren domänmotor (noll I/O): criteria, matching, stateMachine,
+                  budget, schema/forms, stacking, deadlines, validation
+apps/api          Fastify: src/{routes,services,jobs,db,plugins,seed}, drizzle/
+                  (6 SQL-migreringar + meta), test/ (15 filer), vitest.config.ts
+apps/web          Vite React SPA: src/pages (Onboarding, Matches, Application,
+                  Vault, Inbox, Admin, RuleEditor, Account, Search), api.ts
+api/index.ts      Vercel-funktion som wrappar hela Fastify-appen
+deploy/k8s        deployment.yaml + secrets.example.yaml (alternativväg)
+docs/             ARCHITECTURE, SECURITY, PRIVACY, LIMITATIONS, OPERATIONS,
+                  DEPLOYMENT (Vercel/Supabase-runbook), MIGRATION-REPORT
+.github/workflows CI: typecheck, tester mot riktig Postgres, backup/restore-
+                  övning, npm audit, web+api-bygge, Docker-bygge
+vercel.json · Dockerfile · .env.example (namn, inga värden) · .gitignore</code></pre>
+  <p><strong>Sådant som inte hör hemma i Git:</strong> inget hittat bland spårade filer. <code>node_modules/</code>, <code>dist/</code>, <code>uploads/</code>, <code>test-uploads/</code>, <code>.env*</code>, <code>.vercel/</code> är ignorerade; <code>git ls-files</code> visar inga byggartefakter, databaser, cachear eller hemligheter. Ospårat byggskräp finns lokalt på disk (<code>apps/web/dist</code>) men är korrekt ignorerat. Testvärden i <code>vitest.config.ts</code> och CI är uppenbara icke-hemligheter.</p>
+
+  <h2><span class="n">3</span>Faktisk runtime-modell</h2>
+  <ul>
+    <li><strong>Frontend:</strong> statisk SPA (Vite-bygge → <code>apps/web/dist</code>). Ingen SSR, inga klienthemligheter, inga <code>VITE_</code>-variabler — allt går mot <code>/v1</code> på samma origin. Servas av Vercel (statiskt) eller av API:t via <code>@fastify/static</code> (container).</li>
+    <li><strong>Backend:</strong> ett Fastify-API. Två startvägar: <code>src/index.ts</code> (långlivad process: migrerar vid start + startar pg-boss-worker) och <code>api/index.ts</code> (serverless: ingen migrering, ingen worker; instans delas mellan varma anrop).</li>
+    <li><strong>Persistens:</strong> Postgres via <code>pg</code>-pool (<code>DATABASE_URL</code>, <code>PG_POOL_MAX</code>); Drizzle för alla queries; <code>DIRECT_DATABASE_URL</code> respekteras av migratorn.</li>
+    <li><strong>Filer:</strong> dokumentvalvet kräver objektlagring — disk-driver (kräver beständigt filsystem) eller Supabase Storage-driver (kräver inget filsystem). Inga andra filberoenden i runtime.</li>
+  </ul>
+
+  <h2><span class="n">4</span>Databas-forensik</h2>
+  <p>
+    PostgreSQL, 34 tabeller i <code>public</code>: tenants/users/memberships/invites (flerhyresgäst),
+    applicant_profiles/projects (fakta), authorities/funding_opportunities/rule_versions (kunskapsgraf med
+    effective-datering), matches/funding_stacks, application_cases + budget_lines/canonical_answers/
+    submissions/submission_receipts/decisions/reporting_requirements/payment_milestones (ärenden),
+    documents/case_documents (valv), sources/source_snapshots/review_queue (inhämtning),
+    notifications/reminders/correspondence_events, audit_events (append-only),
+    payments/receipts (köp + verifikationer med egen nummersekvens), refresh_tokens.
+    FK:er med genomtänkt on-delete (tenant-kaskad; kvitton överlever radering), index på heta vägar,
+    pengar i öre (integer), JSONB för fakta/regler/planer.
+  </p>
+  <p>
+    Migreringar: 6 st deterministiska SQL-filer (0000–0005) versionerade i Git, körda av Drizzles migrator i CI,
+    test och deploysteg. 0005 slår på RLS (deny-all, inga policies) för alla tabeller och återkallar
+    anon/authenticated-grants; ett invarianttest fäller CI om en framtida tabell saknar RLS.
+    Seeddata: 51 stöd/29 myndigheter som idempotent seed-skript.
+  </p>
+  <p><strong>Supabase-kompatibilitet:</strong> <span class="status ok">hög</span> — ren Postgres utan extensions utöver standard; RLS-migreringen är skriven för exakt Supabase-exponeringen; pooler-hänsyn (transaction mode) finns i migratorn. Ingen migrering utförd i denna revision.</p>
+
+  <h2><span class="n">5</span>Autentisering &amp; auktorisering</h2>
+  <ul>
+    <li>Register/login/logout/refresh/me finns; lösenord scrypt med per-användare-salt; refresh-tokens roteras och lagras hashade; cookies httpOnly + secure i produktion; origin-guard som CSRF-försvar; hårdare rate limit på auth-endpoints.</li>
+    <li><strong>Lösenordsåterställning saknas</strong> och e-postverifiering saknas — konto skapas direkt. (Rapporterat, ej åtgärdat.)</li>
+    <li>Auktorisering i applikationslagret: varje query är tenant-scopad (<code>tenant_id</code> ur verifierat medlemskap, aldrig ur klientdata); främmande resurser ger 404, inte 403; roller (owner/administrator/applicant/contributor/reviewer/finance/data_curator) via <code>requireRole</code>; admin-/kuratorsytor kräver admin/data_curator.</li>
+    <li><strong>Cross-tenant-åtkomst till sökningar, analyser, betalningar, kvitton, dokument: verifierat spärrad</strong> av dedikerade isolationstester (tenantIsolation, payments, gdpr) — inklusive försök att sätta främmande <code>X-Tenant-Id</code>.</li>
+    <li>RLS på databasnivå är deny-all-mur mot PostgREST-vägen; applikationens behörighetsmodell ligger i API:t (API:t ansluter som tabellägare).</li>
+  </ul>
+
+  <h2><span class="n">6</span>API-arkitektur</h2>
+  <p class="muted">REST, ~60 endpoints under <code>/v1</code>, JSON-scheman på alla bodies, OpenAPI-export. Alla utom de markerade kräver sessionscookie. DB = Drizzle/Postgres i samtliga.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Yta</th><th>Endpoints</th><th>Auth</th><th>Vendor/hemlighet</th></tr></thead>
+    <tbody>
+      <tr><td>Hälsa/meta</td><td><code>GET /healthz</code> · <code>/readyz</code> · <code>/metrics</code> · <code>/v1/openapi.json</code></td><td>öppna</td><td>—</td></tr>
+      <tr><td>Auth</td><td><code>POST register/login/logout/refresh</code> · <code>GET me</code></td><td>öppna resp. cookie</td><td>AUTH_SECRET</td></tr>
+      <tr><td>Profiler/projekt</td><td>CRUD <code>/v1/profiles</code>, <code>/v1/projects</code> · <code>external-identifiers</code> (fältkrypterade)</td><td>cookie + roll</td><td>FIELD_ENCRYPTION_KEY</td></tr>
+      <tr><td>Matchning</td><td><code>GET/POST /v1/projects/:id/matches</code> (teaser när låst) · <code>funding-stack</code> (402 när låst)</td><td>cookie</td><td>—</td></tr>
+      <tr><td>Betalning/kvitto</td><td><code>unlock-status</code> · <code>analysis-unlock</code> · <code>mock-confirm</code> (endast icke-prod) · <code>receipt-email</code> · <code>resend-receipt</code> · <code>GET receipt</code></td><td>cookie + roll</td><td>Swish-cert (framtida), Resend</td></tr>
+      <tr><td>Webhook</td><td><code>POST /v1/webhooks/payments/:provider</code></td><td>öppen, svarar alltid 503</td><td>— (tills provider konfigureras)</td></tr>
+      <tr><td>Ärenden</td><td><code>/v1/applications</code> + budget/validate/submit/transition/decision/reporting …</td><td>cookie + roll</td><td>—</td></tr>
+      <tr><td>Dokument</td><td>upload/list/download/delete</td><td>cookie + roll</td><td>ClamAV (valfri), Storage-nyckel</td></tr>
+      <tr><td>Stödkatalog</td><td><code>GET /v1/funding-opportunities</code> (+ :id)</td><td>cookie</td><td>—</td></tr>
+      <tr><td>Team/GDPR</td><td>tenants/members/invites · <code>tenant/export</code> · <code>DELETE /v1/tenant</code></td><td>cookie + roll</td><td>Resend (inbjudningar)</td></tr>
+      <tr><td>Kurator/admin</td><td>sources/snapshots/fetch · review-queue apply/resolve · rule-versions · verify · stale-matches</td><td>admin/data_curator</td><td>—</td></tr>
+      <tr><td>Intern cron</td><td><code>GET/POST /v1/internal/cron/:job</code></td><td>Bearer CRON_SECRET (404 utan)</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Vercel-körbarhet:</strong> alla endpoints går genom serverless-entryn (röktestad). Enda persistent-server-antagandena är pg-boss-workern (ersatt av cron-endpoints på Vercel-vägen) och disk-drivern (ersatt av Storage-drivern).</p>
+
+  <h2><span class="n">7</span>Externa vendors</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Vendor</th><th>Syfte</th><th>Anrop</th><th>Auth</th><th>Felhantering</th></tr></thead>
+    <tbody>
+      <tr><td>Resend</td><td>transaktionsmail (kvitton, notiser, inbjudningar)</td><td><code>POST api.resend.com/emails</code> från <code>services/email.ts</code>, server-side</td><td>Bearer <code>RESEND_API_KEY</code></td><td>fel → auditloggat <code>failed</code>; utan nyckel → SMTP-fallback → "skipped". Ingen timeout satt på Resend-anropet (noterat §17)</td></tr>
+      <tr><td>SMTP</td><td>fallback-mail</td><td>nodemailer, <code>SMTP_URL</code></td><td>i URL:en</td><td>samma auditflöde</td></tr>
+      <tr><td>Swish</td><td>betalning (avsedd)</td><td><em>inga nätverksanrop implementerade</em> — adaptern kräver <code>SWISH_MERCHANT_ALIAS</code> + <code>SWISH_CERT_PATH</code> och kastar annars 503</td><td>mTLS (framtida)</td><td>ärlig vägran; skapar aldrig sken av betalning</td></tr>
+      <tr><td>Supabase Storage</td><td>dokumentvalv (driver <code>supabase</code>)</td><td>Storage REST object/list/delete, 30 s timeout</td><td>service-nyckel, server-side</td><td>kastar vid put/get-fel; delete är best-effort</td></tr>
+      <tr><td>ClamAV</td><td>filskanning (valfri)</td><td>TCP INSTREAM</td><td>—</td><td>otillgänglig → <code>scan_unavailable</code>, aldrig tyst "ren"</td></tr>
+      <tr><td>Källwebbplatser</td><td>inhämtning av stödvillkor</td><td>GET med SSRF-guard (blockerar privata nät), hashade snapshots, diff → granskningskö</td><td>—</td><td>fel per källa isoleras; retry via pg-boss</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">SECRET FOUND: NO — inga riktiga nycklar någonstans i spårade filer.</p>
+
+  <h2><span class="n">8</span>Betalnings-forensik</h2>
+  <p>Implementerat i dag — kedjan är redan "betalning är den auktoritativa händelsen":</p>
+  <ul>
+    <li><code>payments</code>-tabellen motsvarar det föreslagna payment-recordet: id, tenant/projekt, kind (<code>analysis_unlock</code>), belopp i öre, valuta, provider, <strong>status <code>pending / confirmed / failed / cancelled</code></strong>, provider_reference, receipt_email, created_at, confirmed_at.</li>
+    <li><strong>Entitlement finns som härledning, inte som egen tabell:</strong> <code>isProjectUnlocked()</code> = "det existerar en bekräftad betalning för projektet". Ingen <code>expires_at</code> (engångsköp per analys). Frontend litar aldrig på klienttillstånd — teasern/402:an avgörs server-side per anrop, verifierat av läckagetester.</li>
+    <li>Bekräftelse → transaktion bokförd → kvitto utfärdat (i samma DB-transaktion, idempotent på payment_id — dubbla callbacks kan inte ge dubbla kvitton) → upplåsning observerbar. Kvitton: löpnummer ur sekvens, brutto/netto/moms fryst i öre, säljaruppgifter, omskickbart mail.</li>
+    <li>Tillstånden "initiated/pending/verified/failed/unlocked" särskiljs alltså: initiated+pending = <code>pending</code>-raden, verified = <code>confirmed</code>, failed = <code>failed</code>, unlocked = härlett ur confirmed.</li>
+  </ul>
+  <p><strong>Inte implementerat:</strong> QR-generering, Swish-anrop, callback-verifiering (webhooken svarar 503 på allt), separat entitlement-tabell, samt <strong>anonymt köp utan konto</strong> — i dag krävs registrering före betalning eftersom betalningen hänger på tenant/projekt. Mock-providern är avstängd i produktion per konstruktion (<code>NODE_ENV</code>-villkor i config). Ingen Stripe-kod existerar.</p>
+  <div class="callout"><p><strong>Öppet beslut som styr implementationen:</strong> Swish Företag (manuell avstämning, ingen callback), Swish Handel (m-commerce-API med QR + callback via mTLS-certifikat från bank) eller betalpartner (t.ex. PSP med Swish + webhook). Verifieringskoden ser olika ut i alla tre fallen; providergränssnittet i <code>paymentProviders.ts</code> är byggt för att bära vilket som helst av dem.</p></div>
+
+  <h2><span class="n">9</span>E-post</h2>
+  <p>
+    Ja — via <code>services/email.ts</code>: Resend om <code>RESEND_API_KEY</code> finns, annars SMTP, annars auditloggat "skipped".
+    Utskick i dag: kvitton (fullt verifikationsdokument, omskickbart), deadline-påminnelser/notiser (14/7/3 dagar, dedup),
+    regeländringsnotiser, teaminbjudningar. Mallar är text i koden, separerade från UI.
+    <strong>Ingen e-postverifiering vid registrering, ingen lösenordsåterställning</strong> (hänger ihop med §5-fyndet).
+  </p>
+
+  <h2><span class="n">10</span>Hemligheter &amp; miljövariabler</h2>
+  <p class="muted">Alla läses server-side i <code>config.ts</code>. SPA:n har noll miljövariabler (inga <code>VITE_</code>/<code>NEXT_PUBLIC_</code>). <code>.env.example</code> listar namnen utan värden.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Variabel</th><th>Krävs</th><th>Hemlig</th></tr></thead>
+    <tbody>
+      <tr><td><code>DATABASE_URL</code> · <code>DIRECT_DATABASE_URL</code></td><td>ja (direct för migreringar)</td><td>ja</td></tr>
+      <tr><td><code>AUTH_SECRET</code> · <code>FIELD_ENCRYPTION_KEY</code></td><td>ja</td><td>ja</td></tr>
+      <tr><td><code>SUPABASE_URL</code> · <code>SUPABASE_SERVICE_ROLE_KEY</code> · <code>SUPABASE_STORAGE_BUCKET</code> · <code>STORAGE_DRIVER</code></td><td>vid supabase-driver</td><td>service-nyckeln: ja</td></tr>
+      <tr><td><code>CRON_SECRET</code></td><td>på Vercel-vägen</td><td>ja</td></tr>
+      <tr><td><code>RESEND_API_KEY</code> · <code>SMTP_URL</code> · <code>EMAIL_FROM</code></td><td>för mail</td><td>nyckel/URL: ja</td></tr>
+      <tr><td><code>SWISH_MERCHANT_ALIAS</code> · <code>SWISH_CERT_PATH</code></td><td>för Swish (framtida)</td><td>ja</td></tr>
+      <tr><td><code>ANALYSIS_PRICE_MINOR</code> · <code>VAT_RATE_BPS</code> · <code>SELLER_NAME/ORG_NUMBER/VAT_NUMBER</code></td><td>för korrekta kvitton</td><td>nej</td></tr>
+      <tr><td><code>PUBLIC_BASE_URL</code> · <code>CORS_ORIGIN</code> · <code>PORT</code> · <code>HOST</code> · <code>LOG_LEVEL</code> · <code>RATE_LIMIT_MAX</code> · <code>PG_POOL_MAX</code> · <code>ACCESS_TOKEN_TTL</code> · <code>REFRESH_TOKEN_TTL_DAYS</code> · <code>MAX_UPLOAD_BYTES</code> · <code>UPLOAD_DIR</code> · <code>WEB_DIST</code> · <code>ENABLE_WORKER</code> · <code>CLAMAV_ADDRESS</code> · <code>PAYMENTS_MOCK_ENABLED</code></td><td>valfria (rimliga defaults)</td><td>nej</td></tr>
+    </tbody>
+  </tbody></table></div>
+
+  <h2><span class="n">11</span>Deploykompatibilitet</h2>
+  <p><strong>Vercel:</strong> <span class="status ok">kompatibel</span> — konfigurationen finns redan (<code>vercel.json</code>, <code>api/index.ts</code>, cron-scheman, SPA-fallback) och serverless-entryn är röktestad genom hela köpresan. Villkor: <code>STORAGE_DRIVER=supabase</code>, poolad DB-anslutning, <code>CRON_SECRET</code> satt, migreringar som deploysteg. Kallstart bygger appen (~100-tals ms). Källhämtningsjobbet är sekventiellt och ryms i 60 s-budgeten vid nuvarande källvolym (~7); växer volymen behöver jobbet chunkas.</p>
+  <p><strong>Supabase:</strong> <span class="status ok">kompatibel</span> — Postgres: ren SQL, RLS deny-all förberedd; Storage: driver implementerad (dock ej integrationstestad mot riktigt projekt — kräver nycklar); Auth: <em>används inte</em> (egen auth, dokumenterat beslut); Edge Functions: <em>används inte</em> (inget krav identifierat); pooler: hanterad i migrator + pool-storlek.</p>
+
+  <h2><span class="n">12</span>AWS-beroenden</h2>
+  <p><span class="status ok">inga</span> — ingen AWS-SDK i något paketträd, inga tjänsteanrop, inga antaganden i kod. Ordet förekommer endast i kommentarer i <code>deploy/k8s/</code> (generisk egen drift). ACTUAL USE: NO · REQUIRED: NO.</p>
+
+  <h2><span class="n">13</span>Bakgrundsarbete</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Jobb</th><th>Trigger</th><th>Varaktighet</th><th>Idempotens/felhantering</th><th>Vercel-körbart</th></tr></thead>
+    <tbody>
+      <tr><td>source-fetch</td><td>var 6:e h (pg-boss-schema eller Vercel Cron)</td><td>sekunder–minuter (7 källor)</td><td>hashade snapshots (oförändrat = no-op); fel per källa isoleras; retry/backoff i pg-boss-vägen</td><td>ja (60 s-budget; chunkas vid tillväxt)</td></tr>
+      <tr><td>deadline-scan</td><td>dagligen 06</td><td>sekunder</td><td>dedup via reminders-tabellen — säker vid varje frekvens</td><td>ja</td></tr>
+      <tr><td>stale-match-recalc</td><td>var 15:e min</td><td>sekunder (batch 100)</td><td>stale-flaggan nollas per projekt; omkörning ofarlig</td><td>ja</td></tr>
+      <tr><td>retention</td><td>dagligen 04:30</td><td>sekunder</td><td>tidsbaserad, konservativ, idempotent</td><td>ja</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">Identiska jobbkroppar (<code>jobs/tasks.ts</code>) för båda exekveringsvägarna. Ingen övrig async: mail skickas inline (best-effort, blockerar aldrig upplåsning).</p>
+
+  <h2><span class="n">14</span>Bygg &amp; deploy</h2>
+  <pre><code>INSTALL   npm ci --no-audit --no-fund
+BUILD     npm run build  (core → api → web; Vercel: core + web)
+START     node apps/api/dist/index.js  (container)  /  api/index.ts (Vercel)
+OUTPUT    apps/web/dist (SPA) · apps/api/dist (server)
+NODE      >= 22
+MIGRATE   npm run db:migrate  (DIRECT_DATABASE_URL; aldrig via pooler)</code></pre>
+  <p>Icke-destruktiv byggverifiering utförd i denna miljö: fullt bygge + typecheck (0 fel) + 155 tester gröna. Inga filer ändrade.</p>
+
+  <h2><span class="n">15</span>Säkerhets-forensik</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Nivå</th><th>Fynd</th></tr></thead>
+    <tbody>
+      <tr><td><span class="status no">HIGH</span></td><td>Lösenordsåterställning och e-postverifiering saknas: fellstavad adress vid registrering = permanent utlåst konto, och kvitto-/notismail kan gå till fel adress. Blir viktigare i samma stund riktiga betalningar aktiveras.</td></tr>
+      <tr><td><span class="status warn">MEDIUM</span></td><td>Rate limiting är per processinstans — på serverless ger det svagare globalt skydd mot brute force (auth-endpoints har egna hårdare gränser, men även de är per instans).</td></tr>
+      <tr><td><span class="status warn">MEDIUM</span></td><td>Utan ClamAV accepteras uppladdningar som <code>scan_unavailable</code> (synligt, men filer kan delas vidare i team). Magic-byte/typ/storlek kontrolleras alltid.</td></tr>
+      <tr><td><span class="status warn">MEDIUM</span></td><td><code>DELETE /v1/documents/:id</code> raderar DB-raden men inte lagringsobjektet — kvarlämnade filer tills GDPR-radering/retention. Lagringsläcka, inte åtkomstläcka (nedladdning kräver DB-raden).</td></tr>
+      <tr><td><span class="status info">LOW</span></td><td><code>/metrics</code> är oautentiserad (containervägen; antar intern skrapning). På Vercel oåtkomlig via rewrites.</td></tr>
+      <tr><td><span class="status info">LOW</span></td><td>Resend-anropet saknar explicit timeout (Storage-drivern har 30 s). Mail är best-effort och blockerar aldrig upplåsning, så effekten är begränsad.</td></tr>
+      <tr><td><span class="status ok">INFO</span></td><td>Positivt verifierat: inga hemligheter i Git; inga klienthemligheter; parametriserade queries överallt (Drizzle) — ingen SQL-injektion funnen; React-escaping + ingen <code>dangerouslySetInnerHTML</code>; SSRF-guard på inhämtning; upload-allowlist med magic bytes; betalupplåsning kan inte påverkas av klienten (server-side-härledning, läckagetestad teaser); mock-betalning produktionsspärrad i config; webhooks avvisar allt tills signaturverifiering finns; RLS deny-all + CI-invariant; fältkryptering för externa identifierare; append-only audit; 404-inte-403 för främmande resurser.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">16</span>Produktfunktionskarta</h2>
+  <pre><code>LANDING/REGISTRERING  konto krävs i dag (anonym session finns INTE)   [byggt]
+  ↓
+INTAG                 "Vad behöver du hjälp med?" — en fråga/skärm,
+                      två spår (privatekonomi / projektfinansiering)   [byggt]
+  ↓
+ANALYS                riktig motor: 51 stöd, trevärd logik, poäng,
+                      förklaringar, följdfrågor med kontext            [byggt]
+  ↓
+TEASER                antal + nivåer + kategorier, namn maskerade      [byggt]
+  ↓
+BETALNING 39 kr       providerregister: Swish = ärlig 503-stub,
+                      mock endast utanför produktion                   [delvis: Swish-anrop/QR/callback saknas]
+  ↓
+VERIFIERAD BETALNING  payment.state=confirmed är sanningen             [byggt för mock-vägen; verifieringskod för riktig Swish saknas]
+  ↓
+KVITTO                löpnummer, moms, mail via Resend, omskick        [byggt]
+  ↓
+UPPLÅST RESULTAT      full rapport, finansieringsplan, disclaimer      [byggt]
+  ↓
+VIDARE (valfritt)     ansökningsarbetsyta → validering → assisterad
+                      inlämning med kvitto → ärende → beslut →
+                      redovisningskrav                                 [byggt; extern inlämning är
+                                                                        avsiktligt assisterad, ej automatiserad]</code></pre>
+  <p class="muted">Inget är mockat i produktvägen. De enda mock/stub-ytorna är medvetna och produktionsspärrade: mock-betalprovidern (dev/test), Swish-stubben (503), webhook-stubben (503). Kunskapsbasen är kurerad på riktigt (källor, datum, provenienskrav) men är 51 stöd — motorbevis, inte nationell täckning.</p>
+
+  <h2><span class="n">17</span>Teknisk skuld med deploypåverkan</h2>
+  <ul>
+    <li>Storage-drivern för Supabase är skriven men aldrig körd mot ett riktigt projekt (kräver nycklar) — verifieras första dagen.</li>
+    <li>Ingen lösenordsåterställning (se §15 HIGH) — bör finnas före betalande användare.</li>
+    <li>Per-instans rate limiting på serverless (global limitering är ett framtida beslut, inte en gateway).</li>
+    <li>Source-fetch är sekventiell — ok för ~7 källor, chunkas innan kunskapsbasen växer 10×.</li>
+    <li>pg-boss-schemat ligger kvar i databasen även på Vercel-vägen (oanvänt, ofarligt).</li>
+    <li>Momsklassningen (25 % default) är konfigurerad men inte bekräftad med redovisning — måste vara rätt från första riktiga kronan.</li>
+  </ul>
+
+  <h2><span class="n">18</span>Slutlig bedömning</h2>
+  <div class="verdict">
+    <h3>Current state</h3>
+    <p>Komplett, testad flerhyresgäst-plattform för rättighets-/stödutredning med betalvägg och kvittolager; monorepo med ren domänmotor, Fastify-API (34 tabeller, ~60 endpoints), React-SPA; dubbla deployvägar där Vercel + Supabase är förberedd och dokumenterad som primär.</p>
+    <h3>What actually works</h3>
+    <p>Hela produktvägen intag → analys → teaser → (mock)betalning → kvitto → upplåst rapport → ansökan → ärende, verifierad av 155 tester och webbläsartester; teamsamarbete, dokumentvalv, GDPR-export/radering, kuratorskonsol, inhämtningspipeline, deterministiska migreringar, seedad kunskapsbas.</p>
+    <h3>What is mocked / incomplete</h3>
+    <p>Swish-nätverksanropen (QR, callback, verifiering) — adaptern är en ärlig 503-stub; mock-betalning endast utanför produktion; webhooken avvisar allt; lösenordsåterställning/e-postverifiering saknas; anonymt köp utan konto finns inte; Storage-drivern ej integrationstestad mot riktigt Supabase-projekt.</p>
+    <h3>Deployment blockers</h3>
+    <p>Endast konfiguration + avtal: Supabase-/Vercel-projekt med hemligheter och domän; Storage-verifiering; Swish-avtal (och valet av Swish-variant); Resend-nyckel + SPF/DKIM; momsklassning bekräftad.</p>
+    <h3>Vercel compatibility</h3>
+    <p><span class="status ok">GREEN</span> — serverless-entry, cron-endpoints, storage-driver och rewrites finns och är röktestade; villkoren (poolad DB, supabase-driver, CRON_SECRET, migrering som deploysteg) är dokumenterade.</p>
+    <h3>Supabase compatibility</h3>
+    <p><span class="status ok">GREEN</span> — ren Postgres + förberedd RLS deny-all; Storage via driver; Auth/Edge Functions används medvetet inte (dokumenterade beslut).</p>
+    <h3>AWS dependencies</h3>
+    <p>Inga.</p>
+    <h3>Swish status</h3>
+    <p>Datamodell och kedja klara (payment-record med pending/confirmed/failed/cancelled; kvitto i samma transaktion; upplåsning härledd server-side). Nätverksintegrationen är inte påbörjad: ingen QR, ingen callback-verifiering. <strong>Blockerande beslut: Swish Företag vs Swish Handel vs betalpartner</strong> — det avgör om verifiering sker via mTLS-callback, polling eller PSP-webhook, och providergränssnittet är byggt för att ta emot vilket som helst.</p>
+    <h3>Vendor map</h3>
+    <p>Resend (mail) · SMTP (fallback) · Swish (stub) · Supabase Storage (driver) · ClamAV (valfri) · källwebbplatser (inhämtning med SSRF-guard). Ingen Stripe, ingen Kong, ingen AWS.</p>
+    <h3>Secret / environment map</h3>
+    <p>Se §10 — hemliga: <code>DATABASE_URL</code>, <code>DIRECT_DATABASE_URL</code>, <code>AUTH_SECRET</code>, <code>FIELD_ENCRYPTION_KEY</code>, <code>SUPABASE_SERVICE_ROLE_KEY</code>, <code>CRON_SECRET</code>, <code>RESEND_API_KEY</code>, <code>SMTP_URL</code>, <code>SWISH_*</code>. Samtliga enbart server-side; SPA:n har inga.</p>
+    <h3>Security risks</h3>
+    <p>HIGH: ingen lösenordsåterställning/e-postverifiering · MEDIUM: per-instans rate limiting; scan_unavailable-uppladdningar; kvarlämnade lagringsobjekt vid dokumentradering · LOW: oautentiserad /metrics (containervägen); Resend utan explicit timeout.</p>
+    <h3>Estimated migration complexity</h3>
+    <p><span class="status ok">LOW</span> — kodmigreringen är redan gjord och verifierad. Återstående arbete är plattformskonfiguration, förstadagsverifiering av Storage-drivern, och Swish-integrationen (den enda riktiga nya koden, ~en adapter + callback-verifiering när varianten är vald).</p>
+    <h3>Recommended next architecture</h3>
+    <p>Exakt den stack som redan är förberedd: GitHub → Vercel (SPA + en API-funktion + Cron) → Supabase (Postgres med RLS deny-all + privat Storage) · Swish engångsbetalning + QR → callback-verifiering server-side → befintligt payment-record som sanning → upplåsning · Resend för kvitton. Två produktbeslut innan Swish-koden skrivs: (1) Swish-variant/PSP, (2) om anonym session-till-köp ska byggas för konvertering — då behövs en session-ägd analys och en explicit entitlement-koppling (payments äger redan strukturen; en <code>expires_at</code>/sessionsnyckel är litet tillägg), plus kontokrav flyttat till efter köpet. Ingen Stripe, ingen Kong, ingen AWS.</p>
+  </div>
+
+  <footer>
+    Forensisk revision i strict mode — inga filer ändrade, inga beroenden installerade, ingenting deployat.
+    Verifierat mot <code>162192c</code>: 48 domäntester + 107 API-tester gröna, fullt bygge + typecheck utan fel.
+  </footer>
+</div>

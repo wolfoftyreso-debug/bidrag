@@ -1,0 +1,159 @@
+<title>Red Team-revisionen</title>
+<style>
+  :root {
+    --paper: #F7F6F2; --ink: #1C1F26; --muted: #6A6E78; --line: #DDDAD2;
+    --card: #FFFFFF; --accent: #B3382E; --pass: #2E7D4F; --warn: #A8731C;
+    --passbg: #E7F2EA; --warnbg: #F6EEDC; --failbg: #F7E5E2; --mono-bg: #EFEDE7;
+  }
+  :root:not([data-theme="light"]) { }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #191B20; --ink: #E8E6E1; --muted: #9A9EA8; --line: #33363E;
+      --card: #21242B; --accent: #E06A5E; --pass: #6FBF8F; --warn: #D9A54E;
+      --passbg: #223428; --warnbg: #363023; --failbg: #3A2724; --mono-bg: #262932;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #191B20; --ink: #E8E6E1; --muted: #9A9EA8; --line: #33363E;
+    --card: #21242B; --accent: #E06A5E; --pass: #6FBF8F; --warn: #D9A54E;
+    --passbg: #223428; --warnbg: #363023; --failbg: #3A2724; --mono-bg: #262932;
+  }
+  body { background: var(--paper); color: var(--ink); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; line-height: 1.25; text-wrap: balance; }
+  h1 { font-size: 2rem; margin: 0.2rem 0 0.4rem; }
+  h2 { font-size: 1.35rem; margin: 2.6rem 0 0.7rem; border-bottom: 1px solid var(--line); padding-bottom: 0.35rem; }
+  h3 { font-size: 1.05rem; margin: 1.4rem 0 0.4rem; }
+  p, li { max-width: 68ch; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.09em; font-size: 0.75rem; color: var(--muted); font-weight: 600; }
+  .meta { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.8rem; }
+  .verdict { border: 2px solid var(--warn); background: var(--warnbg); border-radius: 6px; padding: 1.1rem 1.3rem; margin: 1.6rem 0; }
+  .verdict strong.v { font-size: 1.15rem; letter-spacing: 0.02em; }
+  .proven { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 0.7rem; }
+  .chip { border-radius: 999px; padding: 0.15rem 0.75rem; font-size: 0.82rem; font-weight: 600; }
+  .chip.p { background: var(--passbg); color: var(--pass); }
+  .chip.n { background: var(--failbg); color: var(--accent); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+  .tablewrap { overflow-x: auto; }
+  th, td { text-align: left; padding: 0.45rem 0.7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .bar { height: 7px; border-radius: 4px; background: var(--line); min-width: 110px; position: relative; top: 2px; }
+  .bar > span { display: block; height: 100%; border-radius: 4px; background: var(--pass); }
+  .bar.mid > span { background: var(--warn); }
+  .bar.low > span { background: var(--accent); }
+  code, .probe { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 0.86em; background: var(--mono-bg); border-radius: 4px; padding: 0.08em 0.4em; }
+  .status { font-weight: 700; font-size: 0.8rem; letter-spacing: 0.04em; white-space: nowrap; }
+  .ok { color: var(--pass); } .part { color: var(--warn); } .fail { color: var(--accent); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 1rem 1.2rem; margin: 0.9rem 0; }
+  .fixed { border-left: 4px solid var(--pass); }
+  .order { border-left: 4px solid var(--warn); }
+  ul { padding-left: 1.2rem; } li { margin: 0.3rem 0; }
+  .small { font-size: 0.88rem; color: var(--muted); }
+</style>
+<div class="wrap">
+  <div class="eyebrow">Bidrag.se · Ultimate Red Team &amp; Perfection Audit · direktiv §1–39</div>
+  <h1>Red Team-revisionen</h1>
+  <p class="meta">Genomförd 2026-08-16 mot det körande systemet (levande prober, inga antaganden om implementation). Bevisunderlag: probsviterna <span class="probe">audit-red.mjs</span> + <span class="probe">audit-red2.mjs</span>, 79 + 178 automatiska tester, browser-verifieringar. Två fynd åtgärdades och ombevisades under revisionen.</p>
+
+  <div class="verdict">
+    <div class="eyebrow" style="margin-bottom:0.3rem">§36 Production verdict</div>
+    <strong class="v">PRODUCTION READY WITH CONDITIONS</strong>
+    <p style="margin:0.5rem 0 0">Den deterministiska kärnan — utlysningsförståelse, behörighet, granskning, konsistens, budget, gate, dokument utan påhitt — håller för adversariell prövning och är bevisad i drift. Villkoren: externa produktionsblockerare (Swish-avtal/certifikat, Supabase/Vercel-konton), formulärscheman för 5/55 stöd, och att språklig generering (§39:s "exceptionellt professionell formulering") medvetet inte finns — systemet återger endast sökandens egna ord.</p>
+    <div class="proven">
+      <span class="chip p">PROVEN — deterministisk pipeline: förstå → pröva → granska → stoppa → dokumentera utan påhitt</span>
+      <span class="chip n">NOT PROVEN — §39:s fulla standard: adaptiv intervju + exceptionell formulering (generation mode finns inte)</span>
+    </div>
+  </div>
+
+  <h2>Vad som testades och vad som hände</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Prob</th><th>Direktiv</th><th>Faktiskt beteende</th><th>Utfall</th></tr>
+    <tr><td class="probe">R1</td><td>§3 requirement recall</td><td>Kulturrådets resebidrag: 7 kriterier (4 icke-kompensatoriska), budgetregel, 3 bevisningskrav, deadline, 10 formulärfält, statsstödsflagga, grant fingerprint i §33-kontraktet — allt ur den frusna regelversionen med källänk</td><td class="status ok">PASS*</td></tr>
+    <tr><td class="probe">R2</td><td>§4 övertolkning</td><td>Viktade kriterier blockerar aldrig som "måste"; hårda krav utesluter med skäl ("Sökande ska vara en organisation …")</td><td class="status ok">PASS</td></tr>
+    <tr><td class="probe">R4</td><td>§6–7 frågemotorn</td><td>0 redundanta frågor (besvarat ↔ obesvarat disjunkta); ett svar tog bort frågan, flyttade den till "Dina svar" och uppgraderade unknown → eligible live</td><td class="status ok">PASS</td></tr>
+    <tr><td class="probe">R5a–b</td><td>§9 claim propagation (belopp, antal)</td><td>Formulärbelopp ≠ finansieringsplan ⇒ HIGH; 300 mot 80 deltagare i olika fält ⇒ konfliktflagga; rättning släcker</td><td class="status ok">PASS</td></tr>
+    <tr><td class="probe">R5c</td><td>§9 claim propagation (period)</td><td><strong>Först: FAIL.</strong> Periodändring lämnade gamla månader i texten oflaggade. Åtgärdat under revisionen (se fynd 2), ombevisat: januari utanför perioden ⇒ flagga</td><td class="status ok">FAIL → FIXAT</td></tr>
+    <tr><td class="probe">R6</td><td>§10 hallucination under press</td><td>Minimalt underlag: obesvarade fält utelämnas, 0 uppfunna siffror, inga standardvärden</td><td class="status ok">PASS</td></tr>
+    <tr><td class="probe">R7</td><td>§11–12 överdriven optimering</td><td>"världsledande", "unika", "garanterar", "kommer att skapa 500 …" flaggades — texten orörd, dokumentet skapades ändå (rådgivande, aldrig omskrivning)</td><td class="status ok">PASS</td></tr>
+    <tr><td class="probe">R12</td><td>§28–29 meta-trace, cold read</td><td>Alla 5 mallar: 0 förekomster av Bidrag.se/AI/genererad/score/interna ID:n; rubrik, mottagare, datum på plats</td><td class="status ok">PASS</td></tr>
+    <tr><td class="probe">R13–14</td><td>§30–31 användarkontroll, regeneration</td><td>Förifyllnad innehåller endast känd fakta (namn, kommun — aldrig adress/belopp); nytt dokument bär ny uppgift, tappar gammal, äldre dokument bevaras</td><td class="status ok">PASS</td></tr>
+    <tr><td class="probe">R15</td><td>§32 multi-grant</td><td>Två stöd ⇒ egna frusna snapshots, olika kriterieuppsättningar, dubbelfinansieringsstatus per ärende</td><td class="status ok">PASS</td></tr>
+    <tr><td class="probe">R16</td><td>§33 determinism</td><td>Två granskningar av samma läge: bytesidentiska svar</td><td class="status ok">PASS</td></tr>
+    <tr><td class="probe">R17</td><td>§34 stop conditions</td><td>Trasig finansiering ⇒ övergången vägrar med 422 och hela granskningen i svaret (toppgap <span class="probe">budget-_financing_balance</span>); efter rättning ⇒ 200. Probens första körning var själv felaktig (hoppade över tillståndssekvensen) och stoppades av tillståndsmaskinen med 409 — också korrekt beteende</td><td class="status ok">PASS</td></tr>
+    <tr><td class="probe">F-EGEN</td><td>§1 "UI-funktion utan backendlogik" (användarfynd)</td><td><strong>Först: CRITICAL FAILURE.</strong> Intaget lovade genomlysning av företagandet vid "Driver eget företag" — men <span class="probe">person.selfEmployed</span> användes av ingenting. Åtgärdat (se fynd 1), ombevisat i webb + demo</td><td class="status ok">FAIL → FIXAT</td></tr>
+  </table></div>
+  <p class="small">*R1:s recall är mätt mot systemets kurerade regelversion, som bär källänk och versionshistorik. Verifiering mot originalkällan är kuratorsprocessens ansvar och kan inte automatiseras bort — detta redovisas öppet i stället för att räknas som automatiskt uppfyllt.</p>
+
+  <h2>De två fynden — och åtgärderna</h2>
+  <div class="card fixed">
+    <h3 style="margin-top:0">1. Löftesbrottet mot egenföretagare (CRITICAL — hittat av användaren)</h3>
+    <p><strong>Var:</strong> intagets svarsalternativ lovade "vi tittar på både stöd till dig som person och stöd som rör företagandet"; spårfiltret i <span class="probe">apps/api/src/routes/projects.ts</span> släppte aldrig igenom ett enda företagsstöd.</p>
+    <p><strong>Varför:</strong> personspåret filtrerade till ersättningar/studiestöd; <span class="probe">person.selfEmployed</span> sattes men konsumerades aldrig av någon regel.</p>
+    <p><strong>Åtgärd:</strong> kurerad företagslista ingår nu i egenföretagares genomlysning — individuellt sökbara stöd får riktiga följdfrågor, aktiebolagsstöd redovisas ärligt som "uppfyller inte kraven" med skälet och vägen framåt (bolaget söker). Ny intagsfråga om driftsform. Egen rapportsektion som aldrig sammanfattas bort. Webb + demo.</p>
+    <p><strong>Regressionstest:</strong> företagsstöden syns för egenföretagare med öppna frågor, aldrig för andra. Browser-verifierat (<span class="probe">bizcheck.mjs</span> 5/5).</p>
+  </div>
+  <div class="card fixed">
+    <h3 style="margin-top:0">2. Perioden propagerade inte (CONSISTENCY FAILURE — hittat av prob R5c)</h3>
+    <p><strong>Var:</strong> konsistensmotorn korsjämförde siffror men inte tid — en periodändring lämnade gamla månadsangivelser i fritexten orörda.</p>
+    <p><strong>Åtgärd:</strong> <span class="probe">findPeriodConflicts</span> i kärnan: månader i textsvar korsjämförs mot periodfältet (kalendermånadsupplösning, årsskiftesmedveten, tyst vid helårsperiod); granskningen flaggar MEDIUM per kvarglömd månad och HIGH när periodens slut ligger före dess start. Aldrig tyst rättning.</p>
+    <p><strong>Regressionstest:</strong> 4 kärntester + granskningstest (flagga uppstår, rättning släcker); levande omprob: <span class="probe">periodMismatchCaught: true</span>.</p>
+  </div>
+
+  <h2>§35 Scorecard</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Dimension</th><th style="width:130px"></th><th>Poäng</th><th>Grund</th></tr>
+    <tr><td>REAL_FINAL_GATE</td><td><div class="bar"><span style="width:95%"></span></div></td><td class="num">95</td><td>Livebevisad: 422 med granskning i vägran, 200 efter rättning; UNKNOWN släpps aldrig igenom</td></tr>
+    <tr><td>REAL_ELIGIBILITY</td><td><div class="bar"><span style="width:92%"></span></div></td><td class="num">92</td><td>Trevärde; hårda krav utesluter med skäl; unknown ⇒ fråga</td></tr>
+    <tr><td>REAL_TRACEABILITY</td><td><div class="bar"><span style="width:90%"></span></div></td><td class="num">90</td><td>Frusna snapshots, versionerade regler, determinism bytesidentisk</td></tr>
+    <tr><td>REAL_BUDGET_LOGIC</td><td><div class="bar"><span style="width:88%"></span></div></td><td class="num">88</td><td>Öre-exakt; balans blockerar åt båda håll; andel &gt;100 % blockerar. Saknas: strukturell aktivitet↔kostnads-koppling</td></tr>
+    <tr><td>REAL_CRITERIA_COVERAGE</td><td><div class="bar"><span style="width:85%"></span></div></td><td class="num">85</td><td>Per kriterium ur frusen version, icke-kompensatoriskt märkt, E-nivå per rad</td></tr>
+    <tr><td>REAL_HUMILITY</td><td><div class="bar"><span style="width:85%"></span></div></td><td class="num">85</td><td>§12-lista + kvantifierade löften flaggas deterministiskt; aldrig omskrivning</td></tr>
+    <tr><td>REAL_HANDLER_CLARITY</td><td><div class="bar"><span style="width:82%"></span></div></td><td class="num">82</td><td>Prioriterade luckor med åtgärd; troliga kompletteringar listas</td></tr>
+    <tr><td>REAL_CONSISTENCY</td><td><div class="bar"><span style="width:80%"></span></div></td><td class="num">80</td><td>Siffror, belopp-korskoppling, orgnr (Luhn), namn, period. Saknas: partners, exakta datum i löptext</td></tr>
+    <tr><td>REAL_REQUIREMENT_UNDERSTANDING</td><td><div class="bar mid"><span style="width:78%"></span></div></td><td class="num">78</td><td>Kurerade regelversioner med källa; formulärschema för 5/55 — resten flaggas öppet som oblint fält</td></tr>
+    <tr><td>REAL_DILIGENCE</td><td><div class="bar mid"><span style="width:75%"></span></div></td><td class="num">75</td><td>Härledd ur saknad bevisning + E1-baserade icke-kompensatoriska + konflikter; ingen riskregisterstruktur</td></tr>
+    <tr><td>REAL_EVIDENCE</td><td><div class="bar mid"><span style="width:70%"></span></div></td><td class="num">70</td><td>E0–E2 med kurerad kriterium↔bilaga-koppling; E3/E4 (externa/verifierade källor) saknas</td></tr>
+    <tr><td>REAL_ADAPTIVE_INTERVIEW</td><td><div class="bar mid"><span style="width:55%"></span></div></td><td class="num">55</td><td>Villkorade frågor, följdfrågor som uppdaterar live, alla svar ändringsbara. Ingen informationsvärdes-prioriterad adaptiv intervju</td></tr>
+    <tr><td>REAL_GENERATION</td><td><div class="bar low"><span style="width:40%"></span></div></td><td class="num">40</td><td>Ingen språkgenerering finns — medvetet: motorn återger endast sökandens ord och <em>kan inte</em> hallucinera. Poängen är låg mot §39:s formuleringsstandard, inte mot ärlighetsstandarden där den är 100</td></tr>
+  </table></div>
+  <p class="small">Totalpoäng redovisas inte — direktivet förbjuder att en summa döljer kritiska fel. De två kritiska felen som fanns är åtgärdade och ombevisade; inga kända kritiska fel kvarstår i den byggda funktionaliteten.</p>
+
+  <h2>§37 Rapporten i tolv punkter</h2>
+  <h3>1. Fungerar på riktigt (bevisat i drift)</h3>
+  <p>Trevärdesbehörighet med uteslutningsskäl · granskning per fruset kriterium med E-nivåer och INTERNAL_ESTIMATE-märkning · budgetmotor som blockerar åt båda håll · konsistensmotor (siffror, belopp, orgnr, namn, period) · språkflagga utan omskrivning · gate som vägrar med hela granskningen i svaret · deterministisk om-körning · dokument som aldrig innehåller något sökanden inte sagt, utan verktygsspår · dubbelfinansieringskontroll · källfärskhet + CONFLICT vid väntande källändring · företagarspåret (efter fynd 1).</p>
+  <h3>2. Såg ut att fungera men gjorde det inte</h3>
+  <p>Två fall, båda nu åtgärdade: egenföretagarlöftet (UI-text utan backendlogik) och periodpropagering (konsistensmotorn var blind för tid). Det är exakt den kategori direktivet varnar för — och båda hittades genom faktisk prövning, inte kodläsning.</p>
+  <h3>3. Partiellt</h3>
+  <p>Formulärscheman 5/55 (resten flaggas öppet som HIGH i granskningen — aldrig tyst godkännande) · E-nivåer till E2 · konsistens utan partner-/datumjämförelse i löptext · adaptivitet via villkorsfrågor, inte informationsvärde.</p>
+  <h3>4. Saknas</h3>
+  <p>Generation mode (§39:s formuleringsmotor — produktbeslut, kräver LLM med BEFORE/REASON/AFTER-spårbarhet) · riskregister med RISK→SANNOLIKHET→PÅVERKAN→ÅTGÄRD→ÄGARE · additionalitets-/value-for-money-bedömning som motorkontroll (§17–18; finns som mallfrågor) · strukturell aktivitet↔kostnads-länk i budgeten · E3/E4.</p>
+  <h3>5–6. Misslyckade och klarade tester</h3>
+  <p>Misslyckades först: R5c (period), F-EGEN (företagarlöftet) — båda åtgärdade och ombevisade. Klarade: R1, R2, R4, R5a–b, R6, R7, R12 (5/5 mallar), R13, R14, R15, R16, R17 samt 257 automatiska tester.</p>
+  <h3>7. De fem farligaste problemen (nu)</h3>
+  <ul>
+    <li>Kurerad regeldata åldras — färskhetsflaggan är skyddet, men kuratorsprocessen är systemets verkliga sanningskälla.</li>
+    <li>50/55 stöd saknar digitaliserat formulär: granskningen säger det öppet, men användaren kan övervärdera hur långt "READY" bär där.</li>
+    <li>Generation mode-förväntan: användare kan tro att systemet skriver ansökan åt dem — det förbereder, strukturerar och granskar.</li>
+    <li>Fritextkonsistens täcker siffror/månader men inte partners och exakta datum — motstridigheter där passerar.</li>
+    <li>Swish/Supabase/Vercel är fortfarande overifierade i produktion (externa blockerare, användarens att lösa).</li>
+  </ul>
+  <h3>8. De tio viktigaste förbättringarna</h3>
+  <p>1) Fler kurerade scheman (störst marginalnytta per timme) · 2) datum-/partnerkonsistens · 3) riskregisterstruktur i projektbeskrivningen · 4) aktivitet↔kostnads-länk · 5) E3 (extern källa) för vanligaste bevistyperna · 6) additionalitetsfråga som motorkontroll · 7) informationsvärdes-sortering av öppna frågor · 8) generation mode-beslut (med spårbarhet) · 9) kuratorspåminnelser på nextReviewAt · 10) fler företagsstöd för enskild firma i kunskapsbasen.</p>
+  <h3>9. Troligaste verkliga användarfelen</h3>
+  <p>Glömmer uppdatera fritext efter ändrat belopp/period (nu flaggat) · söker som person när bolaget ska söka (nu vägledd) · lämnar in trots MEDIUM-flaggor utan att läsa dem · tror att READY betyder beviljat (texten säger uttryckligen motsatsen).</p>
+  <h3>10. Troligaste handläggarinvändningarna</h3>
+  <p>"Var kommer siffran ifrån?" (E1-underlag — diligence listar det) · "Budgetposten saknar koppling till aktivitet" (strukturell länk saknas) · "Styrk att du är yrkesverksam" (E2 kräver bilaga — flaggas) · kompletteringsbegäran vid motstridiga uppgifter (konsistensmotorn fångar de flesta numeriska).</p>
+  <h3>11. Största hallucinationsriskerna</h3>
+  <p>I dokumenten: noll per konstruktion — motorn kan bara återge svar, bevisat med sifferjakt (0 uppfunna tal). Den verkliga risken är i stället <em>inaktuell kurerad data</em> som ser auktoritativ ut — därav färskhets- och CONFLICT-flaggorna, och därav att recall mot originalkällan förblir ett manuellt kuratorsansvar.</p>
+  <h3>12. Största gapet ambition ↔ funktion</h3>
+  <p>§39:s standard kräver intelligent intervju och exceptionell formulering. Systemet intervjuar villkorsstyrt och formulerar ingenting själv. Det är ett medvetet val (kan-inte-ljuga före välskrivet), men det ÄR gapet — och det ska sägas högt, inte döljas bakom de gröna proberna.</p>
+
+  <h2>§38 Utvecklingsorder för det som inte åtgärdades nu</h2>
+  <div class="card order"><strong>Schematäckning (prio 1).</strong> Var: <span class="probe">apps/api/src/seed/data.ts</span> · Varför: kurerat arbete, inte kod · Lösning: 5–10 scheman per sprint för mest sökta stöden · Verifiering: K3-flaggan ska försvinna per stöd; regressionstest per schema som i <span class="probe">applicationReview.test.ts</span>.</div>
+  <div class="card order"><strong>Riskregister (prio 2).</strong> Var: <span class="probe">documentTemplates.ts</span> projektbeskrivningen · Lösning: valfri risksektion med struktur RISK→SANNOLIKHET→PÅVERKAN→ÅTGÄRD→ÄGARE, mekanikkrav i guidance, aldrig artificiella mallrisker · Verifiering: mallrendering + validering; obesvarat utelämnas.</div>
+  <div class="card order"><strong>Datum/partner-konsistens (prio 3).</strong> Var: <span class="probe">consistency.ts</span> · Lösning: ISO-datum + partnernamn extraheras och korsjämförs som sifferklaims · Verifiering: kärntester i stil med periodtesterna; falsk-positiv-budget &lt; 1 flagga per normal ansökan.</div>
+  <div class="card order"><strong>Generation mode (produktbeslut).</strong> Kräver LLM + AI-spec §32 (BEFORE/REASON/AFTER per ändring) + konstitutionens §3 (sökanden godkänner varje formulering) och §25-förbuden. Ska inte byggas som "bättre text på knapp" utan som spårbar föreslå-och-godkänn.</div>
+
+  <p class="small" style="margin-top:2.5rem">Metod: inga påståenden om funktion har accepterats utan levande bevis — varje PASS ovan motsvarar ett faktiskt API-anrop, en renderad PDF eller en browser-körning under revisionen. Probskript och råresultat finns i sessionens arbetskatalog; regressionstester är incheckade (<span class="probe">9b64488</span> och tidigare).</p>
+</div>

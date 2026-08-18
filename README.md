@@ -42,11 +42,14 @@ Nästa fas är **Production Hardening + Knowledge Expansion** (se
 
 | Path | What |
 |---|---|
-| `packages/core` | Pure domain engine: criteria DSL, layered match scoring, application state machine, budget engine, schema-driven forms, funding-stack compatibility, deadline math. Zero I/O, 43 unit tests. |
-| `apps/api` | Fastify + PostgreSQL modular monolith: auth, tenancy, funding knowledge graph, matching, application cases, documents, submissions, correspondence, ingestion, background jobs, curation API. 36 integration tests. |
+| `packages/core` | Pure domain engine: criteria DSL, layered match scoring, application state machine, budget engine, schema-driven forms, funding-stack compatibility, deadline math. Zero I/O, 90 unit tests. |
+| `apps/api` | Fastify + PostgreSQL modular monolith: auth, tenancy, funding knowledge graph, matching, application cases, documents, submissions, correspondence, ingestion, background jobs, curation API. 192 integration tests. |
 | `apps/web` | Swedish-first React SPA: onboarding, matches, opportunity detail, application workspace, vault, inbox, admin console. |
 | `deploy/k8s` | Kubernetes manifests (deployment, service, ingress, PDB, PVC, secret templates). |
+| `demo/` | Fristående demo som kör den verkliga motorn i webbläsaren, plus sju webbläsarkontroller. Se `demo/README.md`. |
+| `tools/` | Verifieringsverktyg: 30-användarsimulering, 13 UI-genomklickningar, revisionssviter, schemakontroll, röktester. Se `tools/README.md`. |
 | `docs/` | Architecture, security, privacy/GDPR, limitations. |
+| `docs/reports/` | Genererade revisionsrapporter (historiska ögonblicksbilder). |
 
 ## Quick start (local)
 

@@ -1,0 +1,167 @@
+<title>Masterrevisionen</title>
+<style>
+  :root {
+    --paper: #F7F6F2; --ink: #1C1F26; --muted: #6A6E78; --line: #DDDAD2;
+    --card: #FFFFFF; --accent: #B3382E; --pass: #2E7D4F; --warn: #A8731C;
+    --passbg: #E7F2EA; --warnbg: #F6EEDC; --failbg: #F7E5E2; --mono-bg: #EFEDE7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #191B20; --ink: #E8E6E1; --muted: #9A9EA8; --line: #33363E;
+      --card: #21242B; --accent: #E06A5E; --pass: #6FBF8F; --warn: #D9A54E;
+      --passbg: #223428; --warnbg: #363023; --failbg: #3A2724; --mono-bg: #262932;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #191B20; --ink: #E8E6E1; --muted: #9A9EA8; --line: #33363E;
+    --card: #21242B; --accent: #E06A5E; --pass: #6FBF8F; --warn: #D9A54E;
+    --passbg: #223428; --warnbg: #363023; --failbg: #3A2724; --mono-bg: #262932;
+  }
+  body { background: var(--paper); color: var(--ink); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; }
+  .wrap { max-width: 800px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; line-height: 1.25; text-wrap: balance; }
+  h1 { font-size: 2rem; margin: 0.2rem 0 0.4rem; }
+  h2 { font-size: 1.35rem; margin: 2.6rem 0 0.7rem; border-bottom: 1px solid var(--line); padding-bottom: 0.35rem; }
+  h3 { font-size: 1.05rem; margin: 1.4rem 0 0.4rem; }
+  p, li { max-width: 70ch; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.09em; font-size: 0.75rem; color: var(--muted); font-weight: 600; }
+  .meta { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.8rem; }
+  .verdict { border: 2px solid var(--warn); background: var(--warnbg); border-radius: 6px; padding: 1.1rem 1.3rem; margin: 1.6rem 0; }
+  .verdict strong.v { font-size: 1.2rem; letter-spacing: 0.02em; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  .tablewrap { overflow-x: auto; }
+  th, td { text-align: left; padding: 0.42rem 0.65rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .bar { height: 7px; border-radius: 4px; background: var(--line); min-width: 100px; position: relative; top: 2px; }
+  .bar > span { display: block; height: 100%; border-radius: 4px; background: var(--pass); }
+  .bar.mid > span { background: var(--warn); }
+  .bar.low > span { background: var(--accent); }
+  code, .probe { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 0.85em; background: var(--mono-bg); border-radius: 4px; padding: 0.08em 0.4em; }
+  .cls { font-weight: 700; font-size: 0.78rem; letter-spacing: 0.04em; white-space: nowrap; }
+  .impl { color: var(--pass); } .part { color: var(--warn); } .miss { color: var(--accent); } .mock { color: var(--muted); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 1rem 1.2rem; margin: 0.9rem 0; }
+  ul { padding-left: 1.2rem; } li { margin: 0.3rem 0; }
+  .small { font-size: 0.88rem; color: var(--muted); }
+</style>
+<div class="wrap">
+  <div class="eyebrow">Bidragskoll.se · Master Test, Red-Team &amp; Perfection Audit · direktiv §1–36</div>
+  <h1>Masterrevisionen</h1>
+  <p class="meta">Genomförd 2026-08-17 mot det körande systemet med 38/55 kurerade formulär. Metod: inget räknas som implementerat utan bevis end-to-end — varje PASS motsvarar ett verkligt API-anrop, en renderad PDF eller en browser-körning. Bevisunderlag: probsviterna <span class="probe">audit-red.mjs</span> + <span class="probe">audit-red2.mjs</span> + <span class="probe">audit-master.mjs</span> (färskt omkörda i dag), 88 + 180 automatiska tester, 30-personssimulering (30/30, 0 anomalier), 8 webbläsarkontroller. Bygger på red team-revisionen v1 vars två fynd (F-EGEN, periodpropagering) åtgärdades och ombevisades.</p>
+
+  <div class="verdict">
+    <div class="eyebrow" style="margin-bottom:0.3rem">§35 Final verdict</div>
+    <strong class="v">PRODUCTION READY WITH CONDITIONS</strong>
+    <p style="margin:0.5rem 0 0">Den deterministiska beredningsmotorn — hela kedjan utlysning → regelverk → fingerprint → behörighet → krav → bedömning → fakta → bevis → claims → budget → diligence → granskning → gate — är bevisad i drift och håller för adversariell prövning. Villkoren är oförändrade och externa: Swish-handelsavtal + certifikat, Supabase/Vercel-konton, samt att språklig <em>generering</em> (§23) medvetet inte finns — systemet formulerar ingenting åt sökanden, vilket är exakt varför det inte kan hallucinera.</p>
+  </div>
+
+  <h2>§1 Kedjan — vad som är kopplat och bevisat</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Steg</th><th>Bevis (färsk prob eller test)</th></tr>
+    <tr><td>Verklig utlysning → regelverk → fingerprint</td><td>Kulturrådets resebidrag: 7 kriterier (4 icke-kompensatoriska), budgetregel, 3 bevisningskrav, deadline, 10 formulärfält, källänk, <span class="probe">grant_fingerprint</span> i §33-kontraktet</td></tr>
+    <tr><td>Eligibility (§5)</td><td>PASS/FAIL/UNKNOWN trevärt; UNKNOWN blir aldrig PASS (blockerar gate — livebevisat); hård FAIL märks <span class="probe">requiresFactualChange</span> och skrivs aldrig runt; Erasmus utesluts med skäl</td></tr>
+    <tr><td>Requirement matrix (§6)</td><td>"Var bevisas kriteriet?" besvaras per rad: kriterium → utfall → E-nivå → kurerad bilagekoppling; bilagor listas ATTACHED/MISSING; E1-kriterier hamnar i kompletteringslistan — probat i dag</td></tr>
+    <tr><td>Evaluation (§7)</td><td>Formellt/kvalitets-/prioriteringskrav = hard/mandatory/weighted ur frusen regelversion; weighted blockerar aldrig; intern styrka ALLTID märkt <span class="probe">INTERNAL_ESTIMATE</span> med förklaring att den inte är en beslutsprognos</td></tr>
+    <tr><td>Adaptiv intervju (§8–9)</td><td>0 redundanta frågor (besvarat↔obesvarat disjunkta); svar uppgraderar unknown→eligible live och flyttar frågan till "Dina svar" (ändringsbar); öppna frågor sorteras efter informationsvärde (flest avgörbara stöd först)</td></tr>
+    <tr><td>Evidence (§10)</td><td>E0→E1 vid svar; E2 vid bifogat EGET dokument enligt kurerad koppling; E3 vid dokument utfärdat av extern part (inbjudan → E3, CV → E2 — testat); nivå höjs aldrig utan faktiskt underlag; E4 finns inte och påstås aldrig</td></tr>
+    <tr><td>Claim register (§11)</td><td>Motsägelser fångas i: antal (500/450), belopp (formulär↔finansieringsplan, blockerande), procent (60/40 — probat i dag), period/månader, exakta datum (dagprecision, årsskiftessäkert), partner (nej i formulär + partner i text ⇒ CONFLICT), orgnr (Luhn), namn</td></tr>
+    <tr><td>Longitudinal (§12)</td><td>Ändringar över tid: ny siffra ⇒ konflikt mot kvarglömd gammal; ändrad period ⇒ kvarglömda månader flaggas; sänkt budget ⇒ balansen blockerar tills finansieringen följer med; omgenererat dokument bär nytt, tappar gammalt, äldre dokument bevaras</td></tr>
+    <tr><td>Projektlogik (§13–14)</td><td>Mallen kräver mekanism per led (problem→orsak→mål→aktivitet→resultat); indikator med finns ⇒ baseline/målvärde/mätmetod/ansvarig obligatoriska (validering vägrar annars); risker opt-in med full struktur</td></tr>
+    <tr><td>Budget (§15)</td><td>Alla åtta medvetna fel hittades: kostnad utan aktivitet (flagga), fel summa (blockerar), fel stödnivå (max-regel + balans, blockerar), saknad medfinansiering (blockerar — probat i dag), dubbelfinansiering (HIGH_RISK + blockerande), period i text ≠ periodfält, sökt &gt; totalbudget, orimlig andel</td></tr>
+    <tr><td>Diligence (§18)</td><td>Kompletteringslistan härleds ur saknad bevisning + E1-baserade icke-kompensatoriska kriterier + motstridiga uppgifter</td></tr>
+    <tr><td>Adversarial review (§20)</td><td>Granskningen listar avslagsgrunderna en kritisk handläggare tar först, sorterade CRITICAL→LOW, med åtgärd per lucka och ärlig <span class="probe">requiresFactualChange</span>-märkning när bättre text inte hjälper</td></tr>
+    <tr><td>Consistency + final review + gate (§31–32)</td><td>Bytesidentisk determinism; gaten vägrar med 422 + HELA granskningen i svaret, öppnar med 200 efter rättning — livebevisat i dag. Tillståndsmaskinen stoppar dessutom hopp förbi granskningsstegen (409)</td></tr>
+  </table></div>
+
+  <h2>§33 Komponentklassificering — är det ett system på riktigt?</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Funktion</th><th>Klass</th><th>Grund</th></tr>
+    <tr><td>Matchmotor (trevärde, 55 stöd, versionerade regler)</td><td class="cls impl">IMPLEMENTED</td><td>End-to-end i 30-sim + prober; append-only regelversioner med källänk</td></tr>
+    <tr><td>Granskningsmotor + submission gate</td><td class="cls impl">IMPLEMENTED</td><td>Live: 422/200-rundresa; UNKNOWN/FAIL/budget/bilagor blockerar</td></tr>
+    <tr><td>Konsistensmotor (8 claimtyper)</td><td class="cls impl">IMPLEMENTED</td><td>Prober i dag: antal, belopp, procent, period, datum, partner, orgnr, namn</td></tr>
+    <tr><td>Evidenstrappa E0–E3</td><td class="cls impl">IMPLEMENTED</td><td>CV⇒E2, inbjudan⇒E3 testat; kurerad koppling, aldrig heuristik</td></tr>
+    <tr><td>Budgetmotor + aktivitetslänk</td><td class="cls impl">IMPLEMENTED</td><td>Öre-exakt; 8/8 felinjektioner fångade</td></tr>
+    <tr><td>Dokumentmotor + PDF (5 mallar, förifyllnad)</td><td class="cls impl">IMPLEMENTED</td><td>0 uppfunna tal, 0 meta-spår i alla 5 mallar (pdftotext-grep); typografi verifierad</td></tr>
+    <tr><td>Språkkontroll (ödmjukhet, generiska fraser, upprepningar)</td><td class="cls impl">IMPLEMENTED</td><td>Flaggar, skriver aldrig om; avslöjade egna testfixturens lathet</td></tr>
+    <tr><td>Formulärscheman</td><td class="cls impl">IMPLEMENTED (38/55)</td><td>Kanoniska nycklar ger korskontroller + förifyllnad på varje form; övriga 17 flaggas öppet HIGH (fail-safe, regressionstestad)</td></tr>
+    <tr><td>Företagarspåret</td><td class="cls impl">IMPLEMENTED</td><td>Var UI_ONLY (användarfynd F-EGEN) — nu byggt, browser-verifierat i webb + demo, formulärkomplett</td></tr>
+    <tr><td>Betalkedja + kvitton (moms, Landvex)</td><td class="cls impl">IMPLEMENTED</td><td>Swish-adapter med mTLS byggd; mock endast i dev — <span class="probe">PAYMENTS_MOCK_ENABLED</span> vägras i produktion (testat)</td></tr>
+    <tr><td>Källfärskhet + kuratorskö + CONFLICT</td><td class="cls impl">IMPLEMENTED</td><td>Staleness-flagga, väntande källändring ⇒ CONFLICT i granskningen, kö med apply/resolve</td></tr>
+    <tr><td>Adaptiv intervju</td><td class="cls part">PARTIAL</td><td>Villkorsfrågor + live-omprövning + informationsvärdes-sortering; generativ omprioritering kräver generation mode</td></tr>
+    <tr><td>Additionalitet / value for money (§16–17)</td><td class="cls part">PARTIAL</td><td>Mallfrågor med mekanikkrav + medfinansieringsbalans; ingen motorbedömning av svaren</td></tr>
+    <tr><td>Källhierarki (10 nivåer, §4)</td><td class="cls part">PARTIAL</td><td>En kurerad källa per regelverk med version/färskhet/CONFLICT; flerkälls-prioritering är kuratorsprocess, inte motor</td></tr>
+    <tr><td>Claimtyper geografi/indikatorer i fritext</td><td class="cls part">PARTIAL</td><td>Indikatorer strukturerat i mallen; fritextjämförelse saknas</td></tr>
+    <tr><td>Generation mode (§23 språkgenerering)</td><td class="cls miss">MISSING (beslut)</td><td>Kräver LLM + BEFORE/REASON/AFTER-spårbarhet + sökandens godkännande per formulering; medvetet ovalt — dagens motor kan inte ljuga</td></tr>
+    <tr><td>E4 / de minimis-registerkontroll</td><td class="cls miss">MISSING</td><td>Äkthetskontroll och registerslagning kräver externa integrationer; påstås aldrig</td></tr>
+    <tr><td>Mockad betalning i dev</td><td class="cls mock">MOCKED (märkt)</td><td>"SIMULERAD BETALNING" i UI; produktionsvägran testad</td></tr>
+  </table></div>
+  <p class="small">Inga kända PROMPT_ONLY-, UI_ONLY- eller HARDCODED-funktioner återstår: det enda hittade UI_ONLY-fallet (företagarlöftet) upptäcktes av användaren under revision v1, byggdes på riktigt och regressionstestades.</p>
+
+  <h2>§34 Scorecard</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Dimension</th><th style="width:120px"></th><th>Poäng</th></tr>
+    <tr><td>Final Gate</td><td><div class="bar"><span style="width:95%"></span></div></td><td class="num">95</td></tr>
+    <tr><td>Eligibility</td><td><div class="bar"><span style="width:92%"></span></div></td><td class="num">92</td></tr>
+    <tr><td>Traceability</td><td><div class="bar"><span style="width:90%"></span></div></td><td class="num">90</td></tr>
+    <tr><td>Budget</td><td><div class="bar"><span style="width:90%"></span></div></td><td class="num">90</td></tr>
+    <tr><td>Humility</td><td><div class="bar"><span style="width:88%"></span></div></td><td class="num">88</td></tr>
+    <tr><td>Consistency</td><td><div class="bar"><span style="width:85%"></span></div></td><td class="num">85</td></tr>
+    <tr><td>Evaluation Understanding</td><td><div class="bar"><span style="width:85%"></span></div></td><td class="num">85</td></tr>
+    <tr><td>Requirement Understanding</td><td><div class="bar"><span style="width:82%"></span></div></td><td class="num">82</td></tr>
+    <tr><td>Claim Integrity</td><td><div class="bar"><span style="width:82%"></span></div></td><td class="num">82</td></tr>
+    <tr><td>Handler Clarity</td><td><div class="bar"><span style="width:82%"></span></div></td><td class="num">82</td></tr>
+    <tr><td>Adversarial Review</td><td><div class="bar mid"><span style="width:78%"></span></div></td><td class="num">78</td></tr>
+    <tr><td>Diligence</td><td><div class="bar mid"><span style="width:78%"></span></div></td><td class="num">78</td></tr>
+    <tr><td>Evidence</td><td><div class="bar mid"><span style="width:75%"></span></div></td><td class="num">75</td></tr>
+    <tr><td>Project Logic</td><td><div class="bar mid"><span style="width:72%"></span></div></td><td class="num">72</td></tr>
+    <tr><td>Adaptive Interview</td><td><div class="bar mid"><span style="width:60%"></span></div></td><td class="num">60</td></tr>
+    <tr><td>Additionality</td><td><div class="bar low"><span style="width:45%"></span></div></td><td class="num">45</td></tr>
+    <tr><td>Value for Money</td><td><div class="bar low"><span style="width:45%"></span></div></td><td class="num">45</td></tr>
+    <tr><td>Generation Quality</td><td><div class="bar low"><span style="width:40%"></span></div></td><td class="num">40</td></tr>
+  </table></div>
+  <p class="small">Ingen totalsumma redovisas — kritiska fel överstyr poäng per direktivet. Generation Quality mäts mot §23:s formuleringsstandard; mot ärlighetsstandarden (aldrig påhitt, aldrig meta-spår) är genereringen 100 — det som produceras är strukturdokument av sökandens egna ord, bevisat rena.</p>
+
+  <h2>§35 Domen i delar</h2>
+  <h3>PROVEN</h3>
+  <p>Hela den deterministiska kedjan §1, punkt för punkt med levande bevis (tabellen ovan) · no-hallucination under press (0 uppfunna tal, obesvarat utelämnas) · no-meta-trace i alla 5 mallar · användarägande (förifyllnad endast känd fakta; korrigering vinner alltid; äldre dokument bevaras) · determinism · multi-grant-separation med egna frusna snapshots · stoppvillkoren (§32:s hela lista är i drift: eligibility, obligatoriska fält, bilagor, budgetbalans, teckengränser, motsägelser, kritiska UNKNOWN).</p>
+  <h3>FAILED → FIXAT under revisionsserien</h3>
+  <p>Företagarlöftet utan backendlogik (användarfynd, CRITICAL) · periodändring som inte propagerade (CONSISTENCY FAILURE). Båda byggda, regressionstestade och ombevisade. Inga kvarvarande misslyckade tester.</p>
+  <h3>PARTIAL</h3>
+  <p>Adaptiv intervju (sortering + villkor, ej generativ) · additionalitet/value-for-money (mallfrågor, ej motorbedömning) · källhierarkins flerkälls-prioritering (kuratorsprocess) · geografi/indikator-claims i fritext.</p>
+  <h3>MISSING</h3>
+  <p>Generation mode (produktbeslut — kravbilden dokumenterad i båda styrdokumenten) · E4/registerkontroller · 17/55 formulärscheman (flaggas öppet, aldrig tyst).</p>
+  <h3>CRITICAL FAILURES (blockerar produktion)</h3>
+  <p>Inga i den byggda funktionaliteten. Produktionsblockerarna är externa och oförändrade: Swish-handelsavtal + certifikat (betalning), Supabase/Vercel-konton (drift). Utan dem kan ingen riktig betalning tas emot — och mock-läget vägrar starta i produktion, vilket är rätt beteende.</p>
+  <h3>HIGH-RISK GAPS (kan ge verkligt dåliga ansökningar)</h3>
+  <ul>
+    <li>Kurerad regeldata som åldras — färskhets- och CONFLICT-flaggorna är skyddet; kuratorsrutinen är systemets verkliga sanningskälla och behöver bemanning i drift.</li>
+    <li>Användare som läser "READY_FOR_SUBMISSION" som löfte om bifall — texten säger uttryckligen motsatsen, men förväntansstyrning i onboarding kan stärkas.</li>
+    <li>17 stöd utan formulär: granskningen säger det öppet, men användaren gör där mer själv.</li>
+    <li>Additionalitet bedöms inte av motorn — en svag "varför räcker inte egna resurser"-berättelse passerar med bara mallvägledning.</li>
+  </ul>
+  <h3>TOP 10 FIXES (prioritetsordning)</h3>
+  <p>1) Sista 17 schemana · 2) additionalitetsfråga som strukturfält med motorflagga · 3) geografi/indikator-claims i konsistensmotorn · 4) kuratorspåminnelser (notifiering, inte bara kö) · 5) förväntansstyrning kring READY-status · 6) generation mode-beslutet (störst enskild kvalitetshöjning — och störst risk; kravbilden är klar) · 7) E3-koppling för fler bevistyper · 8) datumfält↔periodfält-korskontroll där scheman har båda · 9) fler företagsstöd för enskild firma i kunskapsbasen · 10) engelska källdokument (Erasmus/Kreativa Europa) i kurerad form.</p>
+  <h3>REAL-WORLD TEST RESULT</h3>
+  <p>Kulturrådets internationella resebidrag, end-to-end: persona → matchning (eligible med skäl) → ansökan med fruset regelverk → 10 fält + förifyllnad → budget med aktivitetslänk → bevisuppladdning (CV⇒E2, inbjudan⇒E3) → granskning READY → gate öppnar. Med åtta injicerade fel: alla åtta fångade, gate stängd, 422 med prioriterad åtgärdslista. 30 samtidiga personor: 30/30, 0 anomalier.</p>
+
+  <h2>§36 Den ultimata standarden — ärligt svar</h2>
+  <p>Kan systemet ta en verklig sökande, förstå en verklig utlysning, upptäcka vilken information som behövs, ställa rätt frågor, bygga en korrekt bild, samla rätt bevis, förstå bedömningslogiken, identifiera svagheter, försöka slå sönder ansökan och lämna ett komplett, trovärdigt, verifierbart beslutsunderlag som sökanden själv granskar och lämnar in? <strong>Ja — bevisat med testresultat, för hela kedjan utom ett led.</strong> Ledet "formulera den professionellt" utförs i dag av sökanden med systemets struktur, förifyllnad, vägledning och språkgranskning — inte av systemet självt. Det är ett dokumenterat produktval, inte en glömd funktion: motorn som inte formulerar är också motorn som aldrig kan hitta på. Att ändra det valet är beslut nummer 6 i listan ovan, och kravbilden för att göra det säkert är färdigskriven.</p>
+
+  <div class="card" style="border-left:4px solid var(--pass); margin-top:2rem">
+    <strong>Addendum (efter revisionen, samma dygn):</strong> Fix #1 är genomförd — schematäckningen gick från 38/55 till <strong>54/55</strong> i kureringspass 6 (commit <span class="probe">b99f043</span>). Formas öppna utlysning hålls medvetet schemalös: varje utlysningsomgång har eget formulär hos finansiären, och den är samtidigt regressionsvaktpost för fail-safe-flaggan. 180 API-tester gröna efter omseedning.
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--pass); margin-top:1rem">
+    <strong>Addendum 2 (2026-08-17):</strong> Sedan revisionen har flera av tabellens öppna rader stängts och basen växt väsentligt.
+    <ul>
+      <li><strong>PARTIAL-rader stängda:</strong> additionalitet är nu strukturfält med motorflagga (fix #2), geografi-claims i fritext bevakas av destinationsvakten (fix #3), kuratorspåminnelser notifierar aktivt (fix #4), READY-förväntansstyrningen är skärpt (fix #5) och generation mode-skalet är byggt bakom flaggor med deterministiska vakter (fix #6 — aktiveras med API-nyckel).</li>
+      <li><strong>Kunskapsbas 55 → 72 stöd, 35 finansiärer, 71/72 scheman:</strong> utvandringsspåret (3 stöd), funktionsnedsättnings-/omsorgsspåret (omvårdnadsbidrag, merkostnadsersättning, bilstöd, närståendepenning — gated bakom ny upptäcktsfråga), nyanländspåret (etableringsersättning, hemutrustningslån — en gemensam gate-fråga), studiestartsstöd, inackorderingstillägg samt sex organisationsstöd (kommunala föreningsbidrag, regionala kulturstöd, sparbanksstiftelserna, Leader, Forte, Radiohjälpen). Körkortslånet uteslöts medvetet — avvecklat stöd vore falsk täckning.</li>
+      <li><strong>Sex användartestfynd åtgärdade i demon</strong> (frågor som försvann spårlöst → förklarande notis + ärlig räknare; "Dina svar" öppen som standard; ärlig företagstext för aktiebolag; "Vill ansöka"-val + Nästa → plan per stöd; blurrad teaser med tydlig upplåsning; scroll till toppen vid sidbyte) — företagstexten och teasern speglade till webbappen.</li>
+      <li><strong>Resend påkopplad som e-postkanal:</strong> kvittot kan laddas ner som PDF och skickas via e-post från Mina köp; lösenordsåterställning via e-postlänk är primär väg (fail-closed utan kanal, koder som reserv).</li>
+      <li><strong>Ombevisat:</strong> 190 API- + 90 core-tester gröna, 30-användarsimulering 30/30 utan anomalier mot 72-stödsbasen, sex demokontroller + uicheck12 i riktiga webbappen gröna. Commits <span class="probe">4ca61f2 · ec64522 · 71e6971 · 8bcdac1 · 61b35aa</span>.</li>
+    </ul>
+    Kvarstående öppna rader är oförändrat ärliga: E4/registerkontroller (ingen extern API), flerkälls-hierarkin (kuratorsprocess), generation-aktivering (ANTHROPIC_API_KEY) samt de externa produktionsblockerarna (Swish-avtal + certifikat, Supabase/Vercel, Resend-konto med verifierad domän).
+  </div>
+
+  <p class="small" style="margin-top:1.5rem">Bevisregister: <span class="probe">audit-red-master.json</span> (färsk probkörning), <span class="probe">audit-master.mjs</span>-utfall, testsviter 88 core + 180 api gröna, sim30 30/30, uicheck9/10/11 + 5 demokontroller gröna, produktionsbyggen (vite + tsc) rena. Föregående revision: red team v1 med K1–K5 och F-EGEN — samtliga åtgärdade och ombevisade.</p>
+</div>

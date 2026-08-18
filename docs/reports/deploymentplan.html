@@ -1,0 +1,171 @@
+<title>Bidrag.se Deploymentplan</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --surface: #ffffff; --ink: #1c2330; --ink-soft: #55617a;
+    --line: #dde1ea; --accent: #2743c7; --accent-soft: #eceffc;
+    --ok: #1a7a4a; --warn: #9a6a00; --danger: #b3341f; --code-bg: #eef0f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171e; --surface: #1b1f29; --ink: #e7eaf2; --ink-soft: #9aa5bd;
+      --line: #2c3342; --accent: #8fa3ff; --accent-soft: #232b45;
+      --ok: #4cc088; --warn: #d9a53d; --danger: #e06550; --code-bg: #232835;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171e; --surface: #1b1f29; --ink: #e7eaf2; --ink-soft: #9aa5bd;
+    --line: #2c3342; --accent: #8fa3ff; --accent-soft: #232b45;
+    --ok: #4cc088; --warn: #d9a53d; --danger: #e06550; --code-bg: #232835;
+  }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif; margin: 0; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 50rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  .kicker { color: var(--accent); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+  h1 { font-size: 2rem; line-height: 1.15; margin: 0.4rem 0 0.6rem; text-wrap: balance; letter-spacing: -0.015em; }
+  .lede { color: var(--ink-soft); margin: 0 0 0.8rem; max-width: 64ch; }
+  .meta { color: var(--ink-soft); font-size: 0.85rem; border-bottom: 1px solid var(--line); padding-bottom: 1.6rem; }
+  h2 { font-size: 1.22rem; margin: 2.6rem 0 0.7rem; letter-spacing: -0.01em; }
+  h2 .n { color: var(--accent); font-variant-numeric: tabular-nums; margin-right: 0.55rem; }
+  p { margin: 0.7rem 0; max-width: 70ch; }
+  .muted { color: var(--ink-soft); }
+  code { font: 0.85em/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 4px; }
+  pre { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; overflow-x: auto; font: 0.8rem/1.55 ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  pre code { background: none; padding: 0; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); margin: 0.8rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.86rem; }
+  th, td { text-align: left; padding: 0.5rem 0.8rem; border-top: 1px solid var(--line); vertical-align: top; }
+  thead th { border-top: none; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); white-space: nowrap; }
+  td code { white-space: nowrap; }
+  ul, ol { padding-left: 1.2rem; margin: 0.7rem 0; }
+  li { margin: 0.35rem 0; max-width: 68ch; }
+  .status { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; padding: 0.1rem 0.55rem; border-radius: 99px; white-space: nowrap; }
+  .status.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+  .status.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); }
+  .status.no { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); }
+  .callout { border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 8px 8px 0; padding: 0.8rem 1.1rem; margin: 1.2rem 0; max-width: 68ch; }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout p { margin: 0.3rem 0; }
+  footer { margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 0.82rem; }
+</style>
+
+<div class="page">
+  <div class="kicker">Bidrag.se · Deployment till produktion — read-only-analys</div>
+  <h1>Deploymentplan: GitHub → Vercel + Supabase</h1>
+  <p class="lede">
+    Exakt runtime, bygge, miljövariabler, beroenden och en steg-för-steg-plan. All fakta är verifierad
+    mot källkoden och mot ett riktigt bygge från en ren utcheckning — ingenting är gissat; de två punkter
+    som inte KAN verifieras utanför riktiga plattformar är explicit flaggade som stoppunkter.
+  </p>
+  <p class="meta">2026-08-16 · gren <code>claude/bidrag-se-production-build-hdabqp</code> @ <code>35fd6db</code> · ingen kod ändrad</p>
+
+  <h2><span class="n">1</span>Runtime, bygge, start — verifierat</h2>
+  <div class="tablewrap"><table><tbody>
+    <tr><td>Runtime</td><td>Node.js <strong>≥ 22</strong> (<code>engines</code> i package.json). Vercel-projektet måste ställas på Node 22.x.</td></tr>
+    <tr><td>Framework</td><td>Inget metaframework. Vite 6 + React 18 SPA (statisk) · Fastify 5-API som Vercel-funktion. <code>vercel.json</code> sätter <code>framework: null</code>.</td></tr>
+    <tr><td>Install</td><td><code>npm ci --no-audit --no-fund</code> (workspaces-monorepo, en lockfil i roten)</td></tr>
+    <tr><td>Build (Vercel)</td><td><code>npm run build -w packages/core &amp;&amp; npm run build -w apps/web</code> → output <code>apps/web/dist</code></td></tr>
+    <tr><td>Start</td><td>Vercel: ingen startprocess — SPA:n servas statiskt, API:t är funktionen <code>api/index.ts</code> (60 s, 1024 MB). Container-alternativ: <code>node apps/api/dist/index.js</code>.</td></tr>
+    <tr><td>Cron</td><td>4 scheman i <code>vercel.json</code> → <code>GET /v1/internal/cron/:job</code> med <code>Authorization: Bearer $CRON_SECRET</code> (skickas automatiskt av Vercel).</td></tr>
+    <tr><td>Routing</td><td>Rewrites: <code>/v1/*</code> och <code>/healthz</code> → funktionen; allt övrigt → <code>index.html</code> (SPA-fallback). <code>/metrics</code> exponeras inte.</td></tr>
+  </tbody></table></div>
+
+  <h2><span class="n">2</span>Ren-utcheckning-verifiering — utförd, inte antagen</h2>
+  <pre><code>git clone &lt;repo&gt; → npm ci                240 paket, lockfil i synk        ✓
+npm run build (core + api + web)         0 fel                            ✓
+npm run typecheck (alla tre workspaces)  0 fel                            ✓
+Migreringar 0000–0006 mot TOM databas    "Migrations applied."            ✓
+npm run db:seed                          51 stöd, idempotent              ✓
+RLS-kontroll                             35 tabeller, 0 utan RLS          ✓
+Testsviten (körd på samma commit)        48 domän + 120 API gröna         ✓
+Serverless-röktest genom api/index.ts    hela köpresan inkl. cron-auth    ✓</code></pre>
+
+  <h2><span class="n">3</span>Supabase-beroenden</h2>
+  <ul>
+    <li><strong>PostgreSQL</strong> — enda hårda beroendet. Ren SQL/Drizzle, inga extensions utöver standard (<code>gen_random_uuid</code>, sekvenser). Runtime ansluter via Supavisor-poolern (port 6543, transaction mode — kompatibelt: node-postgres använder inga namngivna prepared statements); migreringar går ALLTID mot direktanslutningen (5432) via <code>DIRECT_DATABASE_URL</code>.</li>
+    <li><strong>Storage</strong> — dokumentvalvet med <code>STORAGE_DRIVER=supabase</code>: privat bucket, service-nyckel enbart server-side, REST-anrop med timeout. <span class="status warn">stoppunkt A</span> — drivern är skriven mot Storage-API:et men aldrig körd mot ett riktigt projekt (kräver nycklar).</li>
+    <li><strong>Auth/Edge Functions/PostgREST</strong> — används INTE. RLS deny-all + revoke gör PostgREST-ytan stängd (verifierat: 0 tabeller utan RLS; CI-invariant vaktar framtida tabeller).</li>
+  </ul>
+
+  <h2><span class="n">4</span>Migreringar &amp; seed</h2>
+  <p>
+    7 deterministiska SQL-migreringar i <code>apps/api/drizzle/</code>: <code>0000</code> initial (schemat) ·
+    <code>0001</code> index · <code>0002</code> invites · <code>0003</code> payments · <code>0004</code> receipts + kvittosekvens ·
+    <code>0005</code> RLS deny-all + revoke · <code>0006</code> password_reset_tokens + provider_token.
+    Körs med <code>npm run db:migrate</code> (Node 22, ingen extra tooling). Seed: <code>npm run db:seed</code> —
+    idempotent, körs en gång vid uppsättning. Regel: migrera FÖRE koddeploy som behöver schemat; aldrig DDL via poolern.
+  </p>
+
+  <h2><span class="n">5</span>Lagring, auth, API-ytor</h2>
+  <ul>
+    <li><strong>Lagring:</strong> uppladdningar (PDF/PNG/JPG/DOCX/XLSX/TXT, magic-byte-verifierade, opaka tenant-scopade namn) → Supabase Storage på Vercel. Ingen annan filsystemsanvändning i runtime.</li>
+    <li><strong>Auth:</strong> egen (scrypt + JWT 15 min + roterande refresh, httpOnly-cookies, origin-guard, lösenordsåterställning). Kräver <code>AUTH_SECRET</code> ≥ 32 tecken; saknas den i produktion vägrar processen starta (fail-fast, verifierat i config).</li>
+    <li><strong>API:</strong> ~62 REST-endpoints under <code>/v1</code> i EN funktion — auth, profiler/projekt, matchning+teaser, betalning/kvitto (Swish + status/QR), ärenden, dokument, team/GDPR, kurator, cron. Webhook: <code>POST /v1/webhooks/payments/swish</code> (callback-URL:en kräver https:443 — Vercel uppfyller).</li>
+  </ul>
+
+  <h2><span class="n">6</span>Externa tjänster</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Tjänst</th><th>Krävs för</th><th>Läge</th></tr></thead>
+    <tbody>
+      <tr><td>Resend (eller SMTP)</td><td>kvittomail, lösenordsåterställning, notiser, inbjudningar</td><td><span class="status no">krävs i produktion</span> — utan mailväg får användare aldrig återställningslänkar eller kvitton (bokförs ärligt som "skipped", men det räcker inte för betalande kunder)</td></tr>
+      <tr><td>Swish Handel</td><td>betalvägen (39 kr-upplåsningen)</td><td>kod klar + testad mot lokal mTLS-server; väntar avtal/certifikat. Utan konfiguration svarar unlock ärligt 503 — produktbeslut om lansering sker före eller efter Swish</td></tr>
+      <tr><td>ClamAV</td><td>filskanning</td><td>valfri; utan den märks filer <code>scan_unavailable</code></td></tr>
+      <tr><td>Källwebbplatser</td><td>inhämtning (cron)</td><td>utgående HTTPS med SSRF-guard; inga nycklar</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">7</span>Miljövariabler — komplett</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Variabel</th><th>Hemlig</th><th>Produktion</th></tr></thead>
+    <tbody>
+      <tr><td><code>DATABASE_URL</code> (pooler 6543)</td><td>ja</td><td><span class="status no">krävs — fail-fast</span></td></tr>
+      <tr><td><code>DIRECT_DATABASE_URL</code> (5432)</td><td>ja</td><td>krävs för migreringssteget</td></tr>
+      <tr><td><code>AUTH_SECRET</code> · <code>FIELD_ENCRYPTION_KEY</code> (64 hex)</td><td>ja</td><td><span class="status no">krävs — fail-fast</span></td></tr>
+      <tr><td><code>STORAGE_DRIVER=supabase</code> · <code>SUPABASE_URL</code> · <code>SUPABASE_SERVICE_ROLE_KEY</code> · <code>SUPABASE_STORAGE_BUCKET=documents</code></td><td>nyckeln: ja</td><td>krävs på Vercel (disk fungerar inte serverless)</td></tr>
+      <tr><td><code>CRON_SECRET</code></td><td>ja</td><td>krävs (annars körs inga jobb — ytan är 404)</td></tr>
+      <tr><td><code>RESEND_API_KEY</code> · <code>EMAIL_FROM</code> (alt. <code>SMTP_URL</code>)</td><td>nyckeln: ja</td><td>krävs i praktiken (se §6)</td></tr>
+      <tr><td><code>PUBLIC_BASE_URL=https://bidrag.se</code> · <code>CORS_ORIGIN=https://bidrag.se</code></td><td>nej</td><td>krävs (återställningslänkar + Swish-callback byggs på PUBLIC_BASE_URL)</td></tr>
+      <tr><td><code>PG_POOL_MAX=2</code> · <code>NODE_ENV=production</code></td><td>nej</td><td>rekommenderat resp. sätts av Vercel</td></tr>
+      <tr><td><code>SELLER_NAME</code> · <code>SELLER_ORG_NUMBER</code> · <code>SELLER_VAT_NUMBER</code> · <code>VAT_RATE_BPS</code> · <code>ANALYSIS_PRICE_MINOR</code></td><td>nej</td><td>krävs för korrekta kvitton (defaults: 2500 bps, 3900 öre)</td></tr>
+      <tr><td><code>SWISH_MERCHANT_ALIAS</code> · <code>SWISH_CERT_BASE64</code> · <code>SWISH_KEY_BASE64</code> · (<code>SWISH_KEY_PASSPHRASE</code>, <code>SWISH_API_BASE</code>, <code>SWISH_QR_BASE</code>, <code>SWISH_CA_BASE64</code>)</td><td>ja</td><td>vid Swish-aktivering; <code>SWISH_API_BASE</code> → MSS i preview</td></tr>
+      <tr><td><code>RATE_LIMIT_MAX</code> · <code>LOG_LEVEL</code> · <code>MAX_UPLOAD_BYTES</code> · <code>ACCESS_TOKEN_TTL</code> · <code>REFRESH_TOKEN_TTL_DAYS</code> · <code>CLAMAV_ADDRESS</code> · <code>PAYMENTS_MOCK_ENABLED</code></td><td>nej</td><td>valfria; mock ignoreras alltid i produktion</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">Inga klientvariabler existerar (inga <code>VITE_</code>) — SPA:n pratar bara med <code>/v1</code> på samma origin. Inga hemligheter i Git (skannat).</p>
+
+  <h2><span class="n">8</span>DNS-krav</h2>
+  <ul>
+    <li><code>bidrag.se</code> (apex) → Vercel: A-post <code>76.76.21.21</code> (eller ALIAS/ANAME enligt Vercels domänguide) · <code>www</code> → CNAME <code>cname.vercel-dns.com</code>. TLS utfärdas automatiskt av Vercel.</li>
+    <li>Resend-avsändardomän: SPF- och DKIM-TXT-poster (exakta värden ges i Resend-konsolen vid domänverifiering) + rekommenderad DMARC-post.</li>
+    <li>Swish-callback kräver ingen DNS utöver produktionsdomänen (https:443 uppfylls av Vercel).</li>
+  </ul>
+
+  <h2><span class="n">9</span>Production blockers &amp; stoppunkter</h2>
+  <div class="callout warn">
+    <p><strong>Stoppunkt A — Supabase Storage-drivern:</strong> skriven mot Storage-REST men aldrig körd mot ett riktigt projekt (kräver nycklar). Verifieras i steg 3 nedan innan produktionstrafik.</p>
+    <p><strong>Stoppunkt B — Vercels funktionsbygge av <code>api/index.ts</code>:</strong> funktionen importerar hela API:t över workspace-gränsen med explicita <code>.ts</code>-ändelser. Vår lokala serverless-simulering är grön, men Vercels egen bundler (nft/esbuild) kan inte köras härifrån och verifieras därför på FÖRSTA preview-deployen. Om den mot förmodan inte löser importerna är fallbacken liten och känd: peka funktionen mot förbyggd JS (<code>apps/api/dist</code>, byggs redan av <code>npm run build</code>) i stället för källfilerna.</p>
+  </div>
+  <ul>
+    <li>Konton/hemligheter: Supabase-projekt, Vercel-projekt, domän, Resend-nyckel + domänverifiering (blockerar mail).</li>
+    <li>Swish: handelsavtal + certifikat → MSS-körning → en riktig 39 kr-betalning (<code>scripts/swish-readiness.mjs</code>). Blockerar betalvägen, inte lanseringen av gratisanalys/teaser.</li>
+    <li>Momsklassning bekräftad med redovisningen innan första riktiga kronan (<code>VAT_RATE_BPS</code> är konfigurerbar).</li>
+  </ul>
+
+  <h2><span class="n">10</span>Konkret plan: GitHub → Vercel + Supabase</h2>
+  <ol>
+    <li><strong>Supabase</strong> — skapa projekt (EU-region). Hämta poolad + direkt connection string. Skapa PRIVAT Storage-bucket <code>documents</code>. Kör från en utcheckning av <code>main</code>:
+      <pre><code>DIRECT_DATABASE_URL=&lt;5432&gt; DATABASE_URL=&lt;5432&gt; AUTH_SECRET=&lt;prod&gt; \
+FIELD_ENCRYPTION_KEY=&lt;prod&gt; npm run db:migrate &amp;&amp; npm run db:seed</code></pre></li>
+    <li><strong>Vercel</strong> — importera GitHub-repot (root = repo-roten; <code>vercel.json</code> styr build/output/funktion/rewrites/cron). Sätt Node 22.x. Lägg in §7-variablerna med separata värden för Production/Preview. <em>Verifiera stoppunkt B på första preview-deployen</em>: <code>/healthz</code> → <code>{"ok":true}</code>.</li>
+    <li><strong>Storage-verifiering (stoppunkt A)</strong> — i preview: registrera testkonto, ladda upp PDF, ladda ner, GDPR-radera kontot; kontrollera i Supabase-konsolen att objekten skapas och försvinner.</li>
+    <li><strong>Preview-genomkörning</strong> — hela flödet: registrering → intag → teaser → (mock av i preview? nej: <code>PAYMENTS_MOCK_ENABLED</code> sätts ENDAST i preview, aldrig production) → kvitto → rapport; lösenordsåterställning med riktigt Resend-mail; cron: kontrollera i Vercel-loggarna att de fyra jobben kör grönt.</li>
+    <li><strong>Domän</strong> — koppla <code>bidrag.se</code> + <code>www</code> (DNS enligt §8), sätt <code>PUBLIC_BASE_URL</code>/<code>CORS_ORIGIN</code> till produktionsdomänen. Verifiera Resend-domänen (SPF/DKIM).</li>
+    <li><strong>Production-deploy</strong> — merge till produktionsgrenen → automatisk deploy. Rökkontroll: <code>/healthz</code>, registrering, teaser, dokumentvalv, återställningsmail till riktig inkorg.</li>
+    <li><strong>Swish-milstolpen</strong> (när avtal + cert finns) — MSS i preview (<code>SWISH_API_BASE=https://mss.cpc.getswish.net</code>, testcert) → <code>node scripts/swish-readiness.mjs</code>; därefter produktionscert + en riktig 39 kr-betalning med samma skript; återbetala i Swish-portalen. Först därefter är betalvägen live.</li>
+    <li><strong>Efterkontroller</strong> — Vercel-larm på funktionsfel; Supabase-backupper är på per default (verifiera PITR-nivå); kalenderpåminnelse för Swish-certets utgångsdatum.</li>
+  </ol>
+
+  <footer>
+    Verifierat på commit <code>35fd6db</code>: ren utcheckning → npm ci → bygge → typecheck → migreringar mot tom
+    databas → seed → RLS-kontroll, samtliga gröna. Ingen kod ändrad i denna analys. Två explicita stoppunkter
+    (A: Storage mot riktigt projekt, B: Vercels funktionsbundling) — inga gissningar.
+  </footer>
+</div>

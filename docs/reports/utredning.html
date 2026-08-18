@@ -1,0 +1,390 @@
+<title>Byggutredning Bidrag.se</title>
+<style>
+  :root {
+    --paper: #fbfaf6;
+    --ink: #1a2230;
+    --muted: #5b6270;
+    --rule: #d8d6cc;
+    --rule-soft: #e7e5dc;
+    --accent: #1e40af;
+    --accent-soft: #eef2fb;
+    --ok: #166534;
+    --ok-soft: #e9f5ec;
+    --warn: #92580a;
+    --warn-soft: #fdf4e3;
+    --card: #ffffff;
+    --mono-bg: #f1efe8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #14181f;
+      --ink: #e4e6ea;
+      --muted: #98a0ad;
+      --rule: #333a46;
+      --rule-soft: #262c36;
+      --accent: #8aa8ee;
+      --accent-soft: #1c2534;
+      --ok: #7fc796;
+      --ok-soft: #17251c;
+      --warn: #dfb06a;
+      --warn-soft: #2a2214;
+      --card: #1a1f28;
+      --mono-bg: #1f242e;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #14181f;
+    --ink: #e4e6ea;
+    --muted: #98a0ad;
+    --rule: #333a46;
+    --rule-soft: #262c36;
+    --accent: #8aa8ee;
+    --accent-soft: #1c2534;
+    --ok: #7fc796;
+    --ok-soft: #17251c;
+    --warn: #dfb06a;
+    --warn-soft: #2a2214;
+    --card: #1a1f28;
+    --mono-bg: #1f242e;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 17px;
+    line-height: 1.62;
+  }
+  .page { max-width: 46rem; margin: 0 auto; padding: 3.5rem 1.4rem 5rem; }
+
+  .masthead { border-bottom: 3px double var(--rule); padding-bottom: 1.6rem; margin-bottom: 2.2rem; }
+  .eyebrow {
+    font-family: -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin: 0 0 0.7rem;
+  }
+  h1 {
+    font-size: 2.35rem; line-height: 1.15; margin: 0 0 0.9rem;
+    font-weight: 400; letter-spacing: -0.01em; text-wrap: balance;
+  }
+  .meta {
+    font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.82rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.4rem 1.6rem;
+  }
+  .meta strong { color: var(--ink); font-weight: 600; }
+
+  h2 {
+    font-size: 1.45rem; font-weight: 400; margin: 3rem 0 0.9rem;
+    padding-top: 1.4rem; border-top: 1px solid var(--rule);
+    text-wrap: balance;
+  }
+  h2 .no {
+    color: var(--accent); font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.95rem; font-weight: 700; margin-right: 0.65rem; vertical-align: 0.12em;
+  }
+  h3 { font-size: 1.05rem; font-weight: 700; margin: 1.7rem 0 0.45rem; }
+  p { margin: 0.65rem 0; }
+  p, li { max-width: 65ch; }
+  ul, ol { padding-left: 1.3rem; margin: 0.6rem 0; }
+  li { margin: 0.28rem 0; }
+  a { color: var(--accent); }
+
+  .summary {
+    background: var(--accent-soft); border-left: 3px solid var(--accent);
+    padding: 1.1rem 1.3rem; margin: 0 0 1rem; border-radius: 0 6px 6px 0;
+  }
+  .summary p:first-child { margin-top: 0; }
+  .summary p:last-child { margin-bottom: 0; }
+
+  .toc {
+    font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.88rem; columns: 2; column-gap: 2.5rem; margin: 1.2rem 0 0;
+    padding: 0; list-style: none;
+  }
+  .toc li { break-inside: avoid; margin: 0.22rem 0; }
+  .toc .n { color: var(--accent); font-weight: 700; display: inline-block; min-width: 1.5em; }
+  .toc a { color: var(--ink); text-decoration: none; }
+  .toc a:hover { color: var(--accent); }
+
+  code, .mono {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.83em; background: var(--mono-bg); padding: 0.1em 0.35em; border-radius: 4px;
+  }
+  pre {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.8rem; line-height: 1.55; background: var(--mono-bg);
+    padding: 0.9rem 1.1rem; border-radius: 6px; overflow-x: auto; margin: 0.9rem 0;
+  }
+  pre code { background: none; padding: 0; }
+
+  .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.7rem; margin: 1.4rem 0; }
+  .figure {
+    background: var(--card); border: 1px solid var(--rule-soft); border-radius: 8px;
+    padding: 0.85rem 1rem;
+  }
+  .figure .n {
+    font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: 1.55rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1;
+  }
+  .figure .l {
+    font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.74rem; color: var(--muted); letter-spacing: 0.03em; margin-top: 0.15rem;
+  }
+
+  .tablewrap { overflow-x: auto; margin: 0.9rem 0; }
+  table {
+    border-collapse: collapse; width: 100%;
+    font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 0.85rem;
+  }
+  th {
+    text-align: left; font-weight: 600; color: var(--muted);
+    font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0.45rem 0.7rem 0.35rem 0; border-bottom: 2px solid var(--rule);
+  }
+  td { padding: 0.5rem 0.7rem 0.5rem 0; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  .pill {
+    display: inline-block; font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.72rem; font-weight: 600; padding: 0.1rem 0.55rem; border-radius: 999px;
+  }
+  .pill.ok { background: var(--ok-soft); color: var(--ok); }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); }
+
+  .principle { margin: 0.9rem 0; padding-left: 1.1rem; border-left: 3px solid var(--rule); }
+  .principle strong { display: block; }
+
+  .flow {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.78rem; line-height: 1.7; color: var(--muted);
+    background: var(--mono-bg); border-radius: 6px; padding: 0.8rem 1.1rem;
+    overflow-x: auto; white-space: nowrap; margin: 0.9rem 0;
+  }
+  .flow b { color: var(--accent); font-weight: 700; }
+
+  .footer {
+    margin-top: 3.5rem; padding-top: 1.3rem; border-top: 3px double var(--rule);
+    font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 0.8rem; color: var(--muted);
+  }
+  @media (max-width: 620px) { .toc { columns: 1; } h1 { font-size: 1.85rem; } }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <p class="eyebrow">Teknisk utredning · 2026-08-13</p>
+    <h1>Vad vi har byggt: Bidrag.se, en fullständig genomgång</h1>
+    <div class="meta">
+      <span>Repo: <strong>wolfoftyreso-debug/bidrag</strong></span>
+      <span>Gren: <strong>claude/bidrag-se-production-build-hdabqp</strong></span>
+      <span>Commits: <strong>6</strong> (samtliga pushade)</span>
+    </div>
+  </header>
+
+  <div class="summary">
+    <p><strong>Sammanfattning.</strong> Utgångsläget var ett helt tomt repo — inga commits, ingen befintlig infrastruktur. Under en byggsession har en komplett, körbar SaaS-plattform byggts från grunden: ett finansierings&shy;operativsystem som tar en användare från fritext-intention till förklarbar matchning, förberedd ansökan, assisterad inlämning med kvitto, och ärendehantering med korrespondens och beslut. Allt är verifierat: 79 automatiska tester passerar, hela användarresan är genomkörd i riktig webbläsare, och den kompilerade produktionsbygget kör med bakgrundsjobb, SPA-servering och OpenAPI-kontrakt.</p>
+  </div>
+
+  <div class="figures">
+    <div class="figure"><div class="n">≈9 400</div><div class="l">rader TypeScript/CSS</div></div>
+    <div class="figure"><div class="n">31</div><div class="l">databastabeller</div></div>
+    <div class="figure"><div class="n">51</div><div class="l">API-operationer (42 paths)</div></div>
+    <div class="figure"><div class="n">79</div><div class="l">tester, alla gröna</div></div>
+    <div class="figure"><div class="n">7</div><div class="l">kurerade stöd, våg 1</div></div>
+    <div class="figure"><div class="n">11</div><div class="l">skärmar i webbappen</div></div>
+  </div>
+
+  <nav>
+    <h3 style="margin-top:1.5rem">Innehåll</h3>
+    <ul class="toc">
+      <li><span class="n">1</span><a href="#s1">Uppdraget och utgångsläget</a></li>
+      <li><span class="n">2</span><a href="#s2">Systemets form</a></li>
+      <li><span class="n">3</span><a href="#s3">Domänmotorn</a></li>
+      <li><span class="n">4</span><a href="#s4">Datamodellen</a></li>
+      <li><span class="n">5</span><a href="#s5">API:t och säkerheten</a></li>
+      <li><span class="n">6</span><a href="#s6">Kunskapsbasen (våg 1)</a></li>
+      <li><span class="n">7</span><a href="#s7">Webbappen</a></li>
+      <li><span class="n">8</span><a href="#s8">Verifiering och bevis</a></li>
+      <li><span class="n">9</span><a href="#s9">Drift, CI och dokumentation</a></li>
+      <li><span class="n">10</span><a href="#s10">Kända begränsningar</a></li>
+      <li><span class="n">11</span><a href="#s11">Uppföljning efter granskning</a></li>
+      <li><span class="n">12</span><a href="#s12">Omramning: rättighetsutredning</a></li>
+      <li><span class="n">13</span><a href="#s13">Produktionshärdning: fynd och övningar</a></li>
+    </ul>
+  </nav>
+
+  <h2 id="s1"><span class="no">1</span>Uppdraget och utgångsläget</h2>
+  <p>Byggordern beskrev ett produktionsfärdigt finansierings&shy;operativsystem: inte en bidragskatalog, utan en kontinuerlig kedja där användaren aldrig behöver kunna namnet på ett bidrag i förväg. Direktivet var uttryckligen <em>guard mode</em> — inga demon, inga fejkade flöden, inga dolda begränsningar.</p>
+  <p>Rekognosceringen (fas A) visade att repot var tomt. Det fanns alltså ingen befintlig autentisering, databas eller CI att återanvända — miljön bestod av Node 22, PostgreSQL 16, Redis och Docker. Bygget gjordes därför från noll, men med byggorderns arkitekturprinciper som kontrakt.</p>
+  <div class="flow">Profil → Intention → Stödutbud → Behörighet → <b>Matchning</b> → Finansieringsplan → Ansökan → <b>Inlämning</b> → Ärende → Svar → Redovisning</div>
+
+  <h2 id="s2"><span class="no">2</span>Systemets form</h2>
+  <p>En <strong>modulär monolit</strong> i TypeScript, medvetet vald enligt §56 i byggordern: en deploybar image som innehåller API, bakgrundsarbetare och den byggda webbappen. Logiska gränser upprätthålls i kodstrukturen och kan brytas ut till tjänster senare utan att kontrakten ändras.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Del</th><th>Innehåll</th><th>Omfattning</th></tr>
+    <tr><td><code>packages/core</code></td><td>Ren domänlogik utan I/O: regelmotor, matchning, tillståndsmaskin, budget, formulärmotor, stackning, deadlines</td><td class="num">1 137 rader + 420 test</td></tr>
+    <tr><td><code>apps/api</code></td><td>Fastify + PostgreSQL (Drizzle): auth, tenants, kunskapsgraf, ärenden, ingestion, jobb, kurering</td><td class="num">4 792 rader + 643 test</td></tr>
+    <tr><td><code>apps/web</code></td><td>React-SPA på svenska: onboarding, matchningar, arbetsyta, valv, inkorg, adminkonsol</td><td class="num">2 381 rader</td></tr>
+    <tr><td><code>deploy/k8s</code>, <code>Dockerfile</code>, <code>.github</code></td><td>Kubernetes-manifest, produktions-image, CI-pipeline</td><td class="num">—</td></tr>
+    <tr><td><code>docs/</code></td><td>Arkitektur, säkerhet, GDPR, begränsningsregister, OpenAPI-kontrakt</td><td class="num">5 dokument</td></tr>
+  </table></div>
+
+  <h2 id="s3"><span class="no">3</span>Domänmotorn</h2>
+  <p>Kärnan i produkten är ett rent, fullt enhetstestat paket utan beroenden mot databas eller nätverk. Det gör varje bedömning <strong>deterministisk och reproducerbar</strong>: samma fakta, samma regelversion och samma referensdatum ger alltid exakt samma resultat.</p>
+
+  <h3>Regelspråket</h3>
+  <p>Varje behörighetskrav lagras som data, aldrig som kod: en faktasökväg (t.ex. <code>project.countries</code>), en operator (<code>eq</code>, <code>in</code>, <code>between</code>, <code>intersects</code> m.fl.), ett förväntat värde, en klartextbeskrivning och en källhänvisning. Logiken är <strong>trevärd</strong>: ett kriterium kan vara uppfyllt, inte uppfyllt eller <em>okänt</em>. Okänt betyder att en uppgift saknas — då genereras en intakefråga till användaren i stället för att kravet tyst räknas som misslyckat.</p>
+
+  <h3>Matchning i fem lager</h3>
+  <ol>
+    <li><strong>Hårda uteslutningar</strong> — fel sökandetyp, fel geografi, stängd deadline. Poängen blir noll oavsett allt annat; semantisk likhet kan aldrig runda en deterministisk uteslutning.</li>
+    <li><strong>Obligatoriska kriterier</strong> över kända fakta.</li>
+    <li><strong>Viktad strategisk passform</strong> — sektor, aktivitetstyp, målgrupp.</li>
+    <li><strong>Underlagsberedskap</strong> — vilka obligatoriska underlag som redan finns i valvet.</li>
+    <li><strong>Genomförbarhet</strong> — dagar till deadline mot uppskattad arbetsinsats.</li>
+  </ol>
+  <p>Sammanvägning: behörighetsgrind 40 + passform 35 + underlag 15 + genomförbarhet 10 = poäng 0–100, alltid med fullständig förklaring per kriterium, lista över saknade fakta och saknade underlag samt konfidensnivå.</p>
+
+  <h3>Övriga motorer</h3>
+  <ul>
+    <li><strong>Tillståndsmaskin</strong> med 16 lägen (<code>DISCOVERED</code> → … → <code>AWARDED</code>/<code>REJECTED</code> → <code>CLOSED</code>) och vaktade övergångar — <code>SUBMITTED</code> kräver bevis, <code>READY_TO_SUBMIT</code> kräver godkänd validering.</li>
+    <li><strong>Budgetmotor</strong> i ören (heltal, ingen flyttalsdrift) med regeltyper som kategoritak, stödandelstak och medfinansieringskrav; fynden formuleras på klarsvenska: <em>”Det här stödet kräver att du själv finansierar minst 30 % av projektet.”</em></li>
+    <li><strong>Formulärmotor</strong>: ansökningsformulär är scheman i data med 21 fälttyper, villkorsstyrd synlighet (fråga B7 visas bara när projektet har internationell partner) och <em>kanoniska nycklar</em> — samma svar (t.ex. <code>project.summary</code>) återanvänds mellan olika myndigheters formulär, spårbart per fält.</li>
+    <li><strong>Stackningsmotor</strong>: föreslår kombinationer av stöd mot en totalbudget, respekterar belopps- och andelstak — och antar <em>aldrig</em> att två offentliga stöd kan kombineras; utan uttrycklig regel flaggas paret ”kräver bekräftelse”.</li>
+    <li><strong>Deadlinemotor</strong>: räknar fram intern gransknings- och underlagsdeadline och klassar tidsplanen som bekväm, tajt eller orealistisk.</li>
+  </ul>
+
+  <h2 id="s4"><span class="no">4</span>Datamodellen</h2>
+  <p>31 tabeller i PostgreSQL med deterministiska, incheckade SQL-migreringar. Tre invarianter bär hela modellen:</p>
+  <div class="principle"><strong>Tenantisolering är en säkerhetsinvariant.</strong> Varje tenantägd tabell bär <code>tenant_id</code>; varje fråga filtrerar på det; korstenantåtkomst ger 404 så att inte ens existens läcker. Detta är explicit testat.</div>
+  <div class="principle"><strong>Offentlig kunskap bär proveniens, inte ägare.</strong> Myndigheter, program, stöd och regler delas mellan tenants och bär i stället källa-URL, källkvalitet (A–D), verifieringsstatus och senast-verifierad-datum.</div>
+  <div class="principle"><strong>Regler är temporala.</strong> <code>rule_versions</code> är effektivdaterade; varje matchning vet vilken regelversion den beräknades mot; en inlämnad ansökan fryser en oföränderlig ögonblicksbild av stödet, reglerna och svaren. Systemet kan alltid svara på ”vad visste vi när denna ansökan lämnades in?”.</div>
+  <p>Entiteterna täcker hela §31-listan: användare, tenants, medlemskap med roller, profiler, krypterade externa identifierare (OID/orgnr, AES-256-GCM), projekt, myndigheter, program, stöd, regelversioner, källor, källsnapshots, granskningskö, matchningar, finansieringsplaner, ansökningsscheman, ärenden, budgetrader, kanoniska svar, dokument, ärendebilagor, inlämningar, kvitton, korrespondens, beslut, redovisningskrav, utbetalningsmilstolpar, notiser, påminnelser samt en <em>append-only</em> revisionslogg.</p>
+
+  <h2 id="s5"><span class="no">5</span>API:t och säkerheten</h2>
+  <p>Versionerat REST-API under <code>/v1</code> — 42 sökvägar, 51 operationer, med genererat OpenAPI-kontrakt (<code>docs/openapi.json</code>, även serverat på <code>/v1/openapi.json</code>).</p>
+
+  <h3>Autentisering och behörighet</h3>
+  <ul>
+    <li>Lösenord hashas med scrypt; inloggningsfel har identisk form oavsett om kontot finns (ingen användaruppräkning).</li>
+    <li>Korta JWT-åtkomsttoken (15 min) + roterande refresh-token (lagrade som SHA-256-hashar, återkallbara) i httpOnly-cookies.</li>
+    <li>Åtta roller (owner, applicant, contributor, reviewer, finance, administrator, data_curator, integration_operator); kureringsytan kräver kuratorroll; varje skrivning attribueras i revisionsloggen.</li>
+  </ul>
+
+  <h3>Det ärliga inlämningsflödet</h3>
+  <p>Detta är produktens viktigaste garanti. Den generiska övergångs-endpointen <em>vägrar</em> sätta <code>SUBMITTED</code>. Enda vägen dit:</p>
+  <ol>
+    <li>Ansökan valideras komplett (fält, budgetregler, obligatoriska bilagor) → <code>READY_TO_SUBMIT</code>.</li>
+    <li><code>POST /submit</code> med uttrycklig bekräftelse. Finns en registrerad adapter körs den; misslyckas den faller ärendet synligt tillbaka — aldrig fejkad framgång.</li>
+    <li>Utan adapter (dagens läge för samtliga källor) förbereds ett komplett paket med deterministisk hash, användaren får den officiella länken, och först när ett <strong>kvitto med referens</strong> registreras blir ärendet <code>SUBMITTED</code> — med fryst ögonblicksbild.</li>
+  </ol>
+
+  <h3>Ingestion, jobb och övrigt</h3>
+  <ul>
+    <li><strong>Källingestion</strong> med strikta SSRF-skydd (protokollvitlista, DNS-upplösning mot privata/reserverade nät v4+v6, storleks- och tidsgränser), oföränderliga hashade snapshots, hash-diff mot föregående hämtning och granskningskö för människor. Råkällan kastas aldrig.</li>
+    <li><strong>Regelversionering</strong>: när en kurator publicerar en ny version effektivdateras den gamla, berörda matchningar markeras inaktuella och räknas om av arbetaren, och berörda användare notifieras — inlämnade ansökningar rörs aldrig.</li>
+    <li><strong>Bakgrundsjobb</strong> på pg-boss (Postgres-baserad kö, ingen extra infrastruktur): källhämtning var 6:e timme, daglig deadlineskanning med notiser, omräkning av inaktuella matchningar var 15:e minut. Alla jobb idempotenta med retry/backoff.</li>
+    <li><strong>Uppladdningar som fientlig indata</strong>: vitlista för filtyper, magic byte-verifiering (polyglotskydd), 20 MB-tak, opaka tenantskopade lagringsnamn, ClamAV-skanning när daemon finns — annars markeras filen synligt ”ej skannad”, aldrig tyst antagen ren.</li>
+    <li><strong>Korrespondensinkorg</strong>: deterministisk klassificering av svensk beslutsvokabulär (beviljat, avslag, komplettering, utbetalning, redovisning …) och automatisk ärendekoppling via diarienummer från registrerade kvitton, med mänsklig överstyning.</li>
+  </ul>
+
+  <h2 id="s6"><span class="no">6</span>Kunskapsbasen (våg 1)</h2>
+  <p>Tio myndigheter/organ och åtta registrerade källor är inlagda, med sju kurerade stöd som medvetet spänner över olika datamönster. Varje post bär källkvalitet A, status <code>human_curated</code>, verifieringsdatum 2026-08-13 och käll-URL — och där deadline inte kunde verifieras är modellen ärligt <em>löpande</em> eller <em>kommande omgång</em>, aldrig ett påhittat datum.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Stöd</th><th>Instrumenttyp</th><th>Mönster som övas</th></tr>
+    <tr><td>Kulturrådet — Resebidrag internationellt kulturutbyte</td><td>Resebidrag</td><td>Privatperson, återkommande deadline, digitaliserat formulär</td></tr>
+    <tr><td>Kulturrådet — Projektbidrag musik</td><td>Projektbidrag</td><td>Kommande omgång utan publicerat datum</td></tr>
+    <tr><td>Erasmus+ — Ungdomsutbyten</td><td>EU-bidrag</td><td>OID-krav, partnerkrav, 5–21 dagars regel, utesluter annat offentligt stöd</td></tr>
+    <tr><td>MUCF — Projektbidrag barn och unga</td><td>Projektbidrag</td><td>Föreningskrav, demokrativillkor</td></tr>
+    <tr><td>Vinnova — Innovativa startups</td><td>Statligt bidrag</td><td>Bolagsålder, omgångar</td></tr>
+    <tr><td>Energimyndigheten — Energi- och klimatprojekt</td><td>Statligt bidrag</td><td>Löpande utlysningar, endast organisationer</td></tr>
+    <tr><td>Naturvårdsverket — Miljö- och klimatåtgärder</td><td>Statligt bidrag</td><td>Flera mottagartyper, stödandelstak</td></tr>
+  </table></div>
+  <p>Två stöd har fullt digitaliserade ansökningsscheman med kanonisk fältmappning (Kulturrådets resebidrag och Erasmus+-förberedelsen) — de bevisar återanvändningen: projektbeskrivningen från den ena ansökan förifylls spårbart i den andra.</p>
+
+  <h2 id="s7"><span class="no">7</span>Webbappen</h2>
+  <p>Svenskspråkig SPA byggd som en högförtroende­produkt: lugn typografi, källa och färskhet alltid synliga, nästa steg alltid tydligt. Elva ytor:</p>
+  <ul>
+    <li><strong>Registrering/inloggning</strong> — med löftet i klartext: inget personnummer för att se vad du kan söka, inga myndighetsinloggningar lagras.</li>
+    <li><strong>Adaptiv onboarding</strong> — börjar med <em>”Vad vill du åstadkomma?”</em> i fritext och ställer bara frågor som materiellt ändrar resultatet.</li>
+    <li><strong>Översikt</strong> — att göra nu, kommande deadlines, ansökningar, notiser.</li>
+    <li><strong>Matchningar</strong> — transparent poäng 0–100, behörighetsstatus, saknade fakta som besvaras direkt på sidan (bara frågor som fortfarande kan ändra ett utfall), och uteslutna stöd med exakt skäl.</li>
+    <li><strong>Stöddetalj</strong> — krav på klarsvenska, underlagslista, källrad med verifieringsstatus och regelversion, ärlig inlämningsnivå.</li>
+    <li><strong>Finansieringsplan</strong> — föreslagen stack med kombinationsflaggor.</li>
+    <li><strong>Ansökningsarbetsyta</strong> — schemadrivet formulär med villkorsfält och förifyllnadsmärkning, budgetbyggare med finansieringsbalans, bilagor från valvet, valideringschecklista, vaktade statusövergångar och det assisterade inlämningsflödet med kvittoregistrering.</li>
+    <li><strong>Mina ansökningar</strong>, <strong>Dokumentvalv</strong> (underlagstyper, skanningsstatus), <strong>Inkorg</strong> (klassificering + ärendekoppling), <strong>Sök</strong> (fritext + filter, uttryckligen underordnad matchningen).</li>
+    <li><strong>Adminkonsol</strong> — källhälsa, hämta nu, granskningskö, räknare för inaktuella matchningar.</li>
+  </ul>
+
+  <h2 id="s8"><span class="no">8</span>Verifiering och bevis</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Nivå</th><th>Omfattning</th><th>Resultat</th></tr>
+    <tr><td>Enhetstester (core)</td><td>Regelmotor, matchningslager, tillståndsmaskin, budget, formulär, stackning, deadlines</td><td class="num"><span class="pill ok">43 / 43</span></td></tr>
+    <tr><td>Integrationstester (API, riktig Postgres)</td><td>Auth, RBAC, tenantisolering (IDOR, listskopning, header-spoofing), hela resan, uppladdningssäkerhet, SSRF, regelversionering</td><td class="num"><span class="pill ok">36 / 36</span></td></tr>
+    <tr><td>Webbläsartest (Playwright/Chromium)</td><td>Registrering → onboarding → matchningar → stöddetalj → arbetsyta → översikt</td><td class="num"><span class="pill ok">5 / 5 steg</span></td></tr>
+    <tr><td>Produktionsbygge</td><td>Kompilerad dist med arbetare, SPA-fallback, OpenAPI, readiness-prob</td><td class="num"><span class="pill ok">verifierat</span></td></tr>
+  </table></div>
+  <p>Byggorderns testfall (§38/§74), dansläraren som vill ta sin grupp till Jamaica, är genomkört på riktigt: profilen matchar <strong>85/100 behörig</strong> mot Kulturrådets resebidrag medan Erasmus+ korrekt hårduteslutar en privatperson (med skälet synligt). Resan fortsätter genom validering som blockerar ofullständig ansökan, uppladdade underlag, assisterad inlämning som <em>inte</em> markerar inlämnat, kvittoregistrering → <code>SUBMITTED</code> med fryst snapshot, beslutsbrev som autokopplas via diarienummer, beslut → <code>AWARDED</code>, och kanonisk förifyllnad i nästa ansökan.</p>
+
+  <h2 id="s9"><span class="no">9</span>Drift, CI och dokumentation</h2>
+  <ul>
+    <li><strong>Dockerfile</strong>: multi-stage, icke-root-användare, healthcheck, en image med API + arbetare + byggd SPA.</li>
+    <li><strong>Kubernetes-manifest</strong>: rullande deployment med readiness/liveness-prober och resursgränser, service, ingress med TLS och kroppsstorlek för uppladdningar, PodDisruptionBudget, PVC för dokument, secret-/configmapmallar (värden checkas aldrig in).</li>
+    <li><strong>CI (GitHub Actions)</strong>: typkontroll, båda testsviterna mot en riktig Postgres-tjänst, migrerings­driftkontroll, web- och API-byggen, docker-bygge med bootröktest mot databas.</li>
+    <li><strong>Dokumentation</strong>: <code>README</code>, <code>ARCHITECTURE.md</code>, <code>SECURITY.md</code>, <code>PRIVACY.md</code> (dataminimering, artikel 22-hållning, datainventarium, DPIA-status) samt <code>LIMITATIONS.md</code>.</li>
+  </ul>
+
+  <h2 id="s10"><span class="no">10</span>Kända begränsningar</h2>
+  <p>Guard mode kräver att ingen begränsning döljs. Registret i <code>docs/LIMITATIONS.md</code> är produktens ärliga karta — varje punkt anger blockeraren, den implementerade reserven och nästa integrationsgräns:</p>
+  <div class="tablewrap"><table>
+    <tr><th>Begränsning</th><th>Varför</th><th>Implementerad reserv</th></tr>
+    <tr><td>Inga native-inlämningsadaptrar</td><td>Ingen våg 1-myndighet exponerar ett stödt publikt inlämnings-API; UI-automation utan avtal vore otillåten</td><td>Förstklassig assisterad inlämning med kvittokrav; adapterregistret är pluggbart</td></tr>
+    <tr><td>Ingestion är snapshot + diff, inte strukturerad extraktion</td><td>Källorna publicerar HTML/PDF; oövervakad regelextraktion är inte säker att publicera</td><td>Hashade snapshots, ändringsdetektering, mänsklig granskningskö, kurerade versionerade regler med proveniens</td></tr>
+    <tr><td>Digital post ej ansluten</td><td>Kräver roll som offentlig aktör eller ackrediterad brevlådeoperatör</td><td>Enhetlig inkorg via uppladdning/manuell registrering med klassificering och autokoppling</td></tr>
+    <tr><td>E-postutskick ej kopplat</td><td>SMTP-adapter ej vald</td><td>Notiser levereras i appen; utebliven e-post loggas i revisionsspåret</td></tr>
+    <tr><td>ClamAV valfritt, PVC i stället för S3, Prometheus-endpoint saknas, GDPR-självservice ofullständig, ingen fakturering</td><td>Medvetna avgränsningar med dokumenterade gränssnitt</td><td>Synliga statusar, isolerade adaptergränser, kaskadradering + API-export finns</td></tr>
+  </table></div>
+  <p>Två miljönoteringar från själva byggsessionen: sandlådans nätpolicy blockerade Docker Hub (imagen byggs och röktestas i CI i stället) och utgående hämtningar mot myndighetssajter (ingestionvägen är testtäckt och fungerar med produktionsegress).</p>
+
+  <h2 id="s11"><span class="no">11</span>Uppföljning efter extern granskning</h2>
+  <p>Efter en extern arkitekturgranskning (slutsats: <em>”skala, härda och befolka — inte bygga om”</em>) genomfördes en härdnings- och expansionssprint samma dag (commit <span class="mono">ce0b372</span>):</p>
+  <div class="tablewrap"><table>
+    <tr><th>Granskningens punkt</th><th>Åtgärd</th><th>Status</th></tr>
+    <tr><td>Översåld ”produktionsfärdig”-formulering</td><td>README omformulerad: ”produktionsarkitektur med verifierad end-to-end-kärna och tydligt isolerade integrationsgränser”, med granskningens mognadsdimensioner</td><td class="num"><span class="pill ok">klart</span></td></tr>
+    <tr><td>Kunskapstäckning (7 stöd)</td><td>Utökad till <strong>28 kurerade stöd från 16 finansiärer</strong> (bl.a. Konstnärsnämnden, Arvsfonden, Boverket, RF/LOK-stöd, Filminstitutet, Formas, Klimatklivet, Industriklivet, LONA, ESF+, Solidaritetskåren, Erasmus+ KA1, Kreativa Europa) — samma ärlighetsmodell, inga påhittade deadlines</td><td class="num"><span class="pill ok">klart</span></td></tr>
+    <tr><td>Kuratorflödets hastighet</td><td>Granskningskön visar nu vilka stöd varje källändring påverkar; ny lista sorterad på granskningsbehov med engångsklicks-verifiering (flyttar fram granskningsfönstret 30 dagar)</td><td class="num"><span class="pill ok">klart</span></td></tr>
+    <tr><td>Prometheus-endpoint saknades</td><td><span class="mono">/metrics</span> med HTTP-, process-, pool- och domänmätare (publicerade stöd, förfallna granskningar, inaktuella matchningar, kö-djup, trasiga källor) + larmregler i ny driftrunbook <span class="mono">docs/OPERATIONS.md</span> (backup/restore-övning, rollbackpolicy, incidentrutin, lanseringschecklista)</td><td class="num"><span class="pill ok">klart</span></td></tr>
+    <tr><td>GDPR-självservice ofullständig</td><td><span class="mono">GET /v1/tenant/export</span> (komplett JSON-paket) och <span class="mono">DELETE /v1/tenant</span> (skriftlig bekräftelse, filradering, kaskadradering, tenantlöst raderingsbevis i revisionsloggen) — integrationstestade</td><td class="num"><span class="pill ok">klart</span></td></tr>
+    <tr><td>Redis som latent arkitekturrest</td><td>Verifierat: noll Redis-referenser i kod och beroenden — pg-boss på Postgres är enda kön; ett arkitekturtest fäller bygget om Redis introduceras</td><td class="num"><span class="pill ok">klart</span></td></tr>
+    <tr><td>Tillståndsmaskinen som domäninvariant</td><td>Verifierat och testfäst: endast domänservicen får skriva ärendestatus — UI, API-handlers och framtida integrationer går via <span class="mono">transitionCase()</span></td><td class="num"><span class="pill ok">klart</span></td></tr>
+    <tr><td>Verklig klusterdrift, lasttest, backup-övning, fakturering</td><td>Kvarstår medvetet — kräver riktig driftmiljö respektive bevisad kärnvärde före billing; procedurerna är dokumenterade i runbooken</td><td class="num"><span class="pill warn">återstår</span></td></tr>
+  </table></div>
+  <p>Testläget efter sprinten: <strong>43 + 43 tester gröna</strong> (nya GDPR- och invariantstester inkluderade), webbläsarflödet grönt mot den utökade kunskapsbasen, <span class="mono">/metrics</span> rapporterar 28 publicerade stöd.</p>
+
+  <h2 id="s12"><span class="no">12</span>Omramning: personlig rättighets- och stödutredning</h2>
+  <p>Produktens mentala modell har därefter skiftats (commit <span class="mono">6546896</span>): inte <em>”en tjänst där man söker bidrag”</em> utan <em>”berätta vad du behöver hjälp med — systemet tar reda på vad du kan ha rätt till”</em>. Bidrag är ett av resultaten, inte produkten.</p>
+  <ul>
+    <li><strong>Personliga ersättningar i kunskapsbasen</strong> — åtta nya poster (totalt 36 stöd, 20 finansiärer): Försäkringskassans bostadsbidrag (barnfamiljer respektive unga), aktivitetsersättning och underhållsstöd; kommunens försörjningsstöd; CSN:s studiemedel; Pensionsmyndighetens bostadstillägg och äldreförsörjningsstöd. Instrumenttyperna <span class="mono">social_benefit</span>/<span class="mono">educational_support</span> håller dem strikt åtskilda från projektbidrag i gränssnittet.</li>
+    <li><strong>En fråga per skärm</strong> är nu hård UX-princip: intaget börjar med ”Vad behöver du hjälp med?” och förgrenar sig i ett personligt spår (hushåll → barn → separation → ålder → sysselsättning → inkomst → boendekostnad, varje fråga på egen skärm, med adaptiv överhoppning) och projektspåret. Ingen blankett existerar längre.</li>
+    <li><strong>Bedömningsspråk, aldrig beslut</strong>: resultatet rubriceras ”Det här ser du ut att kunna ha rätt till” med nivåerna hög sannolikhet / möjlig / behöver utredas, alltid med friskrivningen att myndigheten fattar det slutliga beslutet. Följdfrågor från personliga stöd prioriteras, och icke-aktuella projektbidrag komprimeras till en sammanfattningsrad.</li>
+    <li><strong>Verifierat</strong>: ny integrationssvit för den personliga resan — en arbetslös ensamstående förälder med låg inkomst får bostadsbidrag (hög sannolikhet) och underhållsstöd, utesluts korrekt från ungdoms- och pensionärsstöd, och försörjningsstödet uppgraderas deterministiskt när följdfrågorna besvaras. 48 + 43 tester gröna; båda spåren genomkörda i webbläsare.</li>
+  </ul>
+
+  <h2 id="s13"><span class="no">13</span>Produktionshärdning: fynd och övningar</h2>
+  <p>Härdningsfasen genomfördes som <em>övningar, inte dokument</em> (commit <span class="mono">d97b8b9</span>). Den viktigaste lärdomen: felinjektionen hittade två riktiga produktionsbuggar som inga av de 92 tidigare testerna kunde se.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Övning</th><th>Utfall</th></tr>
+    <tr><td><strong>Felinjektion</strong> — databasen dödades under live-trafik</td><td>Två äkta fynd: (1) ohanterade <span class="mono">error</span>-händelser från lediga pool-anslutningar <em>kraschade processen</em> vid varje databasblipp — nu degraderar tjänsten (503 på readyz, generiska 500) och återhämtar sig helt; (2) Fastifys felhanterare fångas av inkapslade ruttkontexter vid registrering — vår sattes efteråt, så <span class="mono">ECONNREFUSED 127.0.0.1:5432</span> läckte till klienter. Båda åtgärdade med regressionstester. Verifierat efter fix: 503 under avbrott, generiskt fel + request-id, överlevnad, full läs/skriv-återhämtning.</td></tr>
+    <tr><td><strong>Backup/restore-drill</strong> — körd på riktigt</td><td>Dump + uppladdningsarkiv med sha256-manifest → återställning i skratchdatabas → radräkningsverifiering → API bootad mot den återställda databasen (readyz 200, registrering 201). Drillen körs nu även i CI vid varje push.</td></tr>
+    <tr><td><strong>Lasttest</strong> — ärliga siffror</td><td>599 req/s uthålligt, 0 icke-2xx, läsvägar p95 ≈ 45 ms (4 vCPU dev). Första körningen avslöjade ärligt att den mätte rate-limitern (49 000 × 429 räknades som framgång) — skriptet fäller nu på varje icke-2xx. Matchningsomräkningen batchades: p95 504 → 164 ms.</td></tr>
+    <tr><td><strong>Säkerhet</strong></td><td>Origin-vakt på alla muterande anrop (CSRF-försvar i djupled), konfigurerbar rate limit med test (11:e snabba inloggningen → 429), och 0 kända sårbarheter i produktionsberoenden efter uppgradering av <span class="mono">@fastify/static</span> (path traversal-advisories) och <span class="mono">drizzle-orm</span>.</td></tr>
+    <tr><td><strong>Tillförlitlighet</strong></td><td>Deadlinepåminnelser var en dubblettbugg (notis per skanning) — nu idempotenta per tröskelintervall (14/7/3 dagar) via unikt index, testade. Additiv indexmigrering (0001) bevisar rollback-policyn i praktiken.</td></tr>
+  </table></div>
+  <p>Testläget: <strong>97 tester gröna</strong> (43 kärna + 54 API). Kvar för riktig klustermiljö: rollback-övning under trafik, larmkedja till jour, ClamAV-deployment och hemlighetsrotation — spårat i <span class="mono">docs/OPERATIONS.md</span>:s checklista.</p>
+
+  <div class="footer">
+    <p><strong>Commithistorik</strong> (kronologisk): core-domänmotor → API-backend med kurerad data → integrationstestsvit → webb-SPA → drift/CI/dokumentation → finansieringsplan-UI. Samtliga sex commits pushade till <span class="mono">claude/bidrag-se-production-build-hdabqp</span>.</p>
+    <p>Utredningen speglar repots tillstånd per 2026-08-13. Fullständiga detaljer i <span class="mono">docs/</span> i repot.</p>
+  </div>
+</div>

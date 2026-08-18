@@ -1,0 +1,258 @@
+<title>AI-motor Slutrevision</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --surface: #ffffff; --ink: #1c2330; --ink-soft: #55617a;
+    --line: #dde1ea; --accent: #2743c7; --accent-soft: #eceffc;
+    --ok: #1a7a4a; --warn: #9a6a00; --danger: #b3341f; --code-bg: #eef0f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171e; --surface: #1b1f29; --ink: #e7eaf2; --ink-soft: #9aa5bd;
+      --line: #2c3342; --accent: #8fa3ff; --accent-soft: #232b45;
+      --ok: #4cc088; --warn: #d9a53d; --danger: #e06550; --code-bg: #232835;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171e; --surface: #1b1f29; --ink: #e7eaf2; --ink-soft: #9aa5bd;
+    --line: #2c3342; --accent: #8fa3ff; --accent-soft: #232b45;
+    --ok: #4cc088; --warn: #d9a53d; --danger: #e06550; --code-bg: #232835;
+  }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif; margin: 0; }
+  .page { max-width: 54rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  .kicker { color: var(--accent); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+  h1 { font-size: 2rem; line-height: 1.15; margin: 0.4rem 0 0.6rem; letter-spacing: -0.015em; }
+  .lede { color: var(--ink-soft); margin: 0 0 0.8rem; max-width: 66ch; }
+  .meta { color: var(--ink-soft); font-size: 0.85rem; border-bottom: 1px solid var(--line); padding-bottom: 1.6rem; }
+  h2 { font-size: 1.22rem; margin: 2.6rem 0 0.7rem; }
+  h2 .n { color: var(--accent); font-variant-numeric: tabular-nums; margin-right: 0.55rem; }
+  p { margin: 0.7rem 0; max-width: 72ch; }
+  code { font: 0.85em/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 4px; }
+  .verdict { border: 2px solid var(--danger); background: var(--surface); border-radius: 12px; padding: 1.1rem 1.3rem; margin: 1.4rem 0; }
+  .verdict h3 { margin: 0 0 0.3rem; color: var(--danger); font-size: 1.15rem; letter-spacing: 0.03em; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); margin: 0.8rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.84rem; }
+  th, td { text-align: left; padding: 0.45rem 0.7rem; border-top: 1px solid var(--line); vertical-align: top; }
+  thead th { border-top: none; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); white-space: nowrap; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .status { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; padding: 0.1rem 0.55rem; border-radius: 99px; white-space: nowrap; }
+  .status.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+  .status.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); }
+  .status.no { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); }
+  ul, ol { padding-left: 1.2rem; margin: 0.7rem 0; }
+  li { margin: 0.35rem 0; max-width: 70ch; }
+  .finding { border: 1px solid var(--line); border-left: 3px solid var(--danger); background: var(--surface); border-radius: 0 8px 8px 0; padding: 0.9rem 1.1rem; margin: 1rem 0; max-width: 72ch; }
+  .finding.warn { border-left-color: var(--warn); }
+  .finding.good { border-left-color: var(--ok); }
+  .finding h3 { margin: 0 0 0.3rem; font-size: 0.98rem; }
+  .scorebar { display: flex; align-items: center; gap: 0.6rem; margin: 0.3rem 0; }
+  .scorebar .label { width: 15rem; flex-shrink: 0; font-size: 0.84rem; }
+  .scorebar .track { flex: 1; height: 10px; background: var(--code-bg); border-radius: 99px; overflow: hidden; }
+  .scorebar .fill { height: 100%; border-radius: 99px; }
+  .scorebar .v { width: 2.4rem; text-align: right; font-variant-numeric: tabular-nums; font-size: 0.84rem; font-weight: 700; }
+  footer { margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 0.82rem; }
+</style>
+
+<div class="page">
+  <div class="kicker">Bidrag.se · Oberoende slutrevision</div>
+  <h1>Application Intelligence — faktisk implementation, inte påstådd</h1>
+  <p class="lede">
+    Revisionen utgår inte från att systemet är rätt byggt. Varje komponent har klassificerats genom
+    kodinspektion, och alla centrala påståenden har verifierats genom live-prober mot det körande systemet
+    med avsiktligt felaktiga ansökningar. "Prompten/README/UI säger det" har inte räknats som implementerat.
+  </p>
+  <p class="meta">2026-08-16 · commit <code>5bb4ac8</code> · verklig utlysning i testfallet: Kulturrådets internationella resebidrag (kurerad ur officiell källa) · rådata: <code>audit-ai.mjs</code></p>
+
+  <div class="verdict">
+    <h3>PRODUCTION READINESS: NOT READY</h3>
+    <p style="margin:0.3rem 0 0">
+      <strong>Bidrag.se har byggt en äkta, deterministisk beredningsgrund — men ännu inte den
+      bidragsberedningsmotor som specifikationen kräver.</strong> Behörighetsmotorn, budgetreglerna,
+      teckengränserna och gatens skelett är på riktigt och datadrivna per utlysning (live-verifierat).
+      Men intelligenslagret saknas: inga claimkonflikter upptäcks, ingen evidensgradering finns,
+      ingen bedömningsmatris, och kravtäckningen omfattar 3 av 55 stöd. Bottleneck-logik gäller:
+      höga delpoäng får inte maskera att gaten i dag släpper igenom en ansökan med olöst behörighet.
+    </p>
+  </div>
+
+  <h2><span class="n">0</span>Uppdatering: K1–K5 åtgärdade och omverifierade <span class="status ok">klart</span></h2>
+  <p>
+    Efter revisionen åtgärdades de fem kritiska felen och proberna kördes om live mot samma system
+    (commit <code>efter 5bb4ac8</code>, 160 API-tester gröna varav 10 i granskningssviten):
+  </p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Fynd</th><th>Före</th><th>Efter omkörning</th></tr></thead>
+    <tbody>
+      <tr><td>K1 UNKNOWN-behörighet i gaten</td><td><span class="status no">READY (MEDIUM)</span></td><td><span class="status ok">NOT_READY — HIGH, blockerar tills frågan besvarats</span></td></tr>
+      <tr><td>K2 Finansiering ≠ budget (26 000 kr mot 23 200 kr)</td><td><span class="status no">Varning → READY</span></td><td><span class="status ok">NOT_READY — obalans + "sökt belopp överstiger hela projektbudgeten"</span></td></tr>
+      <tr><td>K3 Stöd utan digitaliserat formulär</td><td><span class="status no">Tyst blind</span></td><td><span class="status ok">Öppen HIGH-flagga: "granskningen kan inte verifiera fälten" (§18 fail-safe)</span></td></tr>
+      <tr><td>K4 Claimkonflikt 500/450/600 deltagare</td><td><span class="status no">Ingen flagga</span></td><td><span class="status ok">Detekteras: "Olika uppgifter om antal deltagare: 500 / 450 / 600" — rapporteras per §31</span></td></tr>
+      <tr><td>K5 Tillståndsmaskinen vs behörighet</td><td><span class="status no">Vaktade bara fält/budget/bilagor</span></td><td><span class="status ok">READY_TO_SUBMIT vaktar hela granskningen — 422 med granskningen bifogad</span></td></tr>
+    </tbody>
+  </table></div>
+  <p>
+    Ny strukturerad korskontroll dessutom: sökt belopp i formuläret måste stämma med finansieringsplanen
+    (känd motsägelse ⇒ blockerar). Textheuristikens träffar (K4) rapporteras som trolig motsägelse utan att
+    blockera — en heuristik ska aldrig kunna felstoppa en korrekt ansökan; den strukturerade jämförelsen är den
+    som stoppar. Perfekta ansökan (test A) passerar fortsatt den hårdare gaten med noll luckor.
+    Kvarstående ur topplistan: scheman för fler stöd (innehållsarbete), evidensnivåer E0–E4, evaluation matrix,
+    källhierarki, statsstöd och diligence.
+  </p>
+
+  <h2><span class="n">1</span>Implementation score (bottleneck-logik, inte snitt)</h2>
+  <div>
+    <div class="scorebar"><span class="label">Eligibility</span><span class="track"><span class="fill" style="width:85%;background:var(--ok)"></span></span><span class="v">85</span></div>
+    <div class="scorebar"><span class="label">Submission gate</span><span class="track"><span class="fill" style="width:50%;background:var(--warn)"></span></span><span class="v">50</span></div>
+    <div class="scorebar"><span class="label">Budget</span><span class="track"><span class="fill" style="width:70%;background:var(--warn)"></span></span><span class="v">70</span></div>
+    <div class="scorebar"><span class="label">Traceability</span><span class="track"><span class="fill" style="width:60%;background:var(--warn)"></span></span><span class="v">60</span></div>
+    <div class="scorebar"><span class="label">Generation (no-hallucination)</span><span class="track"><span class="fill" style="width:55%;background:var(--warn)"></span></span><span class="v">55</span></div>
+    <div class="scorebar"><span class="label">Evidence</span><span class="track"><span class="fill" style="width:30%;background:var(--danger)"></span></span><span class="v">30</span></div>
+    <div class="scorebar"><span class="label">Requirement coverage</span><span class="track"><span class="fill" style="width:25%;background:var(--danger)"></span></span><span class="v">25</span></div>
+    <div class="scorebar"><span class="label">Consistency</span><span class="track"><span class="fill" style="width:15%;background:var(--danger)"></span></span><span class="v">15</span></div>
+    <div class="scorebar"><span class="label">Evaluation coverage</span><span class="track"><span class="fill" style="width:10%;background:var(--danger)"></span></span><span class="v">10</span></div>
+    <div class="scorebar"><span class="label">Diligence</span><span class="track"><span class="fill" style="width:5%;background:var(--danger)"></span></span><span class="v">5</span></div>
+  </div>
+  <p class="lede">En totalsiffra redovisas medvetet inte: konsistens 15 och diligence 5 är flaskhalsar som ingen medelvärdesbildning får dölja.</p>
+
+  <h2><span class="n">2</span>Komponentklassificering (kod + live-verifiering)</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Komponent</th><th>Status</th><th>Belägg</th></tr></thead>
+    <tbody>
+      <tr><td>Eligibility Engine</td><td><span class="status ok">IMPLEMENTED</span></td><td>Live: eligible med 7 förklarade kriterier; excluded med källgrundad orsak ("Sökande ska vara en organisation…"); UNKNOWN aldrig behandlad som PASS; varje unknown bär frågor</td></tr>
+      <tr><td>Budget Engine (regelmatematik)</td><td><span class="status ok">IMPLEMENTED</span></td><td>Öre-exakta heltal; max/min/stödandel/medfinansiering/kategoriregler; live-flaggad obalans. Aktivitetskoppling saknas (spec §17)</td></tr>
+      <tr><td>Character Limit (validering)</td><td><span class="status ok">IMPLEMENTED</span></td><td>Live: 5 000 tecken i 4 000-fält → "får vara högst 4000 tecken (nu 5000)" → NOT_READY. Faktisk räkning, inte uppskattning</td></tr>
+      <tr><td>Final Submission Gate</td><td><span class="status warn">PARTIAL</span></td><td>Test A/B/C/fält fungerar live — men två hål (se kritiska fel 1–2) och blind där schema saknas</td></tr>
+      <tr><td>Grant Fingerprint</td><td><span class="status warn">PARTIAL</span></td><td>Stöd + versionerade regelverk (kriterier/budget/bevisning, källa, ändringsnot) finns; diarienummer, rättslig grund, poängmodell, statsstöd, programversion saknas</td></tr>
+      <tr><td>Requirement Matrix</td><td><span class="status warn">PARTIAL</span></td><td>Schemamotor med kanoniska nycklar och villkorsfält finns — men bara 3/55 stöd har schema; fält↔kriterium-mappning saknas</td></tr>
+      <tr><td>Decision Traceability</td><td><span class="status warn">PARTIAL</span></td><td>Regelversion fryses per ansökan; svarsproveniens (user/prefill) lagras; kriterium→källa spårbart. Claim→evidence-kedjan saknas</td></tr>
+      <tr><td>Language/Generation</td><td><span class="status warn">PARTIAL</span></td><td>Dokumentmotorn hittar aldrig på (obesvarat utelämnas — verifierat tidigare i dokumentrevisionen); men ingen kriteriekopplad svarsgenerering; ingen LLM finns i systemet</td></tr>
+      <tr><td>Double Funding</td><td><span class="status warn">PARTIAL</span></td><td>Stackningsmotor med förenlighetsregler finns i core — men är inte inkopplad i granskningen</td></tr>
+      <tr><td>Completion Risk</td><td><span class="status warn">PARTIAL</span></td><td>CRITICAL/HIGH/MEDIUM/LOW med åtgärd per lucka finns — men täcker bara fält/bevis/budget/deadline/behörighet</td></tr>
+      <tr><td>Consistency Engine</td><td><span class="status no">MISSING</span></td><td>Live-bevisat: 500/450/600 deltagare i tre fält → ingen flagga, READY_FOR_SUBMISSION</td></tr>
+      <tr><td>Claim Register</td><td><span class="status no">MISSING</span></td><td>Inga claims extraheras eller korsrefereras</td></tr>
+      <tr><td>Evidence Engine E0–E4</td><td><span class="status no">MISSING</span></td><td>Bevisning är binär (bilaga finns/saknas per typ); inga nivåer, ingen påstående↔underlag-koppling</td></tr>
+      <tr><td>Evaluation Matrix / poängmodell</td><td><span class="status no">MISSING</span></td><td>Ingen per-kriterium-bedömning, tröskel eller icke-kompensatorisk märkning utöver hard/mandatory; intern fitScore är inte märkt INTERNAL_ESTIMATE</td></tr>
+      <tr><td>Källhierarki + CONFLICT</td><td><span class="status no">MISSING</span></td><td>En kurerad källa per stöd med kvalitetsgrad — ingen hierarki, ingen konfliktdetektion</td></tr>
+      <tr><td>State Aid Check</td><td><span class="status no">MISSING</span></td><td>Ingen statsstödslogik; flaggan STATE_AID_UNKNOWN existerar inte</td></tr>
+      <tr><td>Diligence / handläggarperspektiv</td><td><span class="status no">MISSING</span></td><td>Inga sannolika kompletteringsfrågor eller avslagsargument produceras</td></tr>
+      <tr><td>Horizontal Principles</td><td><span class="status no">MISSING</span></td><td>—</td></tr>
+      <tr><td>Implementation/Long-Term Value</td><td><span class="status no">MISSING</span></td><td>—</td></tr>
+      <tr><td>Competitive Position</td><td><span class="status no">MISSING</span></td><td>—</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">3</span>Kritiska fel (måste åtgärdas)</h2>
+  <div class="finding">
+    <h3>K1 — Gaten släpper igenom olöst behörighet</h3>
+    <p>Live-test P6: ansökan på ett stöd där behörigheten är <strong>UNKNOWN</strong> (obesvarade hårda krav)
+    blev <code>READY_FOR_SUBMISSION</code> — de obesvarade behörighetsfrågorna klassas MEDIUM och blockerar inte.
+    Spec §5/§30 kräver att ett obesvarat krav aldrig räknas som uppfyllt i submission-läget. Motorn gör rätt
+    (UNKNOWN ≠ PASS i bedömningen) men gaten omsätter det inte.</p>
+  </div>
+  <div class="finding">
+    <h3>K2 — Matematisk motsägelse i finansieringen passerar gaten</h3>
+    <p>Live-test P3D: sökt belopp 26 000 kr mot en totalbudget på 23 200 kr (112 % stödandel, finansiering ≠ budget)
+    gav endast en varning — <code>READY_FOR_SUBMISSION</code>. Underfinansiering är ett fel, överfinansiering bara
+    en varning; spec §30 kräver att budgeten stämmer matematiskt åt båda hållen.</p>
+  </div>
+  <div class="finding">
+    <h3>K3 — Kravmatrisen är blind för 52 av 55 stöd</h3>
+    <p>Endast 3 stöd har ansökningsschema. För övriga finns inga obligatoriska fält alls — en ansökan utan ett enda
+    svar kan bli READY så länge bilagor finns (live-bevisat i P6, <code>hasSchema=false</code>). Formulärmotorn är
+    riktig; innehållstäckningen är det inte.</p>
+  </div>
+  <div class="finding">
+    <h3>K4 — Inga motsägelser upptäcks</h3>
+    <p>Live-test P4: 500 deltagare i sammanfattningen, 450 i planen, 600 i budgetmotiveringen → ingen flagga.
+    Konsistensmotorn (§12) och claimregistret (§11) existerar inte. Detta är den enskilt största avvikelsen från
+    spec:en, eftersom internkonsekvens är ett av dess primära mål.</p>
+  </div>
+  <div class="finding">
+    <h3>K5 — Tillståndsmaskinens egen gate kontrollerar inte behörighet</h3>
+    <p>Övergången till READY_TO_SUBMIT vaktas av fält/budget/bilagor men inte av behörighetsstatus. I live-testet
+    stoppades den uteslutna ansökan (422) — men av att bilagor saknades, inte av uteslutningen. Kodinspektion
+    bekräftar att <code>validateCase</code> saknar behörighetskontroll; den nya granskningen har den, men den
+    tvingas inte i tillståndsövergången.</p>
+  </div>
+
+  <h2><span class="n">4</span>Vad som bevisligen fungerar</h2>
+  <div class="finding good">
+    <h3>Behörighetskedjan är på riktigt — och datadriven per utlysning</h3>
+    <p>Trevärdesbedömningen är live-verifierad: behörig (7 förklarade kriterier), utesluten med källgrundat skäl,
+    okänd med exakta följdfrågor — och UNKNOWN blir aldrig PASS i bedömningen. Ett hårt FAIL flaggas
+    "kräver ändrade omständigheter" (<code>requiresFactualChange=true</code>) i granskningen — systemet försöker
+    inte skriva runt det (§5-stoppregeln). Två olika utlysningar gav olika kriterieuppsättningar och olika
+    bevisningskrav (P8) — regelverket styr beteendet, inte generiska antaganden.</p>
+  </div>
+  <div class="finding good">
+    <h3>No-hallucination är arkitektur, inte policy</h3>
+    <p>Systemet innehåller ingen LLM-textgenerering: allt renderas deterministiskt ur användarens egna svar, och
+    obesvarade fält utelämnas i stället för att fyllas. §27 uppfylls därmed by construction — men notera att
+    §25:s kriteriekopplade textkompilering därmed inte heller finns.</p>
+  </div>
+  <div class="finding good">
+    <h3>Teckengränser, budgetregler och gate-skelett håller under live-attack</h3>
+    <p>Test A (komplett ansökan → READY), B (bilaga saknas → NOT_READY med CRITICAL), C (utesluten → NOT_READY
+    med CRITICAL) och teckengränsen (5 000 > 4 000 → NOT_READY med exakt räkning) passerade alla live.</p>
+  </div>
+
+  <h2><span class="n">5</span>Testresultat</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Test</th><th>Förväntat</th><th>Utfall</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>P1 Trevärde + UNKNOWN≠PASS</td><td>pass/fail/unknown korrekt</td><td>Korrekt, inkl. skäl och frågor</td><td><span class="status ok">PASS</span></td></tr>
+      <tr><td>A Komplett ansökan</td><td>READY</td><td>READY, 0 luckor</td><td><span class="status ok">PASS</span></td></tr>
+      <tr><td>B Bilaga saknas</td><td>NOT_READY</td><td>NOT_READY, CRITICAL</td><td><span class="status ok">PASS</span></td></tr>
+      <tr><td>C Hårt behörighetsfel</td><td>NOT_READY</td><td>NOT_READY, CRITICAL + requiresFactualChange</td><td><span class="status ok">PASS</span></td></tr>
+      <tr><td>D Budgetmotsägelse (över-fin.)</td><td>NOT_READY/HIGH</td><td>Varning → READY</td><td><span class="status no">FAIL</span></td></tr>
+      <tr><td>E Kriterium utan bevis</td><td>Flagga</td><td>Ej detekterbart (ingen claim↔evidence-koppling)</td><td><span class="status no">FAIL</span></td></tr>
+      <tr><td>P4 Claimkonflikt 500/450/600</td><td>CONTRADICTION</td><td>Ingen flagga</td><td><span class="status no">FAIL</span></td></tr>
+      <tr><td>P5 Teckengräns 5000&gt;4000</td><td>Blockeras</td><td>Exakt räkning, NOT_READY</td><td><span class="status ok">PASS</span></td></tr>
+      <tr><td>P6 UNKNOWN-behörighet i gaten</td><td>Blockeras</td><td>READY (MEDIUM-luckor)</td><td><span class="status no">FAIL</span></td></tr>
+      <tr><td>P7 Tillståndsgate vs uteslutning</td><td>Blockeras pga behörighet</td><td>Blockeras — men av bilagekravet</td><td><span class="status warn">DELVIS</span></td></tr>
+      <tr><td>P8 Två utlysningar, olika beteende</td><td>Regelverket styr</td><td>Olika kriterier/bevisning per stöd</td><td><span class="status ok">PASS</span></td></tr>
+      <tr><td>Källhierarki-konflikt</td><td>Prioritering + CONFLICT</td><td>Går ej att testa — funktionen finns inte</td><td><span class="status no">MISSING</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">6</span>Real-world-testet, steg för steg</h2>
+  <p>
+    Kulturrådets internationella resebidrag kördes genom hela kedjan: situationsprofil (professionell dansare) →
+    matchning (behörig, 7 kriterier förklarade, 2 bevisningskrav) → ansökan skapad med fryst regelversion →
+    schema med 8 fält inkl. teckengränser och intygande → budgetposter i öre → finansiering → obligatorisk
+    bevisning uppladdad och kopplad → granskning → READY_FOR_SUBMISSION. Data följde med hela vägen:
+    regelversionen frystes på ansökan, svarens proveniens registrerades, bevisningen matchades mot regelverkets
+    krav per typ. <strong>Ingen information hallucinerades någonstans — men den granskades inte heller på
+    innehållsnivå:</strong> claims, konsistens och kriterietäckning passerade okontrollerade.
+  </p>
+
+  <h2><span class="n">7</span>Top 10 åtgärder (efter risk)</h2>
+  <ol>
+    <li><strong>Gaten:</strong> UNKNOWN-behörighet ⇒ blockerande (HIGH) tills frågorna besvarats — risk för felaktigt godkänd ansökan. <em>(K1)</em></li>
+    <li><strong>Gaten:</strong> finansiering ≠ budget blockerar åt båda hållen; sökt belopp valideras även mot stödets tak/andel — risk för formellt avslag och ekonomiskt fel. <em>(K2)</em></li>
+    <li><strong>Tillståndsmaskinen:</strong> READY_TO_SUBMIT ska vakta på hela granskningen (behörighet + deadline), inte bara fält/budget/bilagor. <em>(K5)</em></li>
+    <li><strong>Kravtäckning:</strong> ansökningsscheman för fler stöd — utan dem är kravmatrisen blind för 52/55. <em>(K3)</em></li>
+    <li><strong>Konsistensmotor v1:</strong> extrahera tal/datum/belopp ur svaren och korsjämför (500≠450≠600) — spec:ens största lucka. <em>(K4)</em></li>
+    <li><strong>Evidence v1:</strong> koppla påstående↔bilaga (E0/E1/E2) och per kriterium besvara "var bevisas detta?" — annars är test E odetekterbart.</li>
+    <li><strong>Evaluation matrix light:</strong> per kriterium status/bevisplats/icke-kompensatorisk flagga; märk fitScore <code>INTERNAL_ESTIMATE</code>.</li>
+    <li><strong>Dubbelfinansiering:</strong> koppla in stackningsmotorn i granskningen (motorn finns redan).</li>
+    <li><strong>Källhierarki + programversion</strong> i fingerprint, med CONFLICT-flagga i stället för tyst val.</li>
+    <li><strong>Diligence v1:</strong> generera sannolika kompletteringsfrågor ur luckorna (datat finns redan i granskningens gap-lista).</li>
+  </ol>
+
+  <h2><span class="n">8</span>Slutlig dom</h2>
+  <p>
+    <strong>Bidrag.se har inte ännu byggt en fullständig bidragsberedningsmotor — men har byggt något som är
+    svårare att eftermontera: en ärlig, deterministisk grund.</strong> Behörighetsbedömningen, budgetmatematiken,
+    teckengränserna och spårbarheten är verkliga, live-verifierade och utlysningsstyrda, och arkitekturen kan
+    inte hallucinera. Det som saknas är hela det granskande intelligenslagret — konsistens, evidensgradering,
+    bedömningsmatris, diligence — samt tre konkreta gate-hål som i dag släpper igenom ansökningar spec:en
+    kräver att systemet stoppar. Åtgärdslistans topp 5 är förutsättningen för att kalla systemet en
+    beredningsmotor; utan dem är det en mycket bra beredningsassistent med falsk trygghet i slutkontrollen.
+  </p>
+
+  <footer>
+    Oberoende slutrevision 2026-08-16 mot commit <code>5bb4ac8</code>. Metod: kodinspektion av
+    core/api/web + live-prober mot körande system med avsiktliga fel (skript <code>audit-ai.mjs</code>,
+    utfall återgivna ordagrant). Inga åtgärder har genomförts inom revisionen.
+  </footer>
+</div>

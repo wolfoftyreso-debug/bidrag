@@ -1,0 +1,295 @@
+<title>Bidrag.se Beta-arkitektur</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --ink: #1c2330;
+    --ink-soft: #55617a;
+    --line: #dde1ea;
+    --accent: #2743c7;
+    --accent-soft: #eceffc;
+    --ok: #1a7a4a;
+    --warn: #9a6a00;
+    --danger: #b3341f;
+    --code-bg: #eef0f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171e;
+      --surface: #1b1f29;
+      --ink: #e7eaf2;
+      --ink-soft: #9aa5bd;
+      --line: #2c3342;
+      --accent: #8fa3ff;
+      --accent-soft: #232b45;
+      --ok: #4cc088;
+      --warn: #d9a53d;
+      --danger: #e06550;
+      --code-bg: #232835;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171e;
+    --surface: #1b1f29;
+    --ink: #e7eaf2;
+    --ink-soft: #9aa5bd;
+    --line: #2c3342;
+    --accent: #8fa3ff;
+    --accent-soft: #232b45;
+    --ok: #4cc088;
+    --warn: #d9a53d;
+    --danger: #e06550;
+    --code-bg: #232835;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, "Segoe UI", system-ui, sans-serif;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 46rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  .kicker {
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  h1 { font-size: 2rem; line-height: 1.15; margin: 0.4rem 0 0.6rem; text-wrap: balance; letter-spacing: -0.015em; }
+  .lede { color: var(--ink-soft); margin: 0 0 0.8rem; max-width: 62ch; }
+  .meta { color: var(--ink-soft); font-size: 0.85rem; border-bottom: 1px solid var(--line); padding-bottom: 1.6rem; }
+  h2 {
+    font-size: 1.22rem;
+    margin: 2.8rem 0 0.7rem;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  h2 .n {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    margin-right: 0.55rem;
+  }
+  p { margin: 0.7rem 0; max-width: 68ch; }
+  .muted { color: var(--ink-soft); }
+  code {
+    font: 0.85em/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    background: var(--code-bg);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    font: 0.8rem/1.55 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color: var(--ink);
+  }
+  pre code { background: none; padding: 0; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 0.55rem 0.9rem; border-top: 1px solid var(--line); vertical-align: top; }
+  thead th {
+    border-top: none;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-soft);
+  }
+  ul { padding-left: 1.2rem; margin: 0.7rem 0; }
+  li { margin: 0.35rem 0; max-width: 66ch; }
+  .status {
+    display: inline-block;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.1rem 0.55rem;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+  .status.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+  .status.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); }
+  .status.no { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); }
+  .diagram {
+    display: grid;
+    gap: 0.45rem;
+    justify-items: center;
+    margin: 1.4rem 0;
+  }
+  .box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.55rem 1.1rem;
+    text-align: center;
+    font-size: 0.88rem;
+    min-width: min(20rem, 90%);
+  }
+  .box strong { display: block; }
+  .box small { color: var(--ink-soft); }
+  .box.accent { border-color: var(--accent); background: var(--accent-soft); }
+  .down { color: var(--ink-soft); font-size: 0.85rem; line-height: 1; }
+  .split { display: flex; gap: 0.45rem; flex-wrap: wrap; justify-content: center; width: 100%; }
+  .split .box { flex: 1 1 14rem; min-width: 12rem; }
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: var(--surface);
+    border-radius: 0 8px 8px 0;
+    padding: 0.8rem 1.1rem;
+    margin: 1.2rem 0;
+    max-width: 66ch;
+  }
+  .callout p { margin: 0.3rem 0; }
+  footer { margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 0.82rem; }
+</style>
+
+<div class="page">
+  <div class="kicker">Bidrag.se · Arkitekturrapport</div>
+  <h1>Migrering till Vercel + Supabase</h1>
+  <p class="lede">
+    Från containerantaganden till en avsiktligt tråkig beta-arkitektur: GitHub som källa till sanning,
+    Vercel som bygg- och driftplattform, Supabase som hanterad Postgres och lagring. Ingen Kubernetes,
+    ingen gateway, ingen Redis, ingen AWS.
+  </p>
+  <p class="meta">2026-08-16 · Kodmigreringen klar och verifierad (107 API-tester gröna, serverless-röktest genom riktiga handlern) · Plattformskoppling återstår som konfiguration</p>
+
+  <h2><span class="n">1</span>Nuvarande arkitektur</h2>
+  <p>
+    Monorepo med tre arbetsytor: <code>packages/core</code> (ren domänmotor, noll I/O),
+    <code>apps/api</code> (Fastify 5 + Drizzle + PostgreSQL 16) och <code>apps/web</code> (Vite React SPA).
+    Egen auth (scrypt, roterande refresh-tokens, httpOnly-cookies), pg-boss-jobb i en långlivad process,
+    dokument på lokal disk, containerimage mot Kubernetes-manifest.
+  </p>
+  <p>Den forensiska revisionen (20 punkter) fann <strong>fyra verkliga deployblockerare</strong> — och noll AWS-beroenden:</p>
+  <ul>
+    <li>Migreringar och pg-boss-worker startades i processen (<code>index.ts</code>)</li>
+    <li>Dokumentvalvet skrev till lokal disk (<code>UPLOAD_DIR</code>)</li>
+    <li>Jobbschemaläggningen krävde den långlivade workern</li>
+    <li>Supabase-specifikt: <code>public</code>-schemat utan RLS är läsbart via PostgREST för alla med anon-nyckeln</li>
+  </ul>
+  <p class="muted">Inga hemligheter i Git (skannat). Inga hårdkodade produktions-URL:er — SPA:n anropar bara <code>/v1</code> på samma origin.</p>
+
+  <h2><span class="n">2</span>Målarkitektur</h2>
+  <div class="diagram">
+    <div class="box"><strong>GitHub</strong><small>källa till sanning — kod, migreringar, konfiguration</small></div>
+    <div class="down">▼ git push</div>
+    <div class="box accent"><strong>Vercel</strong><small>statisk SPA + hela API:t som en serverless-funktion (<code>api/index.ts</code>)</small></div>
+    <div class="down">▼</div>
+    <div class="split">
+      <div class="box"><strong>Supabase PostgreSQL</strong><small>poolad anslutning · RLS deny-all mot PostgREST</small></div>
+      <div class="box"><strong>Supabase Storage</strong><small>privat bucket · service-nyckel enbart server-side</small></div>
+      <div class="box"><strong>Vercel Cron</strong><small>→ <code>/v1/internal/cron/:job</code> · Bearer-skyddat</small></div>
+    </div>
+    <div class="down">▼ server-side, aldrig från webbläsaren</div>
+    <div class="split">
+      <div class="box"><strong>Swish</strong><small>503 tills avtal + certifikat</small></div>
+      <div class="box"><strong>Resend</strong><small>kvitton &amp; transaktionsmail</small></div>
+      <div class="box"><strong>ClamAV</strong><small>valfri filskanning</small></div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>Migrerade komponenter</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Komponent</th><th>Lösning</th></tr></thead>
+    <tbody>
+      <tr><td>API-runtime</td><td>Fastify-appen oförändrad bakom en serverless-handler; instansen delas mellan varma anrop. Röktestad genom handlern: hela köpresan inkl. cookies, kvitto och cron-auth.</td></tr>
+      <tr><td>Bakgrundsjobb</td><td>Jobbkroppar i <code>jobs/tasks.ts</code>; körs av pg-boss (container) <em>eller</em> Vercel Cron mot <code>/v1/internal/cron/:job</code> (Bearer <code>CRON_SECRET</code>, timing-safe, 404 utan hemlighet). Alla jobb idempotenta.</td></tr>
+      <tr><td>Dokumentlagring</td><td>Driver-gräns i <code>services/storage.ts</code>: <code>disk</code> (dev/test/container) och <code>supabase</code> (privat bucket). GDPR-radering går genom samma gräns.</td></tr>
+      <tr><td>Migreringar</td><td>Ur kallstarten; <code>npm run db:migrate</code> som deploysteg mot <code>DIRECT_DATABASE_URL</code> (5432) — aldrig DDL genom transaktionspoolern.</td></tr>
+      <tr><td>Supabase-härdning</td><td>Migrering 0005: RLS på (deny-all) för samtliga tabeller + revoke av anon/authenticated. Invarianttest tvingar RLS på varje framtida tabell.</td></tr>
+      <tr><td>Deploy-konfig</td><td><code>vercel.json</code>: build, SPA-fallback, <code>/v1</code>-rewrite, fyra cron-scheman, 60&nbsp;s/1024&nbsp;MB för funktionen.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">4</span>Behållna komponenter — med skäl</h2>
+  <ul>
+    <li><strong>Egen auth i stället för Supabase Auth.</strong> Dokumenterat starkt skäl: komplett, testad auth med tenants, roller, inbjudningar och roterande refresh är sammanvävd med behörighetsmodellen. Byte = stor omskrivning utan beta-värde. Kan omprövas senare.</li>
+    <li><strong>Auktorisering i applikationslagret</strong> (tenant-scopad på varje query, verifierad av isolationstester). RLS är deny-all-muren mot PostgREST-vägen, inte applikationens behörighetsmodell.</li>
+    <li><strong>Drizzle-migreringar</strong> versionerade i Git — samma garanti som Supabase CLI, noll omskrivning.</li>
+    <li><strong>Vendor-anrop server-side i API:t.</strong> Edge Functions införs inte nu: att flytta fungerande server-side-kod till en andra runtime vore infrastruktur utan krav. Dokumenterat som framtida beslut om integrationsytan växer.</li>
+    <li><strong>Dockerfile + <code>deploy/k8s/</code></strong> som alternativ egen-drift-väg — valideras i CI, driftas inte, ej primär.</li>
+  </ul>
+
+  <h2><span class="n">5</span>Borttagna beteenden</h2>
+  <ul>
+    <li>Migreringar vid processtart (kapplöpningsrisk i serverless) — nu deploysteg</li>
+    <li>Direkta filsystemanrop i rutter — nu bakom lagringsdrivern</li>
+    <li>Antagandet om en långlivad process för schemaläggning</li>
+  </ul>
+
+  <h2><span class="n">6</span>Vendor-integrationer</h2>
+  <p class="muted">Alla följer mönstret: autentiserad appförfrågan → server-side validering → hemlighet ur miljön → vendor-anrop med timeout → normaliserat svar. Webbläsaren når aldrig en hemlig nyckel.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Vendor</th><th>Status</th><th>Anmärkning</th></tr></thead>
+    <tbody>
+      <tr><td>Swish</td><td><span class="status warn">väntar avtal</span></td><td>Adaptern vägrar ärligt (503) tills handelsavtal + mTLS-certifikat finns; webhooken avvisar allt tills signaturverifiering kan ske. Betalningens sanning är alltid server-side: bekräftad betalning → bokförd transaktion → kvitto → upplåsning.</td></tr>
+      <tr><td>Resend</td><td><span class="status warn">nyckel saknas</span></td><td>Server-side fetch; SMTP-fallback; utan båda bokförs utskick ärligt som "skipped". Avsändardomän behöver SPF/DKIM.</td></tr>
+      <tr><td>ClamAV</td><td><span class="status ok">valfri</span></td><td>Utan skanner markeras filer <code>scan_unavailable</code> — aldrig tyst antaget rena.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">7</span>Miljövariabler</h2>
+  <p>Kompletta i <code>.env.example</code> (endast namn). Kritiska för Vercel-drift:</p>
+  <pre><code>DATABASE_URL            poolad anslutning (Supavisor 6543, transaction mode)
+DIRECT_DATABASE_URL     direktanslutning 5432 — endast migreringar
+AUTH_SECRET             ≥32 tecken · rotation loggar ut alla (avsett)
+FIELD_ENCRYPTION_KEY    32 byte hex — fältkryptering
+STORAGE_DRIVER=supabase SUPABASE_URL · SUPABASE_SERVICE_ROLE_KEY
+SUPABASE_STORAGE_BUCKET privat bucket, aldrig publika URL:er
+CRON_SECRET             skyddar /v1/internal/cron/* (404 utan)
+PG_POOL_MAX=2           liten pool per funktionsinstans
+PUBLIC_BASE_URL · CORS_ORIGIN · RESEND_API_KEY · EMAIL_FROM
+SELLER_NAME · SELLER_ORG_NUMBER · SELLER_VAT_NUMBER · VAT_RATE_BPS</code></pre>
+  <p class="muted">Dev/Preview/Production hålls isär i Vercels miljöhantering. En hemlighet som råkat committas är komprometterad och roteras — historikstädning räcker aldrig.</p>
+
+  <h2><span class="n">8</span>Databasmigreringar</h2>
+  <p>
+    Deterministiska, committade, körs i CI och som deploysteg:
+    <code>0000</code> initial · <code>0001</code> index · <code>0002</code> invites ·
+    <code>0003</code> payments · <code>0004</code> receipts · <code>0005</code> RLS deny-all.
+  </p>
+  <div class="callout">
+    <p><strong>Regel:</strong> ny tabell ⇒ <code>ENABLE ROW LEVEL SECURITY</code> i samma migrering.
+    Invarianttestet listar varje tabell utan RLS och fäller CI — en ny tabell utan RLS vore ett öppet API mot dess data.</p>
+  </div>
+
+  <h2><span class="n">9</span>Deployprocedur</h2>
+  <pre><code>Kodändring:    git push → Vercel build → Preview → merge → Production
+Schemaändring: migrering i Git → npm run db:migrate (DIRECT_DATABASE_URL)
+               → därefter koddeploy som behöver schemat
+Aldrig:        klicka fram schema i Supabase-konsolen utan migrering i Git</code></pre>
+  <p>Fullständig runbook med Supabase-/Vercel-uppsättning steg för steg: <code>docs/DEPLOYMENT.md</code>.</p>
+
+  <h2><span class="n">10</span>Återstående blockerare för beta</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Blockerare</th><th>Typ</th></tr></thead>
+    <tbody>
+      <tr><td>Skapa Supabase- och Vercel-projekt, lägga in hemligheter, peka domänen bidrag.se</td><td><span class="status warn">konfiguration</span></td></tr>
+      <tr><td>Verifiera Supabase Storage-drivern mot ett riktigt projekt (skriven mot Storage-API:et; disk-drivern fullt testad, molnvägen kräver riktiga nycklar)</td><td><span class="status warn">verifiering</span></td></tr>
+      <tr><td>Swish-handelsavtal + certifikat; momsklassning bekräftas med redovisningen</td><td><span class="status warn">avtal</span></td></tr>
+      <tr><td>Resend-nyckel + avsändardomän (SPF/DKIM) för riktiga kvittomail</td><td><span class="status warn">konfiguration</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">11</span>Känd teknisk skuld</h2>
+  <ul>
+    <li>Rate limiting per funktionsinstans, inte globalt — acceptabelt för beta; global limitering är ett framtida beslut vid behov, inte en gateway.</li>
+    <li>Beta-observability = Vercels funktionsloggar + strukturerade pino-loggar + audit-tabellen; <code>/metrics</code> exponeras medvetet inte på Vercel. Larmkoppling är konfiguration, inte kod.</li>
+    <li>pg-boss-schemat ligger kvar i databasen (oanvänt på Vercel-vägen, ofarligt); städas om container-vägen pensioneras.</li>
+    <li>Kallstart bygger Fastify-appen (~hundratals ms första anropet per instans) — acceptabelt för beta.</li>
+  </ul>
+
+  <h2><span class="n">12</span>AWS</h2>
+  <p>
+    <span class="status ok">ingenting kräver AWS</span>&nbsp; Inga SDK-beroenden, inga tjänsteantaganden i kod.
+    Ordets enda förekomster är kommentarer i de behållna Kubernetes-manifesten (alternativvägen) och gäller generisk egen drift.
+  </p>
+
+  <footer>
+    Bidrag.se · commit <code>162192c</code> på <code>claude/bidrag-se-production-build-hdabqp</code> ·
+    107 API-tester + 48 domäntester gröna · serverless-röktest genom <code>api/index.ts</code>-handlern:
+    registrering → teaser → betalning → kvitto → cron-auth.
+  </footer>
+</div>

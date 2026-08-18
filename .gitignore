@@ -17,3 +17,6 @@ test-uploads/
 .env.local
 *.tsbuildinfo
 doc-*.pdf
+artifacts/
+# Härledd ur seed-datan av demo/build.mjs — genereras, versionshanteras inte
+demo/demo-opportunities.json
