@@ -16,6 +16,9 @@ och bundlar allt till en enda självförsörjande fil.
 
 ## Verifiera
 
+Kontrollerna kör i en riktig webbläsare; installera den en gång med
+`npx playwright install chromium` (se `tools/README.md`).
+
 ```bash
 npm run demo:check      # sju webbläsarkontroller mot den byggda demon
 ```

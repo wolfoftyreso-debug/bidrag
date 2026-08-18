@@ -4,6 +4,18 @@ Skript som verifierar systemet på nivåer enhetstesterna inte når: verkliga
 användarresor genom API:t, webbläsargenomklickningar av gränssnittet och
 revisioner av kunskapsbasen.
 
+## Förutsättningar
+
+`playwright` och `esbuild` är deklarerade devDependencies och installeras av
+`npm ci`. Själva webbläsaren laddas inte ner automatiskt — kör en gång:
+
+```bash
+npx playwright install chromium
+```
+
+I miljöer som redan har en webbläsare (t.ex. en förberedd container) räcker
+det att peka ut den med `CHROMIUM_PATH` eller `PLAYWRIGHT_BROWSERS_PATH`.
+
 Alla webbläsarskript använder `tools/lib/browser.mjs`, som hittar chromium
 portabelt. Sätt `CHROMIUM_PATH` eller `PLAYWRIGHT_BROWSERS_PATH` om din
 miljö lägger webbläsaren på ett eget ställe; annars låter det Playwright
