@@ -28,10 +28,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-audit --no-fund
-      - name: Typecheck
-        run: npm run typecheck
+      # Core måste byggas först: apps/api och apps/web typkontrolleras mot
+      # @bidrag/core:s genererade typdeklarationer, som skapas av bygget.
       - name: Build core
         run: npm run build -w packages/core
+      - name: Typecheck
+        run: npm run typecheck
       - name: Unit tests (core)
         run: npm run test -w packages/core
       - name: Integration tests (api, real Postgres)
@@ -72,7 +74,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build production image
-        run: docker build -t bidrag:${{ github.sha }} .
+        run: docker build -t bidragskoll:${{ github.sha }} .
       - name: Smoke test image
         run: |
           docker network create ci
@@ -82,7 +84,7 @@ jobs:
             -e DATABASE_URL=postgres://postgres@pg:5432/bidrag \
             -e AUTH_SECRET=$(openssl rand -hex 32) \
             -e FIELD_ENCRYPTION_KEY=$(openssl rand -hex 32) \
-            -e NODE_ENV=production -p 3000:3000 bidrag:${{ github.sha }}
+            -e NODE_ENV=production -p 3000:3000 bidragskoll:${{ github.sha }}
           for i in $(seq 1 30); do
             if curl -sf localhost:3000/readyz; then echo "READY"; exit 0; fi
             sleep 2
