@@ -185,3 +185,21 @@ be overridden via `SELLER_NAME`/`SELLER_ORG_NUMBER`/`SELLER_VAT_NUMBER`/
 used by tests and the demo is disabled in production by construction
 (`PAYMENTS_MOCK_ENABLED` is ignored when `NODE_ENV=production`), and it is
 never selected when Swish is configured.
+
+## 11. Dependency audit — clean in production, dev tooling lags
+
+`npm audit --omit=dev` reports **0 vulnerabilities**: nothing that ships to
+production is affected. The advisories `npm audit` does report (verified
+2026-08-18: 8 total, 1 critical, 1 high, 6 moderate) all come from the test
+toolchain — `vitest@2.1.9` and the `vite@5.4.21` it pulls in transitively.
+Neither is part of any build output or runtime image; the critical advisory
+concerns the Vitest UI server, which this project never starts.
+
+The fix is deliberately deferred rather than silently applied: no patched
+`vite@5.4.x` exists, so closing the advisories requires a major upgrade of
+the test framework (`vitest` 2 → 3/4). The 282-test suite is this project's
+entire safety net, and migrating it is its own piece of work with its own
+verification — not a drive-by change on a release run. The web app already
+builds on `vite@6.4.3`; only the test runner is pinned to the older line.
+Planned as a standalone task: upgrade `vitest`, re-run both suites, confirm
+`--pool=forks` behaviour and the real-Postgres integration path still hold.
