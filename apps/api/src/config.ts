@@ -48,15 +48,25 @@ export const config = {
    * Aldrig styckdebitering per dokument, aldrig prenumeration.
    */
   applicationPriceMinor: Number(env.APPLICATION_PRICE_MINOR ?? 1900),
-  /** Mockbetalningar för utveckling/test — kan aldrig aktiveras i produktion. */
-  paymentsMockEnabled: env.PAYMENTS_MOCK_ENABLED === 'true' && env.NODE_ENV !== 'production',
+  /**
+   * Mockbetalningar för utveckling/test — kan aldrig aktiveras i skarp
+   * produktion. Undantag: Vercels PREVIEW-miljöer (VERCEL_ENV='preview')
+   * kör med NODE_ENV=production men är avsedda för test — där tillåts
+   * mocken när flaggan uttryckligen är satt, så att hela köpflödet går
+   * att felsöka i en deployad fullversion före Swish-avtalet. I
+   * produktionsmiljön (VERCEL_ENV='production' eller ingen Vercel alls)
+   * är mocken strukturellt avstängd precis som förut.
+   */
+  paymentsMockEnabled:
+    env.PAYMENTS_MOCK_ENABLED === 'true' && (env.NODE_ENV !== 'production' || env.VERCEL_ENV === 'preview'),
   /**
    * Generation mode (AI-spec §32): textförslag via LLM, alltid bakom de
    * deterministiska vakterna i @bidrag/core. Anthropic-nyckeln aktiverar i
    * drift; mocken fungerar ALDRIG i produktion (samma regel som betalmocken).
    */
   anthropicApiKey: env.ANTHROPIC_API_KEY ?? null,
-  generationMockEnabled: env.GENERATION_MOCK_ENABLED === 'true' && env.NODE_ENV !== 'production',
+  generationMockEnabled:
+    env.GENERATION_MOCK_ENABLED === 'true' && (env.NODE_ENV !== 'production' || env.VERCEL_ENV === 'preview'),
   /**
    * Momssats i baspunkter. Analysupplåsningen och dokumentförberedelsen är
    * elektroniskt levererade tjänster till konsument i Sverige — standardmoms

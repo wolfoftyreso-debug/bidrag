@@ -183,8 +183,12 @@ on receipts defaults to the real operating company — Landvex AB, org.nr
 be overridden via `SELLER_NAME`/`SELLER_ORG_NUMBER`/`SELLER_VAT_NUMBER`/
 `SELLER_ADDRESS` if the company details ever change. The mock provider
 used by tests and the demo is disabled in production by construction
-(`PAYMENTS_MOCK_ENABLED` is ignored when `NODE_ENV=production`), and it is
-never selected when Swish is configured.
+(`PAYMENTS_MOCK_ENABLED` is ignored when `NODE_ENV=production`), with one
+deliberate, verified exception: Vercel **preview** deployments
+(`VERCEL_ENV=preview`) may enable it explicitly, so the full purchase flow
+can be debugged in a deployed environment before the Swish agreement
+exists. The production environment stays structurally locked, and the mock
+is never selected when Swish is configured.
 
 ## 11. Dependency audit — clean in production, one upstream dev advisory left
 
