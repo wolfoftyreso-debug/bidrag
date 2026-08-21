@@ -516,6 +516,10 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
   } | null>(null);
   const [confirmed, setConfirmed] = useState<{ receiptNumber: string; email: string | null } | null>(null);
 
+  // F-SCROLL: betalväggens interna vyer (erbjudande → betalning → kvitto)
+  // passerar aldrig routern — utan egen återställning startar de i botten.
+  useEffect(() => { window.scrollTo(0, 0); }, [payment, confirmed]);
+
   // Swish: betalningen bekräftas av banken, inte av klienten — vi pollar
   // status tills servern (som själv verifierar mot Swish) säger confirmed.
   useEffect(() => {

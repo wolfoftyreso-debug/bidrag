@@ -327,6 +327,11 @@ function Teaser({ facts, track, onUnlocked }: { facts: Facts; track: 'personal' 
   const [confirmed, setConfirmed] = useState(false);
   const [consent, setConsent] = useState(false);
 
+  // F-SCROLL igen (användarfynd 2): betalväggens vyer (teaser → Swish →
+  // kvitto) är interna tillståndsbyten som den globala step/view-återställningen
+  // aldrig ser — utan egen återställning landar man i botten av betalvyn.
+  useEffect(() => { window.scrollTo(0, 0); }, [paying, confirmed]);
+
   // Betalning genomförd — kvittobekräftelsen kommer före rapporten. I
   // produkten är kedjan: Swish bekräftar → transaktionen bokförs → kvitto
   // med momsspecifikation utfärdas → analysen låses upp. Kvittot är en

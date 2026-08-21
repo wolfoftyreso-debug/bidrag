@@ -210,6 +210,9 @@ function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: str
   const [payment, setPayment] = useState<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean } } | null>(null);
   const [confirmed, setConfirmed] = useState(false);
 
+  // F-SCROLL: köpflödets vyer är interna tillståndsbyten — börja alltid i toppen.
+  useEffect(() => { window.scrollTo(0, 0); }, [payment, confirmed]);
+
   const buy = async () => {
     setBusy(true);
     setError(null);

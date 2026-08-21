@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { get, getActiveTenant, post, setActiveTenant } from './api';
 import TermsPage from './pages/Terms';
 import LoginPage from './pages/Login';
@@ -19,6 +19,14 @@ import AdminPage from './pages/Admin';
 import RuleEditorPage from './pages/RuleEditor';
 import AccountPage from './pages/Account';
 import SearchPage from './pages/Search';
+
+
+/** F-SCROLL: varje ruttbyte börjar i toppen — annars ärvs scrolläget från förra sidan. */
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 
 export interface Session {
   user: { id: string; email: string };
@@ -57,11 +65,14 @@ export default function App() {
       {session ? (
         <Shell />
       ) : (
-        <Routes>
-          <Route path="/aterstall/:token" element={<ResetPasswordPage />} />
-          <Route path="/villkor" element={<div className="auth-page"><TermsPage /></div>} />
-          <Route path="*" element={<LoginPage onLogin={reload} />} />
-        </Routes>
+        <>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/aterstall/:token" element={<ResetPasswordPage />} />
+            <Route path="/villkor" element={<div className="auth-page"><TermsPage /></div>} />
+            <Route path="*" element={<LoginPage onLogin={reload} />} />
+          </Routes>
+        </>
       )}
     </SessionContext.Provider>
   );
@@ -115,6 +126,7 @@ function Shell() {
         <button className="subtle" onClick={logout} style={{ textAlign: 'left' }}>Logga ut</button>
       </nav>
       <main className="main">
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/kom-igang" element={<OnboardingPage />} />
