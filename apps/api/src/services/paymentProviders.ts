@@ -5,7 +5,10 @@
  * Swish-adaptern är integrationspunkten för produktion och kräver
  * handelsavtal + klientcertifikat mot Swish kommersiella API — den vägrar
  * ärligt tills SWISH_* är konfigurerat (se docs/LIMITATIONS.md). Mock-
- * providern finns för utveckling/test och kan aldrig aktiveras i produktion.
+ * providern finns för utveckling/test och Vercel Preview; miljögrinden
+ * (aldrig i skarp produktion) ligger samlad i config.paymentsMockEnabled —
+ * lägg inga egna NODE_ENV-villkor här, det var så preview-undantaget
+ * neutraliserades en gång.
  */
 import { config } from '../config.ts';
 import { appLink, createPaymentRequest, swishConfigured } from './integrations/swish.ts';
@@ -63,7 +66,7 @@ const swishProvider: PaymentProvider = {
 
 const mockProvider: PaymentProvider = {
   id: 'mock',
-  available: () => config.paymentsMockEnabled && !config.isProd,
+  available: () => config.paymentsMockEnabled,
   async create(p) {
     return {
       instructions: {

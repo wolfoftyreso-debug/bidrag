@@ -1,5 +1,9 @@
 # Bidragskoll.se — Arkitekturrapport: migrering till Vercel + Supabase
 
+> **OBS: historisk ögonblicksbild (2026-08-16).** Siffror och detaljer nedan
+> speglar läget vid rapportdatumet; aktuella tal och deployväg finns i
+> `docs/DEPLOY-AGENT.md` och `CLAUDE.md`.
+
 Datum: 2026-08-16 · Status: kodmigrering klar och verifierad; plattformskoppling
 (Supabase-projekt, Vercel-projekt, domän) återstår som konfigurationssteg.
 
@@ -71,7 +75,7 @@ Redis, ingen AWS. Medvetet tråkigt.
 
 | Vendor | Status |
 |---|---|
-| Swish | adapter vägrar ärligt (503) tills `SWISH_MERCHANT_ALIAS` + `SWISH_CERT_PATH` (handelsavtal + mTLS) finns; webhook-ytan svarar 503 tills signaturverifiering kan ske |
+| Swish | adapter vägrar ärligt (503) tills `SWISH_MERCHANT_ALIAS` + `SWISH_CERT_BASE64`/`SWISH_KEY_BASE64` (handelsavtal + mTLS; base64-PEM i env — serverless har inget filsystem) finns; callbacken är osignerad by design och används bara som väckning — bekräftelse sker alltid via server-till-server mTLS-statushämtning |
 | Resend | transaktionsmail (kvitton m.m.) via server-side fetch; SMTP-fallback; utan båda bokförs 'skipped' |
 | ClamAV | valfri (`CLAMAV_ADDRESS`); utan den märks filer ärligt `scan_unavailable` |
 | Betalningens sanning | alltid server-side: bekräftad betalning → bokförd transaktion → kvitto → upplåsning; webbläsaren kan aldrig påstå att betalning skett |

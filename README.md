@@ -13,7 +13,7 @@ Två hårda produktprinciper styr upplevelsen:
    rätt till" (hög sannolikhet / möjlig / behöver utredas) — aldrig "du är
    berättigad". Slutligt beslut fattas alltid av myndigheten.
 
-Not a grant directory. The system is a continuous pipeline:
+Ingen bidragskatalog. Systemet är en sammanhängande pipeline:
 
 ```
 Profil → Intention → Stödutbud → Behörighet → Matchning → Finansieringsplan
@@ -29,8 +29,8 @@ Profil → Intention → Stödutbud → Behörighet → Matchning → Finansieri
 | Dimension | Läge |
 |---|---|
 | Teknisk kärna | ~85 % byggd, deterministisk och testad |
-| Production hardening | pågående — metrics, GDPR-självservice och runbook finns; verklig klusterdrift, backup-övning och lasttest återstår |
-| Kunskapstäckning | 72 kurerade stöd från 35 finansiärer, inkl. personliga ersättningar (FK, CSN, Pensionsmyndigheten, socialtjänsten, AF), funktionsnedsättnings-, nyanländ- och utvandringsspår samt lokala/regionala organisationsstöd — bevisar motorn, inte nationell täckning |
+| Production hardening | pågående — metrics, GDPR-självservice och runbook finns; backup-övning och lasttest är genomförda i dev/CI (se `docs/OPERATIONS.md`), verklig produktionsdrift återstår |
+| Kunskapstäckning | 72 kurerade stöd från 35 finansiärer (stämplade `ai_curated` — AI-sammanställda från officiell källa, ej människogranskade), inkl. personliga ersättningar (FK, CSN, Pensionsmyndigheten, socialtjänsten, AF), funktionsnedsättnings-, nyanländ- och utvandringsspår samt lokala/regionala organisationsstöd — bevisar motorn, inte nationell täckning |
 | Integrationsmognad | låg per design — assisterad inlämning tills avtalade adaptrar finns |
 | Kommersiell modell | trestegsmodell: gratis upptäckt → 39 kr analysupplåsning → gratis "ansök själv"-länk eller förberedd ansökan i systemet (19 kr per ansökan — alla dokument för den ansökan ingår, generisk mallmotor, PDF till Mina dokument). Kvitton med löpnummer + moms i kontot. Betalningen är den auktoritativa händelsen; Swish-adaptern väntar ärligt (503) på handelsavtal + certifikat; momsen är fast 25 % standardsats (elektroniskt levererad tjänst till konsument) |
 | Produktarkitektur | stark; skala/härda/befolka, inte bygga om |
@@ -43,13 +43,16 @@ Nästa fas är **Production Hardening + Knowledge Expansion** (se
 | Path | What |
 |---|---|
 | `packages/core` | Pure domain engine: criteria DSL, layered match scoring, application state machine, budget engine, schema-driven forms, funding-stack compatibility, deadline math. Zero I/O, 90 unit tests. |
-| `apps/api` | Fastify + PostgreSQL modular monolith: auth, tenancy, funding knowledge graph, matching, application cases, documents, submissions, correspondence, ingestion, background jobs, curation API. 192 integration tests. |
+| `apps/api` | Fastify + PostgreSQL modular monolith: auth, tenancy, funding knowledge graph, matching, application cases, documents, submissions, correspondence, ingestion, background jobs, curation API. 193 integration tests. |
 | `apps/web` | Swedish-first React SPA: onboarding, matches, opportunity detail, application workspace, vault, inbox, admin console. |
 | `deploy/k8s` | Kubernetes manifests (deployment, service, ingress, PDB, PVC, secret templates). |
 | `demo/` | Fristående demo som kör den verkliga motorn i webbläsaren, plus sju webbläsarkontroller. Se `demo/README.md`. |
 | `tools/` | Verifieringsverktyg: 30-användarsimulering, 13 UI-genomklickningar, revisionssviter, schemakontroll, röktester. Se `tools/README.md`. |
-| `docs/` | Architecture, security, privacy/GDPR, limitations. |
+| `deploy/bootstrap.sql` | Hela databasen (schema + kunskapsbas) som en körbar SQL-fil — reser en tom PostgreSQL utan Node. Regenereras med `scripts/make-bootstrap.sh`. |
+| `scripts/` | `verify.sh` (hälsokontrollen bakom `npm run verify`), backup/restore-övning, lasttest, Swish-beredskap. |
+| `docs/` | Dokumentkarta: `ARCHITECTURE` (helheten), `DEPLOYMENT`+`DEPLOY-AGENT`+`DEPLOY-NU` (deploy: helhet / agentdriven körbok / manuell klickordning), `ACTIVATION` (externa tjänster), `OPERATIONS` (drift), `SECURITY`/`PRIVACY` (säkerhet/GDPR), `LIMITATIONS` (ärlig brislista), `APPLICATION-INTELLIGENCE`+`PERFECT-APPLICATION-CONSTITUTION` (styrdokument för ansökningsmotorn). |
 | `docs/reports/` | Genererade revisionsrapporter (historiska ögonblicksbilder). |
+| `CLAUDE.md` | Ingången för AI-agenter: vad som är byggt, hur allt körs och verifieras, nästa prioriterade arbete. |
 
 ## Quick start (local)
 
@@ -72,14 +75,24 @@ createdb bidrag_test
 npm test                              # core unit + api integration suites
 ```
 
+Hela hälsokontrollen i ett kommando (bygge, typer, tester, databas från tom,
+produktionsbygge, deploy-konfig, hemlighetsskanning):
+
+```bash
+npm run verify
+```
+
 ## Production
 
 **Primär väg: Vercel + Supabase** — GitHub är källan till sanning, `git push`
 bygger och deployar (SPA statiskt + hela API:t som en serverless-funktion),
 Supabase står för PostgreSQL (RLS deny-all mot PostgREST), privat
 dokumentlagring och poolade anslutningar; Vercel Cron kör bakgrundsjobben.
-Hela proceduren: `docs/DEPLOYMENT.md`. Miljövariabler: `.env.example` —
-committa aldrig värden.
+Snabbaste vägen: `docs/DEPLOY-AGENT.md` (agentdriven körbok via
+Supabase-/Vercel-connectors, laddar databasen från `deploy/bootstrap.sql`)
+eller `docs/DEPLOY-NU.md` (manuell klickordning ~15 min). Helheten:
+`docs/DEPLOYMENT.md`; aktivering av Swish/Resend/Anthropic:
+`docs/ACTIVATION.md`. Miljövariabler: `.env.example` — committa aldrig värden.
 
 Alternativ (behållen, ej primär): en containerimage (API + pg-boss-worker +
 byggd SPA) med manifesten i `deploy/k8s/`. Se `docs/ARCHITECTURE.md` för

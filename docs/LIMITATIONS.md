@@ -227,7 +227,7 @@ The adversarial counter-audit ("Motförhöret", docs/reports/motforhoret.html)
 found three A-class gaps. What is now implemented in code, and what remains:
 
 **A1 Withdrawal right (distansavtalslagen)** — implemented: every purchase
-(analysis 39 kr, application 19 kr, document pack) requires an explicit
+(analysis 39 kr, application 19 kr) requires an explicit
 checkbox consenting to immediate delivery and acknowledging that the 14-day
 withdrawal right thereby lapses. The server rejects purchases without it
 (400 `consent_required`); the consent timestamp is stored on the payment,

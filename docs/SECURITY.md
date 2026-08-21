@@ -44,7 +44,8 @@ v6), enforces 10 MB / 30 s limits, and identifies itself with a UA string.
 
 ## Secrets & crypto
 
-- All secrets from environment / Kubernetes Secrets; production fails fast if
+- All secrets from environment variables (Vercel Environment Variables;
+  Kubernetes Secrets in the container path); production fails fast if
   missing; nothing in code or logs (auth headers redacted from request logs).
 - External identifiers (OID, org.nr) encrypted at rest with AES-256-GCM
   (`FIELD_ENCRYPTION_KEY`), stored separately from profiles.
@@ -55,8 +56,14 @@ v6), enforces 10 MB / 30 s limits, and identifies itself with a UA string.
 ## Headers & transport
 
 Helmet CSP (self-only scripts, no framing), CORS restricted to the configured
-origin with credentials, TLS terminated at ingress, cookies Secure in
-production.
+origin with credentials, TLS terminated by the platform on Vercel (at ingress
+in the container path), cookies Secure in production.
+
+## Row Level Security (Supabase)
+
+Migration 0005 enables RLS with no policies (deny-all) on every `public`
+table and revokes grants from the `anon`/`authenticated` roles, so Supabase's
+PostgREST can never read anything — all access goes through the API.
 
 ## Error handling
 
@@ -65,5 +72,7 @@ structured logs.
 
 ## Known gaps
 
-See `LIMITATIONS.md` (ClamAV optional, no CSRF token on top of SameSite=Lax,
-no Prometheus endpoint yet).
+See `LIMITATIONS.md` (ClamAV optional, no CSRF token on top of SameSite=Lax).
+A Prometheus `/metrics` endpoint exists in the API, but dashboards/alerting
+remain to be set up (LIMITATIONS §9) and it is not exposed in the Vercel
+deployment.

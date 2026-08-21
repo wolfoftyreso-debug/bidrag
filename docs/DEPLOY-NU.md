@@ -4,7 +4,8 @@ Målet: en körbar fullversion på Vercel + Supabase på ~15 minuter, testbar
 hela vägen inklusive köpflödena (simulerade betalningar i preview-miljön).
 Repot är färdigt: `vercel.json`, serverless-entryn och CI är gröna.
 Detaljer och felsökning: `docs/DEPLOYMENT.md`. Aktivering av riktiga
-integrationer efteråt: `docs/ACTIVATION.md`.
+integrationer efteråt: `docs/ACTIVATION.md`. Har sessionen Supabase- och
+Vercel-connectors är `docs/DEPLOY-AGENT.md` den snabbare, agentdrivna vägen.
 
 > Jag (byggagenten) kan inte utföra dessa steg åt dig — de kräver dina
 > konton, och den här miljöns nätverk når inte Vercel/Supabase. Allt som
@@ -68,8 +69,12 @@ openssl rand -hex 24   # → CRON_SECRET
 git clone https://github.com/wolfoftyreso-debug/bidragskoll.git && cd bidragskoll
 npm ci
 DATABASE_URL="<DIRECT_DATABASE_URL>" npm run db:migrate   # ALLTID direktanslutningen (5432)
-DATABASE_URL="<DIRECT_DATABASE_URL>" npm run db:seed      # 72 stöd, 35 finansiärer
+DATABASE_URL="<DIRECT_DATABASE_URL>" npm run db:seed      # 72 stöd, 35 finansiärer, 71 scheman, 36 källor
 ```
+
+Alternativ utan Node på din dator: kör `deploy/bootstrap.sql` mot den tomma
+databasen (t.ex. i Supabase SQL Editor) — den innehåller schema + hela
+kunskapsbasen och ger exakt samma slutläge.
 
 ## Steg 5 — Verifiera
 

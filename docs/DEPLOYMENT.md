@@ -49,8 +49,8 @@ git push → GitHub → Vercel build → Preview/Production
    Minimum för drift:
    `DATABASE_URL` (poolad!), `DIRECT_DATABASE_URL`, `AUTH_SECRET`,
    `FIELD_ENCRYPTION_KEY`, `STORAGE_DRIVER=supabase`, `SUPABASE_URL`,
-   `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET`, `PUBLIC_BASE_URL`,
-   `CORS_ORIGIN`, `PG_POOL_MAX=2`. Säljaruppgifterna på kvittona
+   `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_STORAGE_BUCKET=documents`,
+   `CRON_SECRET`, `PUBLIC_BASE_URL`, `CORS_ORIGIN`, `PG_POOL_MAX=2`. Säljaruppgifterna på kvittona
    (Landvex AB, org.nr 559141-7042, Antennvägen 2, 135 48 Tyresö) är
    standardvärden i koden; `SELLER_NAME`/`SELLER_ORG_NUMBER`/
    `SELLER_VAT_NUMBER`/`SELLER_ADDRESS` behöver bara sättas om
@@ -120,8 +120,9 @@ curl -s https://bidragskoll.se/v1/internal/cron/retention  # 404 (hemlighet krä
    — verifierar mTLS-handskakningen, payment request, QR, verifierad status,
    kvitto och upplåsning.
 4. **Produktionstest med en riktig 39 kr-betalning**: samma skript mot
-   produktionsdomänen, betala med Swish-appen, verifiera kvittomailet,
-   återbetala i Swish-portalen.
+   produktionsdomänen, betala med Swish-appen, verifiera kvittot under
+   Mina köp (och kvittomailet om Resend är aktiverat — e-post är inget
+   produktionskrav), återbetala i Swish-portalen.
 5. Säkerhetsmodellen (byggd och testad): callbacken är osignerad och används
    bara som väckning — bekräftelse sker enbart efter statushämtning
    server-till-server över mTLS med beloppskontroll. Tappade callbacks

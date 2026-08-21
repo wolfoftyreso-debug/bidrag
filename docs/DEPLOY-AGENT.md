@@ -35,6 +35,8 @@ en connector saknas eller saknar en förmåga.
    drizzles migrationstabell) + hela kunskapsbasen som INSERT-satser,
    inga psql-metakommandon. ~396 KB — dela på satsgränser om verktyget
    har storleksgräns (aldrig mitt i en sats; strängar innehåller `;`).
+   Filen regenereras med `bash scripts/make-bootstrap.sh` efter varje
+   migrerings- eller seedändring (skriptet rundtursverifierar själv).
 4. **Verifiera räkningarna** — allt annat är ett fel:
    `funding_opportunities=72, funding_authorities=35,
    application_schemas=71, sources=36, drizzle.__drizzle_migrations=12`.

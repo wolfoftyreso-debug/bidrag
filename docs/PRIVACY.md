@@ -11,8 +11,10 @@
   separately and encrypted (AES-256-GCM).
 - **Purpose limitation**: applicant facts exist to compute funding matches and
   prepare applications; the public knowledge graph contains no personal data.
-- **No special-category data** is required by the default matching model, and
-  no seed criterion asks for any.
+- **Special-category data is minimised**: the intake contains exactly one
+  Art. 9 health question, collected with explicit consent and a genuine
+  "Vill inte svara" option — see the *Special category data* section below.
+  No other criterion asks for special-category data.
 
 ## Article 22 posture (no automated decisions)
 
@@ -33,20 +35,25 @@ correcting their facts — recomputation is deterministic.
 | external_identifiers | OID/org.nr, encrypted | contract/legal obligation |
 | correspondence_events | authority messages the user registers | contract |
 | audit_events | actor, action, before/after | legitimate interest (security) |
+| health answer + `person.sensitiveDataConsentAt` | Art. 9 health datum (disability/long-term illness) | explicit consent (Art. 9(2)(a)) |
+| payments / receipts | payment and receipt records | legal obligation (bokföringslagen; survives erasure) |
 
 ## Retention & rights
 
 - Deleting a tenant cascades through all tenant-owned tables (enforced by
   `ON DELETE CASCADE` foreign keys from `tenants`).
 - Export: all tenant data is reachable through the documented `/v1` API.
-- A self-service export/erasure endpoint and a retention scheduler are open
-  items — see LIMITATIONS.md — and must exist before public launch.
+- Self-service export (`GET /v1/tenant/export`) and erasure
+  (`DELETE /v1/tenant`) are implemented (`routes/gdpr.ts`), as is the
+  retention scheduler (the `retention` job). Remaining open item: the
+  operator's DPIA.
 
 ## DPIA
 
 Per IMY guidance, a DPIA is required before production if processing is
-likely to be high-risk. This build's assessment inputs: no special-category
-data required, no automated legal-effect decisions, encryption at rest for
+likely to be high-risk. This build's assessment inputs: special-category
+data is processed (the Art. 9 health question), so the DPIA is mandatory;
+no automated legal-effect decisions, encryption at rest for
 sensitive identifiers, tenant isolation tested. The DPIA itself is an
 organisational step that must be completed by the operator before launch;
 the LIMITATIONS register tracks it.

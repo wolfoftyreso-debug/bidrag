@@ -32,21 +32,29 @@ ytan 404).
 | `FIELD_ENCRYPTION_KEY` | 64 hex-tecken (32 byte), unik per miljö — roteras aldrig utan migreringsplan |
 | `CRON_SECRET` | Slumpad hemlighet; krävs för cron-jobben och readiness-endpointen |
 | `PUBLIC_BASE_URL` | Publika webbadressen (används i återställningslänkar m.m.) |
+| `DIRECT_DATABASE_URL` | Direktanslutning (port 5432) för migreringar/seed — aldrig via poolern |
+| `CORS_ORIGIN` | Tillåtna origins (samma som `PUBLIC_BASE_URL` i normalfallet) |
+| `PG_POOL_MAX` | `2` i serverless |
+| `STORAGE_DRIVER` + `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` + `SUPABASE_STORAGE_BUCKET` | `supabase` + projektets värden; privat bucket `documents` |
+
+Fullständig variabeltabell med värden: `docs/DEPLOY-NU.md` steg 3.
 
 Generera hemligheter: `openssl rand -hex 32`.
 
 ## 1. Supabase (databas)
 
 1. Skapa projekt på supabase.com (region EU).
-2. Hämta anslutningssträngen (Session pooler för serverless) → `DATABASE_URL`.
-3. Kör migrationerna och seeda kunskapsbasen:
+2. Hämta anslutningssträngarna: **Transaction pooler** (port 6543) →
+   `DATABASE_URL`, **Direct connection** (port 5432) → `DIRECT_DATABASE_URL`.
+3. Kör migrationerna och seeda kunskapsbasen — alltid via direktanslutningen,
+   aldrig poolern:
    ```sh
-   cd apps/api
-   DATABASE_URL=... npx drizzle-kit migrate
-   DATABASE_URL=... node --experimental-strip-types src/seed/run.ts
+   DATABASE_URL=<DIRECT_DATABASE_URL> npm run db:migrate
+   DATABASE_URL=<DIRECT_DATABASE_URL> npm run db:seed
    ```
    Seeden är idempotent och versionerar regeländringar append-only — säker
-   att köra om.
+   att köra om. Alternativ utan Node: kör `deploy/bootstrap.sql` (schema +
+   hela kunskapsbasen i en fil), se `docs/DEPLOY-AGENT.md` §1.
 4. Verifiera: readiness → `checks.database.status: "ready"`.
 
 Detaljer: `docs/DEPLOYMENT.md`.

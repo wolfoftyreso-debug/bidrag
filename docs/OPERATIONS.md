@@ -6,10 +6,13 @@ not a backup.
 
 ## Topology
 
-One container image (API + pg-boss worker + SPA), N replicas behind the
-ingress. Stateful dependencies: **PostgreSQL** (all data + job queue) and the
-**uploads volume** (or S3 once migrated). Redis is deliberately not used —
-verified by an architectural test (`test/invariants.test.ts`).
+Primary path: **Vercel** (static SPA + the API as one serverless function) +
+**Supabase** (PostgreSQL via the pooler, Storage for uploads), with jobs run
+by Vercel Cron. Alternative self-hosting path: one container image (API +
+pg-boss worker + SPA), N replicas behind the ingress, with an uploads volume.
+Stateful dependencies either way: **PostgreSQL** (all data + job queue) and
+the document store. Redis is deliberately not used — verified by an
+architectural test (`test/invariants.test.ts`).
 
 ## Backup & restore
 
@@ -27,16 +30,20 @@ pg_restore --dbname=postgres://.../bidrag_restore_test --no-owner bidrag-YYYY-MM
 # audit_events; then boot the API against it and hit /readyz + login.
 ```
 
-Point-in-time recovery: enable WAL archiving on the Postgres instance (RDS
-automated backups on AWS). The pg-boss schema (`pgboss`) is included in the
+Point-in-time recovery: Supabase PITR in the primary path; when self-hosting,
+enable WAL archiving on the Postgres instance (e.g. RDS automated backups on
+AWS). The pg-boss schema (`pgboss`) is included in the
 dump; jobs are idempotent so replaying after restore is safe.
 
 ## Deployment & rollback
 
 - Images are immutable, tagged by commit SHA; never `:latest`.
-- Migrations run at startup and are **additive by policy**: no destructive
+- Migrations run at startup in the container path only; on Vercel they are a
+  deploy step (`npm run db:migrate` against the direct connection) and never
+  run at cold start. They are **additive by policy**: no destructive
   column drops in the same release that stops writing them. This makes
-  rollback = `kubectl rollout undo deployment/bidrag-api` safe.
+  rollback safe: on Vercel, "Promote previous deployment"; in the container
+  path, `kubectl rollout undo deployment/bidrag-api`.
 - A migration that must be destructive ships in two releases: N stops using
   the column, N+1 drops it.
 - After deploy: watch `/readyz`, `bidrag_http_requests_total{status="5xx"}`
@@ -44,7 +51,9 @@ dump; jobs are idempotent so replaying after restore is safe.
 
 ## Monitoring & alerting
 
-`GET /metrics` (Prometheus text format, cluster-internal). Alert on:
+`GET /metrics` (Prometheus text format, cluster-internal). Note: `/metrics`
+is not exposed in the Vercel deployment — there, use Vercel function logs and
+the structured pino logs. Alert on:
 
 | Signal | Condition | Meaning |
 |---|---|---|
@@ -80,8 +89,9 @@ cluster before launch — the checklist below tracks that):
 
 - **Backup + restore drill** (`scripts/backup.sh` → `scripts/restore-verify.sh`):
   dump + uploads archive with sha256 manifest; restored into a scratch DB;
-  row counts verified (36 published opportunities, all core tables, 2 applied
-  migrations); API booted against the restored DB — `/readyz` 200 and a full
+  row counts verified (historical snapshot from the 2026-08-13 drill: 36
+  published opportunities, all core tables, 2 applied migrations — current
+  state is 72 supports and 12 migrations); API booted against the restored DB — `/readyz` 200 and a full
   registration succeeded. The drill also runs in CI on every push.
 - **Load test** (`scripts/loadtest.mjs`, 25 concurrent, 20 s, 4 vCPU dev box):
   599 req/s sustained, 0 non-2xx. Read paths p95 ≈ 45 ms; match recompute
@@ -104,10 +114,10 @@ cluster before launch — the checklist below tracks that):
 
 ## Pre-launch drill checklist (real cluster)
 
-- [x] Restore rehearsal against a scratch DB *(dev 2026-08-13 + automated in CI — repeat against the production backup target)*
-- [ ] Rollback rehearsal (deploy N, roll back to N-1 under traffic)
-- [x] Load test *(dev reference numbers above — repeat at expected peak ×3 through the real ingress)*
-- [x] Failure injection: DB outage *(dev — repeat with pod kill and full uploads volume)*
-- [ ] Alert rules firing verified end-to-end (to the on-call channel)
-- [ ] ClamAV deployed and `scan_unavailable` rate ≈ 0
-- [ ] Secrets rotated once via the real secret-manager path
+- [x] Restore rehearsal against a scratch DB *(dev 2026-08-13 + automated in CI — repeat against the production backup target; Vercel/Supabase: restore via Supabase PITR/backup into a scratch project)*
+- [ ] Rollback rehearsal (deploy N, roll back to N-1 under traffic) *(Vercel: "Promote previous deployment")*
+- [x] Load test *(dev reference numbers above — repeat at expected peak ×3 through the real ingress; Vercel: through the production domain)*
+- [x] Failure injection: DB outage *(dev — repeat with pod kill and full uploads volume; Vercel/Supabase: pause the Supabase project and verify `/readyz` + client error behaviour)*
+- [ ] Alert rules firing verified end-to-end (to the on-call channel) *(Vercel: log/alert integration on function logs — `/metrics` is not exposed there)*
+- [ ] ClamAV deployed and `scan_unavailable` rate ≈ 0 *(no Vercel equivalent — uploads are honestly marked `scan_unavailable` in that path)*
+- [ ] Secrets rotated once via the real secret-manager path *(Vercel: rotate via Environment Variables + redeploy; Supabase: rotate service keys)*

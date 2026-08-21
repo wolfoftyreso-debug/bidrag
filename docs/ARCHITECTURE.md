@@ -2,9 +2,13 @@
 
 ## Shape
 
-A **modular monolith** (deliberately — §56 of the build order): one deployable
-image containing the API, the background worker (pg-boss on Postgres) and the
-built SPA. Logical boundaries are enforced in code layout and can be split into
+A **modular monolith** (deliberately — §56 of the build order). The primary
+deployment is **Vercel + Supabase**: the built SPA served statically and the
+entire API as one serverless function (`api/index.ts`), with Supabase providing
+Postgres (via its pooler) and Storage. A container image (API, pg-boss worker
+and SPA in one) is retained as an alternative self-hosting path. See
+`docs/DEPLOYMENT.md`.
+Logical boundaries are enforced in code layout and can be split into
 services later without changing contracts:
 
 ```
@@ -12,11 +16,12 @@ packages/core          — pure domain logic (no I/O, fully unit-tested)
 apps/api/src
   auth/                — passwords (scrypt), tokens (JWT+refresh), field crypto (AES-GCM)
   plugins/auth.ts      — tenant context + RBAC
-  db/                  — Drizzle schema (30 tables), deterministic SQL migrations
+  db/                  — Drizzle schema (37 tables), deterministic SQL migrations
   routes/              — versioned /v1 REST API (OpenAPI at /v1/openapi.json)
   services/            — matching, applications, submission gateway, ingestion,
                          uploads, notifications
-  jobs/                — pg-boss queues: source-fetch, deadline-scan, stale-match-recalc
+  jobs/                — pg-boss queues: source-fetch, deadline-scan, stale-match-recalc,
+                         curator-reminders, retention
   seed/                — wave-1 curated funding knowledge with provenance
 ```
 
@@ -85,7 +90,10 @@ affected tenants. Raw source evidence is never discarded.
 
 pg-boss (Postgres-backed, no extra infrastructure): all jobs idempotent, retry
 with backoff, failed jobs retained. Queues: `source-fetch` (6-hourly),
-`deadline-scan` (daily), `stale-match-recalc` (15-min).
+`deadline-scan` (daily), `stale-match-recalc` (15-min), `curator-reminders`
+and `retention`. On Vercel the same job bodies run via Vercel Cron calling
+`/v1/internal/cron/:job` (all five schedules are in `vercel.json`) instead of
+the pg-boss worker.
 
 **Redis is deliberately not used.** It exists in some base environments but
 nothing in this system depends on it — Postgres is the single stateful
@@ -118,8 +126,9 @@ by dedicated tests:
 
 ## Scaling path
 
-- Postgres is the single stateful dependency (plus a shared volume or S3 for
-  documents — the storage call sites in `services/uploads.ts` and
-  `routes/documents.ts` are the adapter boundary).
+- Postgres is the single stateful dependency (plus Supabase Storage for
+  documents in production — `STORAGE_DRIVER=supabase` — or a disk/volume in
+  the container path; the driver boundary in `services/storage.ts` is the
+  adapter boundary).
 - Matching is per-project and embarrassingly parallel.
 - The knowledge graph is read-heavy and cacheable; tenant data is not shared.
