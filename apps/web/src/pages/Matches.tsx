@@ -3,7 +3,7 @@
  * missing facts answered inline (adaptive intake round two), freshness and
  * source always visible.
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { PurchaseConsent } from '../components/PurchaseConsent';
 import { ApiError, ELIGIBILITY_LABELS, INSTRUMENT_LABELS, formatDate, formatSek, get, patch, post } from '../api';
@@ -20,6 +20,7 @@ interface StackPlan {
 interface MissingFact {
   factPath: string;
   question: string;
+  criterionId?: string;
 }
 interface MatchRow {
   matchId: string;
@@ -44,7 +45,7 @@ interface MatchRow {
     answeredFacts?: MissingFact[];
     missingEvidence: { kind: string; description: string }[];
     excludedBy: { description: string }[];
-    explanation: { kind: string; outcome: string }[];
+    explanation: { criterionId?: string; description?: string; kind: string; outcome: string }[];
     fitScore: number;
     evidenceReadiness: number;
     executionReadiness: number;
@@ -67,17 +68,59 @@ interface Teaser {
   excludedCount: number;
 }
 
+/**
+ * F-INFO (användarfynd): myndighetstydlig fördjupning vid varje fråga —
+ * därför ställs den, vilket villkor den prövar per stöd, med länk till
+ * stödsidan och den officiella källan. Ingen påhittad text: kravtexterna är
+ * de kurerade kriterierna själva.
+ */
+function QuestionInfo({ details, projectId }: {
+  details: { title: string; slug: string; requirement: string; kind: string; sourceUrl: string }[];
+  projectId: string;
+}) {
+  return (
+    <div className="alert info" role="note" style={{ marginTop: '0.45rem', fontSize: '0.92rem' }}>
+      <strong>Därför ställs frågan</strong>
+      <ul style={{ margin: '0.35rem 0 0.45rem', paddingLeft: '1.1rem' }}>
+        {details.map((d) => (
+          <li key={d.slug} style={{ marginBottom: '0.3rem' }}>
+            <Link to={`/stod/${d.slug}?projekt=${projectId}`}>{d.title}</Link>{' '}
+            {d.kind === 'weighted' ? 'väger in svaret i bedömningen (det är inget krav):' : 'har villkoret:'}{' '}
+            <em>{d.requirement}</em> <a href={d.sourceUrl} target="_blank" rel="noreferrer">(officiell källa)</a>
+          </li>
+        ))}
+      </ul>
+      <span className="meta-line">
+        Svaret används bara för din bedömning, sparas under Dina svar och går alltid att ändra.
+        Slutligt beslut fattas alltid av myndigheten.
+      </span>
+    </div>
+  );
+}
+
+function InfoKnapp({ expanded, onClick }: { expanded: boolean; onClick: () => void }) {
+  return (
+    <button type="button" className="subtle" aria-expanded={expanded} aria-label="Varför ställs frågan?"
+      title="Varför ställs frågan?" onClick={onClick}
+      style={{ padding: '0 0.4rem', fontWeight: 700, borderRadius: '50%', lineHeight: 1.4 }}>
+      i
+    </button>
+  );
+}
+
 export default function MatchesPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [matches, setMatches] = useState<MatchRow[]>([]);
   const [facts, setFacts] = useState<Record<string, unknown>>({});
-  // F-ÄNDRA 2: kvitton på att just sparade svar hamnat under "Dina svar".
-  const [savedNote, setSavedNote] = useState<number | null>(null);
   const [teaser, setTeaser] = useState<Teaser | null>(null);
-  const [answers, setAnswers] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState(false);
+  // F-STABIL: frågelistan är ett stabilt papper — visade frågor står kvar på
+  // sin plats (frusen ordning), besvarade tonas ner och kan ändras direkt.
+  const [qOrder, setQOrder] = useState<string[]>([]);
+  // Inforutan "Därför ställs frågan" — öppen för högst en fråga åt gången.
+  const [openInfo, setOpenInfo] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -114,7 +157,9 @@ export default function MatchesPage() {
   const PERSONAL_Q = new Set(['social_benefit', 'educational_support', 'loan']);
   // Varje fråga bär sin kontext: vilka stöd den avgör. Utan den etiketten är
   // "Har du sparpengar…?" obegriplig mitt i en lista.
-  const openQuestions = new Map<string, { question: string; forTitles: string[]; unknowns: number; personal: boolean }>();
+  interface QDetail { title: string; slug: string; requirement: string; kind: string; sourceUrl: string }
+  interface QEntry { question: string; forTitles: string[]; unknowns: number; personal: boolean; details: QDetail[] }
+  const openQuestions = new Map<string, QEntry>();
   const ordered = [...matches].sort(
     (a, b) => Number(PERSONAL_Q.has(b.instrumentType)) - Number(PERSONAL_Q.has(a.instrumentType)),
   );
@@ -125,9 +170,16 @@ export default function MatchesPage() {
       // Art. 9: den som avböjt hälsofrågan i intaget ska aldrig få den igen —
       // stöden bakom gaten förblir "behöver utredas" utan att frågan upprepas.
       if (f.factPath === 'person.disabilityOrLongTermIllnessInFamily' && facts['person.sensitiveQuestionDeclined'] === true) continue;
+      const expl = m.result.explanation.find((e) => e.criterionId && e.criterionId === f.criterionId);
+      const detail: QDetail = {
+        title: shortTitle, slug: m.slug, sourceUrl: m.sourceUrl,
+        requirement: expl?.description ?? f.question,
+        kind: expl?.kind ?? 'mandatory',
+      };
       const entry = openQuestions.get(f.factPath);
       if (entry) {
         if (!entry.forTitles.includes(shortTitle)) entry.forTitles.push(shortTitle);
+        if (!entry.details.some((d) => d.slug === detail.slug)) entry.details.push(detail);
         if (m.eligibilityStatus === 'unknown') entry.unknowns += 1;
         entry.personal ||= PERSONAL_Q.has(m.instrumentType);
       } else {
@@ -136,6 +188,7 @@ export default function MatchesPage() {
           forTitles: [shortTitle],
           unknowns: m.eligibilityStatus === 'unknown' ? 1 : 0,
           personal: PERSONAL_Q.has(m.instrumentType),
+          details: [detail],
         });
       }
     }
@@ -147,34 +200,42 @@ export default function MatchesPage() {
     Number(b.personal) - Number(a.personal) || b.unknowns - a.unknowns || b.forTitles.length - a.forTitles.length,
   );
 
-  const submitAnswers = async () => {
-    if (!projectId || Object.keys(answers).length === 0) return;
-    setBusy(true);
-    try {
-      const saved = Object.keys(answers).length;
-      await patch(`/v1/projects/${projectId}`, { facts: answers });
-      await post(`/v1/projects/${projectId}/matches`, {});
-      setAnswers({});
-      setSavedNote(saved);
-      load();
-    } finally {
-      setBusy(false);
-    }
-  };
+  // F-STABIL: frys ordningen — en fråga som visats behåller sin plats; nya
+  // frågor läggs alltid sist, så att högst 6 obesvarade visas åt gången.
+  const qMeta = useRef(new Map<string, { question: string; forTitles: string[]; details: QDetail[] }>());
+  for (const [k, q] of openQuestions) qMeta.current.set(k, { question: q.question, forTitles: q.forTitles, details: q.details });
+  useEffect(() => {
+    setQOrder((order) => {
+      const next = [...order];
+      for (const [k] of openList) {
+        if (next.filter((path) => typeof facts[path] !== 'boolean').length >= 6) break;
+        if (!next.includes(k)) next.push(k);
+      }
+      return next.length === order.length ? order : next;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matches, facts]);
 
   // Dina svar: en besvarad fråga försvinner aldrig — den flyttar hit och kan
   // ändras när som helst; matchningen räknas om direkt. Ändringen skrivs som
   // projektfakta och vinner därmed över intagssvaret i sammanvägningen.
-  const answeredQuestions = new Map<string, { question: string; value: boolean; forTitles: string[] }>();
+  const answeredQuestions = new Map<string, { question: string; value: boolean; forTitles: string[]; details: QDetail[] }>();
   for (const m of [...matches].sort((a, b) => Number(PERSONAL_Q.has(b.instrumentType)) - Number(PERSONAL_Q.has(a.instrumentType)))) {
     const shortTitle = m.title.split(' — ').pop() ?? m.title;
     for (const f of m.result.answeredFacts ?? []) {
       if (typeof facts[f.factPath] !== 'boolean') continue;
+      const expl = m.result.explanation.find((e) => e.criterionId && e.criterionId === f.criterionId);
+      const detail: QDetail = {
+        title: shortTitle, slug: m.slug, sourceUrl: m.sourceUrl,
+        requirement: expl?.description ?? f.question,
+        kind: expl?.kind ?? 'mandatory',
+      };
       const entry = answeredQuestions.get(f.factPath);
       if (entry) {
         if (!entry.forTitles.includes(shortTitle)) entry.forTitles.push(shortTitle);
+        if (!entry.details.some((d) => d.slug === detail.slug)) entry.details.push(detail);
       } else {
-        answeredQuestions.set(f.factPath, { question: f.question, value: facts[f.factPath] as boolean, forTitles: [shortTitle] });
+        answeredQuestions.set(f.factPath, { question: f.question, value: facts[f.factPath] as boolean, forTitles: [shortTitle], details: [detail] });
       }
     }
   }
@@ -250,38 +311,47 @@ export default function MatchesPage() {
         </p>
       )}
 
-      {savedNote !== null && (
-        <div className="alert success" role="status" aria-live="polite" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.8rem', flexWrap: 'wrap' }}>
-          <span>✓ {savedNote === 1 ? 'Ditt svar är sparat' : `Dina ${savedNote} svar är sparade`} · analysen är omräknad</span>
-          <button className="subtle" style={{ padding: 0, textDecoration: 'underline', color: 'inherit', fontWeight: 600, whiteSpace: 'nowrap' }}
-            onClick={() => document.getElementById('dina-svar')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
-            Ändra dig under Dina svar ↓
-          </button>
-        </div>
-      )}
-
-      {openQuestions.size > 0 && (
+      {qOrder.length > 0 && (
         <div className="card" style={{ borderColor: 'var(--warning)' }}>
           <h2 style={{ marginBottom: '0.15rem' }}>Några frågor kvar ({openQuestions.size})</h2>
           <p className="meta-line" style={{ margin: '0 0 0.4rem' }}>
-            {openQuestions.size > 6 ? `Visar de 6 som avgör mest · ` : ''}
-            Svaren avgör vilka stöd du kan söka · Besvarade frågor flyttar till ”Dina svar” och kan alltid ändras
+            Svaren räknas om direkt · Besvarade frågor står kvar nedtonade och kan ändras — inget försvinner eller byter plats
+            {openList.some(([k]) => !qOrder.includes(k)) ? ' · Fler frågor läggs till längst ner allteftersom' : ''}
           </p>
-          {openList.slice(0, 6).map(([factPath, q]) => (
-            <div key={factPath} style={{ margin: '0.75rem 0' }}>
-              <div className="meta-line" style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
-                Gäller {q.forTitles.slice(0, 2).join(' och ')}{q.forTitles.length > 2 ? ` + ${q.forTitles.length - 2} till` : ''}
+          {qOrder.map((factPath) => {
+            const meta = qMeta.current.get(factPath);
+            if (!meta) return null;
+            const val = facts[factPath];
+            const isAnswered = typeof val === 'boolean';
+            const stillNeeded = openQuestions.has(factPath);
+            return (
+              <div key={factPath} data-qstate={isAnswered ? 'answered' : stillNeeded ? 'open' : 'resolved'}
+                style={{ margin: '0.75rem 0', opacity: isAnswered || !stillNeeded ? 0.62 : 1 }}>
+                <div className="meta-line" style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                  Gäller {meta.forTitles.slice(0, 2).join(' och ')}{meta.forTitles.length > 2 ? ` + ${meta.forTitles.length - 2} till` : ''}
+                </div>
+                <strong>{meta.question}</strong>{' '}
+                <InfoKnapp expanded={openInfo === factPath} onClick={() => setOpenInfo(openInfo === factPath ? null : factPath)} />
+                {openInfo === factPath && <QuestionInfo details={meta.details} projectId={projectId} />}
+                {isAnswered ? (
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.3rem', alignItems: 'center' }}>
+                    <button className={val === true ? '' : 'secondary'} disabled={busy} onClick={() => val !== true && void changeAnswer(factPath, true)}>Ja</button>
+                    <button className={val === false ? '' : 'secondary'} disabled={busy} onClick={() => val !== false && void changeAnswer(factPath, false)}>Nej</button>
+                    <span className="meta-line" role="status">✓ Sparat — går att ändra</span>
+                  </div>
+                ) : stillNeeded ? (
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.3rem' }}>
+                    <button className="secondary" disabled={busy} onClick={() => void changeAnswer(factPath, true)}>Ja</button>
+                    <button className="secondary" disabled={busy} onClick={() => void changeAnswer(factPath, false)}>Nej</button>
+                  </div>
+                ) : (
+                  <p className="meta-line" style={{ margin: '0.25rem 0 0' }}>
+                    Behövdes inte längre — dina andra svar avgjorde redan {meta.forTitles[0]}.
+                  </p>
+                )}
               </div>
-              <strong>{q.question}</strong>
-              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.3rem' }}>
-                <button className={answers[factPath] === true ? '' : 'secondary'} onClick={() => setAnswers({ ...answers, [factPath]: true })}>Ja</button>
-                <button className={answers[factPath] === false ? '' : 'secondary'} onClick={() => setAnswers({ ...answers, [factPath]: false })}>Nej</button>
-              </div>
-            </div>
-          ))}
-          <button disabled={busy || Object.keys(answers).length === 0} onClick={submitAnswers} style={{ marginTop: '0.5rem' }}>
-            {busy ? 'Uppdaterar…' : 'Uppdatera matchningar'}
-          </button>
+            );
+          })}
         </div>
       )}
 
@@ -298,7 +368,9 @@ export default function MatchesPage() {
               <div className="meta-line" style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
                 Gäller {q.forTitles.slice(0, 2).join(' och ')}{q.forTitles.length > 2 ? ` + ${q.forTitles.length - 2} till` : ''}
               </div>
-              <strong>{q.question}</strong>
+              <strong>{q.question}</strong>{' '}
+              <InfoKnapp expanded={openInfo === `svar:${factPath}`} onClick={() => setOpenInfo(openInfo === `svar:${factPath}` ? null : `svar:${factPath}`)} />
+              {openInfo === `svar:${factPath}` && <QuestionInfo details={q.details} projectId={projectId} />}
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.3rem' }}>
                 <button className={q.value === true ? '' : 'secondary'} disabled={busy} onClick={() => q.value !== true && void changeAnswer(factPath, true)}>Ja</button>
                 <button className={q.value === false ? '' : 'secondary'} disabled={busy} onClick={() => q.value !== false && void changeAnswer(factPath, false)}>Nej</button>

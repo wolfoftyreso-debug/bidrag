@@ -55,34 +55,53 @@ await page.waitForSelector('text=Det här ser du ut att kunna ha rätt till');
 await page.waitForSelector('details[open] >> text=Dina svar');
 console.log('2. "Dina svar" är öppen som standard — svaren syns och kan ändras ✓');
 
-// F-ÄNDRA 2: svara på en öppen fråga → kvittens med hopplänk till Dina svar.
-const OPENQ = '.q-row:not(details .q-row)';
+// F-STABIL: svara på första frågan → raden STÅR KVAR på sin plats, nedtonad,
+// med svaret markerat och ändringsbart. Inget försvinner eller byter plats.
+const OPENQ = '.card.accent .q-row:not(.q-row-dim)';
 if (await page.locator(OPENQ).count()) {
+  const firstBefore = (await page.locator('.card.accent .q-row').first().locator('strong').textContent()).trim();
   await page.locator(OPENQ).first().locator('button:has-text("Ja")').click();
-  await page.waitForSelector('text=är sparat');
-  const receipt = await page.locator('[role="status"]', { hasText: 'är sparat' }).count();
-  if (!receipt) { console.log('FEL: ingen kvittens efter besvarad fråga'); process.exit(1); }
-  await page.click('text=Ändra dig under Dina svar');
-  console.log('2b. Kvittens efter svar + hopplänk till Dina svar ✓');
+  await page.waitForSelector('.card.accent .q-row-dim >> text=Sparat');
+  const firstAfter = (await page.locator('.card.accent .q-row').first().locator('strong').textContent()).trim();
+  if (firstAfter !== firstBefore) { console.log(`FEL: frågan bytte plats ("${firstBefore}" → "${firstAfter}")`); process.exit(1); }
+  const jaMarked = await page.locator('.card.accent .q-row').first().locator('button.primary:has-text("Ja")').count();
+  if (!jaMarked) { console.log('FEL: svaret är inte markerat på raden'); process.exit(1); }
+  // Ändringsbar direkt på raden: byt till Nej och tillbaka.
+  await page.locator('.card.accent .q-row').first().locator('button:has-text("Nej")').click();
+  await page.waitForTimeout(200);
+  const nejMarked = await page.locator('.card.accent .q-row').first().locator('button.primary:has-text("Nej")').count();
+  if (!nejMarked) { console.log('FEL: svaret gick inte att ändra på raden'); process.exit(1); }
+  await page.locator('.card.accent .q-row').first().locator('button:has-text("Ja")').click();
+  console.log('2b. Besvarad fråga står kvar på sin plats, nedtonad, markerad och ändringsbar ✓');
+
+  // F-INFO: inforutan vid frågan — därför ställs den, med kravtext och källa.
+  await page.locator('.card.accent .q-row .info-knapp').first().click();
+  await page.waitForSelector('.inforuta >> text=Därför ställs frågan');
+  const infoBody = await page.locator('.inforuta').first().textContent();
+  if (!/har villkoret:|väger in svaret/.test(infoBody)) { console.log('FEL: inforutan saknar kravtext'); process.exit(1); }
+  const srcLink = await page.locator('.inforuta a:has-text("officiell källa")').count();
+  if (!srcLink) { console.log('FEL: inforutan saknar källänk'); process.exit(1); }
+  await page.locator('.card.accent .q-row .info-knapp').first().click();
+  console.log('2c. Inforutan förklarar varför frågan ställs, med kravtext och officiell källa ✓');
 }
 
 // 4. F-HOPP: frågeräknaren visar totalen.
 const counter = await page.locator('h2', { hasText: 'Några frågor kvar (' }).textContent();
 console.log(`3. Frågeräknaren visar totalen: "${counter.trim()}" ✓`);
 
-// 5. F-HOPP: svara Nej uppifrån tills ett svar gör en väntande fråga
-//    ointressant (t.ex. funktionsnedsättning → bostadsanpassningens följdfråga)
-//    — notisen ska då förklara vad som hände i stället för tyst krympning.
+// 5. F-HOPP + F-STABIL: svara Nej på obesvarade frågor uppifrån tills ett
+//    svar gör en väntande fråga ointressant — raden ska då STÅ KVAR med
+//    märkningen "behövdes inte längre" i stället för att tyst försvinna.
 let noteSeen = false;
 for (let i = 0; i < 12; i++) {
-  const q = page.locator('.card.accent .q-row').first();
+  const q = page.locator('.card.accent .q-row:not(.q-row-dim)').first();
   if (await q.count() === 0) break;
   await q.locator('button:has-text("Nej")').click();
   await page.waitForTimeout(250);
-  if (/behövdes inte längre/.test(await page.textContent('body'))) { noteSeen = true; break; }
+  if (/[Bb]ehövdes inte längre/.test(await page.textContent('body'))) { noteSeen = true; break; }
 }
-if (!noteSeen) { console.log('FEL: ingen notis trots att frågor försvann ur listan'); process.exit(1); }
-console.log('4. Notis när ett svar gör väntande frågor ointressanta ✓');
+if (!noteSeen) { console.log('FEL: ingen kvarstående märkning för fråga som blev inaktuell'); process.exit(1); }
+console.log('4. Inaktuell fråga står kvar med "behövdes inte längre"-märkning ✓');
 
 // 6. F-VIDARE: markera ett stöd och gå vidare till planen.
 await page.locator('button:has-text("Vill ansöka")').first().click();

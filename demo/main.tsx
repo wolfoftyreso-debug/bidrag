@@ -451,18 +451,23 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
   const excludedShown = isSelfEmployed ? excluded.filter((r) => !BUSINESS.has(r.opp.slug)) : excluded;
 
   // Varje följdfråga bär sin kontext: vilket stöd den avgör.
-  const questions = new Map<string, { q: string; titles: string[]; unknowns: number; personal: boolean }>();
+  interface QDetail { title: string; requirement: string; kind: string; sourceUrl: string }
+  const questions = new Map<string, { q: string; titles: string[]; unknowns: number; personal: boolean; details: QDetail[] }>();
   for (const r of [...personal, ...business, ...fundingAll]) {
     const short = r.opp.title.split(' — ').pop() ?? r.opp.title;
     for (const f of r.m.missingFacts) {
       if (f.factPath === 'person.disabilityOrLongTermIllnessInFamily' && facts['person.sensitiveQuestionDeclined'] === true) continue;
+      // Inforutan (F-INFO): kravtexten är det kurerade kriteriet självt.
+      const crit = (r.opp.criteria as { id: string; description?: string; kind?: string }[]).find((c) => c.id === f.criterionId);
+      const detail: QDetail = { title: short, requirement: crit?.description ?? f.question, kind: crit?.kind ?? 'mandatory', sourceUrl: r.opp.sourceUrl };
       const e = questions.get(f.factPath);
       if (e) {
         if (!e.titles.includes(short)) e.titles.push(short);
+        if (!e.details.some((d) => d.title === short)) e.details.push(detail);
         if (r.m.eligibilityStatus === 'unknown') e.unknowns += 1;
         e.personal ||= PERSONAL.has(r.opp.instrumentType);
       } else {
-        questions.set(f.factPath, { q: f.question, titles: [short], unknowns: r.m.eligibilityStatus === 'unknown' ? 1 : 0, personal: PERSONAL.has(r.opp.instrumentType) });
+        questions.set(f.factPath, { q: f.question, titles: [short], unknowns: r.m.eligibilityStatus === 'unknown' ? 1 : 0, personal: PERSONAL.has(r.opp.instrumentType), details: [detail] });
       }
     }
   }
@@ -470,80 +475,105 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
   const allOpen = [...questions.entries()]
     .filter(([k]) => facts[k] === undefined)
     .sort(([, a], [, b]) => Number(b.personal) - Number(a.personal) || b.unknowns - a.unknowns || b.titles.length - a.titles.length);
-  const openQs = allOpen.slice(0, 5);
 
-  // F-HOPP (användarfynd): en väntande fråga får aldrig försvinna spårlöst.
-  // När ett svar gör andra frågor ointressanta — stödet de gällde är redan
-  // avgjort — sägs det rakt ut i stället för att listan bara krymper.
-  const prevOpen = useRef<Map<string, string> | null>(null);
-  const [resolvedNote, setResolvedNote] = useState<string[] | null>(null);
+  // F-STABIL (användarfynd): frågelistan är ett stabilt papper. En fråga som
+  // visats STÅR KVAR på sin plats: besvarad tonas ner med svaret markerat
+  // (och kan ändras direkt på raden), inaktuell märks "behövs inte längre".
+  // Inget försvinner eller byter plats — nya frågor läggs alltid sist, så
+  // många att högst 5 obesvarade visas åt gången.
+  const qMeta = useRef(new Map<string, { q: string; titles: string[]; details: QDetail[] }>());
+  for (const [k, q] of questions) qMeta.current.set(k, { q: q.q, titles: q.titles, details: q.details });
+  // Inforutan "Därför ställs frågan" — öppen för högst en fråga åt gången.
+  const [openInfo, setOpenInfo] = useState<string | null>(null);
+  const [qOrder, setQOrder] = useState<string[]>(() => allOpen.slice(0, 5).map(([k]) => k));
   useEffect(() => {
-    const current = new Map(allOpen.map(([k, q]) => [k, q.q] as const));
-    const prev = prevOpen.current;
-    if (prev) {
-      const gone = [...prev.entries()].filter(([k]) => !current.has(k) && facts[k] === undefined).map(([, t]) => t);
-      setResolvedNote(gone.length > 0 ? gone : null);
-    }
-    prevOpen.current = current;
+    setQOrder((order) => {
+      const next = [...order];
+      for (const [k] of allOpen) {
+        if (next.filter((p) => facts[p] === undefined).length >= 5) break;
+        if (!next.includes(k)) next.push(k);
+      }
+      return next.length === order.length ? order : next;
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [facts]);
 
-  // F-ÄNDRA 2 (användarfynd): när ett svar just lagts ska det SYNAS vart
-  // frågan tog vägen — en kvittens med hopplänk till "Dina svar", i stället
-  // för att frågan tyst försvinner ur listan.
-  const [justAnswered, setJustAnswered] = useState<string | null>(null);
-  const answerOpen = (path: string, v: boolean, q: string) => { setJustAnswered(q); onFact(path, v); };
-
   // Dina svar: en besvarad fråga försvinner aldrig — den flyttar hit och kan
   // ändras när som helst; motorn räknar om direkt i webbläsaren.
-  const answered = new Map<string, { q: string; value: boolean; titles: string[] }>();
+  const answered = new Map<string, { q: string; value: boolean; titles: string[]; details: QDetail[] }>();
   for (const r of results) {
     const short = r.opp.title.split(' — ').pop() ?? r.opp.title;
     for (const f of r.m.answeredFacts ?? []) {
       if (typeof facts[f.factPath] !== 'boolean') continue;
+      const crit = (r.opp.criteria as { id: string; description?: string; kind?: string }[]).find((c) => c.id === f.criterionId);
+      const detail: QDetail = { title: short, requirement: crit?.description ?? f.question, kind: crit?.kind ?? 'mandatory', sourceUrl: r.opp.sourceUrl };
       const e = answered.get(f.factPath);
-      if (e) { if (!e.titles.includes(short)) e.titles.push(short); }
-      else answered.set(f.factPath, { q: f.question, value: facts[f.factPath] as boolean, titles: [short] });
+      if (e) {
+        if (!e.titles.includes(short)) e.titles.push(short);
+        if (!e.details.some((d) => d.title === short)) e.details.push(detail);
+      } else answered.set(f.factPath, { q: f.question, value: facts[f.factPath] as boolean, titles: [short], details: [detail] });
     }
   }
 
+  // F-INFO: myndighetstydlig fördjupning — därför ställs frågan, per stöd,
+  // med kravtexten (det kurerade kriteriet) och officiell källa.
+  const infoRuta = (details: QDetail[]) => (
+    <div className="inforuta" role="note">
+      <strong>Därför ställs frågan</strong>
+      <ul>
+        {details.map((d) => (
+          <li key={d.title}>
+            <strong>{d.title}</strong> {d.kind === 'weighted' ? 'väger in svaret i bedömningen (det är inget krav):' : 'har villkoret:'}{' '}
+            <em>{d.requirement}</em> <a href={d.sourceUrl} target="_blank" rel="noreferrer">(officiell källa)</a>
+          </li>
+        ))}
+      </ul>
+      <span className="meta">Svaret används bara för din bedömning och går alltid att ändra. Slutligt beslut fattas alltid av myndigheten.</span>
+    </div>
+  );
+  const infoKnapp = (id: string) => (
+    <button type="button" className="info-knapp" aria-expanded={openInfo === id} aria-label="Varför ställs frågan?"
+      title="Varför ställs frågan?" onClick={() => setOpenInfo(openInfo === id ? null : id)}>i</button>
+  );
+
   return (
     <div>
-      {resolvedNote && (
-        <div className="card" style={{ borderLeft: '4px solid #2e7d55', padding: '0.8rem 1.1rem' }}>
-          <p style={{ margin: 0, fontSize: '0.9rem' }}>
-            ✓ <strong>{resolvedNote.length === 1 ? 'En fråga behövdes inte längre' : `${resolvedNote.length} frågor behövdes inte längre`}</strong>
-            {' '}— ditt svar avgjorde redan {resolvedNote.map((t) => `”${t}”`).join(' · ')}.
-            <span className="meta" style={{ display: 'inline' }}> Inget är borta: stöden ligger kvar nedan, och du kan ändra dig under ”Dina svar”.</span>
-          </p>
-        </div>
-      )}
-
-      {openQs.length > 0 && (
+      {qOrder.length > 0 && (
         <div className="card accent">
           <h2 style={{ marginBottom: '0.15rem' }}>Några frågor kvar ({allOpen.length})</h2>
           <p className="meta" style={{ margin: '0 0 0.4rem' }}>
-            {allOpen.length > openQs.length ? `Visar de ${openQs.length} som avgör mest · ` : ''}
-            Svaren räknas om direkt · Besvarade frågor flyttar till ”Dina svar” och kan alltid ändras
+            Svaren räknas om direkt · Besvarade frågor står kvar nedtonade och kan ändras — inget försvinner eller byter plats
+            {allOpen.some(([k]) => !qOrder.includes(k)) ? ' · Fler frågor läggs till längst ner allteftersom' : ''}
           </p>
-          {justAnswered && (
-            <div role="status" aria-live="polite" className="svar-kvitto">
-              <span>✓ Svaret på <strong>”{justAnswered}”</strong> är sparat</span>
-              <button className="linkish" style={{ color: 'inherit', textDecoration: 'underline', whiteSpace: 'nowrap' }} onClick={() => document.getElementById('dina-svar')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
-                Ändra dig under Dina svar ↓
-              </button>
-            </div>
-          )}
-          {openQs.map(([path, q]) => (
-            <div key={path} className="q-row">
-              <div className="q-context">Gäller {q.titles.slice(0, 2).join(' och ')}{q.titles.length > 2 ? ` + ${q.titles.length - 2} till` : ''}</div>
-              <strong>{q.q}</strong>
-              <div className="row" style={{ marginTop: '0.3rem' }}>
-                <button className="btn small" onClick={() => answerOpen(path, true, q.q)}>Ja</button>
-                <button className="btn small" onClick={() => answerOpen(path, false, q.q)}>Nej</button>
+          {qOrder.map((path) => {
+            const meta = qMeta.current.get(path);
+            if (!meta) return null;
+            const val = facts[path];
+            const isAnswered = typeof val === 'boolean';
+            const stillNeeded = questions.has(path);
+            const gäller = `Gäller ${meta.titles.slice(0, 2).join(' och ')}${meta.titles.length > 2 ? ` + ${meta.titles.length - 2} till` : ''}`;
+            return (
+              <div key={path} className={`q-row${isAnswered || !stillNeeded ? ' q-row-dim' : ''}`}>
+                <div className="q-context">{gäller}</div>
+                <strong>{meta.q}</strong> {infoKnapp(path)}
+                {openInfo === path && infoRuta(meta.details)}
+                {isAnswered ? (
+                  <div className="row" style={{ marginTop: '0.3rem', alignItems: 'center' }}>
+                    <button className={`btn small${val === true ? ' primary' : ''}`} onClick={() => val !== true && onFact(path, true)}>Ja</button>
+                    <button className={`btn small${val === false ? ' primary' : ''}`} onClick={() => val !== false && onFact(path, false)}>Nej</button>
+                    <span className="meta" role="status">✓ Sparat — går att ändra</span>
+                  </div>
+                ) : stillNeeded ? (
+                  <div className="row" style={{ marginTop: '0.3rem' }}>
+                    <button className="btn small" onClick={() => onFact(path, true)}>Ja</button>
+                    <button className="btn small" onClick={() => onFact(path, false)}>Nej</button>
+                  </div>
+                ) : (
+                  <p className="meta" style={{ margin: '0.25rem 0 0' }}>Behövdes inte längre — dina andra svar avgjorde redan {meta.titles[0]}.</p>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -556,7 +586,8 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
           {[...answered.entries()].map(([path, q]) => (
             <div key={path} className="q-row">
               <div className="q-context">Gäller {q.titles.slice(0, 2).join(' och ')}{q.titles.length > 2 ? ` + ${q.titles.length - 2} till` : ''}</div>
-              <strong>{q.q}</strong>
+              <strong>{q.q}</strong> {infoKnapp(`svar:${path}`)}
+              {openInfo === `svar:${path}` && infoRuta(q.details)}
               <div className="row" style={{ marginTop: '0.3rem' }}>
                 <button className={`btn small${q.value === true ? ' primary' : ''}`} onClick={() => q.value !== true && onFact(path, true)}>Ja</button>
                 <button className={`btn small${q.value === false ? ' primary' : ''}`} onClick={() => q.value !== false && onFact(path, false)}>Nej</button>
