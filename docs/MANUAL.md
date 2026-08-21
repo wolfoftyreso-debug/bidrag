@@ -405,6 +405,9 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | `npm run verify:smoke` | Prismodellens kedja (402 → 19 kr → ansökan) — kräver körande API. |
 | `npm run verify` | HELA hälsokontrollen (scripts/verify.sh): bygge, typer, tester, databas från tom, produktionsbygge, deploy-konfig, hemligheter, handbokens aktualitet. |
 | `npm run manual` | Regenererar denna handbok ur källorna (tools/genmanual.mjs). |
+| `npm run seo:keywords` | Bygger master keyword-databasen seo/keywords.json ur seeden + seo/roots-manual.json (aldrig påhittade volymer — se docs/SEO_STRATEGY.md). |
+| `npm run seo:build` | Genererar den publika, indexerbara ytan (/bidrag/… + sitemap + robots) ur kunskapsbasen — samma sanningsmodell som produkten. |
+| `npm run seo:check` | SEO-QA-crawlen: titlar, canonical, JSON-LD, intern länkgraf, orphans och sitemap-täckning för den genererade ytan. |
 
 ## 10. Drift, deploy och gränser
 

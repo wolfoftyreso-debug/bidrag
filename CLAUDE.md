@@ -37,6 +37,11 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
 - **Deploy-beredskap** — Vercel serverless-ingång (`api/index.ts`),
   `vercel.json` (bygge, SPA-routning, 5 cron-jobb), `deploy/bootstrap.sql`,
   Dockerfile + `deploy/k8s/` som alternativ väg, CI grön.
+- **Publik SEO-yta** — `tools/genseo.mjs` genererar 77 statiska sidor
+  (`/bidrag/` + 4 målgruppshubbar + 72 entity-sidor + sitemap + robots) ur
+  seeden vid varje Vercel-bygge; QA-crawlas av `tools/seocheck.mjs` i verify.
+  Strategi/research i `docs/SEO_*.md`; keyword-databas i `seo/`
+  (332 rötter, inga påhittade volymer — allt källmärkt).
 
 Historik: `git log` är detaljerad och ärlig; revisionsrapporter i
 `docs/reports/`.
@@ -111,6 +116,8 @@ npm run verify:ui             # 13 genomklickningar — kräver KÖRANDE api (PO
 npm run verify:sim30          # 30 simulerade användare — kräver körande api som ovan
 npm run openapi -w apps/api   # regenererar docs/openapi.json efter API-ändringar
 npm run manual                # regenererar systemhandboken docs/MANUAL.md (se nedan)
+npm run seo:check             # genererar publika SEO-ytan + kör QA-crawlen
+npm run seo:keywords          # bygger seo/keywords.json ur seeden + roots-manual
 ```
 
 Webbläsare för kontrollerna: `npx playwright install chromium` eller sätt
@@ -199,7 +206,12 @@ miljön och handboken fördjupas då skärm för skärm.
    `renderDocument`, `validateDocumentAnswers` och demon bundlar core — visa
    dokumentet som text + kopiera-knapp (artefaktsandlådan blockerar
    nedladdningslänkar).
-3. **Mänsklig gransknings-kö** — arbetsflöde som lyfter stöd från
+3. **SEO Tier 1-guiderna** — 12 redaktionella guide-/jämförelsesidor under
+   `/guider/` enligt `docs/SEO_STRATEGY.md` (frågematrisen i
+   `seo/questions-tier1.json` styr; answer-first, YMYL-språk, källor).
+   SERP-luckorna är belagda i `docs/SEO_SERP_RESEARCH.md`. Efter deploy:
+   GSC-verifiering + `docs/SEO_BASELINE.md`-loopen.
+4. **Mänsklig gransknings-kö** — arbetsflöde som lyfter stöd från
    `ai_curated` till `human_verified` mot levande källor (motförhörets A-fynd).
 4. **Full WCAG-genomgång + riktiga användartester** (motförhörets B-fynd).
 5. **Produktkontroller i CI** — kör verify:ui/demo:check i CI med

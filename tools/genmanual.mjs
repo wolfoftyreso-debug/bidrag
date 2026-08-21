@@ -150,6 +150,9 @@ const SCRIPTS = {
   'verify:smoke': 'Prismodellens kedja (402 → 19 kr → ansökan) — kräver körande API.',
   verify: 'HELA hälsokontrollen (scripts/verify.sh): bygge, typer, tester, databas från tom, produktionsbygge, deploy-konfig, hemligheter, handbokens aktualitet.',
   manual: 'Regenererar denna handbok ur källorna (tools/genmanual.mjs).',
+  'seo:keywords': 'Bygger master keyword-databasen seo/keywords.json ur seeden + seo/roots-manual.json (aldrig påhittade volymer — se docs/SEO_STRATEGY.md).',
+  'seo:build': 'Genererar den publika, indexerbara ytan (/bidrag/… + sitemap + robots) ur kunskapsbasen — samma sanningsmodell som produkten.',
+  'seo:check': 'SEO-QA-crawlen: titlar, canonical, JSON-LD, intern länkgraf, orphans och sitemap-täckning för den genererade ytan.',
 };
 
 // ── Samla fakta ur källorna ──────────────────────────────────────────────────

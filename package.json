@@ -27,7 +27,10 @@
     "verify:smoke": "node tools/smoke-appfee.mjs",
     "verify": "bash scripts/verify.sh",
     "manual": "node --experimental-strip-types tools/genmanual.mjs",
-    "verify:relevans": "node tools/audit-relevans.mjs"
+    "verify:relevans": "node tools/audit-relevans.mjs",
+    "seo:keywords": "node --experimental-strip-types tools/seokeywords.mjs",
+    "seo:build": "node --experimental-strip-types tools/genseo.mjs",
+    "seo:check": "node --experimental-strip-types tools/genseo.mjs && node tools/seocheck.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.25.12",

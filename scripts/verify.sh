@@ -137,6 +137,16 @@ step "Deploy-konfiguration (vercel.json, serverless-ingång, cron-routes)" deplo
 manual_check() { node --experimental-strip-types tools/genmanual.mjs --check; }
 step "Systemhandboken är aktuell och komplett (docs/MANUAL.md)" manual_check
 
+# ── 5c. Publika SEO-ytan ─────────────────────────────────────────────────────
+# Keyword-databasen i synk med seeden, sidgenerering ur sanningsmodellen och
+# full teknisk QA (titlar, canonical, länkgraf, sitemap, JSON-LD, orphans).
+seo_check() {
+  node --experimental-strip-types tools/seokeywords.mjs --check &&
+  node --experimental-strip-types tools/genseo.mjs &&
+  node tools/seocheck.mjs
+}
+step "Publika SEO-ytan genereras och klarar QA-crawlen" seo_check
+
 # ── 6. Hemlighetsskanning (versionshanterade filer) ──────────────────────────
 secrets_scan() {
   local hits
