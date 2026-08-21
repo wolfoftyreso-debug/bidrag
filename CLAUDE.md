@@ -28,14 +28,14 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
   auth/tenancy, kunskapsgraf (72 stöd, 35 finansiärer, 71 ansökningsscheman,
   36 källor), matchning, ansökningar, dokumentvalv, betalningar (Swish Handel-
   adapter + mock), kvitton med moms, GDPR-självservice, kurators-API,
-  bakgrundsjobb. 193 integrationstester.
+  bakgrundsjobb. 198 integrationstester.
 - **`apps/web`** — svensk React-SPA (Vite): onboarding en-fråga-per-skärm,
   analys/teaser, köpflöden med ångerrättssamtycke, ansökningsarbetsyta,
   dokumentstudio, Mina köp/kvitton, admin.
 - **`demo/`** — fristående demo som kör den riktiga motorn i webbläsaren
   (ingen server), med 7 automatiska webbläsarkontroller.
 - **Deploy-beredskap** — Vercel serverless-ingång (`api/index.ts`),
-  `vercel.json` (bygge, SPA-routning, 4 cron-jobb), `deploy/bootstrap.sql`,
+  `vercel.json` (bygge, SPA-routning, 5 cron-jobb), `deploy/bootstrap.sql`,
   Dockerfile + `deploy/k8s/` som alternativ väg, CI grön.
 
 Historik: `git log` är detaljerad och ärlig; revisionsrapporter i
@@ -82,7 +82,9 @@ demo/           ← bundlar core + kunskapsbas-export till EN html-fil
 ```bash
 # Förstagångsuppsättning (Node 22+, PostgreSQL 16):
 npm ci
+npm run build -w packages/core   # api/web importerar cores dist — bygg först
 createdb bidrag && npm run db:migrate && npm run db:seed
+cp .env.example .env             # sätt DATABASE_URL + PORT=3100 (se nedan)
 
 # Utveckling:
 npm run dev:api      # API (läser .env i roten; PORT default 3000)
@@ -102,10 +104,12 @@ npm test                      # core + api; api-tester kör mot TEST_DATABASE_UR
                               # databasen skapas av npm run verify)
 npm run lint                  # = tsc --noEmit (ingen separat linter är konfigurerad)
 npm run typecheck             # kräver att core är byggt
-npm run demo:build            # bygger demon → artifacts/demo/demo.html
-npm run demo:check            # 7 webbläsarkontroller av demon (kräver Chromium)
-npm run verify:ui             # 13 genomklickningar av riktiga webben (API + vite + Chromium)
-npm run verify:sim30          # 30 simulerade användare genom hela API-flödet
+npm run demo:build            # bygger demon → artifacts/demo/demo.html (ingen databas)
+npm run demo:check            # 7 webbläsarkontroller av demon (kräver Chromium + byggd demo)
+npm run verify:ui             # 13 genomklickningar — kräver KÖRANDE api (PORT=3100,
+                              # PAYMENTS_MOCK_ENABLED=true) + dev:web + Chromium
+npm run verify:sim30          # 30 simulerade användare — kräver körande api som ovan
+npm run openapi -w apps/api   # regenererar docs/openapi.json efter API-ändringar
 ```
 
 Webbläsare för kontrollerna: `npx playwright install chromium` eller sätt
@@ -153,6 +157,8 @@ aldrig i Production. `/v1/internal/readiness?probe=true` (Bearer
 - Repot pushas till **två** remotes: `origin` (wolfoftyreso-debug/bidrag,
   arbetsgren) och `bidragskoll` (wolfoftyreso-debug/bidragskoll, `main` =
   deploygrenen). Pusha färdigt arbete till båda; CI kör på bidragskoll.
+  Saknas den andra remoten i din klon:
+  `git remote add bidragskoll https://github.com/wolfoftyreso-debug/bidragskoll.git`.
 
 ## Kända begränsningar
 
@@ -186,9 +192,14 @@ dev-beroendesårbarheter i drizzle-kits kedja är medvetet accepterade (§11).
    synas och vägra ärligt (503), aldrig låtsas fungera i skarp drift.
 3. **Inga hemligheter i repot** — `npm run verify` skannar; `.env.example`
    hålls tom på värden. En läckt nyckel ska roteras, inte bortförklaras.
-4. Inga modellnamn/modell-ID:n i commits, kod eller artefakter som pushas.
-5. Svenska i all användarvänd text; teknisk dokumentation på svenska.
+4. Inga modellnamn/modell-ID:n som författar-attribution i commits, kod
+   eller pushade artefakter. (Produktens konfigurerade generationsmodell i
+   `.env.example`/`docs/ACTIVATION.md` är produktkonfiguration — undantagen.)
+5. Svenska i all användarvänd text. Dokumentation: behåll varje fils
+   befintliga språk (flera docs är på engelska — det är medvetet).
 6. Kör `npm run verify` grönt innan du pushar; pusha till båda remotes.
+   Verify är striktare än CI (CI kör inte deploy-konfig-/hemlighetsstegen
+   eller webbläsarkontrollerna) — lita på verify lokalt, CI som andra vakt.
 7. Sandlåde-drift (Claude Code remote): Postgres dör ibland — starta om med
    `rm -f /home/user/pgdata/postmaster.pid && su postgres -c "/usr/lib/postgresql/16/bin/pg_ctl -D /home/user/pgdata -o '-k /tmp -p 5432' -l /home/user/pgdata/log start"`.
    API:ts registrerings-rate-limit är ~10/min — vänta ~75 s efter simuleringar

@@ -35,15 +35,16 @@ Profil → Intention → Stödutbud → Behörighet → Matchning → Finansieri
 | Kommersiell modell | trestegsmodell: gratis upptäckt → 39 kr analysupplåsning → gratis "ansök själv"-länk eller förberedd ansökan i systemet (19 kr per ansökan — alla dokument för den ansökan ingår, generisk mallmotor, PDF till Mina dokument). Kvitton med löpnummer + moms i kontot. Betalningen är den auktoritativa händelsen; Swish-adaptern väntar ärligt (503) på handelsavtal + certifikat; momsen är fast 25 % standardsats (elektroniskt levererad tjänst till konsument) |
 | Produktarkitektur | stark; skala/härda/befolka, inte bygga om |
 
-Nästa fas är **Production Hardening + Knowledge Expansion** (se
-`docs/OPERATIONS.md` och `docs/LIMITATIONS.md`), inte fler UI-funktioner.
+Nästa prioriterade arbete finns i ordnad lista i `CLAUDE.md` (deploy →
+demons dokumentförberedelse → mänsklig gransknings-kö → WCAG/användartester);
+den ärliga brislistan är `docs/LIMITATIONS.md`.
 
 ## Repository layout
 
 | Path | What |
 |---|---|
 | `packages/core` | Pure domain engine: criteria DSL, layered match scoring, application state machine, budget engine, schema-driven forms, funding-stack compatibility, deadline math. Zero I/O, 90 unit tests. |
-| `apps/api` | Fastify + PostgreSQL modular monolith: auth, tenancy, funding knowledge graph, matching, application cases, documents, submissions, correspondence, ingestion, background jobs, curation API. 193 integration tests. |
+| `apps/api` | Fastify + PostgreSQL modular monolith: auth, tenancy, funding knowledge graph, matching, application cases, documents, submissions, correspondence, ingestion, background jobs, curation API. 198 integration tests. |
 | `apps/web` | Swedish-first React SPA: onboarding, matches, opportunity detail, application workspace, vault, inbox, admin console. |
 | `deploy/k8s` | Kubernetes manifests (deployment, service, ingress, PDB, PVC, secret templates). |
 | `demo/` | Fristående demo som kör den verkliga motorn i webbläsaren, plus sju webbläsarkontroller. Se `demo/README.md`. |

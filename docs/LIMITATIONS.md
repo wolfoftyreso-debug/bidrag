@@ -89,14 +89,18 @@ verified sender domain.
 
 ClamAV scanning activates when `CLAMAV_ADDRESS` is set (INSTREAM protocol
 implemented). Without it, uploads are marked `scan_unavailable` — visible in
-the vault, and magic-byte/content-type checks still apply. Deploy the ClamAV
-daemon in the cluster for production.
+the vault, and magic-byte/content-type checks still apply. In the container
+path, deploy the ClamAV daemon alongside the API; the Vercel path has no
+ClamAV equivalent — uploads there are honestly marked `scan_unavailable`
+(open item).
 
-## 6. Object storage is a volume, not S3
+## 6. Object storage: Supabase Storage in the primary path
 
-Documents live on a PVC (`UPLOAD_DIR`). Fine for a single cluster; for AWS
-production move to S3 — call sites are isolated in `routes/documents.ts` /
-`services/uploads.ts`.
+Resolved for the Vercel + Supabase path: documents live in a private
+Supabase Storage bucket (`STORAGE_DRIVER=supabase`, `services/storage.ts` is
+the driver boundary). In the container path documents live on a volume
+(`UPLOAD_DIR`); move to S3-compatible storage if that path ever needs
+multi-node.
 
 ## 7. GDPR self-service — closed (operator's DPIA remains)
 
@@ -199,7 +203,7 @@ The critical and high advisories that used to appear are closed. They came
 from `vitest@2.1.9` and the `vite@5.4.21` it pulled in; the test framework
 was upgraded to `vitest@4` (verified 2026-08-18), which resolves onto the
 same `vite@6.4.3` the web app already builds with. Both suites — 90 core
-unit tests and 192 API integration tests against real Postgres — pass
+unit tests and 198 API integration tests against real Postgres — pass
 unchanged on the new major, because they use only `describe`/`it`/`expect`/
 `beforeAll`/`afterAll` and no mocking API.
 

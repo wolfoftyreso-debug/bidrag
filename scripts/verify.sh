@@ -123,6 +123,10 @@ deploy_config() {
     const missingCron = tasks.filter(j => !crons.includes(j));
     if (missingRoute.length) { console.error("cron i vercel.json utan jobb i CRON_TASKS: " + missingRoute.join(", ")); process.exit(1); }
     if (missingCron.length) { console.error("jobb i CRON_TASKS utan cron-post i vercel.json: " + missingCron.join(", ")); process.exit(1); }'
+  # Dokumentdrift: deploy-körbokens migreringsantal måste stämma med verkligheten.
+  local n; n="$(ls apps/api/drizzle/*.sql | wc -l | tr -d ' ')"
+  grep -q "${n} migreringar" docs/DEPLOY-AGENT.md \
+    || { echo "docs/DEPLOY-AGENT.md nämner inte aktuella migreringsantalet (${n}) — uppdatera körboken (och kör scripts/make-bootstrap.sh)"; return 1; }
 }
 step "Deploy-konfiguration (vercel.json, serverless-ingång, cron-routes)" deploy_config
 
