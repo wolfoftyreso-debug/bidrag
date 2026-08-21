@@ -130,6 +130,12 @@ deploy_config() {
 }
 step "Deploy-konfiguration (vercel.json, serverless-ingång, cron-routes)" deploy_config
 
+# ── 5b. Systemhandboken ──────────────────────────────────────────────────────
+# Reaktivitetsvakten: docs/MANUAL.md måste vara regenererad ur källorna, och
+# varje API-operation/kommando måste ha en instruktion i tools/genmanual.mjs.
+manual_check() { node --experimental-strip-types tools/genmanual.mjs --check; }
+step "Systemhandboken är aktuell och komplett (docs/MANUAL.md)" manual_check
+
 # ── 6. Hemlighetsskanning (versionshanterade filer) ──────────────────────────
 secrets_scan() {
   local hits

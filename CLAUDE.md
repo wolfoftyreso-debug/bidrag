@@ -110,12 +110,24 @@ npm run verify:ui             # 13 genomklickningar — kräver KÖRANDE api (PO
                               # PAYMENTS_MOCK_ENABLED=true) + dev:web + Chromium
 npm run verify:sim30          # 30 simulerade användare — kräver körande api som ovan
 npm run openapi -w apps/api   # regenererar docs/openapi.json efter API-ändringar
+npm run manual                # regenererar systemhandboken docs/MANUAL.md (se nedan)
 ```
 
 Webbläsare för kontrollerna: `npx playwright install chromium` eller sätt
 `CHROMIUM_PATH`.
 
-CI (`.github/workflows/ci.yml`) kör: core-bygge → typecheck → core-tester →
+**Systemhandboken (`docs/MANUAL.md`) är en byggprodukt — redigera den aldrig
+för hand.** Den genereras av `tools/genmanual.mjs` ur systemets faktiska
+källor (Fastifys routetabell, cores exporter, seeden, `.env.example`,
+`package.json`). Reaktivitetsvakt i både verify och CI: en ny API-operation
+eller ett nytt npm-skript utan instruktion i generatorns kartor, eller en
+ocommittad regenerering, fallerar bygget. Efter varje API-/skript-/seed-
+ändring: `npm run manual` och committa. Fjärr-röktest av en deployad miljö:
+`BASE_URL=https://… CRON_SECRET=… node tools/deploy-smoke.mjs` — kör hela
+köpkedjan i preview, verifierar ärlig 503 i produktion utan Swish.
+
+CI (`.github/workflows/ci.yml`) kör: core-bygge → typecheck → handbokskoll →
+core-tester →
 api-tester mot riktig Postgres → migrationsdeterminism (drizzle-kit generate
 får inte ge nya filer) → backup/restore-övning → web- och api-bygge →
 docker-jobb som bygger produktionsimagen och röktestar `/readyz`.
@@ -170,8 +182,17 @@ dev-beroendesårbarheter i drizzle-kits kedja är medvetet accepterade (§11).
 
 ## Nästa prioriterade arbete (i ordning)
 
+Läge 2026-08-21: Swish-uppgifterna från banken väntas fortfarande — deployn
+görs UTAN Swish (köpen vägrar ärligt 503 tills avtalet finns; hela köpflödet
+felsöks i Vercel Preview med mock). När systemet är deployat och klart har
+användaren beställt en **fullständig revision** och i samband med den en
+**komplettering av systemhandboken** — infrastrukturen finns redan
+(`docs/MANUAL.md`, reaktiv via verify/CI); revisionen görs mot den deployade
+miljön och handboken fördjupas då skärm för skärm.
+
 1. **Deployn själv** — användaren kör `docs/DEPLOY-AGENT.md` i en session med
    Supabase-/Vercel-connectors. Assistera; gör det du kan via connectorerna.
+   Verifiera efteråt utifrån med `tools/deploy-smoke.mjs`.
 2. **Demons plan-vy: dokumentförberedelse in-browser** — användarfynd: demon
    länkar till 1177/myndigheten i stället för att visa att systemet förbereder
    ansökan. Core exporterar redan `DOCUMENT_TEMPLATES`, `prefillAnswers`,

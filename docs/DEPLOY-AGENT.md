@@ -101,7 +101,7 @@ Ge användaren blocket och exakt dessa instruktioner:
 när den faktiska `*.vercel.app`-adressen är känd — gör det via
 Vercel-connectorn om den kan skriva env-variabler, annars be användaren.
 
-## Steg 4 — verifiera (via connectorerna)
+## Steg 4 — verifiera (via connectorerna + deploy-smoke)
 
 1. Vercel-connectorn: bekräfta att deployn är klar; läs byggloggen vid fel.
 2. Readiness: `GET https://<projekt>.vercel.app/v1/internal/readiness?probe=true`
@@ -110,11 +110,14 @@ Vercel-connectorn om den kan skriva env-variabler, annars be användaren.
    som blockerare (de aktiveras enligt `docs/ACTIVATION.md`).
    Obs: sandlådans proxy kan blockera utgående anrop — går det inte att
    nå URL:en själv, ge användaren det färdiga curl-kommandot.
-3. Be användaren öppna **preview-URL:en** (varje push till en gren får en)
-   och köra hela flödet: konto → intag → teaser → simulerad betalning
-   39 kr → analys → förbered ansökan 19 kr → dokument → kvitton i
-   Mina köp. Mockbetalningarna fungerar ENDAST i preview — aldrig i
-   produktion.
+3. Kör fjärr-röktestet om nätet tillåter (annars ge användaren kommandot):
+   `BASE_URL=https://<preview-url> CRON_SECRET=<värdet> node tools/deploy-smoke.mjs`
+   — i preview verifierar det HELA kedjan (konto → teaser-gate → 39 kr →
+   analys → 402 → 19 kr → ansökan → kvitton); mot produktions-URL:en
+   verifierar det att köpen vägrar ärligt (503) tills Swish finns.
+4. Be användaren öppna **preview-URL:en** (varje push till en gren får en)
+   och köra samma flöde med ögonen. Mockbetalningarna fungerar ENDAST i
+   preview — aldrig i produktion.
 
 ## Steg 5 — efterarbete
 

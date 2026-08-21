@@ -34,6 +34,11 @@ jobs:
         run: npm run build -w packages/core
       - name: Typecheck
         run: npm run typecheck
+
+      # Systemhandboken är en byggprodukt: fallera om docs/MANUAL.md inte är
+      # regenererad ur källorna eller om en operation saknar instruktion.
+      - name: Manual up to date
+        run: npm run manual -- --check
       - name: Unit tests (core)
         run: npm run test -w packages/core
       - name: Integration tests (api, real Postgres)

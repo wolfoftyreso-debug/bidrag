@@ -25,7 +25,8 @@
     "verify:ui": "node tools/uicheck/uicheck12.mjs && node tools/uicheck/uicheck13.mjs",
     "verify:schemas": "node tools/schemacheck.mjs",
     "verify:smoke": "node tools/smoke-appfee.mjs",
-    "verify": "bash scripts/verify.sh"
+    "verify": "bash scripts/verify.sh",
+    "manual": "node --experimental-strip-types tools/genmanual.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.25.12",
