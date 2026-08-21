@@ -817,7 +817,11 @@ export const opportunities: SeedOpportunity[] = [
     estimatedEffortDays: 10,
     criteria: [
       c('jv-is-h1', 'hard', 'applicant.country', 'eq', 'SE', 'Verksamheten ska bedrivas i Sverige'),
-      c('jv-is-m1', 'mandatory', 'project.sector', 'in', ['agriculture', 'environment'], 'Investeringen ska avse jordbruksverksamhet', 'Avser investeringen jordbruksverksamhet?'),
+      // F-RELEVANS: grinden var ['agriculture', 'environment'] — men källan
+      // gäller investeringar I JORDBRUKSFÖRETAG (miljöåtgärden är en typ av
+      // investering där, inte en egen målgrupp). Ett miljöprojekt utanför
+      // jordbruket ska aldrig se detta stöd.
+      c('jv-is-m1', 'mandatory', 'project.sector', 'eq', 'agriculture', 'Investeringen ska avse jordbruksverksamhet', 'Avser investeringen jordbruksverksamhet?'),
       c('jv-is-m2', 'mandatory', 'project.activityTypes', 'includes', 'investment', 'Ansökan ska avse en investering', 'Avser ansökan en fysisk investering?'),
     ],
     budgetRules: [

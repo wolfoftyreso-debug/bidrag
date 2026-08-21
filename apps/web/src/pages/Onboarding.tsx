@@ -27,6 +27,7 @@ interface Answers {
   ageBand?: 'under20' | '20-28' | '29-65' | '66plus';
   employment?: 'working' | 'unemployed' | 'sick' | 'studying' | 'retired' | 'self_employed';
   businessForm?: 'sole_trader' | 'limited_company' | 'other';
+  bizSector?: 'agriculture' | 'other';
   reducedCapacity?: boolean;
   movingAbroad?: boolean;
   disabilityInFamily?: boolean;
@@ -60,7 +61,7 @@ type StepId =
   | 'entry'
   | 'p-household' | 'p-children' | 'p-separated'
   | 'p-child-school' | 'p-child-costs' | 'p-child-leisure' | 'p-child-glasses' | 'p-child-travel'
-  | 'p-age' | 'p-employment' | 'p-biz-form' | 'p-capacity'
+  | 'p-age' | 'p-employment' | 'p-biz-form' | 'p-biz-sector' | 'p-capacity'
   | 'p-income' | 'p-savings' | 'p-housing' | 'p-housing-cost' | 'p-moving-abroad' | 'p-disability' | 'p-extra'
   | 'pr-intent' | 'pr-who' | 'pr-municipality' | 'pr-artist' | 'pr-sector'
   | 'pr-org-democratic' | 'pr-org-sports' | 'pr-org-youthshare' | 'pr-org-spread'
@@ -78,7 +79,7 @@ const STEP_IDS = new Set<string>([
   'entry',
   'p-household', 'p-children', 'p-separated',
   'p-child-school', 'p-child-costs', 'p-child-leisure', 'p-child-glasses', 'p-child-travel',
-  'p-age', 'p-employment', 'p-biz-form', 'p-capacity',
+  'p-age', 'p-employment', 'p-biz-form', 'p-biz-sector', 'p-capacity',
   'p-income', 'p-savings', 'p-housing', 'p-housing-cost', 'p-moving-abroad', 'p-disability', 'p-extra',
   'pr-intent', 'pr-who', 'pr-municipality', 'pr-artist', 'pr-sector',
   'pr-org-democratic', 'pr-org-sports', 'pr-org-youthshare', 'pr-org-spread',
@@ -117,7 +118,8 @@ function nextStep(current: StepId, a: Answers): StepId | 'done' {
     case 'p-age': return 'p-employment';
     case 'p-employment':
       return a.employment === 'sick' ? 'p-capacity' : a.employment === 'self_employed' ? 'p-biz-form' : 'p-income';
-    case 'p-biz-form': return 'p-income';
+    case 'p-biz-form': return 'p-biz-sector';
+    case 'p-biz-sector': return 'p-income';
     case 'p-capacity': return 'p-income';
     case 'p-income': return a.incomeBand === 'under15' ? 'p-savings' : 'p-housing';
     case 'p-savings': return 'p-housing';
@@ -198,6 +200,10 @@ function personalFacts(a: Answers): Record<string, unknown> {
   // Företagarspåret: driftsformen avgör vem som kan söka företagsstöden —
   // enskild firma söker som person, aktiebolagets stöd söks av bolaget.
   if (a.businessForm) facts['person.businessForm'] = a.businessForm;
+  // Egenföretagarens verksamhetssektor (F-RELEVANS): jordbruksstöden ska
+  // antingen gälla på riktigt eller uteslutas ärligt — aldrig ligga kvar som
+  // "behöver utredas"-brus. OBS: sätts som project.sector i projectFacts.
+
   if (a.reducedCapacity !== undefined) facts['person.reducedWorkCapacityLongTerm'] = a.reducedCapacity;
   if (a.incomeBand) {
     facts['person.monthlyIncomeBand'] = a.incomeBand;
@@ -276,7 +282,19 @@ export default function OnboardingPage() {
       }
 
       const projectFacts: Record<string, unknown> = isPersonal
-        ? {}
+        ? {
+            // F-RELEVANS: personspåret ÄR ett svar på sektorsfrågan — personen
+            // har valt personligt stöd, inte projekt/företag. Utan detta faktum
+            // hamnade sektorsgrindade stöd (jordbruk, kulturprojekt m.fl.) i
+            // "behöver utredas" för alla. Egenföretagare deklarerar i stället
+            // sin verksamhetssektor (p-biz-sector) så att branschstöden gäller
+            // på riktigt eller utesluts ärligt. Vaktas av tools/audit-relevans.mjs.
+            ...(answers.employment !== 'self_employed'
+              ? { 'project.sector': 'personal' }
+              : answers.bizSector
+                ? { 'project.sector': answers.bizSector === 'agriculture' ? 'agriculture' : 'other' }
+                : {}),
+          }
         : {
             'project.sector': answers.sector,
             'project.activityTypes': answers.activityTypes,
@@ -554,6 +572,16 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
           <Choice label="Enskild firma" onClick={() => onAnswer({ businessForm: 'sole_trader' })} />
           <Choice label="Aktiebolag" onClick={() => onAnswer({ businessForm: 'limited_company' })} />
           <Choice label="Annat eller osäker" onClick={() => onAnswer({ businessForm: 'other' })} />
+        </Q>
+      );
+    case 'p-biz-sector':
+      return (
+        <Q
+          title="Vad sysslar verksamheten med?"
+          guidance="Frågan avgör vilka branschstöd som är aktuella — jordbruksstöden gäller till exempel bara jordbruks-, trädgårds- och rennäringsföretag."
+        >
+          <Choice label="Jordbruk, trädgård eller rennäring" onClick={() => onAnswer({ bizSector: 'agriculture' })} />
+          <Choice label="Något annat" onClick={() => onAnswer({ bizSector: 'other' })} />
         </Q>
       );
     case 'p-capacity':

@@ -5,7 +5,7 @@
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { computeMatch } from '@bidrag/core';
+import { BUSINESS_RELEVANT_SLUGS, PERSONAL_INSTRUMENTS, computeMatch } from '@bidrag/core';
 import OPPORTUNITIES from './demo-opportunities.json';
 
 type Facts = Record<string, unknown>;
@@ -29,17 +29,10 @@ interface Opp {
 }
 
 const OPPS = OPPORTUNITIES as unknown as Opp[];
-const PERSONAL = new Set(['social_benefit', 'educational_support', 'loan']);
-// Företagarspåret (F-EGEN): egenföretagarens genomlysning omfattar även
-// företagsstöden — de sammanfattas aldrig bort. Speglar API:ts kurerade lista.
-const BUSINESS = new Set([
-  'af-stod-start-naringsverksamhet',
-  'vinnova-innovativa-startups',
-  'tillvaxtverket-affarsutvecklingscheckar',
-  'tillvaxtverket-regionalt-investeringsstod',
-  'jordbruksverket-startstod-unga',
-  'jordbruksverket-investeringsstod',
-]);
+// Relevanspolicyn (F-RELEVANS) delas med API:t via @bidrag/core — demon
+// bundlar samma modul, så spårfiltren kan aldrig glida isär.
+const PERSONAL = PERSONAL_INSTRUMENTS;
+const BUSINESS = BUSINESS_RELEVANT_SLUGS;
 const INSTRUMENT: Record<string, string> = {
   public_grant: 'Statligt bidrag', eu_grant: 'EU-bidrag', scholarship: 'Stipendium', stipend: 'Stipendium',
   travel_grant: 'Resebidrag', project_grant: 'Projektbidrag', social_benefit: 'Ersättning', educational_support: 'Studiestöd', loan: 'Lån',
@@ -54,7 +47,7 @@ type StepId =
   | 'entry'
   | 'p-household' | 'p-children' | 'p-separated'
   | 'p-child-school' | 'p-child-costs' | 'p-child-leisure' | 'p-child-glasses' | 'p-child-travel'
-  | 'p-age' | 'p-employment' | 'p-biz-form' | 'p-capacity'
+  | 'p-age' | 'p-employment' | 'p-biz-form' | 'p-biz-sector' | 'p-capacity'
   | 'p-income' | 'p-savings' | 'p-housing' | 'p-housing-cost' | 'p-moving-abroad' | 'p-disability' | 'done'
   | 'pr-who' | 'pr-artist' | 'pr-sector'
   | 'pr-org-democratic' | 'pr-org-sports' | 'pr-org-youthshare' | 'pr-org-spread'
@@ -78,7 +71,8 @@ function nextStep(s: StepId, a: A): StepId {
     case 'p-child-travel': return 'p-age';
     case 'p-age': return 'p-employment';
     case 'p-employment': return a.employment === 'sick' ? 'p-capacity' : a.employment === 'self_employed' ? 'p-biz-form' : 'p-income';
-    case 'p-biz-form': return 'p-income';
+    case 'p-biz-form': return 'p-biz-sector';
+    case 'p-biz-sector': return 'p-income';
     case 'p-capacity': return 'p-income';
     case 'p-income': return a.income === 'under15' ? 'p-savings' : 'p-housing';
     case 'p-savings': return 'p-housing';
@@ -108,6 +102,13 @@ function buildFacts(a: A): Facts {
   const f: Facts = { 'applicant.country': 'SE' };
   if (a.track === 'personal') {
     f['applicant.type'] = 'individual';
+    // F-RELEVANS: personspåret ÄR ett svar på sektorsfrågan — personen har
+    // valt personligt stöd, inte projekt/företag. Utan detta faktum hamnade
+    // sektorsgrindade stöd (jordbruk, kulturprojekt m.fl.) i "behöver
+    // utredas" för alla. Undantag: egenföretagare — deras verksamhetssektor
+    // är genuint okänd tills de svarat (F-EGEN-löftet om företagsgenomlysning
+    // står kvar). Vaktas av tools/audit-relevans.mjs.
+    if (a.employment !== 'self_employed') f['project.sector'] = 'personal';
     if (a.household) f['person.householdType'] = a.household;
     if (a.children) f['person.hasChildrenAtHome'] = a.children !== 'no';
     if (a.separated !== undefined) f['person.separatedParent'] = a.separated;
@@ -141,6 +142,10 @@ function buildFacts(a: A): Facts {
       f['person.selfEmployed'] = a.employment === 'self_employed';
     }
     if (a.businessForm) f['person.businessForm'] = a.businessForm;
+    // Egenföretagarens verksamhetssektor (F-RELEVANS): jordbruksstöden ska
+    // antingen gälla på riktigt eller uteslutas ärligt — aldrig ligga kvar
+    // som "behöver utredas"-brus.
+    if (a.bizSector) f['project.sector'] = a.bizSector === 'agriculture' ? 'agriculture' : 'other';
     if (a.capacity !== undefined) f['person.reducedWorkCapacityLongTerm'] = a.capacity;
     f['person.consideringMovingAbroad'] = a.movingAbroad === true;
     // Funktionsnedsättningsspåret: samma gate-mönster som utvandringsspåret.
@@ -965,6 +970,12 @@ function App() {
           <Choice label="Enskild firma" onClick={() => advance({ businessForm: 'sole_trader' })} />
           <Choice label="Aktiebolag" onClick={() => advance({ businessForm: 'limited_company' })} />
           <Choice label="Annat eller osäker" onClick={() => advance({ businessForm: 'other' })} />
+        </Q>
+      )}
+      {step === 'p-biz-sector' && (
+        <Q title="Vad sysslar verksamheten med?" guidance="Frågan avgör vilka branschstöd som är aktuella — jordbruksstöden gäller till exempel bara jordbruks-, trädgårds- och rennäringsföretag.">
+          <Choice label="Jordbruk, trädgård eller rennäring" onClick={() => advance({ bizSector: 'agriculture' })} />
+          <Choice label="Något annat" onClick={() => advance({ bizSector: 'other' })} />
         </Q>
       )}
       {step === 'p-capacity' && (

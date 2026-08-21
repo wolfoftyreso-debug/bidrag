@@ -401,6 +401,7 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | `npm run verify:sim30` | 30 simulerade användare genom hela flödet — kräver körande API (:3100, mock på). |
 | `npm run verify:ui` | 13 UI-genomklickningar — kräver körande API + dev:web + Chromium. |
 | `npm run verify:schemas` | Ansökningsschemanas täckning mot stöden — kräver körande API. |
+| `npm run verify:relevans` | Relevansrevisionen: 10 personor mot alla stöd — inga sektorsgrindade stöd utanför personens situation, inga överexkluderingar (F-RELEVANS). Ingen server krävs. |
 | `npm run verify:smoke` | Prismodellens kedja (402 → 19 kr → ansökan) — kräver körande API. |
 | `npm run verify` | HELA hälsokontrollen (scripts/verify.sh): bygge, typer, tester, databas från tom, produktionsbygge, deploy-konfig, hemligheter, handbokens aktualitet. |
 | `npm run manual` | Regenererar denna handbok ur källorna (tools/genmanual.mjs). |

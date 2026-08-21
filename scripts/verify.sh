@@ -59,6 +59,7 @@ step "Lint" npm run lint
 
 # ── 2. Tester ────────────────────────────────────────────────────────────────
 step "Core-tester (enhetstester, ingen databas)" npm test -w packages/core
+step "Relevansrevisionen (personor mot alla stöd, F-RELEVANS)" node tools/audit-relevans.mjs
 if [ "$db_up" = 1 ]; then
   psql "$ADMIN_URL" -Atc "select 1 from pg_database where datname='bidrag_test'" | grep -q 1 \
     || psql "$ADMIN_URL" -c 'CREATE DATABASE bidrag_test' >/dev/null

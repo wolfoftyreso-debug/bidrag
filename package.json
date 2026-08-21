@@ -26,7 +26,8 @@
     "verify:schemas": "node tools/schemacheck.mjs",
     "verify:smoke": "node tools/smoke-appfee.mjs",
     "verify": "bash scripts/verify.sh",
-    "manual": "node --experimental-strip-types tools/genmanual.mjs"
+    "manual": "node --experimental-strip-types tools/genmanual.mjs",
+    "verify:relevans": "node tools/audit-relevans.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.25.12",

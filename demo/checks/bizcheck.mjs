@@ -13,6 +13,9 @@ await page.click('button:has-text("Driver eget företag")');
 await page.waitForSelector('text=Hur driver du verksamheten?');
 console.log('1. Driftsformsfrågan ställs efter "Driver eget" ✓');
 await page.click('button:has-text("Enskild firma")');
+// F-RELEVANS: verksamhetssektorn frågas nu — "Något annat" ska ge ärlig
+// uteslutning av jordbruksstöden i genomlysningen, inte "behöver utredas".
+await page.click('button:has-text("Något annat")');
 await page.click('button:has-text("15 000–25 000 kr")');
 await page.click('.row >> button:has-text("Ja")'); // betalar boende
 await page.fill('input[type=number]', '9000');

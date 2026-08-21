@@ -12,3 +12,4 @@ export * from './documentTemplates.js';
 export * from './consistency.js';
 export * from './language.js';
 export * from './generation.js';
+export * from './relevance.js';
