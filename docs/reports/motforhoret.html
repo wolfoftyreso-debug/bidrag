@@ -1,0 +1,259 @@
+<title>Motförhöret</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@450;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --paper: #f7f6f5;
+  --card: #ffffff;
+  --ink: #241c1c;
+  --ink-soft: #605555;
+  --line: #ddd6d4;
+  --line-strong: #c1b6b3;
+  --sig: #8f2f2f;
+  --sig-soft: #f6e9e8;
+  --hold: #1d6b4f;
+  --hold-soft: #e7f2ec;
+  --warn: #94660f;
+  --warn-soft: #f8efdb;
+  --mono-bg: #f0edeb;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1b1717;
+    --card: #251f1f;
+    --ink: #eae5e4;
+    --ink-soft: #a59a98;
+    --line: #3b3332;
+    --line-strong: #524745;
+    --sig: #d97f7f;
+    --sig-soft: #362222;
+    --hold: #52b389;
+    --hold-soft: #21322b;
+    --warn: #d3a04a;
+    --warn-soft: #322a1a;
+    --mono-bg: #2b2423;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1b1717;
+  --card: #251f1f;
+  --ink: #eae5e4;
+  --ink-soft: #a59a98;
+  --line: #3b3332;
+  --line-strong: #524745;
+  --sig: #d97f7f;
+  --sig-soft: #362222;
+  --hold: #52b389;
+  --hold-soft: #21322b;
+  --warn: #d3a04a;
+  --warn-soft: #322a1a;
+  --mono-bg: #2b2423;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink);
+  font: 16px/1.65 'IBM Plex Serif', Georgia, serif; -webkit-font-smoothing: antialiased; }
+.doc { max-width: 880px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+h1, h2, h3, .label { font-family: 'IBM Plex Sans', system-ui, sans-serif; }
+h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.015em; margin: 0.2rem 0 0.3rem; text-wrap: balance; }
+h2 { font-size: 1.28rem; font-weight: 700; margin: 2.6rem 0 0.8rem; padding-top: 1.4rem; border-top: 2px solid var(--line-strong); }
+h3 { font-size: 1rem; font-weight: 600; margin: 1.5rem 0 0.4rem; }
+p { margin: 0.55rem 0; max-width: 68ch; }
+.label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--ink-soft); }
+.huvud { border: 2px solid var(--ink); padding: 1.5rem 1.7rem 1.4rem; background: var(--card); }
+.huvud .ingress { color: var(--ink-soft); margin-top: 0.1rem; max-width: none; }
+.jav { margin-top: 1.2rem; padding: 0.85rem 1rem; background: var(--sig-soft); border-left: 3px solid var(--sig); font-size: 0.92rem; }
+table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.tablewrap { overflow-x: auto; margin: 1rem 0; }
+th { text-align: left; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.72rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft);
+  padding: 0.5rem 0.7rem; border-bottom: 2px solid var(--line-strong); }
+td { padding: 0.66rem 0.7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.klass { display: inline-grid; place-items: center; min-width: 2.4rem; height: 1.7rem; padding: 0 0.4rem; border-radius: 3px;
+  font-family: 'IBM Plex Sans', sans-serif; font-weight: 700; font-size: 0.82rem; }
+.klass.a { background: var(--sig-soft); color: var(--sig); border: 1px solid var(--sig); }
+.klass.b { background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); }
+.klass.c { background: var(--mono-bg); color: var(--ink-soft); border: 1px solid var(--line-strong); }
+.holdlist li::marker { color: var(--hold); }
+.bevis { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; background: var(--mono-bg);
+  border: 1px solid var(--line); border-left: 3px solid var(--sig);
+  padding: 0.75rem 0.95rem; margin: 0.8rem 0; overflow-x: auto; white-space: pre; line-height: 1.55; }
+.bevis .bid { color: var(--ink-soft); }
+.domsruta { margin: 2.2rem 0 1rem; border: 2px solid var(--ink); background: var(--card);
+  padding: 1.7rem 1.8rem; display: flex; gap: 2rem; align-items: center; flex-wrap: wrap; }
+.stampel { flex-shrink: 0; transform: rotate(-6deg); border: 3px double var(--sig); color: var(--sig);
+  border-radius: 6px; padding: 0.7rem 1.2rem; text-align: center;
+  font-family: 'IBM Plex Sans', sans-serif; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; font-size: 1rem; line-height: 1.4; }
+.stampel small { display: block; font-size: 0.6rem; letter-spacing: 0.18em; font-weight: 600; opacity: 0.75; }
+.domtext { flex: 1; min-width: 260px; }
+.domtext p { font-size: 0.95rem; }
+ul { padding-left: 1.2rem; }
+li { margin: 0.4rem 0; max-width: 66ch; }
+ol li { margin: 0.55rem 0; }
+strong { font-weight: 600; }
+code { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; background: var(--mono-bg); padding: 0.05rem 0.3rem; border-radius: 3px; }
+.sign { margin-top: 2.5rem; padding-top: 1.2rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-size: 0.85rem; color: var(--ink-soft); }
+.sign .mono { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="doc">
+  <div class="huvud">
+    <div class="label">Motrevision · Ifrågasätt allt · 2026-08-18</div>
+    <h1>Motförhöret — vad systemrevisionen inte frågade</h1>
+    <p class="ingress">Adversariell granskning av Bidragskoll.se <em>och</em> av gårdagens revision av
+    Bidragskoll.se. Uppdraget: ifrågasätt allt — inklusive revisorn, betygen, testerna,
+    affärsmodellen och kunskapsbasens sanning. Varje fynd är grundat i en körd sond (avsnitt 5).</p>
+    <div class="jav">
+      <strong>Jävsdeklaration.</strong> Revisorn, byggaren och den som valde betygskriterierna
+      är samma agent. Systemrevisionen gav 9/12 GODKÄND — betygsatta av den som byggde det
+      betygsatta, samma dag som bristerna rättades. De två B-avvikelserna hittades dessutom
+      inte av revisorn utan av CI:n; revisorns lokala "gröna" körningar hade dolt båda
+      (en pipe svalde en exitkod, en kvarliggande byggkatalog dolde ett ordningsfel).
+      Slutsatsen är inte att revisionen ljög — bevisen är äkta — utan att den mätte
+      det byggaren visste att mäta. Detta dokument letar efter resten.
+    </div>
+  </div>
+
+  <h2>1 · Nya fynd — det revisionen inte såg</h2>
+  <div class="tablewrap"><table>
+    <tr><th></th><th>Fynd</th><th>Varför det är allvarligt</th></tr>
+    <tr><td><span class="klass a">A1</span></td>
+      <td><strong>Ångerrätten hanteras inte alls.</strong> Sond M1: noll träffar på
+      ångerrätt/distansavtal i hela kodbasen. Systemet tar 39 kr + 19 kr av konsumenter
+      på distans utan förhandsinformation om ångerrätt, utan uttryckligt samtycke till
+      omedelbar leverans och utan bekräftelse på att ångerrätten därmed frånfaller.</td>
+      <td>Distansavtalslagen kräver detta före köp av digitalt innehåll. Som byggt kan
+      varje kund kräva pengarna tillbaka i 14 dagar — och tillsynen kan ingripa.
+      Juridisk lanseringsblockerare som ingen readiness-probe fångar.</td></tr>
+    <tr><td><span class="klass a">A2</span></td>
+      <td><strong>Hälsodata samlas in utan grund för känsliga personuppgifter.</strong>
+      Sond M2/M3/M7: intagsfrågan om funktionsnedsättning/långvarig sjukdom skapar
+      art. 9-data (hälsa) som lagras i profilens facts — men inget uttryckligt samtycke
+      inhämtas, och PRIVACY.md nämner inte känsliga uppgifter med ett ord.</td>
+      <td>Art. 9 kräver uttrycklig rättslig grund (i praktiken uttryckligt samtycke) och
+      gör DPIA:n obligatorisk — den är inte den "organisatoriska formalitet" revisionen
+      kallade den. Funkisspåret, en av produktens styrkor, är samtidigt dess största
+      juridiska exponering.</td></tr>
+    <tr><td><span class="klass a">A3</span></td>
+      <td><strong>Kunskapsbasen påstår en granskning som aldrig skett.</strong> Sond M4/M6:
+      seed-koden stämplar <em>samtliga</em> 72 stöd som <code>human_curated</code> —
+      "Manuellt sammanställd från officiell källa" — men ingen människa har granskat dem.
+      De är AI-sammanställda, och beloppsgränser som "25 000 kr" bygger på agentens
+      kunskap, inte på verifierade live-källor (denna miljös nätverk kan inte ens nå
+      myndighetssajterna).</td>
+      <td>Detta bryter mot systemets egen konstitution ("varje regel spårbar till officiell
+      källa", "aldrig dölja en begränsning"). Fel tröskelvärde till en person i ekonomisk
+      utsatthet är produktens största skadepotential — och etiketten säger idag motsatsen
+      till sanningen.</td></tr>
+    <tr><td><span class="klass b">B1</span></td>
+      <td><strong>Tillgängligheten är ogranskad.</strong> Sond M9: 2 av 17 sidor innehåller
+      över huvud taget aria/role. Ingen WCAG-genomgång, ingen skärmläsartestning,
+      ingen tangentbordsgenomklickning som kontroll.</td>
+      <td>Produkten riktar sig uttryckligen till personer med funktionsnedsättning.
+      Att bygga ett funkisspår i en otillgänglig app är ett självmotsägande löfte —
+      och EU:s tillgänglighetsdirektiv träffar konsumenttjänster.</td></tr>
+    <tr><td><span class="klass b">B2</span></td>
+      <td><strong>Valideringen är cirkulär.</strong> 282 tester, 30 simulerade personas,
+      13 UI-genomklickningar — allihop författade av samma agent som skrev koden.
+      De bevisar intern konsistens, inte extern korrekthet.</td>
+      <td>Den enda externa kontakten hittills — Eriks demoklick — fann omedelbart sex
+      verkliga fel som alla kontroller missat. Det är den empiriska kvoten:
+      en människa i tio minuter slog hundratals egentester.</td></tr>
+    <tr><td><span class="klass b">B3</span></td>
+      <td><strong>Ingen återbetalningspolicy.</strong> 19 kr tas innan granskningen kan
+      visa att ansökan är utsiktslös. Kvittot har ett <code>refundStatus</code>-fält —
+      men inget flöde, ingen policy, ingen text sätter det någonsin till något annat
+      än "none".</td>
+      <td>Kombinerat med A1 blir det: kunden har lagligt rätt till återbetalning som
+      produkten varken utlovar eller kan verkställa.</td></tr>
+    <tr><td><span class="klass b">B4</span></td>
+      <td><strong>Affärsantagandena är helt otestade.</strong> Intäkten "1 246 kr" kommer
+      från agentens egna påhittade personas. Noll riktiga kunder, okänd betalningsvilja,
+      okänd konvertering — mot gratisalternativ (myndigheternas egna sidor, kommunal
+      budget- och skuldrådgivning).</td>
+      <td>Hela värdet hänger på att 39 kr-analysen upplevs värd mer än en googling.
+      Det är oprövat, och tunna marginaler (Swish-avgift, certifikat, drift) tål
+      inte låg konvertering.</td></tr>
+    <tr><td><span class="klass c">C</span></td>
+      <td><strong>Mindre brister:</strong> ingen rotationsplan för
+      <code>FIELD_ENCRYPTION_KEY</code> (M8); audit-loggen är vanliga tabellrader —
+      muterbar för databasägaren, ingen hash-kedja (M10); all svensk copy är
+      AI-skriven utan modersmålsgranskning; bus factor 1 — ingen människa kan
+      idag underhålla 279 filer utan agenten.</td>
+      <td>Var för sig acceptabla; tillsammans en påminnelse om att "produktionsfärdig
+      arkitektur" inte är detsamma som "driftbar organisation".</td></tr>
+  </table></div>
+
+  <h2>2 · Förhöret av revisionen själv</h2>
+  <ul>
+    <li><strong>Betygsinflation genom namnval.</strong> "TÜV" lånar ett ackrediterat organs
+    trovärdighet till en självrevision. Reservationen fanns i rapporten — men rubriken
+    gör jobbet innan brasklappen läses.</li>
+    <li><strong>Kriterierna valdes av den granskade.</strong> Tolv områden — men "juridisk
+    efterlevnad för konsumentköp", "tillgänglighet" och "innehållets sakriktighet" fanns
+    inte bland dem. De tre områden där systemet är svagast var inte med på provet.</li>
+    <li><strong>"Färska bevis" mäter att koden gör vad koden gör.</strong> B11 räknade att
+    seed-datan innehåller 72 stöd — inte att något av de 72 är <em>korrekt</em>.
+    Sanningshalten mot verkligheten är obevisad och kan inte bevisas inifrån.</li>
+    <li><strong>Det som höll även under motförhör</strong> förtjänar att sägas:
+    <span style="font-family:'IBM Plex Sans',sans-serif;font-size:0.9em;">cookieflaggorna är korrekta
+    (httpOnly, secure, SameSite lax — sond M5), mock-vakterna är strukturella, betalkedjans
+    invarianter är verkliga, SSRF-skyddet finns, CI:n är en oberoende bevislinje som redan
+    motbevisat agenten två gånger — och readiness-endpointen vägrar ärligt att grönmåla.</span></li>
+  </ul>
+
+  <h2>3 · Reviderat domslut</h2>
+  <div class="domsruta">
+    <div class="stampel"><small>Motrevision 2026-08-18</small>DOMSLUTET<br>REVIDERAS</div>
+    <div class="domtext">
+      <p><strong>"Godkänd med villkor" var rätt svar på fel fråga.</strong> Tekniskt står
+      systemet stadigt — det är verifierat och verifierbart. Men helheten är:</p>
+      <p><strong>Tekniskt verifierad · Juridiskt overifierad · Innehållsligt overifierad ·
+      Kommersiellt overifierad.</strong></p>
+      <p>Tre av fyra ben saknar bevis, och två av dem (A1–A3) kan inte stängas av agenten
+      själv: de kräver en jurist, en mänsklig sakgranskare av alla 72 stöd mot levande
+      källor, och riktiga kunder.</p>
+    </div>
+  </div>
+
+  <h2>4 · Prioriterad åtgärdslista (förslag — beslutas av operatören)</h2>
+  <ol>
+    <li><strong>A3 sanningen först (kan göras direkt i kod):</strong> stämpla om kunskapsbasen
+    till en ärlig status ("AI-sammanställd — ej mänskligt granskad"), visa det i UI och demo,
+    och bygg en gransknings-kö där varje stöd flyttas till <code>human_verified</code> först
+    när en människa bockat av det mot källan.</li>
+    <li><strong>A1 ångerrätten (kod + text):</strong> samtyckesruta före betalning
+    ("Jag samtycker till omedelbar leverans och att ångerrätten därmed upphör"),
+    förhandsinformation, och ett återbetalningsflöde som sätter <code>refundStatus</code>.
+    Låt en jurist läsa texterna.</li>
+    <li><strong>A2 art. 9 (kod + dokument):</strong> uttryckligt samtycke vid
+    funktionsnedsättningsfrågan, känsliga-uppgifter-avsnitt i PRIVACY.md, DPIA som
+    obligatoriskt lanseringsvillkor i readiness-runbooken.</li>
+    <li><strong>B1 tillgänglighet:</strong> WCAG-pass på intaget och betalflödet först
+    (de två flöden en användare måste klara), sedan resten.</li>
+    <li><strong>B2/B4 verklighetskontakt:</strong> 5–10 riktiga användare genom demon före
+    fler funktioner. Eriks sex fynd på tio minuter är facit på var nästa sanning finns.</li>
+  </ol>
+
+  <h2>5 · Sondprotokoll</h2>
+  <div class="bevis"><span class="bid">M1 </span>svep ångerrätt/distansavtal/withdrawal   → 0 träffar i kod, docs, demo
+<span class="bid">M2 </span>art. 9-data i intaget                    → person.disabilityOrLongTermIllnessInFamily
+                                            grindar 5+ stöd, lagras i profilens facts
+<span class="bid">M3 </span>samtyckesinhämtning vid intaget          → saknas (enda träffarna gäller annans
+                                            samtycke i närståendepenning-formuläret)
+<span class="bid">M4 </span>verification_status i seed               → 1 förekomst: konstant för ALLA stöd
+<span class="bid">M5 </span>cookieflaggor                            → httpOnly ✓ secure(prod) ✓ sameSite lax ✓
+<span class="bid">M6 </span>seed/run.ts rad 130                      → verificationStatus: 'human_curated'
+                                            stämplas maskinellt på samtliga 72
+<span class="bid">M7 </span>PRIVACY.md om känsliga uppgifter/art. 9  → 0 träffar
+<span class="bid">M8 </span>rotationsplan FIELD_ENCRYPTION_KEY       → saknas (endast refresh-tokens roteras)
+<span class="bid">M9 </span>aria/role i webbens sidor                → 2 av 17 sidor
+<span class="bid">M10</span>audit-loggens oföränderlighet            → inga skydd utöver vanlig tabell</div>
+
+  <div class="sign">
+    <div>Motrevision på operatörens direktiv "Ifrågasätt allt".<br>
+    Agenten kan inte förhöra sina egna kunskapsluckor — A3 kräver människor.</div>
+    <div class="mono">Motförhör 2026-08-18 · rev. 4da4b11<br>10 sonder · 3 A · 4 B · 4 C</div>
+  </div>
+</div>
