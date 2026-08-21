@@ -24,6 +24,9 @@ const out = {};
 for (const slug of ['kommun-forsorjningsstod', 'fk-bostadsbidrag-barnfamiljer', 'majblomman-bidrag-barn']) {
   const row = m.json.matches.find((r) => r.slug === slug);
   if (!row) { out[slug] = 'EJ I SVARET'; continue; }
+  // Prismodellen: varje ansökan i systemet kostar 19 kr — köp en kredit först.
+  const pur = await call('POST', `/v1/projects/${pid}/application-purchase`, {});
+  await call('POST', `/v1/payments/${pur.json.paymentId}/mock-confirm`);
   const c = await call('POST', '/v1/applications', { projectId: pid, opportunityId: row.opportunityId });
   if (c.status !== 201) { out[slug] = `CASE FAIL ${c.status}`; continue; }
   const det = await call('GET', `/v1/applications/${c.json.application.id}`);
