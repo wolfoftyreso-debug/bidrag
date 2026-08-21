@@ -107,3 +107,11 @@ button:focus-visible, .choice:focus-visible, .btn:focus-visible, input:focus-vis
 /* F-TEASER: blurrade "namn" i teasern — det som blurras är en formbevarande
    mask, aldrig den riktiga titeln. */
 .blurred { filter: blur(4.5px); user-select: none; -webkit-user-select: none; opacity: 0.85; }
+
+/* F-ÄNDRA 2 förtydligad: kvittensen är en kompakt rad, och frågorna i
+   "Några frågor kvar" separeras med tunna avdelare så listan går att skumma. */
+.svar-kvitto { display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem; flex-wrap: wrap;
+  background: var(--success-soft); color: var(--success); border: 1px solid var(--success);
+  border-radius: 9px; padding: 0.55rem 0.85rem; margin: 0.6rem 0; font-size: 0.9rem; }
+.card.accent .q-row { padding: 0.65rem 0; margin: 0; }
+.card.accent .q-row + .q-row { border-top: 1px solid var(--border); }

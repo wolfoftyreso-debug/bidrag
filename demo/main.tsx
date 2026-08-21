@@ -505,27 +505,26 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
   return (
     <div>
       {resolvedNote && (
-        <div className="card" style={{ borderLeft: '4px solid #2e7d55' }}>
-          <p className="guidance" style={{ margin: 0 }}>
-            <strong>{resolvedNote.length === 1 ? 'En väntande fråga behövdes inte längre' : `${resolvedNote.length} väntande frågor behövdes inte längre`}:</strong>{' '}
-            {resolvedNote.map((t) => `”${t}”`).join(' · ')} — ditt senaste svar avgjorde redan de stöd frågorna gällde.
-            Inget har försvunnit ur analysen: varje stöd ligger kvar i sin sektion nedan, och under ”Dina svar” kan du ändra dig.
+        <div className="card" style={{ borderLeft: '4px solid #2e7d55', padding: '0.8rem 1.1rem' }}>
+          <p style={{ margin: 0, fontSize: '0.9rem' }}>
+            ✓ <strong>{resolvedNote.length === 1 ? 'En fråga behövdes inte längre' : `${resolvedNote.length} frågor behövdes inte längre`}</strong>
+            {' '}— ditt svar avgjorde redan {resolvedNote.map((t) => `”${t}”`).join(' · ')}.
+            <span className="meta" style={{ display: 'inline' }}> Inget är borta: stöden ligger kvar nedan, och du kan ändra dig under ”Dina svar”.</span>
           </p>
         </div>
       )}
 
       {openQs.length > 0 && (
         <div className="card accent">
-          <h2>Några frågor kvar ({allOpen.length})</h2>
-          <p className="guidance">
-            Dina svar uppdaterar bedömningen direkt — motorn räknar om i webbläsaren.
-            {allOpen.length > openQs.length ? ` Vi visar de ${openQs.length} som avgör mest först; resten dyker upp allteftersom.` : ''}
-            {' '}En besvarad fråga försvinner inte: den flyttar till ”Dina svar” direkt nedanför, där du kan ändra dig när som helst.
+          <h2 style={{ marginBottom: '0.15rem' }}>Några frågor kvar ({allOpen.length})</h2>
+          <p className="meta" style={{ margin: '0 0 0.4rem' }}>
+            {allOpen.length > openQs.length ? `Visar de ${openQs.length} som avgör mest · ` : ''}
+            Svaren räknas om direkt · Besvarade frågor flyttar till ”Dina svar” och kan alltid ändras
           </p>
           {justAnswered && (
-            <div role="status" aria-live="polite" style={{ background: 'var(--success-soft)', color: 'var(--success)', borderRadius: 8, padding: '0.55rem 0.8rem', margin: '0.5rem 0', fontSize: '0.9rem' }}>
-              ✓ Ditt svar på ”{justAnswered}” är sparat.{' '}
-              <button className="linkish" style={{ color: 'inherit', textDecoration: 'underline' }} onClick={() => document.getElementById('dina-svar')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+            <div role="status" aria-live="polite" className="svar-kvitto">
+              <span>✓ Svaret på <strong>”{justAnswered}”</strong> är sparat</span>
+              <button className="linkish" style={{ color: 'inherit', textDecoration: 'underline', whiteSpace: 'nowrap' }} onClick={() => document.getElementById('dina-svar')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
                 Ändra dig under Dina svar ↓
               </button>
             </div>

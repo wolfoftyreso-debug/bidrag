@@ -251,20 +251,22 @@ export default function MatchesPage() {
       )}
 
       {savedNote !== null && (
-        <div className="alert success" role="status" aria-live="polite">
-          ✓ {savedNote === 1 ? 'Ditt svar är sparat' : `Dina ${savedNote} svar är sparade`} och analysen omräknad.
-          En besvarad fråga försvinner aldrig — du hittar den under{' '}
-          <button className="subtle" style={{ padding: 0, textDecoration: 'underline', color: 'inherit', fontWeight: 600 }}
+        <div className="alert success" role="status" aria-live="polite" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.8rem', flexWrap: 'wrap' }}>
+          <span>✓ {savedNote === 1 ? 'Ditt svar är sparat' : `Dina ${savedNote} svar är sparade`} · analysen är omräknad</span>
+          <button className="subtle" style={{ padding: 0, textDecoration: 'underline', color: 'inherit', fontWeight: 600, whiteSpace: 'nowrap' }}
             onClick={() => document.getElementById('dina-svar')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
-            Dina svar
-          </button>{' '}och kan ändra dig när som helst.
+            Ändra dig under Dina svar ↓
+          </button>
         </div>
       )}
 
       {openQuestions.size > 0 && (
         <div className="card" style={{ borderColor: 'var(--warning)' }}>
-          <h2>Några frågor kvar</h2>
-          <p className="guidance">Dina svar avgör vilka stöd du faktiskt kan söka. En besvarad fråga försvinner inte — den flyttar till ”Dina svar” nedanför, där du kan ändra dig.</p>
+          <h2 style={{ marginBottom: '0.15rem' }}>Några frågor kvar ({openQuestions.size})</h2>
+          <p className="meta-line" style={{ margin: '0 0 0.4rem' }}>
+            {openQuestions.size > 6 ? `Visar de 6 som avgör mest · ` : ''}
+            Svaren avgör vilka stöd du kan söka · Besvarade frågor flyttar till ”Dina svar” och kan alltid ändras
+          </p>
           {openList.slice(0, 6).map(([factPath, q]) => (
             <div key={factPath} style={{ margin: '0.75rem 0' }}>
               <div className="meta-line" style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
