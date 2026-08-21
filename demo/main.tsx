@@ -483,6 +483,12 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [facts]);
 
+  // F-ÄNDRA 2 (användarfynd): när ett svar just lagts ska det SYNAS vart
+  // frågan tog vägen — en kvittens med hopplänk till "Dina svar", i stället
+  // för att frågan tyst försvinner ur listan.
+  const [justAnswered, setJustAnswered] = useState<string | null>(null);
+  const answerOpen = (path: string, v: boolean, q: string) => { setJustAnswered(q); onFact(path, v); };
+
   // Dina svar: en besvarad fråga försvinner aldrig — den flyttar hit och kan
   // ändras när som helst; motorn räknar om direkt i webbläsaren.
   const answered = new Map<string, { q: string; value: boolean; titles: string[] }>();
@@ -516,13 +522,21 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
             {allOpen.length > openQs.length ? ` Vi visar de ${openQs.length} som avgör mest först; resten dyker upp allteftersom.` : ''}
             {' '}En besvarad fråga försvinner inte: den flyttar till ”Dina svar” direkt nedanför, där du kan ändra dig när som helst.
           </p>
+          {justAnswered && (
+            <div role="status" aria-live="polite" style={{ background: 'var(--success-soft)', color: 'var(--success)', borderRadius: 8, padding: '0.55rem 0.8rem', margin: '0.5rem 0', fontSize: '0.9rem' }}>
+              ✓ Ditt svar på ”{justAnswered}” är sparat.{' '}
+              <button className="linkish" style={{ color: 'inherit', textDecoration: 'underline' }} onClick={() => document.getElementById('dina-svar')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+                Ändra dig under Dina svar ↓
+              </button>
+            </div>
+          )}
           {openQs.map(([path, q]) => (
             <div key={path} className="q-row">
               <div className="q-context">Gäller {q.titles.slice(0, 2).join(' och ')}{q.titles.length > 2 ? ` + ${q.titles.length - 2} till` : ''}</div>
               <strong>{q.q}</strong>
               <div className="row" style={{ marginTop: '0.3rem' }}>
-                <button className="btn small" onClick={() => onFact(path, true)}>Ja</button>
-                <button className="btn small" onClick={() => onFact(path, false)}>Nej</button>
+                <button className="btn small" onClick={() => answerOpen(path, true, q.q)}>Ja</button>
+                <button className="btn small" onClick={() => answerOpen(path, false, q.q)}>Nej</button>
               </div>
             </div>
           ))}
@@ -532,7 +546,7 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
       {/* F-ÄNDRA (användarfynd): besvarade frågor ska synligt gå att ändra —
           sektionen är öppen som standard, inte hopfälld. */}
       {answered.size > 0 && (
-        <details className="card" open>
+        <details className="card" open id="dina-svar">
           <summary style={{ cursor: 'pointer', fontWeight: 600 }}>Dina svar ({answered.size}) — granska eller ändra</summary>
           <p className="guidance" style={{ marginTop: '0.5rem' }}>Ändrar du ett svar räknas hela analysen om direkt.</p>
           {[...answered.entries()].map(([path, q]) => (

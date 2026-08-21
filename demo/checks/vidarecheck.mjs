@@ -55,6 +55,17 @@ await page.waitForSelector('text=Det här ser du ut att kunna ha rätt till');
 await page.waitForSelector('details[open] >> text=Dina svar');
 console.log('2. "Dina svar" är öppen som standard — svaren syns och kan ändras ✓');
 
+// F-ÄNDRA 2: svara på en öppen fråga → kvittens med hopplänk till Dina svar.
+const OPENQ = '.q-row:not(details .q-row)';
+if (await page.locator(OPENQ).count()) {
+  await page.locator(OPENQ).first().locator('button:has-text("Ja")').click();
+  await page.waitForSelector('text=är sparat');
+  const receipt = await page.locator('[role="status"]', { hasText: 'är sparat' }).count();
+  if (!receipt) { console.log('FEL: ingen kvittens efter besvarad fråga'); process.exit(1); }
+  await page.click('text=Ändra dig under Dina svar');
+  console.log('2b. Kvittens efter svar + hopplänk till Dina svar ✓');
+}
+
 // 4. F-HOPP: frågeräknaren visar totalen.
 const counter = await page.locator('h2', { hasText: 'Några frågor kvar (' }).textContent();
 console.log(`3. Frågeräknaren visar totalen: "${counter.trim()}" ✓`);

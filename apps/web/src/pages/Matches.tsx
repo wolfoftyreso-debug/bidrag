@@ -73,6 +73,8 @@ export default function MatchesPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [matches, setMatches] = useState<MatchRow[]>([]);
   const [facts, setFacts] = useState<Record<string, unknown>>({});
+  // F-ÄNDRA 2: kvitton på att just sparade svar hamnat under "Dina svar".
+  const [savedNote, setSavedNote] = useState<number | null>(null);
   const [teaser, setTeaser] = useState<Teaser | null>(null);
   const [answers, setAnswers] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState(false);
@@ -149,9 +151,11 @@ export default function MatchesPage() {
     if (!projectId || Object.keys(answers).length === 0) return;
     setBusy(true);
     try {
+      const saved = Object.keys(answers).length;
       await patch(`/v1/projects/${projectId}`, { facts: answers });
       await post(`/v1/projects/${projectId}/matches`, {});
       setAnswers({});
+      setSavedNote(saved);
       load();
     } finally {
       setBusy(false);
@@ -246,10 +250,21 @@ export default function MatchesPage() {
         </p>
       )}
 
+      {savedNote !== null && (
+        <div className="alert success" role="status" aria-live="polite">
+          ✓ {savedNote === 1 ? 'Ditt svar är sparat' : `Dina ${savedNote} svar är sparade`} och analysen omräknad.
+          En besvarad fråga försvinner aldrig — du hittar den under{' '}
+          <button className="subtle" style={{ padding: 0, textDecoration: 'underline', color: 'inherit', fontWeight: 600 }}
+            onClick={() => document.getElementById('dina-svar')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+            Dina svar
+          </button>{' '}och kan ändra dig när som helst.
+        </div>
+      )}
+
       {openQuestions.size > 0 && (
         <div className="card" style={{ borderColor: 'var(--warning)' }}>
           <h2>Några frågor kvar</h2>
-          <p className="guidance">Dina svar avgör vilka stöd du faktiskt kan söka.</p>
+          <p className="guidance">Dina svar avgör vilka stöd du faktiskt kan söka. En besvarad fråga försvinner inte — den flyttar till ”Dina svar” nedanför, där du kan ändra dig.</p>
           {openList.slice(0, 6).map(([factPath, q]) => (
             <div key={factPath} style={{ margin: '0.75rem 0' }}>
               <div className="meta-line" style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
@@ -269,7 +284,7 @@ export default function MatchesPage() {
       )}
 
       {answeredQuestions.size > 0 && (
-        <details className="card" style={{ padding: '0.9rem 1.35rem' }}>
+        <details className="card" open id="dina-svar" style={{ padding: '0.9rem 1.35rem' }}>
           <summary style={{ cursor: 'pointer', fontWeight: 600 }}>
             Dina svar ({answeredQuestions.size}) — granska eller ändra
           </summary>
