@@ -76,6 +76,7 @@ export async function issueReceipt(tx: Tx, payment: PaymentRow): Promise<Receipt
       sellerVatNumber: config.sellerVatNumber,
       sellerAddress: config.sellerAddress,
       email: payment.receiptEmail,
+      withdrawalConsentAt: payment.withdrawalConsentAt,
     })
     .returning();
   return receipt!;
@@ -102,7 +103,8 @@ export function receiptDocument(r: ReceiptRow): string {
     `Produkt:           ${r.productDescription}`,
     `Betalningsmetod:   ${METHOD_LABEL[r.paymentMethod] ?? r.paymentMethod}`,
     `Betalningsstatus:  ${r.paymentStatus === 'confirmed' ? 'Genomförd' : r.paymentStatus}`,
-    `Återbetalning:     ${r.refundStatus === 'none' ? 'Nej' : r.refundStatus}`,
+    `Återbetalning:     ${r.refundStatus === 'none' ? 'Nej' : r.refundStatus === 'requested' ? 'Begärd' : 'Genomförd'}`,
+    `Ångerrätt:         ${r.withdrawalConsentAt ? 'Upphörd — uttryckligt samtycke till omedelbar leverans lämnades vid köpet' : 'Se köpvillkoren'}`,
     '',
     `Belopp exkl. moms: ${kr(r.amountNetMinor)}`,
     `Moms (${vatPercent} %):   ${kr(r.vatAmountMinor)}`,

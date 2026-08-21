@@ -28,6 +28,7 @@ await page.waitForSelector('text=allvarlig sjukdom');
 await page.click('.row >> button:has-text("Nej")');
 await page.waitForSelector('text=Lås upp din bidragsanalys');
 await page.click('text=Lås upp din bidragsanalys');
+await page.check('#angerratt');
 await page.click('text=Godkänn betalning (simulerad)');
 await page.waitForSelector('text=Betalning genomförd');
 await page.click('text=Visa min analys');

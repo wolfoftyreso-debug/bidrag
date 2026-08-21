@@ -12,7 +12,7 @@ process.env.PAYMENTS_MOCK_ENABLED = 'true';
 process.env.CRON_SECRET = 'smoke-cron-secret';
 process.env.LOG_LEVEL = 'silent';
 
-const { default: handler } = await import('./api/index.ts');
+const { default: handler } = await import('../api/index.ts');
 
 const server = http.createServer((req, res) => handler(req, res));
 await new Promise((r) => server.listen(3200, r));
@@ -52,7 +52,7 @@ const teaser = await call('GET', `/v1/projects/${pid}/matches`);
 if (!teaser.json.locked) throw new Error('teaser saknas');
 console.log('OK: matchning + teaser');
 
-const unlock = await call('POST', `/v1/projects/${pid}/analysis-unlock`, { email: 'sv@test.example' });
+const unlock = await call('POST', `/v1/projects/${pid}/analysis-unlock`, { email: 'sv@test.example', immediateDeliveryConsent: true });
 console.log("unlock:", unlock.status, JSON.stringify(unlock.json).slice(0,200));
 const confirm = await call('POST', `/v1/payments/${unlock.json.paymentId}/mock-confirm`);
 console.log("confirm:", confirm.status, JSON.stringify(confirm.json).slice(0,200));

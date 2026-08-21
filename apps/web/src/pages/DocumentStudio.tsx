@@ -8,6 +8,7 @@
  */
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { PurchaseConsent } from '../components/PurchaseConsent';
 import { ApiError, formatDate, formatSek, get, post } from '../api';
 
 interface DocQuestion {
@@ -130,6 +131,7 @@ export default function DocumentStudioPage() {
 /** Paketerbjudandet — hjälp, inte styckdebitering. "Gör det själv" är alltid gratis. */
 function PackOffer({ projectId, prices, onPurchased }: { projectId: string; prices: CreditsInfo['prices']; onPurchased: () => void }) {
   const [busy, setBusy] = useState(false);
+  const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [payment, setPayment] = useState<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean } } | null>(null);
   const [confirmedNote, setConfirmedNote] = useState(false);
@@ -139,7 +141,7 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
     setError(null);
     try {
       const res = await post<{ paymentId: string; instructions: { method: string; message?: string } }>(
-        `/v1/projects/${projectId}/document-pack`, { pack: 'application' },
+        `/v1/projects/${projectId}/document-pack`, { pack: 'application', immediateDeliveryConsent: true },
       );
       setPayment(res);
     } catch (err) {
@@ -209,8 +211,9 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
           <strong>Förbered ansökan — alla dokument</strong>
           <div className="meta-line">Ansökan, ekonomisk bilaga, behovsbeskrivning och förklaringar — allt som behövs för en ansökan.</div>
         </div>
-        <button className="secondary" disabled={busy} onClick={buy}>{formatSek(prices.application)}</button>
+        <button className="secondary" disabled={busy || !consent} onClick={buy}>{formatSek(prices.application)}</button>
       </div>
+      <PurchaseConsent checked={consent} onChange={setConsent} idSuffix="-dokument" />
       {error && <div className="alert error">{error}</div>}
     </div>
   );

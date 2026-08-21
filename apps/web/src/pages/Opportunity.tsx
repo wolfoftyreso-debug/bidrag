@@ -5,6 +5,7 @@
  */
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { PurchaseConsent } from '../components/PurchaseConsent';
 import { ApiError, INSTRUMENT_LABELS, formatDate, formatSek, get, post } from '../api';
 
 interface Criterion {
@@ -50,6 +51,7 @@ interface OpportunityDetail {
 const VERIFICATION_LABELS: Record<string, string> = {
   unverified: 'Ej verifierad',
   machine_extracted: 'Automatiskt inläst — ej granskad',
+  ai_curated: 'AI-sammanställd från officiell källa — ej granskad av människa',
   human_curated: 'Manuellt sammanställd från officiell källa',
   human_verified: 'Verifierad mot officiell källa',
 };
@@ -203,6 +205,7 @@ export default function OpportunityPage() {
  */
 function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: string; priceMinor: number; onPaid: () => void }) {
   const [busy, setBusy] = useState(false);
+  const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [payment, setPayment] = useState<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean } } | null>(null);
   const [confirmed, setConfirmed] = useState(false);
@@ -212,7 +215,7 @@ function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: str
     setError(null);
     try {
       const res = await post<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean } }>(
-        `/v1/projects/${projectId}/application-purchase`,
+        `/v1/projects/${projectId}/application-purchase`, { immediateDeliveryConsent: true },
       );
       setPayment(res);
     } catch (err) {
@@ -272,7 +275,8 @@ function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: str
         Att förbereda en ansökan i systemet kostar {formatSek(priceMinor)} per ansökan — alla dokument för den
         ansökan ingår. Du kan alltid ansöka själv direkt hos myndigheten, det är gratis.
       </p>
-      <button disabled={busy} onClick={buy}>Förbered ansökan — {formatSek(priceMinor)}</button>
+      <PurchaseConsent checked={consent} onChange={setConsent} idSuffix="-ansokan" />
+      <button disabled={busy || !consent} onClick={buy}>Förbered ansökan — {formatSek(priceMinor)}</button>
       {error && <div className="alert error">{error}</div>}
     </div>
   );

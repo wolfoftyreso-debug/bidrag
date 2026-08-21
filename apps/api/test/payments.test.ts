@@ -66,8 +66,14 @@ describe('teaser före betalning', () => {
 });
 
 describe('betalning → bekräftelse → kvitto → upplåsning', () => {
-  it('creates a pending payment with mock instructions and a receipt email', async () => {
+  it('refuses a purchase without explicit immediate-delivery consent (400, distansavtalslagen)', async () => {
     const res = await api(app, user, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { email: 'kvitto@test.example' });
+    expect(res.statusCode).toBe(400);
+    expect((res.json() as { error: string }).error).toBe('consent_required');
+  });
+
+  it('creates a pending payment with mock instructions and a receipt email', async () => {
+    const res = await api(app, user, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { email: 'kvitto@test.example', immediateDeliveryConsent: true });
     expect(res.statusCode).toBe(201);
     const body = res.json() as { paymentId: string; amountMinor: number; instructions: { method: string; mockConfirmable: boolean; message: string } };
     paymentId = body.paymentId;
@@ -100,7 +106,7 @@ describe('betalning → bekräftelse → kvitto → upplåsning', () => {
   });
 
   it('a second unlock attempt is idempotent — never charge twice', async () => {
-    const res = await api(app, user, 'POST', `/v1/projects/${projectId}/analysis-unlock`);
+    const res = await api(app, user, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { immediateDeliveryConsent: true });
     expect(res.statusCode).toBe(200);
     expect((res.json() as { alreadyUnlocked: boolean }).alreadyUnlocked).toBe(true);
   });
@@ -178,7 +184,7 @@ describe('kvitto/verifikationsunderlag', () => {
     const projectRes = await api(app, user, 'POST', '/v1/projects', { profileId, title: 'Utan e-post', intent: 'test' });
     const pid = (projectRes.json() as { project: { id: string } }).project.id;
 
-    const create = await api(app, user, 'POST', `/v1/projects/${pid}/analysis-unlock`);
+    const create = await api(app, user, 'POST', `/v1/projects/${pid}/analysis-unlock`, { immediateDeliveryConsent: true });
     expect(create.statusCode).toBe(201);
     const newPaymentId = (create.json() as { paymentId: string }).paymentId;
     await api(app, user, 'POST', `/v1/payments/${newPaymentId}/mock-confirm`);
@@ -208,7 +214,7 @@ describe('kvitto/verifikationsunderlag', () => {
     const profileId = (profiles.json() as { profiles: { id: string }[] }).profiles[0]!.id;
     const projectRes = await api(app, user, 'POST', '/v1/projects', { profileId, title: 'Serie', intent: 'test' });
     const pid = (projectRes.json() as { project: { id: string } }).project.id;
-    const create = await api(app, user, 'POST', `/v1/projects/${pid}/analysis-unlock`, { email: 'serie@test.example' });
+    const create = await api(app, user, 'POST', `/v1/projects/${pid}/analysis-unlock`, { email: 'serie@test.example', immediateDeliveryConsent: true });
     const p2 = (create.json() as { paymentId: string }).paymentId;
     await api(app, user, 'POST', `/v1/payments/${p2}/mock-confirm`);
     const r2 = await api(app, user, 'GET', `/v1/projects/${pid}/receipt`);
@@ -244,6 +250,7 @@ describe('Mina köp — kvittot är förstaklass i kontot (ingen e-post krävs)'
     const { document } = res.json() as { document: string };
     expect(document).toContain('KVITTO');
     expect(document).toContain('Moms (25,00 %)');
+    expect(document).toContain('Ångerrätt:         Upphörd');
   });
 
   it('IDOR: another tenant sees an empty purchase list and 404 on a known payment id', async () => {

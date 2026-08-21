@@ -2,7 +2,9 @@
  * Wave-1 curated funding knowledge (§73).
  *
  * Every record is traceable to an official primary source URL (source quality
- * A) and marked verification_status = 'human_curated' with a retrieval date.
+ * A) and marked verification_status = 'ai_curated' with a retrieval date —
+ * compiled by an AI from official sources, NOT human-reviewed. The curator
+ * flow in admin is the only path to 'human_curated'/'human_verified'.
  * Deadlines that could not be verified from the source at curation time are
  * modelled as 'rolling' or 'upcoming_round' with closesAt = null — the UI
  * says so instead of inventing dates. Amounts and criteria encode the

@@ -39,6 +39,7 @@ console.log('OK: teaser utan läckage');
 await page.click('text=Lås upp din bidragsanalys — 39 kr');
 await page.waitForSelector('text=SIMULERAD BETALNING');
 await page.screenshot({ path: `${S}/18-demo-swish.png`, fullPage: true });
+await page.check('#angerratt');
 await page.click('text=Godkänn betalning (simulerad)');
 await page.waitForSelector('text=Betalning genomförd ✓');
 await page.click('text=Visa min analys');
@@ -75,6 +76,7 @@ await page.click('.row >> button:has-text("Ja")'); // kunskap hem
 await page.click('.row >> button:has-text("Nej")'); // ej barn/unga
 await page.waitForSelector('text=stöd som matchar din situation');
 await page.click('text=Lås upp din bidragsanalys — 39 kr');
+await page.check('#angerratt');
 await page.click('text=Godkänn betalning (simulerad)');
 await page.waitForSelector('text=Betalning genomförd ✓');
 await page.click('text=Visa min analys');

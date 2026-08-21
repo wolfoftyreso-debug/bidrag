@@ -44,6 +44,7 @@ await page.waitForSelector('text=stöd som matchar din situation', { timeout: 60
 console.log('1. Intaget genomfört, teasern visas ✓');
 
 // Lås upp analysen (39 kr, simulerad).
+await page.check('#angerratt-samtycke-analys');
 await page.click('button:has-text("Lås upp")');
 await page.waitForSelector('button:has-text("Bekräfta betalning")', { timeout: 30000 });
 await page.click('button:has-text("Bekräfta betalning")');
@@ -74,6 +75,7 @@ if (!/ansöka själv/.test(body)) fail('den ärliga "gratis att ansöka själv"-
 console.log('4. Utan kredit → köpflöde med 19 kr + ärlig gratisväg, inget fel ✓');
 
 // Köp + bekräfta → ansökan skapas.
+await page.check('#angerratt-samtycke-ansokan');
 await page.click('button:has-text("Förbered ansökan —")');
 await page.waitForSelector('button:has-text("Bekräfta betalning")', { timeout: 30000 });
 await page.click('button:has-text("Bekräfta betalning")');

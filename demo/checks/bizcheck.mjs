@@ -24,6 +24,7 @@ await page.click('.row >> button:has-text("Nej")');
 await page.waitForSelector('text=stöd som matchar din situation');
 await page.click('text=Lås upp din bidragsanalys — 39 kr');
 await page.waitForSelector('text=SIMULERAD BETALNING');
+await page.check('#angerratt');
 await page.click('text=Godkänn betalning (simulerad)');
 await page.waitForSelector('text=Betalning genomförd ✓');
 await page.click('text=Visa min analys');

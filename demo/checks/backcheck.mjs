@@ -53,6 +53,7 @@ console.log('3. Teasern → Ändra mina svar → tillbaka på sista frågan ✓'
 await page.waitForSelector('text=allvarlig sjukdom');
 await page.click('.row >> button:has-text("Nej")');
 await page.click('text=Lås upp din bidragsanalys — 39 kr');
+await page.check('#angerratt');
 await page.click('text=Godkänn betalning (simulerad)');
 await page.click('text=Visa min analys');
 await page.waitForSelector('text=Det här ser du ut att kunna ha rätt till');

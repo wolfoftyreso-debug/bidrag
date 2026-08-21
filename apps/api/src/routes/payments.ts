@@ -100,7 +100,10 @@ export async function paymentRoutes(app: FastifyInstance) {
         params: { type: 'object', properties: { id: { type: 'string', format: 'uuid' } }, required: ['id'] },
         body: {
           type: 'object',
-          properties: { email: { type: 'string', format: 'email', maxLength: 320 } },
+          properties: {
+            email: { type: 'string', format: 'email', maxLength: 320 },
+            immediateDeliveryConsent: { type: 'boolean' },
+          },
           additionalProperties: false,
           nullable: true,
         },
@@ -109,13 +112,21 @@ export async function paymentRoutes(app: FastifyInstance) {
     async (request, reply) => {
       const { id } = request.params as { id: string };
       const tenantId = request.auth!.tenantId;
-      const { email } = (request.body ?? {}) as { email?: string };
+      const { email, immediateDeliveryConsent } = (request.body ?? {}) as { email?: string; immediateDeliveryConsent?: boolean };
       const [project] = await db
         .select({ id: projects.id })
         .from(projects)
         .where(and(eq(projects.id, id), eq(projects.tenantId, tenantId)))
         .limit(1);
       if (!project) return reply.code(404).send({ error: 'not_found' });
+
+      if (immediateDeliveryConsent !== true) {
+        return reply.code(400).send({
+          error: 'consent_required',
+          message:
+            'Köpet kräver uttryckligt samtycke till omedelbar leverans. När det digitala innehållet levereras direkt upphör ångerrätten enligt distansavtalslagen (2005:59) — kryssa i samtycket för att fortsätta.',
+        });
+      }
 
       const provider = activeProvider();
       if (!provider) {
@@ -136,6 +147,7 @@ export async function paymentRoutes(app: FastifyInstance) {
           provider: provider.id,
           state: 'pending',
           receiptEmail: email?.trim().toLowerCase() ?? null,
+          withdrawalConsentAt: new Date(),
         })
         .returning();
 
@@ -184,7 +196,10 @@ export async function paymentRoutes(app: FastifyInstance) {
         params: { type: 'object', properties: { id: { type: 'string', format: 'uuid' } }, required: ['id'] },
         body: {
           type: 'object',
-          properties: { email: { type: 'string', format: 'email', maxLength: 320 } },
+          properties: {
+            email: { type: 'string', format: 'email', maxLength: 320 },
+            immediateDeliveryConsent: { type: 'boolean' },
+          },
           additionalProperties: false,
           nullable: true,
         },
@@ -193,7 +208,7 @@ export async function paymentRoutes(app: FastifyInstance) {
     async (request, reply) => {
       const { id } = request.params as { id: string };
       const tenantId = request.auth!.tenantId;
-      const { email } = (request.body ?? {}) as { email?: string };
+      const { email, immediateDeliveryConsent } = (request.body ?? {}) as { email?: string; immediateDeliveryConsent?: boolean };
       const [project] = await db
         .select({ id: projects.id, title: projects.title })
         .from(projects)
@@ -203,6 +218,16 @@ export async function paymentRoutes(app: FastifyInstance) {
 
       if (await isProjectUnlocked(tenantId, id)) {
         return { alreadyUnlocked: true };
+      }
+
+      // Distansavtalslagen: uttryckligt samtycke till omedelbar leverans
+      // (= ångerrättens upphörande) är ett hårt krav på varje köp.
+      if (immediateDeliveryConsent !== true) {
+        return reply.code(400).send({
+          error: 'consent_required',
+          message:
+            'Köpet kräver uttryckligt samtycke till omedelbar leverans. När det digitala innehållet levereras direkt upphör ångerrätten enligt distansavtalslagen (2005:59) — kryssa i samtycket för att fortsätta.',
+        });
       }
 
       const provider = activeProvider();
@@ -222,6 +247,7 @@ export async function paymentRoutes(app: FastifyInstance) {
           provider: provider.id,
           state: 'pending',
           receiptEmail: email?.trim().toLowerCase() ?? null,
+          withdrawalConsentAt: new Date(),
         })
         .returning();
 

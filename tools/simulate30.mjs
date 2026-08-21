@@ -204,7 +204,7 @@ for (const p of PERSONAS) {
     }
 
     // 4. 39 kr-upplåsning
-    const unlock = await call(cookie, 'POST', `/v1/projects/${projectId}/analysis-unlock`);
+    const unlock = await call(cookie, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { immediateDeliveryConsent: true });
     await call(cookie, 'POST', `/v1/payments/${unlock.json.paymentId}/mock-confirm`);
 
     // 5. Full analys
@@ -244,7 +244,7 @@ for (const p of PERSONAS) {
 
     // 7. Dokumentköp + generering (utvalda personor)
     if (p.buyDocs) {
-      const pack = await call(cookie, 'POST', `/v1/projects/${projectId}/document-pack`, { pack: p.buyDocs });
+      const pack = await call(cookie, 'POST', `/v1/projects/${projectId}/document-pack`, { pack: p.buyDocs, immediateDeliveryConsent: true });
       await call(cookie, 'POST', `/v1/payments/${pack.json.paymentId}/mock-confirm`);
       const docs = [];
       for (const spec of [p.docAnswers, p.docAnswers2].filter(Boolean)) {

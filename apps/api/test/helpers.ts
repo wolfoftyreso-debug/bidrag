@@ -61,7 +61,7 @@ export async function api(
 
 /** Lås upp analysen via mock-betalningen (testar samtidigt köpflödet). */
 export async function unlockProject(app: FastifyInstance, user: TestUser, projectId: string): Promise<void> {
-  const create = await api(app, user, 'POST', `/v1/projects/${projectId}/analysis-unlock`);
+  const create = await api(app, user, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { immediateDeliveryConsent: true });
   if (create.statusCode === 200 && (create.json() as { alreadyUnlocked?: boolean }).alreadyUnlocked) return;
   if (create.statusCode !== 201) throw new Error(`unlock create failed: ${create.statusCode} ${create.body}`);
   const { paymentId } = create.json() as { paymentId: string };
@@ -71,7 +71,7 @@ export async function unlockProject(app: FastifyInstance, user: TestUser, projec
 
 /** Köp en ansökningskredit (19 kr/ansökan) via mock-betalningen. */
 export async function payForApplication(app: FastifyInstance, user: TestUser, projectId: string): Promise<void> {
-  const create = await api(app, user, 'POST', `/v1/projects/${projectId}/application-purchase`);
+  const create = await api(app, user, 'POST', `/v1/projects/${projectId}/application-purchase`, { immediateDeliveryConsent: true });
   if (create.statusCode !== 201) throw new Error(`application purchase failed: ${create.statusCode} ${create.body}`);
   const { paymentId } = create.json() as { paymentId: string };
   const confirm = await api(app, user, 'POST', `/v1/payments/${paymentId}/mock-confirm`);

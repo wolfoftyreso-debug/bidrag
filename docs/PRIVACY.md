@@ -50,3 +50,27 @@ data required, no automated legal-effect decisions, encryption at rest for
 sensitive identifiers, tenant isolation tested. The DPIA itself is an
 organisational step that must be completed by the operator before launch;
 the LIMITATIONS register tracks it.
+
+## Special category data (GDPR Art. 9) — health
+
+The intake contains exactly one health question: whether the user or a close
+family member has a disability or a long-term/serious illness. The answer is
+special category personal data under Art. 9.
+
+How it is handled (hardening 2026-08-18, counter-audit finding A2):
+
+- **Explicit consent at the point of collection.** The question screen states,
+  before the answer buttons, that this is a health datum under Art. 9 and
+  that answering Yes or No constitutes explicit consent to processing for
+  the stated purpose (finding relevant support). The consent timestamp is
+  stored alongside the answer (`person.sensitiveDataConsentAt`).
+- **A real "decline" path.** "Vill inte svara" records a declined marker,
+  never sets the health fact (a declined answer is NOT a "no"), and the
+  question is never asked again — not in the intake and not in the report's
+  follow-up questions. Gated supports honestly show as "behöver utredas".
+- **Deletion.** The data participates in the standard self-service erasure
+  flow (full cascade) like all other profile facts.
+
+Remaining before public launch: the operator's DPIA is **mandatory** (not
+optional) given Art. 9 processing at scale — tracked as a launch condition
+in LIMITATIONS §12 and docs/ACTIVATION.md.

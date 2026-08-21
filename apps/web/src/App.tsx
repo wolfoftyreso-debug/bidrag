@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { get, getActiveTenant, post, setActiveTenant } from './api';
+import TermsPage from './pages/Terms';
 import LoginPage from './pages/Login';
 import ResetPasswordPage from './pages/ResetPassword';
 import DocumentStudioPage from './pages/DocumentStudio';
@@ -58,6 +59,7 @@ export default function App() {
       ) : (
         <Routes>
           <Route path="/aterstall/:token" element={<ResetPasswordPage />} />
+          <Route path="/villkor" element={<div className="auth-page"><TermsPage /></div>} />
           <Route path="*" element={<LoginPage onLogin={reload} />} />
         </Routes>
       )}
@@ -128,6 +130,7 @@ function Shell() {
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/regler/:id" element={<RuleEditorPage />} />
           <Route path="/konto" element={<AccountPage />} />
+          <Route path="/villkor" element={<TermsPage />} />
           <Route path="/kalender" element={<CalendarPage />} />
           <Route path="/inbjudan/:token" element={<InvitePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

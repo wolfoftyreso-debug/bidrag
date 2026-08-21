@@ -266,7 +266,7 @@ export const fundingOpportunities = pgTable(
     sourceUrl: text('source_url').notNull(),
     sourceQuality: text('source_quality', { enum: ['A', 'B', 'C', 'D'] }).notNull(),
     verificationStatus: text('verification_status', {
-      enum: ['unverified', 'machine_extracted', 'human_curated', 'human_verified'],
+      enum: ['unverified', 'machine_extracted', 'ai_curated', 'human_curated', 'human_verified'],
     }).notNull(),
     lastVerifiedAt: timestamp('last_verified_at', { withTimezone: true }),
     nextReviewAt: timestamp('next_review_at', { withTimezone: true }),
@@ -616,6 +616,13 @@ export const payments = pgTable(
     providerToken: text('provider_token'),
     /** Dit kvittot skickas — samlas in före betalningen, kan kompletteras efteråt. */
     receiptEmail: text('receipt_email'),
+    /**
+     * Distansavtalslagen: tidpunkt då köparen uttryckligen samtyckte till
+     * omedelbar leverans av det digitala innehållet och bekräftade att
+     * ångerrätten därmed upphör. Köp utan samtycke avvisas (400) — fältet
+     * är alltså satt på varje betalning som skapats efter 2026-08-18.
+     */
+    withdrawalConsentAt: timestamp('withdrawal_consent_at', { withTimezone: true }),
     createdAt: createdAt(),
     confirmedAt: timestamp('confirmed_at', { withTimezone: true }),
   },
@@ -654,6 +661,8 @@ export const receipts = pgTable(
     paymentMethod: text('payment_method').notNull(),
     paymentStatus: text('payment_status').notNull().default('confirmed'),
     refundStatus: text('refund_status', { enum: ['none', 'requested', 'refunded'] }).notNull().default('none'),
+    /** Fryst kopia av betalningens samtycke till omedelbar leverans (ångerrättens upphörande). */
+    withdrawalConsentAt: timestamp('withdrawal_consent_at', { withTimezone: true }),
     sellerName: text('seller_name').notNull(),
     sellerOrgNumber: text('seller_org_number'),
     sellerVatNumber: text('seller_vat_number'),

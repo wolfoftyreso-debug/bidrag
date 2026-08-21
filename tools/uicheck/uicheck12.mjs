@@ -51,6 +51,7 @@ if (!/För att se namnen och gå vidare med ansökan låser du upp rapporten/.te
 console.log(`2. Webbteasern: rubrik + ${blurCount} blurrade namnrader + upplåsnings-CTA ✓`);
 
 // 3. Lås upp → funktionsnedsättningsspårets frågor i rapporten.
+await page.check('#angerratt-samtycke-analys');
 await page.click('text=Lås upp din bidragsanalys — 39 kr');
 await page.waitForSelector('text=SIMULERAD');
 await page.click('text=Bekräfta betalning (simulerad)');

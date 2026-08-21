@@ -41,6 +41,7 @@ await page.click('.row >> button:has-text("Nej")');
 
 await page.waitForSelector('text=stöd som matchar din situation');
 await page.click('button:has-text("Lås upp din bidragsanalys")');
+await page.check('#angerratt');
 await page.click('button:has-text("Godkänn betalning")');
 await page.click('button:has-text("Visa min analys")');
 await page.waitForSelector('.q-context');

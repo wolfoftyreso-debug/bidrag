@@ -21,7 +21,7 @@ const behovsAnswers = {
 };
 
 async function buyPack(pack: string): Promise<void> {
-  const res = await api(app, user, 'POST', `/v1/projects/${projectId}/document-pack`, { pack });
+  const res = await api(app, user, 'POST', `/v1/projects/${projectId}/document-pack`, { pack, immediateDeliveryConsent: true });
   expect(res.statusCode).toBe(201);
   const { paymentId } = res.json() as { paymentId: string };
   const confirm = await api(app, user, 'POST', `/v1/payments/${paymentId}/mock-confirm`);
@@ -163,7 +163,7 @@ describe('dokumentstudion', () => {
     const pid = (projectRes.json() as { project: { id: string } }).project.id;
     await api(app, other, 'POST', `/v1/projects/${pid}/matches`, {});
 
-    const pack = await api(app, other, 'POST', `/v1/projects/${pid}/document-pack`, { pack: 'application' });
+    const pack = await api(app, other, 'POST', `/v1/projects/${pid}/document-pack`, { pack: 'application', immediateDeliveryConsent: true });
     const { paymentId } = pack.json() as { paymentId: string };
     await api(app, other, 'POST', `/v1/payments/${paymentId}/mock-confirm`);
 

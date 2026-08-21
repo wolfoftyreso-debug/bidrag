@@ -55,6 +55,11 @@ describe('full journey — dancehall exchange to Jamaica', () => {
       matches: { opportunityId: string; slug: string }[];
     };
     const opp = matches.matches.find((m) => m.slug === 'kulturradet-internationellt-resebidrag-musik')!;
+    // Distansavtalslagen: köp utan uttryckligt samtycke till omedelbar
+    // leverans avvisas — ångerrätten får aldrig upphöra i tysthet.
+    const noConsent = await api(app, user, 'POST', `/v1/projects/${projectId}/application-purchase`, {});
+    expect(noConsent.statusCode).toBe(400);
+    expect((noConsent.json() as { error: string }).error).toBe('consent_required');
     // Prismodellen: utan betald ansökningskredit → 402 med priset, aldrig en gratis ansökan.
     const unpaid = await api(app, user, 'POST', '/v1/applications', { projectId, opportunityId: opp.opportunityId });
     expect(unpaid.statusCode).toBe(402);

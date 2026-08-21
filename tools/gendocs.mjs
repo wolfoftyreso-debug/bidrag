@@ -60,9 +60,9 @@ const pid = project.id;
 await call('POST', `/v1/projects/${pid}/matches`, {});
 
 // 2. Lås upp analys + köp "alla dokument".
-const unlock = await call('POST', `/v1/projects/${pid}/analysis-unlock`);
+const unlock = await call('POST', `/v1/projects/${pid}/analysis-unlock`, { immediateDeliveryConsent: true });
 await call('POST', `/v1/payments/${unlock.paymentId}/mock-confirm`);
-const pack = await call('POST', `/v1/projects/${pid}/document-pack`, { pack: 'all' });
+const pack = await call('POST', `/v1/projects/${pid}/document-pack`, { pack: 'application', immediateDeliveryConsent: true });
 await call('POST', `/v1/payments/${pack.paymentId}/mock-confirm`);
 
 // 3. Förifyllnaden.

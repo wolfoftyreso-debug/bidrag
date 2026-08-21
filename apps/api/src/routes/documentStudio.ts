@@ -127,7 +127,10 @@ export async function documentStudioRoutes(app: FastifyInstance) {
         body: {
           type: 'object',
           required: ['pack'],
-          properties: { pack: { type: 'string', enum: ['application'] } },
+          properties: {
+            pack: { type: 'string', enum: ['application'] },
+            immediateDeliveryConsent: { type: 'boolean' },
+          },
           additionalProperties: false,
         },
       },
@@ -135,8 +138,16 @@ export async function documentStudioRoutes(app: FastifyInstance) {
     async (request, reply) => {
       const { id } = request.params as { id: string };
       const tenantId = request.auth!.tenantId;
-      const { pack } = request.body as { pack: keyof typeof PACKS };
+      const { pack, immediateDeliveryConsent } = request.body as { pack: keyof typeof PACKS; immediateDeliveryConsent?: boolean };
       if (!(await ownedProject(tenantId, id))) return reply.code(404).send({ error: 'not_found' });
+
+      if (immediateDeliveryConsent !== true) {
+        return reply.code(400).send({
+          error: 'consent_required',
+          message:
+            'Köpet kräver uttryckligt samtycke till omedelbar leverans. När det digitala innehållet levereras direkt upphör ångerrätten enligt distansavtalslagen (2005:59) — kryssa i samtycket för att fortsätta.',
+        });
+      }
 
       const provider = activeProvider();
       if (!provider) {
@@ -157,6 +168,7 @@ export async function documentStudioRoutes(app: FastifyInstance) {
           amountMinor: spec.price(),
           provider: provider.id,
           state: 'pending',
+          withdrawalConsentAt: new Date(),
         })
         .returning();
 

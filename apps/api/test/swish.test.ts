@@ -115,7 +115,7 @@ async function newLockedProject(): Promise<string> {
 }
 
 async function startSwishPayment(projectId: string): Promise<{ paymentId: string; ref: string; deepLink: string }> {
-  const res = await api(app, user, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { email: 'swish@test.example' });
+  const res = await api(app, user, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { email: 'swish@test.example', immediateDeliveryConsent: true });
   expect(res.statusCode).toBe(201);
   const body = res.json() as { paymentId: string; instructions: { method: string; deepLink?: string; qrAvailable?: boolean } };
   expect(body.instructions.method).toBe('swish');

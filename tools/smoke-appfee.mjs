@@ -41,7 +41,7 @@ const proj = await call('POST', '/v1/projects', {
 });
 const prid = proj.json.project.id;
 
-const unlock = await call('POST', `/v1/projects/${prid}/analysis-unlock`, {});
+const unlock = await call('POST', `/v1/projects/${prid}/analysis-unlock`, { immediateDeliveryConsent: true });
 const uconf = await call('POST', `/v1/payments/${unlock.json.paymentId}/mock-confirm`);
 console.log('analysis-unlock', unlock.status, '→ confirm', uconf.status, JSON.stringify(uconf.json).slice(0, 120));
 await call('POST', `/v1/projects/${prid}/matches`, {});
@@ -56,7 +56,7 @@ results.push(['utan kredit → 402', step1.status, JSON.stringify(step1.json)]);
 const status = await call('GET', `/v1/projects/${prid}/unlock-status`);
 results.push(['unlock-status applicationPriceMinor', status.json.applicationPriceMinor]);
 
-const pur = await call('POST', `/v1/projects/${prid}/application-purchase`, {});
+const pur = await call('POST', `/v1/projects/${prid}/application-purchase`, { immediateDeliveryConsent: true });
 results.push(['köp 19 kr → 201', pur.status, pur.json.amountMinor]);
 const conf = await call('POST', `/v1/payments/${pur.json.paymentId}/mock-confirm`);
 results.push(['mock-confirm → 200', conf.status, conf.json?.receipt?.receiptNumber]);

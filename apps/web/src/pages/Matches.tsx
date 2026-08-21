@@ -5,6 +5,7 @@
  */
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { PurchaseConsent } from '../components/PurchaseConsent';
 import { ApiError, ELIGIBILITY_LABELS, INSTRUMENT_LABELS, formatDate, formatSek, get, patch, post } from '../api';
 
 interface StackPlan {
@@ -119,6 +120,9 @@ export default function MatchesPage() {
     if (m.eligibilityStatus === 'excluded') continue;
     const shortTitle = m.title.split(' — ').pop() ?? m.title;
     for (const f of m.result.missingFacts) {
+      // Art. 9: den som avböjt hälsofrågan i intaget ska aldrig få den igen —
+      // stöden bakom gaten förblir "behöver utredas" utan att frågan upprepas.
+      if (f.factPath === 'person.disabilityOrLongTermIllnessInFamily' && facts['person.sensitiveQuestionDeclined'] === true) continue;
       const entry = openQuestions.get(f.factPath);
       if (entry) {
         if (!entry.forTitles.includes(shortTitle)) entry.forTitles.push(shortTitle);
@@ -504,6 +508,7 @@ const LIKELIHOOD_TEASER: Record<string, { dot: string; label: string }> = {
  */
 function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string; teaser: Teaser; onUnlocked: () => void }) {
   const [busy, setBusy] = useState(false);
+  const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [payment, setPayment] = useState<{
     paymentId: string;
@@ -539,7 +544,7 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
         alreadyUnlocked?: boolean;
         paymentId?: string;
         instructions?: { method: string; message?: string; mockConfirmable?: boolean };
-      }>(`/v1/projects/${projectId}/analysis-unlock`);
+      }>(`/v1/projects/${projectId}/analysis-unlock`, { immediateDeliveryConsent: true });
       if (res.alreadyUnlocked) return onUnlocked();
       setPayment({ paymentId: res.paymentId!, instructions: res.instructions! });
     } catch (err) {
@@ -626,7 +631,8 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
 
       {!payment && (
         <>
-          <button disabled={busy} onClick={startUnlock} style={{ fontSize: '1.05rem' }}>
+          <PurchaseConsent checked={consent} onChange={setConsent} idSuffix="-analys" />
+          <button disabled={busy || !consent} onClick={startUnlock} style={{ fontSize: '1.05rem' }}>
             {busy ? 'Startar betalning…' : `Lås upp din bidragsanalys — ${formatSek(teaser.priceMinor)}`}
           </button>
           <p className="guidance" style={{ marginTop: '0.75rem' }}>
@@ -638,7 +644,7 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
       )}
 
       {payment && payment.instructions.method === 'mock' && (
-        <div className="alert warning">
+        <div className="alert warning" role="status" aria-live="polite">
           <p style={{ fontWeight: 700 }}>{payment.instructions.message}</p>
           <button disabled={busy} onClick={confirmMock}>
             {busy ? 'Bekräftar…' : 'Bekräfta betalning (simulerad)'}

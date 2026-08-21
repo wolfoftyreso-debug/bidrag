@@ -127,7 +127,11 @@ export async function runSeed(): Promise<{ opportunities: number; rulesUpdated: 
       sourceId: o.sourceKey ? sourceIdByKey.get(o.sourceKey) ?? null : null,
       sourceUrl: o.sourceUrl,
       sourceQuality: 'A' as const,
-      verificationStatus: 'human_curated' as const,
+      // Ärlighetsprincipen (motförhöret A3): kunskapsbasen är sammanställd av
+      // en AI från officiella källor — ingen människa har granskat posterna.
+      // 'human_curated'/'human_verified' sätts ENDAST av kuratorsflödet i
+      // admin, aldrig av seeden. Etiketten i UI säger detta rakt ut.
+      verificationStatus: 'ai_curated' as const,
       lastVerifiedAt: new Date(CURATED_AT),
       nextReviewAt: new Date(Date.parse(CURATED_AT) + 30 * 86_400_000),
     };

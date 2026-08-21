@@ -46,6 +46,7 @@ console.log(`1. Teasern: rubrik + ${blurCount} blurrade namnrader utan titel-lä
 
 // 2. Lås upp och nå rapporten.
 await page.click('button:has-text("Lås upp din bidragsanalys")');
+await page.check('#angerratt');
 await page.click('button:has-text("Godkänn betalning")');
 await page.click('button:has-text("Visa min analys")');
 await page.waitForSelector('text=Det här ser du ut att kunna ha rätt till');

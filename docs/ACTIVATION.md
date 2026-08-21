@@ -140,3 +140,15 @@ Förväntat i fullt aktiverad produktion:
 Därefter: en riktig betalning, ett riktigt kvittomejl, en riktig
 lösenordsåterställning och ett riktigt språkförslag — fyra manuella
 stickprov som tillsammans täcker alla externa integrationer.
+
+## Icke-tekniska lanseringsvillkor (motförhöret 2026-08-18)
+
+Dessa syns inte i readiness-proben men är lika hårda:
+
+1. **DPIA** — obligatorisk (art. 9-hälsodata behandlas). Underlag: PRIVACY.md.
+2. **Juristgranskning** av köpvillkoren (`/villkor`), samtyckestexterna och
+   kvittots ångerrättsrad.
+3. **Mänsklig granskning av kunskapsbasen** — alla 72 stöd mot levande källor;
+   kuratorsflödet i admin flyttar dem från `ai_curated` till `human_verified`.
+4. **Supportkanal** för reklamationer/återbetalningar (t.ex. brevlåda på
+   den verifierade domänen) — återbetalningar hanteras manuellt.

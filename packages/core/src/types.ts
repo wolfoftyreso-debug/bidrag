@@ -57,6 +57,7 @@ export type SourceQuality = 'A' | 'B' | 'C' | 'D';
 export type VerificationStatus =
   | 'unverified'
   | 'machine_extracted'
+  | 'ai_curated'
   | 'human_curated'
   | 'human_verified';
 

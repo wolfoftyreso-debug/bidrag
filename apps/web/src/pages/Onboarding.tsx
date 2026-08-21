@@ -4,7 +4,7 @@
  * vilket stöd som finns eller vilken kategori det tillhör — dialogen avgör
  * vilka frågor som behöver ställas, och systemet gör första utgrävningen.
  */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ApiError, post } from '../api';
 import { useSession } from '../App';
@@ -30,6 +30,8 @@ interface Answers {
   reducedCapacity?: boolean;
   movingAbroad?: boolean;
   disabilityInFamily?: boolean;
+  /** Art. 9: användaren avböjde hälsofrågan — den ställs aldrig igen. */
+  disabilityDeclined?: boolean;
   incomeBand?: 'under15' | '15-25' | '25-40' | 'over40';
   limitedSavings?: boolean;
   paysHousing?: boolean;
@@ -208,7 +210,14 @@ function personalFacts(a: Answers): Record<string, unknown> {
   if (a.movingAbroad !== undefined) facts['person.consideringMovingAbroad'] = a.movingAbroad;
   // Funktionsnedsättnings- och omsorgsspåret: samma gate-mönster — ett nej
   // håller omvårdnads-, merkostnads-, bilstöds- och närståendefrågorna borta.
-  if (a.disabilityInFamily !== undefined) facts['person.disabilityOrLongTermIllnessInFamily'] = a.disabilityInFamily;
+  if (a.disabilityInFamily !== undefined) {
+    facts['person.disabilityOrLongTermIllnessInFamily'] = a.disabilityInFamily;
+    // Art. 9: svaret är en känslig personuppgift (hälsa) — samtyckestidpunkten
+    // sparas som spårbart faktum tillsammans med svaret.
+    facts['person.sensitiveDataConsentAt'] = new Date().toISOString();
+  }
+  // Avböjt = frågan får aldrig återkomma, inte i intaget och inte i rapporten.
+  if (a.disabilityDeclined) facts['person.sensitiveQuestionDeclined'] = true;
   if (a.limitedSavings !== undefined) facts['person.limitedSavings'] = a.limitedSavings;
   if (a.paysHousing !== undefined) facts['person.paysHousingCost'] = a.paysHousing;
   if (a.housingCost) facts['person.housingCostMonthly'] = Number(a.housingCost);
@@ -323,7 +332,7 @@ export default function OnboardingPage() {
 
   return (
     <div style={{ maxWidth: 560 }}>
-      <div className="progress-steps" aria-hidden>
+      <div className="progress-steps" role="progressbar" aria-label="Så långt har du kommit i frågorna" aria-valuemin={0} aria-valuemax={STEP_IDS.size} aria-valuenow={[...STEP_IDS].indexOf(step) + 1}>
         <span className="done" style={{ flex: progress }} />
         <span style={{ flex: 1 - progress }} />
       </div>
@@ -356,9 +365,14 @@ export default function OnboardingPage() {
 
 /** En fråga. Ett svar. Nästa. */
 function Q({ title, guidance, children }: { title: string; guidance?: string; children: React.ReactNode }) {
+  // Tillgänglighet (motförhöret B1): en fråga per skärm fungerar bara med
+  // skärmläsare om fokus följer med till den nya frågan. Rubriken görs
+  // fokuserbar (utan att hamna i tabbordningen) och fokuseras vid varje byte.
+  const headingRef = useRef<HTMLHeadingElement | null>(null);
+  useEffect(() => { headingRef.current?.focus(); }, [title]);
   return (
     <div className="card">
-      <h1 style={{ fontSize: '1.35rem' }}>{title}</h1>
+      <h1 ref={headingRef} tabIndex={-1} style={{ fontSize: '1.35rem', outline: 'none' }}>{title}</h1>
       {guidance && <p className="guidance">{guidance}</p>}
       <div style={{ marginTop: '1rem' }}>{children}</div>
     </div>
@@ -601,7 +615,16 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
           title="Har du eller någon nära anhörig en funktionsnedsättning eller en långvarig eller allvarlig sjukdom?"
           guidance="Frågan öppnar stöd som många missar — omvårdnadsbidrag, merkostnadsersättning, bilstöd och närståendepenning. Ett nej betyder att inga sådana följdfrågor ställs."
         >
+          <p className="guidance" role="note" style={{ marginBottom: '0.6rem' }}>
+            Detta är en hälsouppgift — en känslig personuppgift enligt GDPR (artikel 9).
+            Svarar du Ja eller Nej samtycker du uttryckligen till att svaret behandlas för att
+            hitta stöd åt dig. Du kan när som helst radera alla dina uppgifter under
+            Konto &amp; data. Väljer du att inte svara ställs frågan aldrig igen.
+          </p>
           <YesNo onAnswer={(v) => onAnswer({ disabilityInFamily: v })} />
+          <button className="subtle" style={{ marginTop: '0.6rem' }} onClick={() => onAnswer({ disabilityDeclined: true })}>
+            Vill inte svara
+          </button>
         </Q>
       );
     case 'p-extra':

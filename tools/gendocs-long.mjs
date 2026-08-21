@@ -23,9 +23,9 @@ await call('POST', '/v1/auth/register', { email: `lang-${stamp}@test.example`, p
 const { profile } = await call('POST', '/v1/profiles', { kind: 'person', displayName: 'S', applicantType: 'individual', country: 'SE', municipality: 'Övertorneå', facts: { 'person.hasChildrenAtHome': true, 'person.householdType': 'alone' } });
 const { project } = await call('POST', '/v1/projects', { profileId: profile.id, title: 'Lång', intent: 'test' });
 const pid = project.id;
-const unlock = await call('POST', `/v1/projects/${pid}/analysis-unlock`);
+const unlock = await call('POST', `/v1/projects/${pid}/analysis-unlock`, { immediateDeliveryConsent: true });
 await call('POST', `/v1/payments/${unlock.paymentId}/mock-confirm`);
-const pack = await call('POST', `/v1/projects/${pid}/document-pack`, { pack: 'all' });
+const pack = await call('POST', `/v1/projects/${pid}/document-pack`, { pack: 'application', immediateDeliveryConsent: true });
 await call('POST', `/v1/payments/${pack.paymentId}/mock-confirm`);
 
 const LONG_IMPACT = [

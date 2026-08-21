@@ -16,7 +16,7 @@ const prof = await call('POST', '/v1/profiles', { kind: 'person', displayName: '
 } });
 const proj = await call('POST', '/v1/projects', { profileId: prof.json.profile.id, title: 'Min situation', intent: 'test' });
 const pid = proj.json.project.id;
-const unlock = await call('POST', `/v1/projects/${pid}/analysis-unlock`);
+const unlock = await call('POST', `/v1/projects/${pid}/analysis-unlock`, { immediateDeliveryConsent: true });
 await call('POST', `/v1/payments/${unlock.json.paymentId}/mock-confirm`);
 await call('POST', `/v1/projects/${pid}/matches`, {});
 const m = await call('GET', `/v1/projects/${pid}/matches`);
@@ -25,7 +25,7 @@ for (const slug of ['kommun-forsorjningsstod', 'fk-bostadsbidrag-barnfamiljer', 
   const row = m.json.matches.find((r) => r.slug === slug);
   if (!row) { out[slug] = 'EJ I SVARET'; continue; }
   // Prismodellen: varje ansökan i systemet kostar 19 kr — köp en kredit först.
-  const pur = await call('POST', `/v1/projects/${pid}/application-purchase`, {});
+  const pur = await call('POST', `/v1/projects/${pid}/application-purchase`, { immediateDeliveryConsent: true });
   await call('POST', `/v1/payments/${pur.json.paymentId}/mock-confirm`);
   const c = await call('POST', '/v1/applications', { projectId: pid, opportunityId: row.opportunityId });
   if (c.status !== 201) { out[slug] = `CASE FAIL ${c.status}`; continue; }

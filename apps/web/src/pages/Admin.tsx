@@ -189,7 +189,7 @@ export default function AdminPage() {
                   <td><a href={o.sourceUrl} target="_blank" rel="noreferrer">{o.title}</a></td>
                   <td>
                     <span className={`badge ${o.verificationStatus === 'human_verified' ? 'success' : ''}`}>
-                      {o.verificationStatus === 'human_verified' ? 'verifierad' : o.verificationStatus === 'human_curated' ? 'kurerad' : o.verificationStatus}
+                      {o.verificationStatus === 'human_verified' ? 'verifierad' : o.verificationStatus === 'human_curated' ? 'kurerad' : o.verificationStatus === 'ai_curated' ? 'AI-sammanställd — ogranskad' : o.verificationStatus}
                     </span>
                   </td>
                   <td>{formatDate(o.lastVerifiedAt)}</td>

@@ -143,8 +143,15 @@ function buildFacts(a: A): Facts {
     if (a.businessForm) f['person.businessForm'] = a.businessForm;
     if (a.capacity !== undefined) f['person.reducedWorkCapacityLongTerm'] = a.capacity;
     f['person.consideringMovingAbroad'] = a.movingAbroad === true;
-    // Funktionsnedsattningssparet: samma gate-monster som utvandringssparet.
-    f['person.disabilityOrLongTermIllnessInFamily'] = a.disabilityInFamily === true;
+    // Funktionsnedsättningsspåret: samma gate-mönster som utvandringsspåret.
+    // Art. 9: ett avböjt svar är INTE ett nej — faktumet lämnas osatt så att
+    // stöden bakom gaten redovisas som "behöver utredas", och markören ser
+    // till att hälsofrågan aldrig ställs igen.
+    if (a.disabilityDeclined) {
+      f['person.sensitiveQuestionDeclined'] = true;
+    } else {
+      f['person.disabilityOrLongTermIllnessInFamily'] = a.disabilityInFamily === true;
+    }
     if (a.income) {
       f['person.lowHouseholdIncome'] = a.income === 'under15' || a.income === '15-25';
       if (a.income === 'under15') f['person.incomeInsufficientForBasicNeeds'] = true;
@@ -264,7 +271,7 @@ function MatchRow({ opp, m, facts, showScore, selected, onToggle }: { opp: Opp; 
               </div>
             ))}
             <div className="srcline">
-              Källa: <a href={opp.sourceUrl} target="_blank" rel="noreferrer">{opp.sourceUrl}</a> · manuellt sammanställd
+              Källa: <a href={opp.sourceUrl} target="_blank" rel="noreferrer">{opp.sourceUrl}</a> · AI-sammanställd — ej människogranskad,
               2026-08-13 — kontrollera alltid aktuella villkor hos källan. {opp.applicationMethod}
             </div>
           </div>
@@ -318,6 +325,7 @@ function Teaser({ facts, track, onUnlocked }: { facts: Facts; track: 'personal' 
   });
   const [paying, setPaying] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+  const [consent, setConsent] = useState(false);
 
   // Betalning genomförd — kvittobekräftelsen kommer före rapporten. I
   // produkten är kedjan: Swish bekräftar → transaktionen bokförs → kvitto
@@ -351,8 +359,16 @@ function Teaser({ facts, track, onUnlocked }: { facts: Facts; track: 'personal' 
           <div className="payrow"><span>Belopp</span><strong>39,00 kr</strong></div>
           <div className="payrow"><span>varav moms (25 %)</span><strong>7,80 kr</strong></div>
         </div>
-        <div className="row" style={{ marginTop: '1rem' }}>
-          <button className="btn primary grow" onClick={() => setConfirmed(true)}>Godkänn betalning (simulerad)</button>
+        <label className="check-row" style={{ marginTop: '0.9rem' }}>
+          <input id="angerratt" type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+          <span style={{ fontSize: '0.88rem' }}>
+            Jag samtycker till att analysen levereras direkt och bekräftar att ångerrätten därmed
+            upphör <span className="meta" style={{ display: 'inline' }}>(distansavtalslagen — i fullversionen
+            vägrar servern köp utan detta samtycke, och tidpunkten anges på kvittot)</span>
+          </span>
+        </label>
+        <div className="row" style={{ marginTop: '0.8rem' }}>
+          <button className="btn primary grow" disabled={!consent} onClick={() => setConfirmed(true)}>Godkänn betalning (simulerad)</button>
           <button className="btn" onClick={() => setPaying(false)}>Avbryt</button>
         </div>
       </div>
@@ -429,6 +445,7 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
   for (const r of [...personal, ...business, ...fundingAll]) {
     const short = r.opp.title.split(' — ').pop() ?? r.opp.title;
     for (const f of r.m.missingFacts) {
+      if (f.factPath === 'person.disabilityOrLongTermIllnessInFamily' && facts['person.sensitiveQuestionDeclined'] === true) continue;
       const e = questions.get(f.factPath);
       if (e) {
         if (!e.titles.includes(short)) e.titles.push(short);
@@ -638,7 +655,7 @@ function PlanView({ slugs, facts, onBack, onToggle }: { slugs: string[]; facts: 
             )}
             <p style={{ margin: '0.3rem 0' }}>
               <strong>{r.m.missingFacts.length > 0 ? '3' : '2'}. Kontrollera aktuella villkor hos källan:</strong>{' '}
-              <a href={r.opp.sourceUrl} target="_blank" rel="noreferrer">{r.opp.sourceUrl}</a> (manuellt sammanställd 2026-08-13)
+              <a href={r.opp.sourceUrl} target="_blank" rel="noreferrer">{r.opp.sourceUrl}</a> (AI-sammanställd 2026-08-13 — ej människogranskad)
             </p>
             <div className="row" style={{ marginTop: '0.5rem' }}>
               <a className="btn primary" href={r.opp.applicationUrl} target="_blank" rel="noreferrer">Till ansökan hos {r.opp.authority} →</a>
@@ -958,7 +975,15 @@ function App() {
       )}
       {step === 'p-disability' && (
         <Q title="Har du eller någon nära anhörig en funktionsnedsättning eller en långvarig eller allvarlig sjukdom?" guidance="Frågan öppnar stöd som många missar — omvårdnadsbidrag, merkostnadsersättning, bilstöd och närståendepenning. Ett nej betyder att inga sådana följdfrågor ställs.">
+          <p className="guidance" role="note" style={{ margin: '0 0 0.6rem' }}>
+            Detta är en hälsouppgift — en känslig personuppgift (GDPR art. 9). Svarar du Ja eller Nej
+            samtycker du uttryckligen till att svaret används för att hitta stöd. Väljer du att inte
+            svara ställs frågan aldrig igen.
+          </p>
           <YesNo on={(v) => advance({ disabilityInFamily: v })} />
+          <button className="btn subtle" style={{ marginTop: '0.5rem' }} onClick={() => advance({ disabilityDeclined: true })}>
+            Vill inte svara
+          </button>
         </Q>
       )}
       {step === 'p-housing-cost' && (
@@ -1046,7 +1071,7 @@ function App() {
 
       <footer className="foot">
         Detta demo kör produktens verkliga matchningsmotor och kurerade kunskapsbas (72 stöd, 35 finansiärer, källor
-        manuellt sammanställda 2026-08-13) lokalt i din webbläsare — inget skickas någonstans. I fullversionen finns
+        AI-sammanställda 2026-08-13, ej människogranskade) lokalt i din webbläsare — inget skickas någonstans. I fullversionen finns
         dessutom konton, ansökningsarbetsyta med förifyllda formulär, dokumentvalv, assisterad inlämning med kvitto och
         ärendeuppföljning. Bedömningarna är vägledande — slutligt beslut fattas alltid av respektive myndighet eller finansiär.
       </footer>

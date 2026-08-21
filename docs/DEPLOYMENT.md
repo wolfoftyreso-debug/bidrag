@@ -91,6 +91,15 @@ git push → GitHub → Vercel build → Preview/Production
 
 ## 5. Verifiering efter deploy
 
+Kör alltid readiness-proben först — den säger ärligt vilka integrationer som
+är aktiva och vilka som blockerar:
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" \
+  "https://<domän>/v1/internal/readiness?probe=true"
+# ok:true = allt aktiverat; blockers-listan säger annars exakt vad som saknas
+```
+
 ```bash
 curl -s https://bidragskoll.se/healthz                     # {"ok":true}
 curl -s https://bidragskoll.se/v1/internal/cron/retention  # 404 (hemlighet krävs)

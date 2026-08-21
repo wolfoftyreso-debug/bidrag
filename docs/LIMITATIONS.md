@@ -216,3 +216,38 @@ run drizzle-kit's transpiler against an API seven minors newer than the one
 it pins — risking the tool that produces our migrations, to silence an
 advisory about a server we never start. The honest state is: wait for
 drizzle-kit to drop `@esbuild-kit`, and re-check on each release.
+
+## 12. Consumer law & content review (counter-audit 2026-08-18)
+
+The adversarial counter-audit ("Motförhöret", docs/reports/motforhoret.html)
+found three A-class gaps. What is now implemented in code, and what remains:
+
+**A1 Withdrawal right (distansavtalslagen)** — implemented: every purchase
+(analysis 39 kr, application 19 kr, document pack) requires an explicit
+checkbox consenting to immediate delivery and acknowledging that the 14-day
+withdrawal right thereby lapses. The server rejects purchases without it
+(400 `consent_required`); the consent timestamp is stored on the payment,
+frozen onto the receipt, and printed on the receipt document. A public
+terms page (`/villkor`) carries the pre-purchase information and the refund/
+complaint policy. **Remaining**: legal review of the texts by a lawyer, and
+an automated refund flow (refunds are handled manually by the operator today;
+`refundStatus` on receipts is the bookkeeping anchor).
+
+**A2 Art. 9 health data** — implemented: explicit-consent framing on the
+health question, a decline path that never re-asks and never counts as "no",
+consent timestamp stored. See PRIVACY.md. **Remaining**: the operator's DPIA,
+now understood as mandatory (Art. 9 at scale), is a launch condition.
+
+**A3 Knowledge-base truth** — implemented: the seed stamps every opportunity
+`ai_curated` ("AI-sammanställd från officiell källa — ej granskad av
+människa") — the previous blanket `human_curated` stamp was untrue and has
+been removed. The curator flow in admin is the only path to `human_curated`/
+`human_verified`. The demo says the same thing. **Remaining**: a human must
+actually review all 72 opportunities against live sources before launch;
+until then every rule value (amounts, thresholds, dates) is AI-knowledge,
+not verified fact.
+
+Also from the counter-audit, still open: full WCAG review (targeted fixes
+shipped: focus management in the one-question intake, progressbar semantics,
+aria-live on payment status — the rest of the app is unreviewed); external
+user testing beyond one session; commercial validation with real customers.
