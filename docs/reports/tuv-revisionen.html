@@ -1,0 +1,254 @@
+<title>TÜV-revisionen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@450;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --paper: #f6f7f5;
+  --card: #ffffff;
+  --ink: #1c2422;
+  --ink-soft: #55605c;
+  --line: #d8ddd9;
+  --line-strong: #b8c1bb;
+  --stamp: #1d6b4f;
+  --stamp-soft: #e7f2ec;
+  --warn: #94660f;
+  --warn-soft: #f8efdb;
+  --crit: #a83232;
+  --crit-soft: #f7e7e7;
+  --mono-bg: #eef1ee;
+}
+:root:not([data-theme="light"]) { }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #171b19;
+    --card: #1f2523;
+    --ink: #e6eae7;
+    --ink-soft: #9aa5a0;
+    --line: #333b38;
+    --line-strong: #47524d;
+    --stamp: #52b389;
+    --stamp-soft: #21322b;
+    --warn: #d3a04a;
+    --warn-soft: #322a1a;
+    --crit: #d97f7f;
+    --crit-soft: #362222;
+    --mono-bg: #242b28;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #171b19;
+  --card: #1f2523;
+  --ink: #e6eae7;
+  --ink-soft: #9aa5a0;
+  --line: #333b38;
+  --line-strong: #47524d;
+  --stamp: #52b389;
+  --stamp-soft: #21322b;
+  --warn: #d3a04a;
+  --warn-soft: #322a1a;
+  --crit: #d97f7f;
+  --crit-soft: #362222;
+  --mono-bg: #242b28;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font: 16px/1.65 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
+  -webkit-font-smoothing: antialiased;
+}
+.doc { max-width: 880px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+h1, h2, h3, .label { font-family: 'IBM Plex Sans', system-ui, sans-serif; }
+h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.015em; margin: 0.2rem 0 0.3rem; text-wrap: balance; }
+h2 { font-size: 1.28rem; font-weight: 700; letter-spacing: -0.008em; margin: 2.6rem 0 0.8rem; padding-top: 1.4rem; border-top: 2px solid var(--line-strong); }
+h3 { font-size: 1rem; font-weight: 600; margin: 1.4rem 0 0.4rem; }
+p { margin: 0.55rem 0; max-width: 68ch; }
+.label {
+  font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em;
+  color: var(--ink-soft);
+}
+.protokollhuvud { border: 2px solid var(--ink); padding: 1.5rem 1.7rem 1.3rem; background: var(--card); }
+.metagrid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.9rem 1.6rem; margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--line);
+}
+.metagrid dt { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--ink-soft); }
+.metagrid dd { margin: 0.1rem 0 0; font-family: 'IBM Plex Mono', monospace; font-size: 0.86rem; }
+mark.metod { background: none; color: inherit; font-style: italic; }
+.ansvar {
+  margin-top: 1.3rem; padding: 0.8rem 1rem; background: var(--warn-soft); border-left: 3px solid var(--warn);
+  font-size: 0.9rem;
+}
+table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.tablewrap { overflow-x: auto; margin: 1rem 0; }
+th {
+  text-align: left; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.72rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft);
+  padding: 0.5rem 0.7rem; border-bottom: 2px solid var(--line-strong);
+}
+td { padding: 0.62rem 0.7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+td.nr { font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; color: var(--ink-soft); white-space: nowrap; }
+.pill {
+  display: inline-block; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.05em; padding: 0.16rem 0.6rem; border-radius: 3px; white-space: nowrap;
+}
+.pill.ok { background: var(--stamp-soft); color: var(--stamp); border: 1px solid var(--stamp); }
+.pill.anm { background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); }
+.pill.villkor { background: var(--card); color: var(--ink); border: 1px dashed var(--line-strong); }
+.pill.stangd { background: var(--stamp-soft); color: var(--stamp); border: 1px solid transparent; }
+.klass {
+  display: inline-grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 3px;
+  font-family: 'IBM Plex Sans', sans-serif; font-weight: 700; font-size: 0.9rem;
+}
+.klass.b { background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); }
+.klass.c { background: var(--mono-bg); color: var(--ink-soft); border: 1px solid var(--line-strong); }
+.klass.o { background: var(--card); color: var(--ink-soft); border: 1px dashed var(--line-strong); }
+.bevis {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; background: var(--mono-bg);
+  border: 1px solid var(--line); border-left: 3px solid var(--stamp);
+  padding: 0.75rem 0.95rem; margin: 0.8rem 0; overflow-x: auto; white-space: pre; line-height: 1.55;
+}
+.bevis .bid { color: var(--ink-soft); }
+.domsruta {
+  margin: 2.2rem 0 1rem; border: 2px solid var(--ink); background: var(--card);
+  padding: 1.7rem 1.8rem; display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;
+}
+.stampel {
+  flex-shrink: 0; transform: rotate(-6deg);
+  border: 3px double var(--stamp); color: var(--stamp); border-radius: 6px;
+  padding: 0.7rem 1.3rem; text-align: center;
+  font-family: 'IBM Plex Sans', sans-serif; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; font-size: 1.05rem; line-height: 1.35;
+}
+.stampel small { display: block; font-size: 0.62rem; letter-spacing: 0.18em; font-weight: 600; opacity: 0.75; }
+.domtext { flex: 1; min-width: 260px; }
+.domtext p { font-size: 0.95rem; }
+ul { padding-left: 1.2rem; }
+li { margin: 0.35rem 0; max-width: 66ch; }
+.sign { margin-top: 2.5rem; padding-top: 1.2rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-size: 0.85rem; color: var(--ink-soft); }
+.sign .mono { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; }
+strong { font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="doc">
+  <div class="protokollhuvud">
+    <div class="label">Revisionsprotokoll · Certifieringsstil</div>
+    <h1>Fullständig systemrevision — Bidragskoll.se</h1>
+    <p style="max-width:none; color:var(--ink-soft); margin-top:0.1rem;">
+      Livssituation → stöd: personlig rättighets- och stödutredning med förberedd ansökan.
+      Revisionen omfattar hela systemet: domänmotor, API, webbapp, demo, kunskapsbas,
+      betalkedja, drift och dokumentationens sanningshalt.
+    </p>
+    <dl class="metagrid">
+      <div><dt>Revisionsdatum</dt><dd>2026-08-18</dd></div>
+      <div><dt>Reviderad version</dt><dd>112ed80 (main)</dd></div>
+      <div><dt>Repo</dt><dd>wolfoftyreso-debug/bidragskoll</dd></div>
+      <div><dt>Testbevis</dt><dd>90 + 192 gröna · CI grön</dd></div>
+      <div><dt>Metod</dt><dd style="font-family:'IBM Plex Serif',serif;"><mark class="metod">dokumentgranskning + statisk kodinspektion + dynamisk provning</mark></dd></div>
+      <div><dt>Kunskapsbas</dt><dd>72 stöd · 35 finansiärer · 71 scheman</dd></div>
+    </dl>
+    <div class="ansvar">
+      <strong>Revisorns ställning — läs först.</strong> Detta är en självrevision utförd av systemets
+      byggagent i certifieringsstil ("TÜV" betecknar metodens ambitionsnivå, inte ett ackrediterat organ).
+      Alla bevis är färska körningar daterade 2026-08-18 och kan återupprepas ur repot.
+      Inför publik lansering rekommenderas en oberoende granskning av utomstående part,
+      särskilt av betalkedjan och GDPR-hanteringen.
+    </div>
+  </div>
+
+  <h2>1 · Scorecard — tolv områden</h2>
+  <p>Varje område är provat med egna bevis (avsnitt 4). Klassning:
+  <span class="pill ok">GODKÄND</span> utan förbehåll,
+  <span class="pill anm">ANMÄRKNING</span> mindre brist som inte hindrar drift,
+  <span class="pill villkor">VILLKOR</span> kräver extern åtgärd före lansering.</p>
+  <div class="tablewrap"><table>
+    <tr><th>#</th><th>Område</th><th>Status</th><th>Kärnbevis</th></tr>
+    <tr><td class="nr">01</td><td>Byggbarhet &amp; reproducerbarhet</td><td><span class="pill ok">GODKÄND</span></td><td>Ren klon → npm ci → bygg → kontroller; CI helt grön inkl. produktionsimage + röktest</td></tr>
+    <tr><td class="nr">02</td><td>Automatiska testbevis</td><td><span class="pill ok">GODKÄND</span></td><td>90 core + 192 API mot riktig Postgres, vitest 4.1.11, körda under revisionen</td></tr>
+    <tr><td class="nr">03</td><td>Säkerhet</td><td><span class="pill ok">GODKÄND</span></td><td>Sessionskrav 13/14 ruttfiler + CRON-skydd på den 14:e; SSRF-vakt; AES-256-GCM; inga hårdkodade hemligheter</td></tr>
+    <tr><td class="nr">04</td><td>Betalkedja &amp; bokföring</td><td><span class="pill ok">GODKÄND</span></td><td>Atomisk kedja betalning→kvitto→rättighet; dubbla unika index; moms medvetet okonfigurerbar</td></tr>
+    <tr><td class="nr">05</td><td>Dataintegritet</td><td><span class="pill ok">GODKÄND</span></td><td>11 deterministiska migrationer utan drift; append-only versionering; backup/restore repeterad</td></tr>
+    <tr><td class="nr">06</td><td>GDPR &amp; integritet</td><td><span class="pill villkor">VILLKOR</span></td><td>Export/radering självservice, retention, personnummer frågas aldrig — DPIA återstår (operatör)</td></tr>
+    <tr><td class="nr">07</td><td>Ärlighetsprinciper</td><td><span class="pill ok">GODKÄND</span></td><td>Readiness svarar ok:false med tre blockerare; mockar strukturellt avstängda i produktion</td></tr>
+    <tr><td class="nr">08</td><td>Drift &amp; återhämtning</td><td><span class="pill anm">ANMÄRKNING</span></td><td>Probes, metrics, runbook, backup verifierad — larmkoppling i riktig driftmiljö återstår</td></tr>
+    <tr><td class="nr">09</td><td>Kunskapsbas</td><td><span class="pill ok">GODKÄND</span></td><td>72/35/71/36 kontrollerade mot seed-datan; schemakontroll 3/3; avsiktlig fail-safe-vaktpost kvar</td></tr>
+    <tr><td class="nr">10</td><td>Produktflöden (webb + demo)</td><td><span class="pill ok">GODKÄND</span></td><td>30-användarsimulering 30/30 utan anomalier; 7/7 demokontroller; prismodellen genomklickad</td></tr>
+    <tr><td class="nr">11</td><td>Beroenden</td><td><span class="pill anm">ANMÄRKNING</span></td><td>Produktion 0 sårbarheter; 4 måttliga i dev-verktyg med en uppströmsorsak, dokumenterade</td></tr>
+    <tr><td class="nr">12</td><td>Externa aktiveringar</td><td><span class="pill villkor">VILLKOR</span></td><td>Swish, Resend, Anthropic, Supabase/Vercel — operatörens konton, verifierbara via readiness-proben</td></tr>
+  </table></div>
+
+  <h2>2 · Avvikelseregister</h2>
+  <p>Inga A-avvikelser (kritiska) föreligger. Samtliga B- och C-avvikelser som upptäcktes under
+  revisionsperioden är åtgärdade, verifierade och pushade. Klassning: <strong>A</strong> hindrar drift,
+  <strong>B</strong> väsentlig brist, <strong>C</strong> mindre brist, <strong>O</strong> observation utan krav.</p>
+  <div class="tablewrap"><table>
+    <tr><th></th><th>Fynd</th><th>Status</th><th>Åtgärd &amp; verifiering</th></tr>
+    <tr><td><span class="klass b">B</span></td><td><strong>CI typkontrollerade före core-bygget</strong> — arbetsflödet föll i varje körning; doldes lokalt av kvarliggande <span style="font-family:'IBM Plex Mono',monospace;font-size:0.85em;">dist/</span></td><td><span class="pill stangd">STÄNGD</span></td><td>Stegordningen rättad (88e2691); reproducerad lokalt genom att radera dist; CI-körning 32178924609 grön</td></tr>
+    <tr><td><span class="klass b">B</span></td><td><strong>backup.sh returnerade fel på lyckad säkerhetskopia</strong> när uploads-katalog saknades — verkligt driftfel: varje Supabase-miljö hade fått alla backupper rapporterade som misslyckade</td><td><span class="pill stangd">STÄNGD</span></td><td>Checksummar nu endast producerade filer (d9d2ec0); verifierad med och utan uploads-katalog, exitkod 0; CI-steget grönt</td></tr>
+    <tr><td><span class="klass c">C</span></td><td>Tre miljövariabler lästes i config men saknades i .env.example</td><td><span class="pill stangd">STÄNGD</span></td><td>Dokumenterade som valfria med standardvärden (112ed80)</td></tr>
+    <tr><td><span class="klass c">C</span></td><td>Namnrest "Bidrag.se" på .env.example rad 1</td><td><span class="pill stangd">STÄNGD</span></td><td>Rättad; fullständigt svep visar inga rester utom audit-verktygens avsiktliga sökord (112ed80)</td></tr>
+    <tr><td><span class="klass c">C</span></td><td>Verktyget schemacheck kände inte till 19 kr-gaten och föll med 402</td><td><span class="pill stangd">STÄNGD</span></td><td>Köper nu ansökningskredit per ansökan; omkörd grön 3/3 (112ed80)</td></tr>
+    <tr><td><span class="klass o">O</span></td><td>Produktkontrollerna (simulering, UI-genomklickningar, demokontroller) körs manuellt, inte i CI — de kräver körande API och webbläsare</td><td><span class="pill villkor">ÖPPEN</span></td><td>Medvetet; kandidat för ett separat CI-jobb med tjänstecontainrar</td></tr>
+    <tr><td><span class="klass o">O</span></td><td>Designparitet mellan webbapp och demo underhålls manuellt (två CSS-filer med samma tokens)</td><td><span class="pill villkor">ÖPPEN</span></td><td>Accepterad kostnad; demon ska vara fristående</td></tr>
+    <tr><td><span class="klass o">O</span></td><td>Fyra måttliga dev-råd: drizzle-kit (senaste) beror på utfasade @esbuild-kit → esbuild 0.18; rådet gäller en dev-server som aldrig startas</td><td><span class="pill villkor">ÖPPEN</span></td><td>Båda tänkbara fixarna provade och förkastade med motivering (LIMITATIONS §11); omprövas per release</td></tr>
+  </table></div>
+
+  <h2>3 · Domslut</h2>
+  <div class="domsruta">
+    <div class="stampel"><small>Systemrevision 2026-08-18</small>GODKÄND<br>MED VILLKOR</div>
+    <div class="domtext">
+      <p><strong>Systemet uppfyller sina deklarerade principer och bevisar det.</strong>
+      Kärnan — deterministisk matchningsmotor, atomisk betalkedja, tenant-isolering,
+      ärlig statusrapportering — är verifierad med 282 automatiska tester, dynamisk
+      provning och grön CI inklusive produktionscontainer. Inga kritiska avvikelser.</p>
+      <p>Villkoren är kända, dokumenterade och verifierbara: operatörens externa
+      aktiveringar (Swish-handelsavtal, Resend-domän, Anthropic-nyckel, Supabase/Vercel),
+      DPIA före publik lansering samt larmkoppling i driftmiljön. Varje aktivering
+      kvitteras med <span style="font-family:'IBM Plex Mono',monospace;font-size:0.85em;">GET /v1/internal/readiness?probe=true</span>
+      enligt runbooken docs/ACTIVATION.md.</p>
+    </div>
+  </div>
+
+  <h2>4 · Bevisens spårbarhet</h2>
+  <p>Samtliga bevis producerade 2026-08-18 mot commit 112ed80 och återupprepbara ur repot.</p>
+  <div class="bevis"><span class="bid">B1  </span>npm run typecheck                  → 0 fel i tre workspaces
+<span class="bid">B2  </span>npm test                           → 90/90 core · 192/192 API (riktig Postgres)
+<span class="bid">B3  </span>hemlighets-/personnummer-/TODO-svep → inga träffar i produktkod
+<span class="bid">B4  </span>config-vakter                      → mock ignoreras när NODE_ENV=production (rad 52, 59)
+<span class="bid">B5  </span>auth-täckning                      → 13/14 ruttfiler requireAuth; internal.ts CRON_SECRET
+                                        fail-closed 404 + timingSafeEqual
+<span class="bid">B6  </span>skyddsmekanismer i kod             → helmet, global rate limit, webhook 120/min,
+                                        SSRF privat-adressblock, AES-256-GCM, magic bytes+scan
+<span class="bid">B7  </span>kvittoinvariant                    → sekvens BS-ÅÅÅÅ-NNNNNN + unika index (paymentId,
+                                        receiptNumber) — dubbel callback kan aldrig ge två kvitton
+<span class="bid">B8  </span>drizzle-kit generate               → "No schema changes" (11 migrationer, ingen drift)
+<span class="bid">B9  </span>backup → restore-verify            → 72 stöd återställda; exitkod 0 med och utan uploads
+<span class="bid">B10 </span>readiness utan token               → 401; med token → ok:false, blockerare:
+                                        payments_swish, email_resend, generation_anthropic
+<span class="bid">B11 </span>seed-räkning                       → opportunities 72 · authorities 35 · scheman 71 · källor 36
+<span class="bid">B12 </span>tools/schemacheck.mjs              → 3/3 scheman aktiva, fail-safe-flaggan släckt korrekt
+<span class="bid">B13 </span>tools/simulate30.mjs               → 30/30 lyckade, 0 anomalier, 0 tomma resultat,
+                                        intäkt 1 246 kr (30×39 + 4×19)
+<span class="bid">B14 </span>demo/checks (7 st)                 → samtliga gröna mot demo byggd ur repot
+<span class="bid">B15 </span>uicheck12 + uicheck13              → 6/6 + 6/6 samma dag: intag, teaser, kvitto-PDF,
+                                        402→köp→ansökan, Mina köp
+<span class="bid">B16 </span>GitHub Actions 32178924609         → alla steg gröna inkl. docker build + röktest /readyz
+<span class="bid">B17 </span>npm audit --omit=dev               → 0 sårbarheter (full audit: 4 måttliga, dev-verktyg)</div>
+
+  <h2>5 · Villkor före publik lansering</h2>
+  <ul>
+    <li><strong>Swish Handel</strong> — handelsavtal och bankutfärdade certifikat; verifiera mot MSS-simulatorn och därefter en riktig 39 kr-betalning.</li>
+    <li><strong>Resend</strong> — konto med verifierad avsändardomän bidragskoll.se; utan den är länk-återställningen avstängd fail-closed (koderna fungerar ändå).</li>
+    <li><strong>Anthropic-nyckel</strong> — aktiverar språkförslagen; utan nyckel svarar ytan ärligt 503, kärnflödet påverkas inte.</li>
+    <li><strong>Supabase + Vercel</strong> — driftkonton enligt docs/DEPLOYMENT.md; migrationer via direktanslutning, aldrig poolern.</li>
+    <li><strong>DPIA</strong> — operatörens konsekvensbedömning (docs/PRIVACY.md) — organisatoriskt steg, inte kod.</li>
+    <li><strong>Larmkoppling</strong> — dashboards och larmregler i den faktiska driftmiljön enligt docs/OPERATIONS.md.</li>
+  </ul>
+  <p>Varje tekniskt villkor kvitteras med readiness-proben; certifikatets status uppgraderas till
+  <strong>GODKÄND UTAN FÖRBEHÅLL</strong> när samtliga blockerare i B10 rapporterar <span style="font-family:'IBM Plex Mono',monospace;font-size:0.85em;">ready</span>.</p>
+
+  <div class="sign">
+    <div>Revision utförd och protokollförd av systemets byggagent<br>på uppdrag av operatören.</div>
+    <div class="mono">Protokoll 2026-08-18 · rev. 112ed80<br>282 tester gröna · CI 32178924609</div>
+  </div>
+</div>

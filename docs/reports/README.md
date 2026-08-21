@@ -7,6 +7,7 @@ för vad som återstår.
 
 | Rapport | Innehåll |
 |---|---|
+| `tuv-revisionen.html` | Fullständig systemrevision i certifieringsstil (2026-08-18): scorecard 12 områden, avvikelseregister, spårbara bevis, domslut |
 | `master-revision.html` | Master test & perfection audit — komponentklassificering, scorecard, dom |
 | `redteam-rapport.html` | Red team-revision mot direktivens §1–39 |
 | `forensisk-revision.html` | Forensisk genomgång av motorn och datakedjan |
