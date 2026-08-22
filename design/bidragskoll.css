@@ -61,11 +61,12 @@ p { margin: .4rem 0; }
 .card.accent { border-color: var(--accent-card-border); }
 
 /* ── Knappar (platta — inga gradienter; djup via kant + skugga) ── */
-button, .btn { font: inherit; font-weight: 600; border: none; color: #fff;
-  background: var(--primary); padding: .56rem 1.15rem; border-radius: var(--radius-sm);
-  cursor: pointer; display: inline-block; box-shadow: var(--shadow-btn);
-  transition: background 130ms ease, box-shadow 130ms ease, transform 80ms ease; }
-button:hover, .btn:hover { background: var(--primary-dark); text-decoration: none; }
+button, .btn { font: inherit; font-weight: 700; border: none; color: #fff;
+  background: var(--primary); padding: .62rem 1.3rem; border-radius: var(--radius-sm);
+  cursor: pointer; display: inline-block; box-shadow: 0 3px 10px rgba(35,44,88,.35);
+  transition: background 130ms ease, box-shadow 130ms ease, transform 120ms ease; }
+button:hover, .btn:hover { background: var(--primary-dark); text-decoration: none;
+  transform: translateY(-1px); box-shadow: 0 5px 16px rgba(35,44,88,.40); }
 button:active, .btn:active { transform: translateY(1px); }
 button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
 button:focus-visible, .btn:focus-visible, a:focus-visible, input:focus-visible {
@@ -79,11 +80,13 @@ button.subtle:hover, .btn.subtle:hover { background: var(--bg-deep); }
 .btn.small { padding: .34rem .9rem; font-size: .9rem; }
 
 /* ── Svarsval ─────────────────────────────────────────────────── */
-.choice { display: block; width: 100%; text-align: left; margin-bottom: .6rem; padding: .9rem 1.05rem;
-  background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-choice);
-  cursor: pointer; font: inherit; color: var(--text); box-shadow: none; font-weight: 600;
-  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease, transform 80ms ease; }
-.choice:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(61,74,140,.14); background: var(--surface); }
+.choice { display: block; width: 100%; text-align: left; margin-bottom: .6rem; padding: .95rem 1.1rem;
+  background: var(--surface); border: 1.5px solid var(--border-strong); border-radius: var(--radius-choice);
+  cursor: pointer; font: inherit; color: var(--text); font-weight: 600;
+  box-shadow: 0 1px 3px rgba(40,36,28,.08), 0 3px 10px rgba(35,44,88,.07);
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease, transform 120ms ease; }
+.choice:hover { border-color: var(--primary); background: var(--surface);
+  transform: translateY(-1px); box-shadow: 0 4px 14px rgba(35,44,88,.20); }
 .choice:active { transform: translateY(1px); }
 .choice.vald { background: var(--primary-soft); border: 1.5px solid var(--primary); }
 .choice-label { font-weight: 600; display: block; }
@@ -101,6 +104,14 @@ button.subtle:hover, .btn.subtle:hover { background: var(--bg-deep); }
 .fraga-framhavd .scen svg { width: 96px; height: 96px; }
 .fraga-framhavd h1 { font-size: 1.8rem; margin-bottom: .35rem; }
 .fraga-framhavd .val { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; text-align: left; }
+/* CTA-pop: valen är skärmens handling — vit yta med djup mot den tonade
+   panelen och en riktningspil som svarar på hovring. */
+.fraga-framhavd .choice { position: relative; padding-right: 2.4rem;
+  box-shadow: 0 2px 6px rgba(35,44,88,.12), 0 8px 22px rgba(35,44,88,.10); }
+.fraga-framhavd .choice::after { content: '›' / ''; position: absolute; right: 1.05rem; top: 50%;
+  transform: translateY(-52%); font-size: 1.3rem; font-weight: 700; color: var(--primary);
+  opacity: .55; transition: opacity 120ms ease, transform 120ms ease; }
+.fraga-framhavd .choice:hover::after { opacity: 1; transform: translateY(-52%) translateX(3px); }
 @media (max-width: 560px) { .fraga-framhavd .val { grid-template-columns: 1fr; } }
 
 /* ── Fält & formulär ──────────────────────────────────────────── */
