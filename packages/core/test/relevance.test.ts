@@ -9,6 +9,7 @@ import {
   BUSINESS_RELEVANT_SLUGS,
   PERSONAL_SECTOR,
   detectTrack,
+  businessRelevantSlugs,
   relevantForTrack,
 } from '../src/relevance.js';
 
@@ -58,6 +59,21 @@ describe('relevantForTrack', () => {
     expect(visible).toContain('af-stod-start-naringsverksamhet');
     expect(BUSINESS_RELEVANT_SLUGS.has('af-stod-start-naringsverksamhet')).toBe(true);
   });
+  it('F-BRANSCH: deklarerad sektor öppnar branschstöden — utan deklaration förblir basmängden', () => {
+    const rows = [
+      { slug: 'kulturradet-projektbidrag-musik', instrumentType: 'project_grant', eligibilityStatus: 'unknown' },
+      { slug: 'naturvardsverket-klimatklivet', instrumentType: 'public_grant', eligibilityStatus: 'unknown' },
+      { slug: 'af-stod-start-naringsverksamhet', instrumentType: 'public_grant', eligibilityStatus: 'unknown' },
+    ];
+    const culture = relevantForTrack(rows, 'personal', { selfEmployed: true, sector: 'culture' }).map((r) => r.slug);
+    expect(culture).toContain('kulturradet-projektbidrag-musik');
+    expect(culture).not.toContain('naturvardsverket-klimatklivet');
+    const other = relevantForTrack(rows, 'personal', { selfEmployed: true, sector: 'other' }).map((r) => r.slug);
+    expect(other).toEqual(['af-stod-start-naringsverksamhet']);
+    expect(businessRelevantSlugs('environment').has('naturvardsverket-klimatklivet')).toBe(true);
+    expect(businessRelevantSlugs(undefined)).toBe(BUSINESS_RELEVANT_SLUGS);
+  });
+
   it('projektspåret: döljer personliga instrument som inte är eligible', () => {
     const visible = relevantForTrack(rows, 'project').map((r) => r.slug);
     expect(visible).not.toContain('kommun-forsorjningsstod');

@@ -5,7 +5,7 @@
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BUSINESS_RELEVANT_SLUGS, PERSONAL_INSTRUMENTS, computeMatch } from '@bidrag/core';
+import { PERSONAL_INSTRUMENTS, businessRelevantSlugs, computeMatch } from '@bidrag/core';
 import OPPORTUNITIES from './demo-opportunities.json';
 
 type Facts = Record<string, unknown>;
@@ -32,7 +32,6 @@ const OPPS = OPPORTUNITIES as unknown as Opp[];
 // Relevanspolicyn (F-RELEVANS) delas med API:t via @bidrag/core — demon
 // bundlar samma modul, så spårfiltren kan aldrig glida isär.
 const PERSONAL = PERSONAL_INSTRUMENTS;
-const BUSINESS = BUSINESS_RELEVANT_SLUGS;
 const INSTRUMENT: Record<string, string> = {
   public_grant: 'Statligt bidrag', eu_grant: 'EU-bidrag', scholarship: 'Stipendium', stipend: 'Stipendium',
   travel_grant: 'Resebidrag', project_grant: 'Projektbidrag', social_benefit: 'Ersättning', educational_support: 'Studiestöd', loan: 'Lån',
@@ -145,7 +144,7 @@ function buildFacts(a: A): Facts {
     // Egenföretagarens verksamhetssektor (F-RELEVANS): jordbruksstöden ska
     // antingen gälla på riktigt eller uteslutas ärligt — aldrig ligga kvar
     // som "behöver utredas"-brus.
-    if (a.bizSector) f['project.sector'] = a.bizSector === 'agriculture' ? 'agriculture' : 'other';
+    if (a.bizSector) f['project.sector'] = a.bizSector;
     if (a.capacity !== undefined) f['person.reducedWorkCapacityLongTerm'] = a.capacity;
     f['person.consideringMovingAbroad'] = a.movingAbroad === true;
     // Funktionsnedsättningsspåret: samma gate-mönster som utvandringsspåret.
@@ -348,7 +347,7 @@ function Teaser({ facts, track, onUnlocked }: { facts: Facts; track: 'personal' 
   // F1: utanför spåret räknas bara stöd som faktiskt bedömts aktuella.
   const inScope = track === 'project'
     ? results.filter((r) => !PERSONAL.has(r.opp.instrumentType) || r.m.eligibilityStatus === 'eligible')
-    : results.filter((r) => PERSONAL.has(r.opp.instrumentType) || r.m.eligibilityStatus === 'eligible' || (facts['person.selfEmployed'] === true && BUSINESS.has(r.opp.slug)));
+    : results.filter((r) => PERSONAL.has(r.opp.instrumentType) || r.m.eligibilityStatus === 'eligible' || (facts['person.selfEmployed'] === true && businessRelevantSlugs(facts['project.sector']).has(r.opp.slug)));
   const relevant = inScope.filter((r) => r.m.eligibilityStatus !== 'excluded');
   const excludedCount = inScope.length - relevant.length;
   const counts = { high: 0, possible: 0, needs_info: 0 };
@@ -420,11 +419,13 @@ function Teaser({ facts, track, onUnlocked }: { facts: Facts; track: 'personal' 
   }
 
   return (
-    <div className="card">
+    <div className="rapport-lock">
+      <span className="rapport-etikett">Personlig bidragsanalys · {results.length} stöd genomlysta</span>
       <h1>Vi hittade {relevant.length} stöd som matchar din situation</h1>
       <p className="guidance">
         Dina svar har körts mot hela kunskapsbasen. Bidragens namn och hur du går vidare visas när rapporten är upplåst.
       </p>
+      <hr className="rapport-guld" />
       <p style={{ fontSize: '1.05rem', margin: '0.7rem 0' }}>
         {[
           counts.high > 0 ? <>🟢 <strong>{counts.high}</strong> med hög relevans</> : null,
@@ -432,7 +433,7 @@ function Teaser({ facts, track, onUnlocked }: { facts: Facts; track: 'personal' 
           counts.needs_info > 0 ? <>⚪ <strong>{counts.needs_info}</strong> kräver mer information</> : null,
         ].filter(Boolean).map((el, i) => <span key={i}>{i > 0 && ' · '}{el}</span>)}
       </p>
-      <div style={{ margin: '0.8rem 0' }}>
+      <div className="rapport-rader">
         {rows.map((r, i) => (
           <div key={i} className="match" style={{ alignItems: 'center', gap: '0.5rem' }}>
             <span>{TEASER_LEVEL[r.level]!.dot}</span>
@@ -452,7 +453,7 @@ function Teaser({ facts, track, onUnlocked }: { facts: Facts; track: 'personal' 
           </p>
         )}
       </div>
-      <button className="btn primary" style={{ fontSize: '1.05rem' }} onClick={() => setPaying(true)}>
+      <button className="btn upplas" style={{ fontSize: '1.05rem' }} onClick={() => setPaying(true)}>
         Lås upp din bidragsanalys — 39 kr
       </button>
       <p className="guidance" style={{ marginTop: '0.8rem' }}>
@@ -470,19 +471,19 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
   // F1: samma spårrelevans som teasern — utanför spåret bara det som bedömts aktuellt.
   const inScope = track === 'project'
     ? results.filter((r) => !PERSONAL.has(r.opp.instrumentType) || r.m.eligibilityStatus === 'eligible')
-    : results.filter((r) => PERSONAL.has(r.opp.instrumentType) || r.m.eligibilityStatus === 'eligible' || (facts['person.selfEmployed'] === true && BUSINESS.has(r.opp.slug)));
+    : results.filter((r) => PERSONAL.has(r.opp.instrumentType) || r.m.eligibilityStatus === 'eligible' || (facts['person.selfEmployed'] === true && businessRelevantSlugs(facts['project.sector']).has(r.opp.slug)));
   const relevant = inScope.filter((r) => r.m.eligibilityStatus !== 'excluded');
   const excluded = inScope.filter((r) => r.m.eligibilityStatus === 'excluded');
   const personal = relevant.filter((r) => PERSONAL.has(r.opp.instrumentType));
   const isSelfEmployed = facts['person.selfEmployed'] === true;
   const businessForm = facts['person.businessForm'];
-  const business = isSelfEmployed ? relevant.filter((r) => BUSINESS.has(r.opp.slug)) : [];
-  const excludedBusiness = isSelfEmployed ? excluded.filter((r) => BUSINESS.has(r.opp.slug)) : [];
-  const fundingAll = relevant.filter((r) => !PERSONAL.has(r.opp.instrumentType) && !(isSelfEmployed && BUSINESS.has(r.opp.slug)));
+  const business = isSelfEmployed ? relevant.filter((r) => businessRelevantSlugs(facts['project.sector']).has(r.opp.slug)) : [];
+  const excludedBusiness = isSelfEmployed ? excluded.filter((r) => businessRelevantSlugs(facts['project.sector']).has(r.opp.slug)) : [];
+  const fundingAll = relevant.filter((r) => !PERSONAL.has(r.opp.instrumentType) && !(isSelfEmployed && businessRelevantSlugs(facts['project.sector']).has(r.opp.slug)));
   const funding = personal.length > 0 ? fundingAll.filter((r) => r.m.eligibilityStatus === 'eligible') : fundingAll;
   const summarised = fundingAll.length - funding.length;
   // Företagsstöd som inte uppfylls visas inne i företagssektionen — inte dubbelt.
-  const excludedShown = isSelfEmployed ? excluded.filter((r) => !BUSINESS.has(r.opp.slug)) : excluded;
+  const excludedShown = isSelfEmployed ? excluded.filter((r) => !businessRelevantSlugs(facts['project.sector']).has(r.opp.slug)) : excluded;
 
   // Varje följdfråga bär sin kontext: vilket stöd den avgör.
   interface QDetail { title: string; requirement: string; kind: string; sourceUrl: string }
@@ -1038,8 +1039,11 @@ function App() {
         </Q>
       )}
       {step === 'p-biz-sector' && (
-        <Q title="Vad sysslar verksamheten med?" guidance="Frågan avgör vilka branschstöd som är aktuella — jordbruksstöden gäller till exempel bara jordbruks-, trädgårds- och rennäringsföretag.">
+        <Q title="Vad sysslar verksamheten med?" guidance="Frågan avgör vilka branschstöd som är aktuella — jordbruksstöden gäller till exempel bara jordbruksföretag, och kultur- och energistöden har egna villkor.">
           <Choice label="Jordbruk, trädgård eller rennäring" onClick={() => advance({ bizSector: 'agriculture' })} />
+          <Choice label="Kultur eller kreativ näring" sub="Musik, film, litteratur, scen, konst" onClick={() => advance({ bizSector: 'culture' })} />
+          <Choice label="Energi eller miljö" sub="Energieffektivisering, laddinfrastruktur, klimatåtgärder" onClick={() => advance({ bizSector: 'environment' })} />
+          <Choice label="Innovation eller teknik" onClick={() => advance({ bizSector: 'innovation' })} />
           <Choice label="Något annat" onClick={() => advance({ bizSector: 'other' })} />
         </Q>
       )}

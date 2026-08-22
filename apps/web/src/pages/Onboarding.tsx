@@ -27,7 +27,7 @@ interface Answers {
   ageBand?: 'under20' | '20-28' | '29-65' | '66plus';
   employment?: 'working' | 'unemployed' | 'sick' | 'studying' | 'retired' | 'self_employed';
   businessForm?: 'sole_trader' | 'limited_company' | 'other';
-  bizSector?: 'agriculture' | 'other';
+  bizSector?: 'agriculture' | 'culture' | 'environment' | 'innovation' | 'other';
   reducedCapacity?: boolean;
   movingAbroad?: boolean;
   disabilityInFamily?: boolean;
@@ -292,7 +292,7 @@ export default function OnboardingPage() {
             ...(answers.employment !== 'self_employed'
               ? { 'project.sector': 'personal' }
               : answers.bizSector
-                ? { 'project.sector': answers.bizSector === 'agriculture' ? 'agriculture' : 'other' }
+                ? { 'project.sector': answers.bizSector }
                 : {}),
           }
         : {
@@ -594,9 +594,12 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
       return (
         <Q
           title="Vad sysslar verksamheten med?"
-          guidance="Frågan avgör vilka branschstöd som är aktuella — jordbruksstöden gäller till exempel bara jordbruks-, trädgårds- och rennäringsföretag."
+          guidance="Frågan avgör vilka branschstöd som är aktuella — jordbruksstöden gäller till exempel bara jordbruksföretag, och kultur- och energistöden har egna villkor."
         >
           <Choice label="Jordbruk, trädgård eller rennäring" onClick={() => onAnswer({ bizSector: 'agriculture' })} />
+          <Choice label="Kultur eller kreativ näring" sub="Musik, film, litteratur, scen, konst" onClick={() => onAnswer({ bizSector: 'culture' })} />
+          <Choice label="Energi eller miljö" sub="Energieffektivisering, laddinfrastruktur, klimatåtgärder" onClick={() => onAnswer({ bizSector: 'environment' })} />
+          <Choice label="Innovation eller teknik" onClick={() => onAnswer({ bizSector: 'innovation' })} />
           <Choice label="Något annat" onClick={() => onAnswer({ bizSector: 'other' })} />
         </Q>
       );

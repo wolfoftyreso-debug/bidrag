@@ -81,7 +81,7 @@ async function trackRelevantMatches(
   const merged = { ...((row?.profileFacts as Record<string, unknown>) ?? {}), ...((row?.projectFacts as Record<string, unknown>) ?? {}) };
   const rows = await listMatchesForProject(tenantId, projectId);
   return {
-    rows: relevantForTrack(rows, detectTrack(merged), { selfEmployed: merged['person.selfEmployed'] === true }),
+    rows: relevantForTrack(rows, detectTrack(merged), { selfEmployed: merged['person.selfEmployed'] === true, sector: merged['project.sector'] }),
     facts: merged,
   };
 }

@@ -282,7 +282,21 @@ export default function MatchesPage() {
   const personal = relevant.filter((m) => PERSONAL_INSTRUMENTS.has(m.instrumentType));
   // Företagarspåret (F-EGEN): den som driver eget har lovats genomlysning av
   // företagsstöden. De får en egen sektion och sammanfattas aldrig bort, även
-  // när frågor återstår. Speglar API:ts BUSINESS_RELEVANT_SLUGS.
+  // när frågor återstår. Speglar core:s businessRelevantSlugs (F-BRANSCH:
+  // basmängden + den deklarerade verksamhetssektorns branschstöd).
+  const SECTOR_SLUGS: Record<string, string[]> = {
+    culture: [
+      'kulturradet-projektbidrag-musik', 'kulturradet-litteraturstod', 'filminstitutet-kortfilmsstod',
+      'musikverket-projektbidrag', 'region-kulturstod', 'nordisk-kulturfond-projektstod',
+      'konstnarsnamnden-kulturbryggan',
+    ],
+    environment: [
+      'energimyndigheten-energieffektivisering', 'naturvardsverket-ladda-bilen-organisationer',
+      'naturvardsverket-klimatklivet', 'energimyndigheten-industriklivet',
+    ],
+    innovation: ['vinnova-planeringsbidrag-eu'],
+  };
+  const declaredSector = facts['project.sector'];
   const BUSINESS_SLUGS = new Set([
     'af-stod-start-naringsverksamhet',
     'vinnova-innovativa-startups',
@@ -290,6 +304,7 @@ export default function MatchesPage() {
     'tillvaxtverket-regionalt-investeringsstod',
     'jordbruksverket-startstod-unga',
     'jordbruksverket-investeringsstod',
+    ...(typeof declaredSector === 'string' ? (SECTOR_SLUGS[declaredSector] ?? []) : []),
   ]);
   const isSelfEmployed = facts['person.selfEmployed'] === true;
   const businessForm = facts['person.businessForm'];
@@ -682,11 +697,13 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
   }
 
   return (
-    <div className="card" style={{ maxWidth: '40rem' }}>
-      <h2>Vi hittade {teaser.total} stöd som matchar din situation</h2>
+    <div className="rapport-lock" style={{ maxWidth: '40rem' }}>
+      <span className="rapport-etikett">Personlig bidragsanalys · klar att låsa upp</span>
+      <h2 style={{ marginTop: 0 }}>Vi hittade {teaser.total} stöd som matchar din situation</h2>
       <p className="guidance">
         Dina svar har körts mot hela kunskapsbasen. Bidragens namn och hur du går vidare visas när rapporten är upplåst.
       </p>
+      <hr className="rapport-guld" />
       <p style={{ fontSize: '1.05rem', margin: '0.75rem 0' }}>
         {[
           teaser.counts.high > 0 && <span key="h">🟢 <strong>{teaser.counts.high}</strong> med hög relevans</span>,
@@ -695,7 +712,7 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
         ].filter(Boolean).map((el, i) => <span key={i}>{i > 0 && ' · '}{el}</span>)}
       </p>
 
-      <div style={{ margin: '1rem 0' }}>
+      <div className="rapport-rader">
         {teaser.rows.map((r, i) => {
           const t = LIKELIHOOD_TEASER[r.likelihood] ?? LIKELIHOOD_TEASER.needs_info!;
           // Fast platshållarmask som blurras — namnen lämnar aldrig servern
@@ -725,7 +742,7 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
       {!payment && (
         <>
           <PurchaseConsent checked={consent} onChange={setConsent} idSuffix="-analys" />
-          <button disabled={busy || !consent} onClick={startUnlock} style={{ fontSize: '1.05rem' }}>
+          <button className="upplas" disabled={busy || !consent} onClick={startUnlock} style={{ fontSize: '1.05rem' }}>
             {busy ? 'Startar betalning…' : `Lås upp din bidragsanalys — ${formatSek(teaser.priceMinor)}`}
           </button>
           <p className="guidance" style={{ marginTop: '0.75rem' }}>

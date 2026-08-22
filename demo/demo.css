@@ -144,3 +144,32 @@ button:focus-visible, .choice:focus-visible, .btn:focus-visible, input:focus-vis
   border-radius: 0 10px 10px 0; padding: 0.7rem 0.95rem; margin: 0.45rem 0; font-size: 0.9rem; }
 .inforuta ul { margin: 0.35rem 0 0.45rem; padding-left: 1.1rem; }
 .inforuta li { margin-bottom: 0.3rem; }
+
+/* Exklusiv låst analys (Bläck, F-EXKLUSIV): rapporten före upplåsning
+   presenteras som ett inbundet dokument — djup indigo, seriffrubrik,
+   guldlinje och rapportetikett. Exklusivitet genom materialkänsla och lugn,
+   ALDRIG genom brådska: inga timers, inga dark patterns; ärlighetstexterna
+   och gratisvägen står kvar ordagrant. */
+.rapport-lock { background: linear-gradient(165deg, #232c58 0%, #2a3468 55%, #2f3a70 100%);
+  color: #f3f1ea; border: 1px solid #1b2244; border-radius: 18px; padding: 1.9rem 1.7rem;
+  margin-bottom: 1.05rem;
+  box-shadow: 0 6px 16px rgba(35,44,88,0.24), 0 24px 60px rgba(35,44,88,0.32); }
+.rapport-lock h1, .rapport-lock h2 { color: #fffdf9; }
+.rapport-lock label { color: #f3f1ea; }
+.rapport-lock .guidance { color: #c3c9e4; }
+.rapport-lock .meta, .rapport-lock .meta-line { color: #aab1d6; }
+.rapport-etikett { display: inline-flex; align-items: center; gap: 0.45rem;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
+  color: #d9b96a; border: 1px solid rgba(217,185,106,0.5); border-radius: 999px;
+  padding: 0.24rem 0.75rem; margin-bottom: 0.85rem; }
+.rapport-guld { border: none; height: 2px; margin: 0.95rem 0 1.05rem;
+  background: linear-gradient(90deg, #d9b96a 0%, rgba(217,185,106,0.12) 78%, transparent); }
+.rapport-rader { background: rgba(255,253,249,0.05); border: 1px solid rgba(255,253,249,0.14);
+  border-radius: 12px; padding: 0.3rem 0.95rem; margin: 0.8rem 0; }
+.rapport-lock .match, .rapport-lock .match-row { border-bottom-color: rgba(255,253,249,0.10); }
+.rapport-lock .match:hover, .rapport-lock .match-row:hover { background: rgba(255,253,249,0.04); }
+.rapport-lock .blurred, .rapport-lock .blurred-name { color: #eef0f9; }
+.rapport-lock .check-row input, .rapport-lock .checkbox-row input { accent-color: #d9b96a; }
+button.upplas, .btn.upplas { background: #fffdf9; color: #232c58; border: none;
+  font-weight: 700; box-shadow: 0 3px 12px rgba(0,0,0,0.30); }
+button.upplas:hover, .btn.upplas:hover { background: #eef0f9; color: #232c58; }

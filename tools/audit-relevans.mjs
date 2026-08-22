@@ -148,6 +148,21 @@ PERSONAS.push(
     // F-EGEN: företagsstöden ska REDOVISAS (även som ärligt uteslutna) …
     mustShow: ['af-stod-start-naringsverksamhet'],
     // … men jordbruksstöden ska vara uteslutna för en icke-jordbruksverksamhet.
+    mustExclude: ['jordbruksverket-startstod-unga', 'jordbruksverket-investeringsstod', 'kulturradet-projektbidrag-musik'],
+  },
+  {
+    // F-BRANSCH: deklarerad kultursektor ska öppna kulturbranschstöden i
+    // personspåret — och jordbruksstöden ska förbli uteslutna.
+    name: 'Egenföretagare (musiker, enskild firma)', venture: 'culture', selfEmployed: true,
+    facts: {
+      ...base,
+      'person.employmentStatus': 'self_employed', 'person.selfEmployed': true,
+      'person.registeredUnemployed': false, 'person.receivesPension': false,
+      'person.businessForm': 'sole_trader', 'project.sector': 'culture',
+      'person.consideringMovingAbroad': false, 'person.disabilityOrLongTermIllnessInFamily': false,
+    },
+    mustSee: [],
+    mustShow: ['af-stod-start-naringsverksamhet', 'kulturradet-projektbidrag-musik', 'musikverket-projektbidrag'],
     mustExclude: ['jordbruksverket-startstod-unga', 'jordbruksverket-investeringsstod'],
   },
   {
@@ -223,7 +238,7 @@ for (const persona of PERSONAS) {
   const shown = relevantForTrack(
     rows.map((r) => ({ slug: r.o.slug, instrumentType: r.o.instrumentType, eligibilityStatus: r.m.eligibilityStatus, r })),
     track,
-    { selfEmployed: persona.selfEmployed === true },
+    { selfEmployed: persona.selfEmployed === true, sector: persona.facts['project.sector'] },
   );
   const visible = shown.filter((x) => x.eligibilityStatus !== 'excluded').map((x) => x.r);
   const personaLeaks = visible.filter((r) => {

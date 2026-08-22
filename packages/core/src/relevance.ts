@@ -32,6 +32,40 @@ export const BUSINESS_RELEVANT_SLUGS: ReadonlySet<string> = new Set([
 ]);
 
 /**
+ * F-BRANSCH: sektorspecifika företags-/verksamhetsstöd som läggs till för
+ * egenföretagare som DEKLARERAT sin verksamhetssektor (p-biz-sector).
+ * Kunskapsbasen har ~50 sektorsmärkta stöd; utan detta såg en egenföretagare
+ * inom kultur eller energi/miljö aldrig sina branschstöd i personspåret
+ * (de nåddes bara via projektspåret). Nycklarna är sektorsvärdena som
+ * intaget sätter; jordbruket ligger redan i basmängden (hårt grindat —
+ * redovisas alltid, även som ärligt uteslutet).
+ */
+export const BUSINESS_SECTOR_SLUGS: Readonly<Record<string, readonly string[]>> = {
+  culture: [
+    'kulturradet-projektbidrag-musik',
+    'kulturradet-litteraturstod',
+    'filminstitutet-kortfilmsstod',
+    'musikverket-projektbidrag',
+    'region-kulturstod',
+    'nordisk-kulturfond-projektstod',
+    'konstnarsnamnden-kulturbryggan',
+  ],
+  environment: [
+    'energimyndigheten-energieffektivisering',
+    'naturvardsverket-ladda-bilen-organisationer',
+    'naturvardsverket-klimatklivet',
+    'energimyndigheten-industriklivet',
+  ],
+  innovation: ['vinnova-planeringsbidrag-eu'],
+};
+
+/** Företagsstöden en egenföretagare ska se: basmängden + deklarerad sektor. */
+export function businessRelevantSlugs(sector?: unknown): ReadonlySet<string> {
+  const extra = typeof sector === 'string' ? (BUSINESS_SECTOR_SLUGS[sector] ?? []) : [];
+  return extra.length === 0 ? BUSINESS_RELEVANT_SLUGS : new Set([...BUSINESS_RELEVANT_SLUGS, ...extra]);
+}
+
+/**
  * Sektorsvärdet som personspåret deklarerar: personen har valt personligt
  * stöd, inte projekt/företag. Det är ett SVAR (inte en gissning) och får
  * sektorsgrindade kriterier att utvärderas till 'fail' i stället för
@@ -76,14 +110,15 @@ export function detectTrack(facts: Record<string, unknown>): RelevanceTrack {
 export function relevantForTrack<T extends RelevanceRow>(
   rows: T[],
   track: RelevanceTrack,
-  opts?: { selfEmployed?: boolean },
+  opts?: { selfEmployed?: boolean; sector?: unknown },
 ): T[] {
   if (track === 'personal') {
+    const business = businessRelevantSlugs(opts?.sector);
     return rows.filter(
       (m) =>
         PERSONAL_INSTRUMENTS.has(m.instrumentType) ||
         m.eligibilityStatus === 'eligible' ||
-        (opts?.selfEmployed === true && BUSINESS_RELEVANT_SLUGS.has(m.slug)),
+        (opts?.selfEmployed === true && business.has(m.slug)),
     );
   }
   if (track === 'project') {
