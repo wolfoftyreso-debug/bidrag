@@ -1,0 +1,576 @@
+{
+ "_kontrakt": "12 personaHYPOTESER (förstakörningen, masterprompt 2 §32.2). Varje profil är en hypotes tills den stödjs av minst tre evidenstyper (§12: querydata + officiell statistik + intervju/test). confidence_level är därför HYPOTHESIS genomgående utom där OFFICIAL_STATISTICS-belägg finns (se docs/SEO_AUDIENCE_ATLAS.md). Personanamn är pedagogiska etiketter, inte demografiska påståenden. Inga individdata — mönster, inte människor.",
+ "personas": [
+  {
+   "persona_id": "PER-001",
+   "persona_name": "Ensamstående förälder med varierande arbetstid",
+   "need_state": "akut hushållsekonomi — pengarna räcker inte månaden ut",
+   "trigger_event": "färre arbetstimmar / oväntad utgift",
+   "household_or_organization_context": "ensamhushåll med 1–2 barn",
+   "financial_context": "låg/skiftande månadsinkomst, litet sparutrymme",
+   "known_information": "känner till ordet bostadsbidrag",
+   "unknown_information": "att flera stöd finns och kan kombineras; att preliminär inkomst styr återbetalning",
+   "system_knowledge": "låg–medel",
+   "digital_ability": "mobilvan",
+   "language_needs": "enkel svenska, korta stycken",
+   "device_and_context": "mobil, ofta kvällstid",
+   "time_pressure": "hög — dagar, inte veckor",
+   "emotional_state": "oro, rädsla för återbetalningskrav och för att göra fel",
+   "trust_barriers": "rädsla att 'fastna i systemet'; skam får aldrig förstärkas",
+   "typical_search_language": [
+    "hjälp med hyran ensamstående med barn",
+    "vilka bidrag kan jag få som ensamstående",
+    "bidrag när man jobbar deltid"
+   ],
+   "first_query": "vilka bidrag kan jag få som ensamstående",
+   "follow_up_queries": [
+    "kan man få bostadsbidrag om man jobbar",
+    "hur mycket får jag tjäna för bostadsbidrag",
+    "blir jag återbetalningsskyldig om jag jobbar mer"
+   ],
+   "likely_answer_entities": [
+    "fk-bostadsbidrag-barnfamiljer",
+    "kommun-forsorjningsstod",
+    "fk-underhallsstod",
+    "majblomman-bidrag-barn",
+    "region-glasogonbidrag-barn"
+   ],
+   "highest_value_content": "samlingsvyn 'vilka stöd kan jag få' + återbetalningsförklaring",
+   "best_interaction_format": "eligibility-flöde + snabb indikativ beräkning",
+   "desired_next_action": "se en konkret lista och gå till rätt ansökan",
+   "return_trigger": "inkomständring, ny termin, deadline",
+   "appropriate_channels": [
+    "organisk sök",
+    "sparade stöd",
+    "frivillig e-postpåminnelse"
+   ],
+   "inappropriate_channels": [
+    "remarketing baserad på besök på bistånds-/bidragssidor",
+    "annonser som antyder ekonomisk utsatthet"
+   ],
+   "privacy_risk": "HÖG — ekonomisk utsatthet är känslig kategori (Google policy + EDPB)",
+   "evidence_sources": "SERP_OBSERVED (problem-first-luckan) + OFFICIAL_STATISTICS (se atlas)",
+   "confidence_level": "HYPOTHESIS"
+  },
+  {
+   "persona_id": "PER-002",
+   "persona_name": "Nyseparerad förälder",
+   "need_state": "ordna ny ekonomi efter separation",
+   "trigger_event": "separation/flytt",
+   "household_or_organization_context": "växelvis eller ensam vårdnad",
+   "financial_context": "dubbla boendekostnader övergångsvis",
+   "known_information": "barnbidrag finns",
+   "unknown_information": "underhållsstöd vs underhållsbidrag; bostadsbidrag efter flytt",
+   "system_knowledge": "medel",
+   "digital_ability": "god",
+   "language_needs": "vanlig svenska",
+   "device_and_context": "mobil + dator",
+   "time_pressure": "medel–hög",
+   "emotional_state": "stress, konflikt­trötthet",
+   "trust_barriers": "vill inte blanda in myndigheter i konflikten i onödan",
+   "typical_search_language": [
+    "bidrag separerad förälder",
+    "underhållsstöd eller underhållsbidrag",
+    "bostadsbidrag efter separation"
+   ],
+   "first_query": "vilka bidrag kan jag söka som separerad förälder",
+   "follow_up_queries": [
+    "vem betalar underhållsstöd",
+    "hur ansöker man om underhållsstöd",
+    "påverkar växelvis boende bidragen"
+   ],
+   "likely_answer_entities": [
+    "fk-underhallsstod",
+    "fk-bostadsbidrag-barnfamiljer",
+    "kommun-forsorjningsstod"
+   ],
+   "highest_value_content": "distinktionen underhållsstöd/underhållsbidrag på enkel svenska (SERP-belagd lucka — juristsajter äger den idag)",
+   "best_interaction_format": "guide + jämförelse + länk till FK",
+   "desired_next_action": "förstå vilket av stöden som gäller och ansöka",
+   "return_trigger": "ändrade boendeförhållanden",
+   "appropriate_channels": [
+    "organisk sök",
+    "sparade stöd"
+   ],
+   "inappropriate_channels": [
+    "remarketing på familjesituation"
+   ],
+   "privacy_risk": "HÖG — familjeförhållanden",
+   "evidence_sources": "SERP_OBSERVED (underhållsstöd-SERPen)",
+   "confidence_level": "HYPOTHESIS"
+  },
+  {
+   "persona_id": "PER-003",
+   "persona_name": "Ung vuxen i första egna boendet",
+   "need_state": "klara hyran på låg lön/deltid",
+   "trigger_event": "flytt hemifrån / första jobbet",
+   "household_or_organization_context": "ensamhushåll under 29",
+   "financial_context": "låg ingångslön, hög hyresandel",
+   "known_information": "vet inte att bostadsbidrag finns för unga utan barn",
+   "unknown_information": "bostadsbidrag till unga under 29",
+   "system_knowledge": "låg",
+   "digital_ability": "mycket god",
+   "language_needs": "vardaglig svenska, tål inte myndighetsprosa",
+   "device_and_context": "mobil",
+   "time_pressure": "medel",
+   "emotional_state": "osäkerhet",
+   "trust_barriers": "tror att bidrag 'inte är för mig'",
+   "typical_search_language": [
+    "bidrag ung vuxen",
+    "hjälp med hyran student",
+    "bostadsbidrag under 29"
+   ],
+   "first_query": "kan man få hjälp med hyran när man är ung",
+   "follow_up_queries": [
+    "hur mycket bostadsbidrag ung",
+    "räknas csn som inkomst",
+    "hur söker man bostadsbidrag"
+   ],
+   "likely_answer_entities": [
+    "fk-bostadsbidrag-unga",
+    "csn-studiemedel"
+   ],
+   "highest_value_content": "upptäckten att stödet finns + inkomstgränserna konkret",
+   "best_interaction_format": "kort svar + kalkylatorhänvisning",
+   "desired_next_action": "ansöka hos FK",
+   "return_trigger": "årlig omprövning",
+   "appropriate_channels": [
+    "organisk sök",
+    "TikTok/Youtube-innehåll (kontextuellt, ej profilerat)"
+   ],
+   "inappropriate_channels": [
+    "individprofilerad social annonsering"
+   ],
+   "privacy_risk": "MEDEL",
+   "evidence_sources": "HYPOTHESIS + SERP_OBSERVED (FK äger termen men unga-varianten är svagt synlig)",
+   "confidence_level": "HYPOTHESIS"
+  },
+  {
+   "persona_id": "PER-004",
+   "persona_name": "Mitt-i-livet-omskolaren",
+   "need_state": "finansiera studier som vuxen utan att tappa lönen",
+   "trigger_event": "vilja/behov att byta yrke",
+   "household_or_organization_context": "hushåll med ekonomiska åtaganden",
+   "financial_context": "van vid lön, rädd för inkomsttapp",
+   "known_information": "vet att CSN finns för unga",
+   "unknown_information": "omställningsstudiestöd (namn + villkor + att veckor inte delas med studiemedel)",
+   "system_knowledge": "medel",
+   "digital_ability": "god",
+   "language_needs": "vanlig svenska",
+   "device_and_context": "dator, dagtid/lunch",
+   "time_pressure": "låg–medel — planeringsfas",
+   "emotional_state": "ambivalens",
+   "trust_barriers": "misstro mot att 'CSN är för 20-åringar'",
+   "typical_search_language": [
+    "plugga som vuxen med lön",
+    "omställningsstudiestöd villkor",
+    "studiemedel eller omställningsstudiestöd"
+   ],
+   "first_query": "kan jag få betalt för att studera som vuxen",
+   "follow_up_queries": [
+    "hur mycket är omställningsstudiestödet",
+    "etableringsvillkor omställningsstudiestöd",
+    "hur länge kan man få"
+   ],
+   "likely_answer_entities": [
+    "csn-omstallningsstudiestod",
+    "csn-studiemedel"
+   ],
+   "highest_value_content": "sida-vid-sida-jämförelsen CSN aldrig gjort (SERP-belagd lucka)",
+   "best_interaction_format": "jämförelsetabell + eligibility-frågor",
+   "desired_next_action": "välja stöd och ansöka i rätt ordning",
+   "return_trigger": "ansökningsfönster (stödet har ansökningsperioder)",
+   "appropriate_channels": [
+    "organisk sök",
+    "frivillig deadline-bevakning"
+   ],
+   "inappropriate_channels": [
+    "arbetsgivarsynlig kommunikation"
+   ],
+   "privacy_risk": "MEDEL",
+   "evidence_sources": "SERP_OBSERVED (CSN/omställningsfonden/FK-splittringen)",
+   "confidence_level": "HYPOTHESIS"
+  },
+  {
+   "persona_id": "PER-005",
+   "persona_name": "Studerande förälder",
+   "need_state": "kombinera studiemedel, tilläggsbidrag och bostadsbidrag",
+   "trigger_event": "studiestart med barn",
+   "household_or_organization_context": "barnfamilj, en eller två vuxna",
+   "financial_context": "stram studieekonomi",
+   "known_information": "studiemedel",
+   "unknown_information": "tilläggsbidrag, bostadsbidrag för barnfamiljer, fribelopp",
+   "system_knowledge": "medel",
+   "digital_ability": "god",
+   "language_needs": "vanlig svenska",
+   "device_and_context": "mobil, kväll",
+   "time_pressure": "medel",
+   "emotional_state": "pressad vardag",
+   "trust_barriers": "rädsla för fribeloppsfel",
+   "typical_search_language": [
+    "studera med barn ekonomi",
+    "csn och bostadsbidrag samtidigt",
+    "tilläggsbidrag csn"
+   ],
+   "first_query": "vilka bidrag kan man få när man studerar med barn",
+   "follow_up_queries": [
+    "räknas studiemedel som inkomst för bostadsbidrag",
+    "hur mycket är tilläggsbidraget",
+    "fribelopp deltidsjobb"
+   ],
+   "likely_answer_entities": [
+    "csn-studiemedel",
+    "fk-bostadsbidrag-barnfamiljer"
+   ],
+   "highest_value_content": "kombinationsreglerna i EN vy (myndigheterna uttrycker dem bara som förbud i löptext — belagd lucka)",
+   "best_interaction_format": "kombinationsguide + kalkylhänvisningar",
+   "desired_next_action": "söka båda i rätt ordning",
+   "return_trigger": "terminsskiften",
+   "appropriate_channels": [
+    "organisk sök",
+    "sparade stöd"
+   ],
+   "inappropriate_channels": [
+    "profilerad annonsering"
+   ],
+   "privacy_risk": "MEDEL–HÖG",
+   "evidence_sources": "SERP_OBSERVED + HYPOTHESIS",
+   "confidence_level": "HYPOTHESIS"
+  },
+  {
+   "persona_id": "PER-006",
+   "persona_name": "Nyligen arbetslös tjänsteman",
+   "need_state": "säkra inkomst under arbetslöshet",
+   "trigger_event": "uppsägning",
+   "household_or_organization_context": "varierande",
+   "financial_context": "buffert som krymper",
+   "known_information": "a-kassa som begrepp",
+   "unknown_information": "skillnaden a-kassa/aktivitetsstöd/försörjningsstöd; bostadsbidrag som komplement",
+   "system_knowledge": "medel",
+   "digital_ability": "mycket god",
+   "language_needs": "vanlig svenska",
+   "device_and_context": "dator + mobil",
+   "time_pressure": "hög första veckorna",
+   "emotional_state": "stress, statusförlust",
+   "trust_barriers": "vill inte 'hamna hos soc'",
+   "typical_search_language": [
+    "blivit arbetslös vad göra ekonomi",
+    "ersättning arbetslös",
+    "a-kassa eller aktivitetsstöd"
+   ],
+   "first_query": "vilken ersättning har jag rätt till som arbetslös",
+   "follow_up_queries": [
+    "hur länge a-kassa",
+    "kan man få bostadsbidrag som arbetslös",
+    "försörjningsstöd krav"
+   ],
+   "likely_answer_entities": [
+    "kommun-forsorjningsstod",
+    "fk-bostadsbidrag-unga",
+    "af-stod-start-naringsverksamhet"
+   ],
+   "highest_value_content": "tidslinjen: vad söker man dag 1, vecka 2, månad 3",
+   "best_interaction_format": "stegvis guide/tidslinje",
+   "desired_next_action": "registrera sig rätt + söka rätt ersättningar",
+   "return_trigger": "förändrad ersättningsnivå, starta-eget-tanken",
+   "appropriate_channels": [
+    "organisk sök",
+    "frivilligt nyhetsbrev"
+   ],
+   "inappropriate_channels": [
+    "arbetslöshetsbaserade målgrupper (RED)"
+   ],
+   "privacy_risk": "HÖG — arbetslöshet är känslig kategori",
+   "evidence_sources": "SERP_OBSERVED (problem-first 'ekonomisk hjälp arbetslös' fragmenterad)",
+   "confidence_level": "HYPOTHESIS"
+  },
+  {
+   "persona_id": "PER-007",
+   "persona_name": "Förälder till barn med funktionsnedsättning",
+   "need_state": "få vardagsekonomin och orken att gå ihop",
+   "trigger_event": "diagnos/ökat omvårdnadsbehov",
+   "household_or_organization_context": "barnfamilj med extra tillsynsbehov",
+   "financial_context": "merkostnader + minskad arbetstid",
+   "known_information": "att 'nåt stöd borde finnas'",
+   "unknown_information": "omvårdnadsbidrag vs merkostnadsersättning, nivåer, ansökansprocess",
+   "system_knowledge": "låg–medel",
+   "digital_ability": "god",
+   "language_needs": "enkel svenska, konkreta exempel",
+   "device_and_context": "mobil, sena kvällar",
+   "time_pressure": "medel men uthålligt",
+   "emotional_state": "utmattning; intresseorganisationer är trovärdigare än FK (SERP-belagt)",
+   "trust_barriers": "rädsla för godtycke i bedömningen",
+   "typical_search_language": [
+    "bidrag barn med funktionsnedsättning",
+    "omvårdnadsbidrag nivåer",
+    "merkostnadsersättning barn"
+   ],
+   "first_query": "vilket stöd kan man få för barn med npf",
+   "follow_up_queries": [
+    "hur mycket är omvårdnadsbidraget",
+    "kan man få både omvårdnadsbidrag och merkostnadsersättning",
+    "hur lång är handläggningstiden"
+   ],
+   "likely_answer_entities": [
+    "fk-omvardnadsbidrag",
+    "fk-merkostnadsersattning",
+    "kommun-bostadsanpassningsbidrag",
+    "fk-bilstod"
+   ],
+   "highest_value_content": "kombinationsbilden + realistiska exempel (intresseorganisationernas styrka, systematiserad)",
+   "best_interaction_format": "guide + checklista inför ansökan",
+   "desired_next_action": "förbereda en stark ansökan",
+   "return_trigger": "omprövningar, barnets ålderstrappor",
+   "appropriate_channels": [
+    "organisk sök",
+    "sparade stöd",
+    "samarbete med funktionsrättsorganisationer"
+   ],
+   "inappropriate_channels": [
+    "hälsobaserad profilering (RED)"
+   ],
+   "privacy_risk": "MYCKET HÖG — hälsodata (art. 9)",
+   "evidence_sources": "SERP_OBSERVED (intresseorg rankar före FK)",
+   "confidence_level": "HYPOTHESIS"
+  },
+  {
+   "persona_id": "PER-008",
+   "persona_name": "Sjukskriven med inkomsttapp",
+   "need_state": "klara ekonomin under sjukskrivning",
+   "trigger_event": "längre sjukskrivning",
+   "household_or_organization_context": "varierande",
+   "financial_context": "80%-tapp + fasta kostnader",
+   "known_information": "sjukpenning",
+   "unknown_information": "bostadsbidrag som komplement; vad som händer dag 180",
+   "system_knowledge": "låg–medel",
+   "digital_ability": "varierande",
+   "language_needs": "enkel svenska",
+   "device_and_context": "mobil",
+   "time_pressure": "medel",
+   "emotional_state": "oro + kognitiv trötthet",
+   "trust_barriers": "orkar inte myndighetsprosa",
+   "typical_search_language": [
+    "sjukskriven dålig ekonomi",
+    "bidrag sjukskriven",
+    "bostadsbidrag sjukskriven"
+   ],
+   "first_query": "vilken hjälp finns när man är sjukskriven och pengarna inte räcker",
+   "follow_up_queries": [
+    "hur mycket är sjukpenningen",
+    "kan man få bostadsbidrag som sjukskriven",
+    "vad händer efter 180 dagar"
+   ],
+   "likely_answer_entities": [
+    "kommun-forsorjningsstod",
+    "fk-bostadsbidrag-unga",
+    "pm-bostadstillagg"
+   ],
+   "highest_value_content": "komplementstöden ingen berättar om",
+   "best_interaction_format": "kort svar + samlingsvy",
+   "desired_next_action": "söka komplementstöd",
+   "return_trigger": "försäkringskassans omprövningspunkter",
+   "appropriate_channels": [
+    "organisk sök"
+   ],
+   "inappropriate_channels": [
+    "hälsorelaterad targeting (RED)"
+   ],
+   "privacy_risk": "MYCKET HÖG — hälsa",
+   "evidence_sources": "HYPOTHESIS",
+   "confidence_level": "HYPOTHESIS"
+  },
+  {
+   "persona_id": "PER-009",
+   "persona_name": "Pensionär med låg pension",
+   "need_state": "täcka boendekostnaden",
+   "trigger_event": "pensionering/partners bortgång",
+   "household_or_organization_context": "ensamhushåll 70+",
+   "financial_context": "låg pension, hög boendekostnadsandel",
+   "known_information": "garantipension",
+   "unknown_information": "bostadstillägg (stort mörkertal — PM uppmanar själva att testa), äldreförsörjningsstöd",
+   "system_knowledge": "låg",
+   "digital_ability": "låg–medel; ofta anhörig som söker åt",
+   "language_needs": "mycket enkel svenska, stor text",
+   "device_and_context": "dator eller anhörigs mobil",
+   "time_pressure": "låg men varaktig",
+   "emotional_state": "stolthet — 'vill inte ligga till last'",
+   "trust_barriers": "bidragsskam i äldre generation",
+   "typical_search_language": [
+    "bostadstillägg pensionär",
+    "hjälp med hyran pensionär",
+    "äldreförsörjningsstöd"
+   ],
+   "first_query": "kan pensionärer få hjälp med hyran",
+   "follow_up_queries": [
+    "hur mycket bostadstillägg kan man få",
+    "räknas sparpengar",
+    "hur ansöker man åt förälder"
+   ],
+   "likely_answer_entities": [
+    "pm-bostadstillagg",
+    "pm-aldreforsorjningsstod",
+    "kommun-bostadsanpassningsbidrag"
+   ],
+   "highest_value_content": "anhörig-vinkeln ('så hjälper du din förälder att söka') — ingen äger den",
+   "best_interaction_format": "steg-för-steg + anhörigguide",
+   "desired_next_action": "testa PM:s beräkning och ansöka",
+   "return_trigger": "årlig ändring av pension/hyra",
+   "appropriate_channels": [
+    "organisk sök",
+    "print/press via partners"
+   ],
+   "inappropriate_channels": [
+    "all digital individprofilering av äldre utsatta"
+   ],
+   "privacy_risk": "HÖG",
+   "evidence_sources": "SERP_OBSERVED (PM starka men anhörigvinkeln oägd) + OFFICIAL_STATISTICS (mörkertalet, se atlas)",
+   "confidence_level": "HYPOTHESIS"
+  },
+  {
+   "persona_id": "PER-010",
+   "persona_name": "Ny i Sverige under etablering",
+   "need_state": "förstå och få de stöd etableringen ger rätt till",
+   "trigger_event": "uppehållstillstånd/etableringsprogram",
+   "household_or_organization_context": "familj eller ensamhushåll",
+   "financial_context": "mycket stram ekonomi",
+   "known_information": "att Arbetsförmedlingen är ingången",
+   "unknown_information": "etableringsersättning + tillägg, hemutrustningslån, CSN för sfi-vidare",
+   "system_knowledge": "mycket låg — nytt system",
+   "digital_ability": "varierande",
+   "language_needs": "lätt svenska eller engelska; ordlista",
+   "device_and_context": "mobil",
+   "time_pressure": "hög",
+   "emotional_state": "osäkerhet inför myndigheter",
+   "trust_barriers": "rädsla att fel påverkar tillstånd",
+   "typical_search_language": [
+    "etableringsersättning hur mycket",
+    "bidrag ny i sverige",
+    "hemutrustningslån"
+   ],
+   "first_query": "vilka bidrag kan man få som ny i sverige",
+   "follow_up_queries": [
+    "hur ansöker man om etableringsersättning",
+    "vad är hemutrustningslån",
+    "får man studera med ersättning"
+   ],
+   "likely_answer_entities": [
+    "af-etableringsersattning",
+    "csn-hemutrustningslan",
+    "kommun-forsorjningsstod"
+   ],
+   "highest_value_content": "hela etableringskedjan i EN vy på lätt svenska",
+   "best_interaction_format": "stegvis flöde, lätt svenska",
+   "desired_next_action": "rätt ansökningar i rätt ordning",
+   "return_trigger": "programfaser",
+   "appropriate_channels": [
+    "organisk sök",
+    "samarbeten (SFI, kommunernas etableringshandläggare, civilsamhälle)"
+   ],
+   "inappropriate_channels": [
+    "etnicitets-/migrationsbaserad targeting (RED)"
+   ],
+   "privacy_risk": "MYCKET HÖG",
+   "evidence_sources": "HYPOTHESIS + SERP_OBSERVED (informationsverige.se-mönstret)",
+   "confidence_level": "HYPOTHESIS"
+  },
+  {
+   "persona_id": "PER-011",
+   "persona_name": "Småföretagaren som ska anställa första gången",
+   "need_state": "ha råd med första medarbetaren",
+   "trigger_event": "tillväxt eller för mycket jobb för en person",
+   "household_or_organization_context": "enskild firma/litet AB",
+   "financial_context": "kassaflödeskänslig",
+   "known_information": "'det finns visst nåt anställningsstöd'",
+   "unknown_information": "nystartsjobb/lönebidrag/introduktionsjobb — vilket som passar VEM man anställer",
+   "system_knowledge": "låg om AF:s system",
+   "digital_ability": "god",
+   "language_needs": "affärssvenska",
+   "device_and_context": "dator, arbetstid",
+   "time_pressure": "medel — rekryteringen brådskar",
+   "emotional_state": "beslutsstress",
+   "trust_barriers": "AF:s rykte; rädsla för administration",
+   "typical_search_language": [
+    "bidrag för att anställa",
+    "stöd anställa arbetslös",
+    "vad kostar det att anställa med stöd"
+   ],
+   "first_query": "kan jag få bidrag om jag anställer någon som är arbetslös",
+   "follow_up_queries": [
+    "nystartsjobb hur mycket",
+    "nystartsjobb eller lönebidrag",
+    "vilka krav på arbetsgivaren",
+    "hur ansöker arbetsgivare"
+   ],
+   "likely_answer_entities": [
+    "guider/anstalla-med-stod (väljaren)",
+    "af-stod-start-naringsverksamhet"
+   ],
+   "highest_value_content": "väljaren 'vilket stöd passar din kandidat' — AF saknar den (SERP-belagt)",
+   "best_interaction_format": "jämförelsetabell + kandidatbaserat frågeträd",
+   "desired_next_action": "kontakta AF med rätt stöd i åtanke",
+   "return_trigger": "nästa rekrytering; regeländringar (t.ex. nystartsjobb 2025)",
+   "appropriate_channels": [
+    "organisk sök",
+    "B2B-nyhetsbrev",
+    "LinkedIn-innehåll (kontextuellt)"
+   ],
+   "inappropriate_channels": [
+    "targeting på kandidatens utsatthet"
+   ],
+   "privacy_risk": "LÅG–MEDEL (B2B-spåret)",
+   "evidence_sources": "SERP_OBSERVED (privata äger jämförelsen; AF splittrar på 4 undersidor)",
+   "confidence_level": "HYPOTHESIS"
+  },
+  {
+   "persona_id": "PER-012",
+   "persona_name": "Föreningskassören",
+   "need_state": "finansiera verksamhet och lokal",
+   "trigger_event": "budgetmöte/årsmöte/projektidé",
+   "household_or_organization_context": "ideell förening, ofta idrott/kultur",
+   "financial_context": "beroende av bidrag + medlemsavgifter",
+   "known_information": "kommunens föreningsbidrag",
+   "unknown_information": "LOK-stöd, Arvsfonden, Boverket samlingslokaler, MUCF, stiftelser — och alla deadlines",
+   "system_knowledge": "medel — men spretigt landskap",
+   "digital_ability": "god",
+   "language_needs": "vanlig svenska",
+   "device_and_context": "dator, kvällar/helger",
+   "time_pressure": "återkommande toppar (deadlines)",
+   "emotional_state": "pliktkänsla",
+   "trust_barriers": "rädsla att missa deadline eller göra fel i redovisning",
+   "typical_search_language": [
+    "bidrag idrottsförening",
+    "söka pengar förening",
+    "föreningsbidrag deadline"
+   ],
+   "first_query": "vilka bidrag kan vår förening söka",
+   "follow_up_queries": [
+    "lok-stöd hur fungerar",
+    "arvsfonden projektstöd krav",
+    "bidrag till föreningslokal",
+    "när öppnar ansökan"
+   ],
+   "likely_answer_entities": [
+    "rf-lok-stod",
+    "arvsfonden-projektstod",
+    "boverket-allmanna-samlingslokaler",
+    "mucf-organisationsbidrag",
+    "kommun-foreningsbidrag"
+   ],
+   "highest_value_content": "deadlinekalendern ingen myndighet erbjuder (belagt: inte ens internt) + stiftelsespåret",
+   "best_interaction_format": "deadlinehubb + bevakning + checklista",
+   "desired_next_action": "planera årets ansökningar",
+   "return_trigger": "varje ansökningsfönster — STARKASTE retention-personan",
+   "appropriate_channels": [
+    "frivillig deadline-bevakning",
+    "e-post efter uttryckligt val",
+    "organisk sök"
+   ],
+   "inappropriate_channels": [
+    "persondata om medlemmar"
+   ],
+   "privacy_risk": "LÅG (organisationsdata)",
+   "evidence_sources": "SERP_OBSERVED (betalförmedlare rankar = betalningsvilja; MUCF har exakta datum men ingen kalender)",
+   "confidence_level": "HYPOTHESIS"
+  }
+ ]
+}

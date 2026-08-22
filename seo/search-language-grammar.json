@@ -1,0 +1,910 @@
+{
+ "_kontrakt": "Search Language Grammar v0.1 (masterprompt 2 §32.4): mönsterbibliotek för query-generering och intentklassning. source=SERP_OBSERVED betyder att mönstret är belagt i dokumenterad SERP-research (docs/SEO_SERP_RESEARCH.md/agentkörningar); SYNTHETIC_HYPOTHESIS betyder författad rimlig svenska som ska verifieras mot GSC/autocomplete när data finns. Mönster används för att FÖRSTÅ språk och mappa queries till noder (QUERY→INTENT→CONTENT NODE) — aldrig för att massgenerera en sida per variant.",
+ "antal": 113,
+ "patterns": [
+  {
+   "family": "officiellt-namn",
+   "segment": "alla",
+   "pattern": "{officiell term}",
+   "example": "omställningsstudiestöd",
+   "source": "SERP_OBSERVED",
+   "id": "QP-001"
+  },
+  {
+   "family": "officiellt-namn",
+   "segment": "alla",
+   "pattern": "{myndighet} {officiell term}",
+   "example": "försäkringskassan bostadsbidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-002"
+  },
+  {
+   "family": "vardagligt-namn",
+   "segment": "boende",
+   "pattern": "bidrag till hyran",
+   "example": "bidrag till hyran",
+   "source": "SERP_OBSERVED",
+   "id": "QP-003"
+  },
+  {
+   "family": "vardagligt-namn",
+   "segment": "studier",
+   "pattern": "pengar när man studerar",
+   "example": "pengar när man studerar",
+   "source": "SERP_OBSERVED",
+   "id": "QP-004"
+  },
+  {
+   "family": "vardagligt-namn",
+   "segment": "arbete",
+   "pattern": "hjälp att anställa",
+   "example": "hjälp att anställa",
+   "source": "SERP_OBSERVED",
+   "id": "QP-005"
+  },
+  {
+   "family": "vardagligt-namn",
+   "segment": "familj",
+   "pattern": "bidrag för barn med {behov}",
+   "example": "bidrag för barn med särskilda behov",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-006"
+  },
+  {
+   "family": "vardagligt-namn",
+   "segment": "alla",
+   "pattern": "{vardagsord} istället för {officiell term}",
+   "example": "socialbidrag (=försörjningsstöd)",
+   "source": "SERP_OBSERVED",
+   "id": "QP-007"
+  },
+  {
+   "family": "vardagligt-namn",
+   "segment": "studier",
+   "pattern": "csn som ord för pengarna",
+   "example": "få csn",
+   "source": "SERP_OBSERVED",
+   "id": "QP-008"
+  },
+  {
+   "family": "problem",
+   "segment": "boende",
+   "pattern": "pengarna räcker inte till {utgift}",
+   "example": "pengarna räcker inte till hyran",
+   "source": "SERP_OBSERVED",
+   "id": "QP-009"
+  },
+  {
+   "family": "problem",
+   "segment": "boende",
+   "pattern": "kan inte betala {utgift}",
+   "example": "kan inte betala hyran",
+   "source": "SERP_OBSERVED",
+   "id": "QP-010"
+  },
+  {
+   "family": "problem",
+   "segment": "boende",
+   "pattern": "har inte råd med {utgift}",
+   "example": "har inte råd med elräkningen",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-011"
+  },
+  {
+   "family": "problem",
+   "segment": "arbete",
+   "pattern": "jag har fått färre arbetstimmar",
+   "example": "fått färre timmar ekonomi",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-012"
+  },
+  {
+   "family": "problem",
+   "segment": "företag",
+   "pattern": "mitt företag behöver {resurs} men har inte råd",
+   "example": "behöver anställa men har inte råd",
+   "source": "SERP_OBSERVED",
+   "id": "QP-013"
+  },
+  {
+   "family": "problem",
+   "segment": "förening",
+   "pattern": "föreningen behöver pengar till {ändamål}",
+   "example": "föreningen behöver pengar till en lokal",
+   "source": "SERP_OBSERVED",
+   "id": "QP-014"
+  },
+  {
+   "family": "problem",
+   "segment": "privatperson",
+   "pattern": "hjälp med ekonomin {situation}",
+   "example": "hjälp med ekonomin ensamstående",
+   "source": "SERP_OBSERVED",
+   "id": "QP-015"
+  },
+  {
+   "family": "problem",
+   "segment": "privatperson",
+   "pattern": "vart vänder man sig när {problem}",
+   "example": "vart vänder man sig när pengarna inte räcker",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-016"
+  },
+  {
+   "family": "problem",
+   "segment": "hälsa-omsorg",
+   "pattern": "orkar inte jobba heltid {orsak}",
+   "example": "orkar inte jobba heltid sjukdom",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-017"
+  },
+  {
+   "family": "problem",
+   "segment": "familj",
+   "pattern": "{utgift} för barnen blir för dyrt",
+   "example": "fritidsaktiviteter för barnen blir för dyrt",
+   "source": "SERP_OBSERVED",
+   "id": "QP-018"
+  },
+  {
+   "family": "livshändelse",
+   "segment": "arbete",
+   "pattern": "jag har blivit arbetslös",
+   "example": "blivit arbetslös vad göra",
+   "source": "SERP_OBSERVED",
+   "id": "QP-019"
+  },
+  {
+   "family": "livshändelse",
+   "segment": "familj",
+   "pattern": "jag har separerat",
+   "example": "separerat ekonomi bidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-020"
+  },
+  {
+   "family": "livshändelse",
+   "segment": "familj",
+   "pattern": "jag har fått barn",
+   "example": "fått barn vilka bidrag",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-021"
+  },
+  {
+   "family": "livshändelse",
+   "segment": "studier",
+   "pattern": "jag ska börja studera",
+   "example": "börja studera ekonomi vuxen",
+   "source": "SERP_OBSERVED",
+   "id": "QP-022"
+  },
+  {
+   "family": "livshändelse",
+   "segment": "hälsa-omsorg",
+   "pattern": "jag är sjukskriven",
+   "example": "sjukskriven vilka bidrag",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-023"
+  },
+  {
+   "family": "livshändelse",
+   "segment": "hälsa-omsorg",
+   "pattern": "mitt barn behöver extra tillsyn",
+   "example": "barn behöver extra tillsyn stöd",
+   "source": "SERP_OBSERVED",
+   "id": "QP-024"
+  },
+  {
+   "family": "livshändelse",
+   "segment": "företag",
+   "pattern": "jag ska starta företag",
+   "example": "starta företag bidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-025"
+  },
+  {
+   "family": "livshändelse",
+   "segment": "investering-projekt",
+   "pattern": "jag ska energieffektivisera {objekt}",
+   "example": "energieffektivisera lokalen stöd",
+   "source": "SERP_OBSERVED",
+   "id": "QP-026"
+  },
+  {
+   "family": "livshändelse",
+   "segment": "privatperson",
+   "pattern": "jag ska flytta {vart}",
+   "example": "flytta utomlands bidrag",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-027"
+  },
+  {
+   "family": "livshändelse",
+   "segment": "privatperson",
+   "pattern": "jag har gått i pension",
+   "example": "pensionär låg inkomst hjälp",
+   "source": "SERP_OBSERVED",
+   "id": "QP-028"
+  },
+  {
+   "family": "livshändelse",
+   "segment": "privatperson",
+   "pattern": "ny i sverige",
+   "example": "bidrag ny i sverige",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-029"
+  },
+  {
+   "family": "livshändelse",
+   "segment": "familj",
+   "pattern": "blivit anhörigvårdare",
+   "example": "vårda anhörig ersättning",
+   "source": "SERP_OBSERVED",
+   "id": "QP-030"
+  },
+  {
+   "family": "eligibility",
+   "segment": "alla",
+   "pattern": "kan jag få {stöd}",
+   "example": "kan jag få bostadsbidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-031"
+  },
+  {
+   "family": "eligibility",
+   "segment": "alla",
+   "pattern": "har jag rätt till {stöd}",
+   "example": "har jag rätt till försörjningsstöd",
+   "source": "SERP_OBSERVED",
+   "id": "QP-032"
+  },
+  {
+   "family": "eligibility",
+   "segment": "alla",
+   "pattern": "vem får {stöd}",
+   "example": "vem får bostadstillägg",
+   "source": "SERP_OBSERVED",
+   "id": "QP-033"
+  },
+  {
+   "family": "eligibility",
+   "segment": "alla",
+   "pattern": "vem kan ansöka om {stöd}",
+   "example": "vem kan ansöka om bostadsbidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-034"
+  },
+  {
+   "family": "eligibility",
+   "segment": "alla",
+   "pattern": "vilka krav gäller för {stöd}",
+   "example": "vilka krav gäller för nystartsjobb",
+   "source": "SERP_OBSERVED",
+   "id": "QP-035"
+  },
+  {
+   "family": "eligibility",
+   "segment": "arbete",
+   "pattern": "får man {stöd} om man {aktivitet}",
+   "example": "får man bostadsbidrag om man jobbar",
+   "source": "SERP_OBSERVED",
+   "id": "QP-036"
+  },
+  {
+   "family": "eligibility",
+   "segment": "företag",
+   "pattern": "kan företag utan anställda söka {stöd}",
+   "example": "kan enmansföretag söka affärsutvecklingscheckar",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-037"
+  },
+  {
+   "family": "eligibility",
+   "segment": "privatperson",
+   "pattern": "vilka bidrag har jag rätt till",
+   "example": "vilka bidrag har jag rätt till",
+   "source": "SERP_OBSERVED",
+   "id": "QP-038"
+  },
+  {
+   "family": "eligibility",
+   "segment": "privatperson",
+   "pattern": "vilka bidrag kan jag få som {grupp}",
+   "example": "vilka bidrag kan jag få som ensamstående",
+   "source": "SERP_OBSERVED",
+   "id": "QP-039"
+  },
+  {
+   "family": "eligibility",
+   "segment": "studier",
+   "pattern": "åldersgräns {stöd}",
+   "example": "åldersgräns studiemedel",
+   "source": "SERP_OBSERVED",
+   "id": "QP-040"
+  },
+  {
+   "family": "eligibility",
+   "segment": "alla",
+   "pattern": "{stöd} inkomstgräns",
+   "example": "bostadsbidrag inkomstgräns",
+   "source": "SERP_OBSERVED",
+   "id": "QP-041"
+  },
+  {
+   "family": "belopp",
+   "segment": "alla",
+   "pattern": "hur mycket {stöd} kan man få",
+   "example": "hur mycket bostadsbidrag kan man få",
+   "source": "SERP_OBSERVED",
+   "id": "QP-042"
+  },
+  {
+   "family": "belopp",
+   "segment": "alla",
+   "pattern": "hur mycket är {stöd}",
+   "example": "hur mycket är lönebidraget",
+   "source": "SERP_OBSERVED",
+   "id": "QP-043"
+  },
+  {
+   "family": "belopp",
+   "segment": "alla",
+   "pattern": "hur räknas {stöd}",
+   "example": "hur räknas bostadsbidraget",
+   "source": "SERP_OBSERVED",
+   "id": "QP-044"
+  },
+  {
+   "family": "belopp",
+   "segment": "alla",
+   "pattern": "högsta belopp {stöd}",
+   "example": "högsta belopp bostadstillägg",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-045"
+  },
+  {
+   "family": "belopp",
+   "segment": "alla",
+   "pattern": "hur påverkar inkomsten {stöd}",
+   "example": "hur påverkar inkomsten bostadsbidraget",
+   "source": "SERP_OBSERVED",
+   "id": "QP-046"
+  },
+  {
+   "family": "belopp",
+   "segment": "familj",
+   "pattern": "hur mycket får man per barn",
+   "example": "underhållsstöd per barn",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-047"
+  },
+  {
+   "family": "belopp",
+   "segment": "företag",
+   "pattern": "hur stor del av {kostnad} täcks",
+   "example": "hur stor del av investeringen täcks",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-048"
+  },
+  {
+   "family": "belopp",
+   "segment": "alla",
+   "pattern": "räkna ut {stöd}",
+   "example": "räkna ut bostadsbidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-049"
+  },
+  {
+   "family": "belopp",
+   "segment": "studier",
+   "pattern": "hur mycket pengar kan jag få eller låna när jag studerar",
+   "example": "(CSN:s egen rubrikform)",
+   "source": "SERP_OBSERVED",
+   "id": "QP-050"
+  },
+  {
+   "family": "ansökan",
+   "segment": "alla",
+   "pattern": "hur söker man {stöd}",
+   "example": "hur söker man bostadstillägg",
+   "source": "SERP_OBSERVED",
+   "id": "QP-051"
+  },
+  {
+   "family": "ansökan",
+   "segment": "alla",
+   "pattern": "var ansöker jag om {stöd}",
+   "example": "var ansöker man om försörjningsstöd",
+   "source": "SERP_OBSERVED",
+   "id": "QP-052"
+  },
+  {
+   "family": "ansökan",
+   "segment": "alla",
+   "pattern": "vilka dokument behövs för {stöd}",
+   "example": "dokument bostadsanpassningsbidrag",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-053"
+  },
+  {
+   "family": "ansökan",
+   "segment": "alla",
+   "pattern": "hur lång tid tar {stöd}",
+   "example": "handläggningstid omvårdnadsbidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-054"
+  },
+  {
+   "family": "ansökan",
+   "segment": "alla",
+   "pattern": "ansöka {stöd} utan bankid",
+   "example": "ansöka utan bankid",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-055"
+  },
+  {
+   "family": "ansökan",
+   "segment": "företag",
+   "pattern": "hur ansöker arbetsgivare om {stöd}",
+   "example": "hur ansöker arbetsgivare om lönebidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-056"
+  },
+  {
+   "family": "ansökan",
+   "segment": "förening",
+   "pattern": "så söker du bidrag till din förening",
+   "example": "(forening.se-rubrikform)",
+   "source": "SERP_OBSERVED",
+   "id": "QP-057"
+  },
+  {
+   "family": "ansökan",
+   "segment": "alla",
+   "pattern": "{stöd} blankett",
+   "example": "bostadsbidrag blankett",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-058"
+  },
+  {
+   "family": "deadline",
+   "segment": "alla",
+   "pattern": "när kan man söka {stöd}",
+   "example": "när kan man söka lok-stöd",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-059"
+  },
+  {
+   "family": "deadline",
+   "segment": "alla",
+   "pattern": "sista ansökningsdag {stöd}",
+   "example": "sista ansökningsdag samlingslokaler",
+   "source": "SERP_OBSERVED",
+   "id": "QP-060"
+  },
+  {
+   "family": "deadline",
+   "segment": "alla",
+   "pattern": "när betalas {stöd} ut",
+   "example": "när betalas bostadsbidraget ut",
+   "source": "SERP_OBSERVED",
+   "id": "QP-061"
+  },
+  {
+   "family": "deadline",
+   "segment": "alla",
+   "pattern": "kan man söka {stöd} retroaktivt",
+   "example": "bostadsbidrag retroaktivt",
+   "source": "SERP_OBSERVED",
+   "id": "QP-062"
+  },
+  {
+   "family": "deadline",
+   "segment": "alla",
+   "pattern": "när öppnar ansökan {stöd}",
+   "example": "när öppnar ansökan organisationsbidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-063"
+  },
+  {
+   "family": "deadline",
+   "segment": "alla",
+   "pattern": "bidrag som går att söka nu",
+   "example": "bidrag att söka nu",
+   "source": "SERP_OBSERVED",
+   "id": "QP-064"
+  },
+  {
+   "family": "deadline",
+   "segment": "alla",
+   "pattern": "utbetalningsdagar {stöd}",
+   "example": "utbetalningsdagar försäkringskassan",
+   "source": "SERP_OBSERVED",
+   "id": "QP-065"
+  },
+  {
+   "family": "avslag",
+   "segment": "alla",
+   "pattern": "varför fick jag avslag på {stöd}",
+   "example": "avslag bostadsbidrag varför",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-066"
+  },
+  {
+   "family": "avslag",
+   "segment": "alla",
+   "pattern": "överklaga {stöd}",
+   "example": "överklaga försörjningsstöd",
+   "source": "SERP_OBSERVED",
+   "id": "QP-067"
+  },
+  {
+   "family": "avslag",
+   "segment": "alla",
+   "pattern": "{stöd} pengarna kommer inte",
+   "example": "bostadsbidrag utbetalning saknas",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-068"
+  },
+  {
+   "family": "avslag",
+   "segment": "alla",
+   "pattern": "måste jag betala tillbaka {stöd}",
+   "example": "återbetalning bostadsbidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-069"
+  },
+  {
+   "family": "avslag",
+   "segment": "alla",
+   "pattern": "fyllde i fel inkomst {stöd}",
+   "example": "fel inkomst bostadsbidrag",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-070"
+  },
+  {
+   "family": "avslag",
+   "segment": "alla",
+   "pattern": "{stöd} ansökan stängd vad göra",
+   "example": "ansökan stängd missat",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-071"
+  },
+  {
+   "family": "avslag",
+   "segment": "alla",
+   "pattern": "återkrav {myndighet}",
+   "example": "återkrav försäkringskassan",
+   "source": "SERP_OBSERVED",
+   "id": "QP-072"
+  },
+  {
+   "family": "kombination",
+   "segment": "alla",
+   "pattern": "kan man få {stöd A} och {stöd B} samtidigt",
+   "example": "bostadsbidrag och försörjningsstöd samtidigt",
+   "source": "SERP_OBSERVED",
+   "id": "QP-073"
+  },
+  {
+   "family": "kombination",
+   "segment": "studier",
+   "pattern": "påverkar csn bostadsbidraget",
+   "example": "påverkar csn bostadsbidraget",
+   "source": "SERP_OBSERVED",
+   "id": "QP-074"
+  },
+  {
+   "family": "kombination",
+   "segment": "privatperson",
+   "pattern": "påverkar lön {stöd}",
+   "example": "påverkar lön försörjningsstöd",
+   "source": "SERP_OBSERVED",
+   "id": "QP-075"
+  },
+  {
+   "family": "kombination",
+   "segment": "företag",
+   "pattern": "kombinera eu-stöd och regionalt stöd",
+   "example": "kombinera eu-stöd regionalt stöd",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-076"
+  },
+  {
+   "family": "kombination",
+   "segment": "alla",
+   "pattern": "vilka stöd kan kombineras",
+   "example": "vilka bidrag kan kombineras",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-077"
+  },
+  {
+   "family": "kombination",
+   "segment": "alla",
+   "pattern": "räknas {inkomsttyp} som inkomst för {stöd}",
+   "example": "räknas csn som inkomst bostadsbidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-078"
+  },
+  {
+   "family": "jämförelse",
+   "segment": "arbete",
+   "pattern": "{stöd A} eller {stöd B}",
+   "example": "nystartsjobb eller lönebidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-079"
+  },
+  {
+   "family": "jämförelse",
+   "segment": "alla",
+   "pattern": "bidrag eller lån",
+   "example": "bidrag eller lån",
+   "source": "SERP_OBSERVED",
+   "id": "QP-080"
+  },
+  {
+   "family": "jämförelse",
+   "segment": "studier",
+   "pattern": "studiemedel eller omställningsstudiestöd",
+   "example": "studiemedel eller omställningsstudiestöd",
+   "source": "SERP_OBSERVED",
+   "id": "QP-081"
+  },
+  {
+   "family": "jämförelse",
+   "segment": "alla",
+   "pattern": "skillnad mellan {stöd A} och {stöd B}",
+   "example": "skillnad underhållsstöd underhållsbidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-082"
+  },
+  {
+   "family": "jämförelse",
+   "segment": "alla",
+   "pattern": "kommunalt eller statligt {stöd}",
+   "example": "kommunalt eller statligt stöd",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-083"
+  },
+  {
+   "family": "jämförelse",
+   "segment": "förening",
+   "pattern": "projektbidrag eller verksamhetsbidrag",
+   "example": "projektbidrag eller organisationsbidrag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-084"
+  },
+  {
+   "family": "jämförelse",
+   "segment": "boende",
+   "pattern": "bostadsbidrag eller bostadstillägg",
+   "example": "bostadsbidrag eller bostadstillägg",
+   "source": "SERP_OBSERVED",
+   "id": "QP-085"
+  },
+  {
+   "family": "talspråk",
+   "segment": "alla",
+   "pattern": "{förkortad fråga utan verb}",
+   "example": "hur mkt bostads bidrag",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-086"
+  },
+  {
+   "family": "talspråk",
+   "segment": "alla",
+   "pattern": "{särskrivning av stödnamn}",
+   "example": "bostads bidrag / lönebidrag anställning",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-087"
+  },
+  {
+   "family": "talspråk",
+   "segment": "alla",
+   "pattern": "{felstavning}",
+   "example": "bostadsbidrag ansöka / bostadbidrag",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-088"
+  },
+  {
+   "family": "talspråk",
+   "segment": "privatperson",
+   "pattern": "kan ja få hjälp med {utgift}",
+   "example": "kan ja få hjälp med hyran",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-089"
+  },
+  {
+   "family": "talspråk",
+   "segment": "privatperson",
+   "pattern": "vad kan man få pengar för av staten",
+   "example": "vad kan man få pengar för av staten",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-090"
+  },
+  {
+   "family": "talspråk",
+   "segment": "privatperson",
+   "pattern": "alla bidrag jag kan få",
+   "example": "alla bidrag jag kan få",
+   "source": "SERP_OBSERVED",
+   "id": "QP-091"
+  },
+  {
+   "family": "talspråk",
+   "segment": "familj",
+   "pattern": "bidrag när man jobbar deltid med barn",
+   "example": "bidrag deltid barn",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-092"
+  },
+  {
+   "family": "talspråk",
+   "segment": "alla",
+   "pattern": "{lång AI-liknande fråga}",
+   "example": "jag är ensamstående med två barn och jobbar deltid vilka bidrag kan jag söka",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-093"
+  },
+  {
+   "family": "talspråk",
+   "segment": "alla",
+   "pattern": "{röstfråga med hela meningen}",
+   "example": "hur gör man för att ansöka om bostadstillägg åt sin mamma",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-094"
+  },
+  {
+   "family": "aktualitet",
+   "segment": "alla",
+   "pattern": "{stöd} {årtal}",
+   "example": "bostadsbidrag 2026",
+   "source": "SERP_OBSERVED",
+   "id": "QP-095"
+  },
+  {
+   "family": "aktualitet",
+   "segment": "alla",
+   "pattern": "nya regler {stöd} {årtal}",
+   "example": "nya regler nystartsjobb 2025",
+   "source": "SERP_OBSERVED",
+   "id": "QP-096"
+  },
+  {
+   "family": "aktualitet",
+   "segment": "alla",
+   "pattern": "{stöd} höjs {årtal}",
+   "example": "bostadsbidrag höjs",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-097"
+  },
+  {
+   "family": "aktualitet",
+   "segment": "alla",
+   "pattern": "nya bidrag {årtal}",
+   "example": "nya bidrag 2026",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-098"
+  },
+  {
+   "family": "aktualitet",
+   "segment": "alla",
+   "pattern": "aktuella stöd {segment}",
+   "example": "aktuella stöd företag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-099"
+  },
+  {
+   "family": "aktualitet",
+   "segment": "alla",
+   "pattern": "bidrag som öppnar snart",
+   "example": "utlysningar som öppnar snart",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-100"
+  },
+  {
+   "family": "geo",
+   "segment": "alla",
+   "pattern": "{stöd} {kommun/region}",
+   "example": "glasögonbidrag skåne",
+   "source": "SERP_OBSERVED",
+   "id": "QP-101"
+  },
+  {
+   "family": "geo",
+   "segment": "förening",
+   "pattern": "föreningsbidrag {kommun}",
+   "example": "föreningsbidrag västerås",
+   "source": "SERP_OBSERVED",
+   "id": "QP-102"
+  },
+  {
+   "family": "geo",
+   "segment": "företag",
+   "pattern": "företagsstöd {region}",
+   "example": "företagsstöd norrbotten",
+   "source": "SERP_OBSERVED",
+   "id": "QP-103"
+  },
+  {
+   "family": "geo",
+   "segment": "företag",
+   "pattern": "stödområde {plats}",
+   "example": "regionalt investeringsstöd stödområde",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-104"
+  },
+  {
+   "family": "geo",
+   "segment": "alla",
+   "pattern": "bidrag landsbygd",
+   "example": "bidrag landsbygd",
+   "source": "SERP_OBSERVED",
+   "id": "QP-105"
+  },
+  {
+   "family": "upptäckt",
+   "segment": "privatperson",
+   "pattern": "vilka bidrag finns för {grupp}",
+   "example": "vilka bidrag finns för pensionärer",
+   "source": "SERP_OBSERVED",
+   "id": "QP-106"
+  },
+  {
+   "family": "upptäckt",
+   "segment": "privatperson",
+   "pattern": "bidrag jag inte visste fanns",
+   "example": "bidrag man inte vet om",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-107"
+  },
+  {
+   "family": "upptäckt",
+   "segment": "alla",
+   "pattern": "lista alla {kategori}",
+   "example": "lista alla bidrag företag",
+   "source": "SERP_OBSERVED",
+   "id": "QP-108"
+  },
+  {
+   "family": "upptäckt",
+   "segment": "alla",
+   "pattern": "test vilka bidrag kan jag få",
+   "example": "kassakollen-liknande testintent",
+   "source": "SERP_OBSERVED",
+   "id": "QP-109"
+  },
+  {
+   "family": "upptäckt",
+   "segment": "företag",
+   "pattern": "finansiera {plan}",
+   "example": "finansiera maskinköp",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-110"
+  },
+  {
+   "family": "upptäckt",
+   "segment": "företag",
+   "pattern": "offentlig finansiering {bransch}",
+   "example": "offentlig finansiering restaurang",
+   "source": "SYNTHETIC_HYPOTHESIS",
+   "id": "QP-111"
+  },
+  {
+   "family": "upptäckt",
+   "segment": "privatperson",
+   "pattern": "{myndighet} alla ersättningar",
+   "example": "försäkringskassan ersättningar a-ö",
+   "source": "SERP_OBSERVED",
+   "id": "QP-112"
+  },
+  {
+   "family": "upptäckt",
+   "segment": "alla",
+   "pattern": "stiftelser som ger pengar till {ändamål}",
+   "example": "stiftelser som ger pengar till studier",
+   "source": "SERP_OBSERVED",
+   "id": "QP-113"
+  }
+ ]
+}
