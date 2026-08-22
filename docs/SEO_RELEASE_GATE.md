@@ -17,6 +17,13 @@ Ingen release av den publika ytan utan att gaten är grön. Gaten är
   utanför sitemapen
 - robots.txt pekar på sitemapen
 
+`tools/gate0.mjs --allow-content-red` (Zero-Compromise Gate, samma
+verify-steg): dubblett-H1, tomma sidor, icke-kanoniska interna länkformer,
+parameterbloat, bildinventering, orphans/djup/ankare via länkgrafen.
+`tools/gatekeywords.mjs --check`: 332-rotregistret i synk.
+Utanför verify (kräver Chromium resp. nät): `npm run gate:ux` (320 px +
+desktop, alla sidor), `npm run gate:links` (extern länkhälsa efter deploy).
+
 `tools/seokeywords.mjs --check`, `tools/genqueries.mjs --check`,
 `tools/genkgraf.mjs --check`: datalagren i synk med sanningsmodellen.
 `tools/genmanual.mjs --check`: reaktiva handboken. Drizzle-determinism,

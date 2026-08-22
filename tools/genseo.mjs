@@ -54,6 +54,12 @@ const HUBS = [
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const kr = (minor) => `${Math.round(minor / 100).toLocaleString('sv-SE')} kr`;
 const shortTitle = (o) => (o.title.split(' — ').pop() ?? o.title).trim();
+// Gate 0: länkankare till stöd med kolliderande namn bär finansiären, så att
+// tre olika "Projektstöd" aldrig får identiska ankartexter mot olika mål.
+const anchorTitle = (o) => {
+  const bare = cap(shortTitle(o));
+  return titleCollisions.has(bare) ? `${bare} – ${authorityByKey.get(o.authorityKey)?.name ?? ''}` : bare;
+};
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 function metaDescription(o) {
@@ -107,7 +113,7 @@ h1{font-family:var(--serif);font-weight:600;font-size:1.7rem;line-height:1.25;le
 .lead{font-size:1.06rem;color:var(--ink);max-width:64ch}
 h2{font-family:var(--serif);font-weight:600;font-size:1.25rem;margin:1.6rem 0 .5rem}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.1rem 1.3rem;margin:1rem 0}
-table.fakta{width:100%;border-collapse:collapse;font-size:.95rem}table.fakta th{text-align:left;font-weight:600;padding:.45rem .6rem .45rem 0;vertical-align:top;white-space:nowrap;color:var(--soft);font-size:.86rem}
+table.fakta{width:100%;border-collapse:collapse;font-size:.95rem;table-layout:fixed}table.fakta th{text-align:left;font-weight:600;padding:.45rem .6rem .45rem 0;vertical-align:top;width:34%;color:var(--soft);font-size:.86rem}table.fakta td{overflow-wrap:break-word}
 table.fakta td{padding:.45rem 0;border-bottom:1px solid var(--line)}table.fakta tr:last-child td{border-bottom:0}
 ul{padding-left:1.2rem}li{margin:.35rem 0;max-width:62ch}
 .honest{background:var(--warnbg);border-left:3px solid var(--warn);border-radius:0 8px 8px 0;padding:.75rem 1rem;font-size:.9rem;margin:1rem 0}
@@ -121,6 +127,9 @@ ul{padding-left:1.2rem}li{margin:.35rem 0;max-width:62ch}
 .kalla{font-size:.86rem;color:var(--soft);border-top:1px solid var(--line);margin-top:1.6rem;padding-top:.9rem}
 footer.site{margin-top:2.2rem;border-top:1px solid var(--line);padding-top:1rem;font-size:.84rem;color:var(--soft)}
 a{color:var(--blue)}@media(min-width:640px){.paths{grid-template-columns:1fr 1fr}}
+@media(max-width:380px){.cta{white-space:normal;text-align:center}}
+.kalla a{overflow-wrap:anywhere}
+.stodlista a,.relaterade a{overflow-wrap:anywhere}
 `;
 
 function layout({ title, description, canonical, crumbs, jsonld, body }) {
@@ -213,7 +222,9 @@ function relatedTo(o) {
 
 function entityPage(o) {
   const auth = authorityByKey.get(o.authorityKey);
-  const short = cap(shortTitle(o));
+  // Gate 0: kolliderande stödnamn ("Projektstöd" ×3) disambigueras med
+  // finansiären i H1/brödsmulor/schema — dubblett-H1 är nolltolerans.
+  const short = anchorTitle(o);
   const canonical = `${BASE}/bidrag/${o.slug}/`;
   const hub = hubsFor(o)[0] ?? HUBS[0];
   const crumbs = [
@@ -279,7 +290,7 @@ granskade av människa. Regler, belopp och datum kan ändras — kontrollera all
 innan du skickar in en ansökan.</div>
 
 ${rel.length ? `<h2>Relaterade stöd</h2>
-<ul class="stodlista">${rel.map((r) => `<li><a href="/bidrag/${r.slug}/">${esc(cap(shortTitle(r)))}</a><span class="sum">${esc(r.summary)}</span></li>`).join('')}</ul>` : ''}
+<ul class="stodlista">${rel.map((r) => `<li><a href="/bidrag/${r.slug}/">${esc(anchorTitle(r))}</a><span class="sum">${esc(r.summary)}</span></li>`).join('')}</ul>` : ''}
 
 <p class="kalla"><strong>Källa:</strong> <a href="${esc(o.sourceUrl)}" rel="noopener">${esc(o.sourceUrl)}</a><br>
 <strong>Senast kontrollerad:</strong> ${CHECKED}${auth?.website ? ` · <strong>Myndighet:</strong> <a href="${esc(auth.website)}" rel="noopener">${esc(auth.name)}</a>` : ''}</p>
@@ -312,7 +323,7 @@ ${[...byInstrument.entries()]
     ([label, list]) => `<h2>${esc(label)}</h2>
 <ul class="stodlista">${list
       .sort((a, b) => shortTitle(a).localeCompare(shortTitle(b), 'sv'))
-      .map((o) => `<li><a href="/bidrag/${o.slug}/">${esc(cap(shortTitle(o)))}</a><span class="sum">${esc(o.summary)}</span></li>`)
+      .map((o) => `<li><a href="/bidrag/${o.slug}/">${esc(anchorTitle(o))}</a><span class="sum">${esc(o.summary)}</span></li>`)
       .join('')}</ul>`,
   )
   .join('')}

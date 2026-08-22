@@ -146,7 +146,9 @@ seo_check() {
   node --experimental-strip-types tools/genkgraf.mjs --check &&
   node --experimental-strip-types tools/demandmodel.mjs --check &&
   node --experimental-strip-types tools/genseo.mjs &&
-  node tools/seocheck.mjs
+  node tools/seocheck.mjs &&
+  node --experimental-strip-types tools/gatekeywords.mjs --check &&
+  node --experimental-strip-types tools/gate0.mjs --allow-content-red
 }
 step "Publika SEO-ytan genereras och klarar QA-crawlen" seo_check
 

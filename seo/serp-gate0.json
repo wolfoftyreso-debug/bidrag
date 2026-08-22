@@ -1,0 +1,827 @@
+{
+ "_kontrakt": "GATE 0-blockets SERP-observationer (docs/ZERO_COMPROMISE_GATE.md §A). 45 färska sökningar 2026-08-22 via WebSearch — samma metodbrasklappar som seo/serp-sprint01.json: USA-index (ordningen kan avvika från google.se), PAA/featured snippets ej observerbara, positionerna är verktygets returordning. Varje rad är en query-FAMILJ: en representativ sökning vars ägarbild appliceras på familjens rötter i seo/gate0-keywords.json. Inga volymer — de är DATA_UNAVAILABLE.",
+ "datum": "2026-08-22",
+ "antal_sokningar": 45,
+ "familjer": [
+  {
+   "familj": "k16-hjalp-med-hyran",
+   "query": "kan inte betala hyran vart vänder jag mig",
+   "topp": [
+    "kronofogden.se",
+    "fastighetsagarna.se",
+    "foretagarna.se",
+    "hyresgastforeningen.se",
+    "lawline.se",
+    "dokum.se",
+    "observa.se"
+   ],
+   "agare": "kronofogden + hyresvärdsperspektiv-sajter",
+   "obs": "SERP blandar hyresgäst/hyresvärd-intent; ingen myndighet hjälper hyresgästen med ekonomiskt stöd; B2-gapet bekräftat",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "k17-vilka-bidrag",
+   "query": "vilka bidrag har jag rätt till",
+   "topp": [
+    "fralsningsarmen.se",
+    "informationsverige.se",
+    "driva-eget.se",
+    "socialstyrelsen.se",
+    "advisa.se",
+    "csdsamverkan.se",
+    "arbetsloshetskassa.nu",
+    "funktionshindersguiden.se"
+   ],
+   "agare": "ingen — civilsamhälle+kommersiellt fragmenterat",
+   "obs": "samlingsvyn B1-gapet bekräftat; låneförmedlare (Advisa) rankar",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "k3-forsorjningsstod",
+   "query": "försörjningsstöd hur mycket",
+   "topp": [
+    "hejaolika.se",
+    "pensionsmyndigheten.se",
+    "lund.se",
+    "halmstad.se",
+    "skuldregistret.se"
+   ],
+   "agare": "hejaolika (media) — inte Socialstyrelsen",
+   "obs": "hejaolika äger beloppsfrågan med 2026-siffror; kommunsidor fragmenterade; skuldregistret kommersiell",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "k1-bostadsbidrag-barnfamilj",
+   "query": "bostadsbidrag barnfamilj hur mycket",
+   "topp": [
+    "hyresgastforeningen.se",
+    "forsakringskassan.se",
+    "familjensjurist.se",
+    "familjebubblan.se",
+    "boupplysningen.se",
+    "advisa.se"
+   ],
+   "agare": "forsakringskassan (flera positioner)",
+   "obs": "FK stark på känd term; privata kalkyl/guide-sajter runt",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "k2-avgoraren",
+   "query": "bostadsbidrag eller bostadstillägg skillnad",
+   "topp": [
+    "forsakringskassan.se",
+    "familjensjurist.se",
+    "bokstavsbarnen.se",
+    "boupplysningen.se",
+    "hyresgastforeningen.se",
+    "jurio.com"
+   ],
+   "agare": "småsajter äger jämförelsen",
+   "obs": "bokstavsbarnen.se rankar på jämförelsen — B4 avgöraren ETTA-MÖJLIG bekräftad",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "k4-studiemedel",
+   "query": "studiemedel hur mycket får man",
+   "topp": [
+    "swedbank.se",
+    "sodrahestrasparbank.se",
+    "sormlandssparbank.se",
+    "alemssparbank.se",
+    "svea.com",
+    "jurio.com",
+    "studentum.se"
+   ],
+   "agare": "bankerna (Swedbank + sparbankskluster)",
+   "obs": "CSN syns inte i toppen på beloppsfrågan (USA-index-brasklapp); banker äger fribeloppsfrågan",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "k5-omstallningsstudiestod",
+   "query": "omställningsstudiestöd vem kan få",
+   "topp": [
+    "vision.se",
+    "regeringen.se",
+    "csn.se",
+    "csn.se",
+    "csn.se",
+    "sverigesingenjorer.se",
+    "omstallningsfonden.se"
+   ],
+   "agare": "csn + facken",
+   "obs": "CSN äger villkoren; facken och omställningsorganisationer runt",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "k6-studiestodsvaljaren",
+   "query": "studiemedel eller omställningsstudiestöd vilket ska jag välja",
+   "topp": [
+    "csn.se",
+    "hb.se",
+    "studentum.se",
+    "studera.nu",
+    "utbildning.se",
+    "forsakringskassan.se",
+    "unionen.se"
+   ],
+   "agare": "ingen äger själva valet",
+   "obs": "ingen riktig jämförelsesida i toppen — B7 väljaren öppen",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "k7-bostadstillagg-pensionar",
+   "query": "bostadstillägg pensionär hur mycket",
+   "topp": [
+    "pensionsmyndigheten.se",
+    "pensionsmyndigheten.se",
+    "pensionsmyndigheten.se",
+    "60plusbanken.se",
+    "boio.se",
+    "dorotea.se",
+    "senioren.se"
+   ],
+   "agare": "pensionsmyndigheten (inkl. egen kalkyl)",
+   "obs": "PM äger inkl. beräkningstjänst; privatsajter runt",
+   "feasibility": "MYNDIGHET-ÄGER-NÄRA/ANGRIP-RUNT"
+  },
+  {
+   "familj": "k8-underhall",
+   "query": "underhållsstöd eller underhållsbidrag skillnad",
+   "topp": [
+    "familjensjurist.se",
+    "familjensjurist.se",
+    "kliently.se",
+    "lawline.se",
+    "glimstedt-goteborg.se",
+    "advokaternaivast.se",
+    "juristjouren.se",
+    "ejderadvokat.se"
+   ],
+   "agare": "advokatbyråer — FK frånvarande",
+   "obs": "hela SERP:en är juridik-Q&A; B6 ETTA-MÖJLIG starkt bekräftad",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "k9-aktivitetsersattning",
+   "query": "aktivitetsersättning hur mycket ung",
+   "topp": [
+    "forsakringskassan.se",
+    "lagen.nu",
+    "funktionshindersguiden.se",
+    "forsakringskassan.se",
+    "hejaolika.se",
+    "ungidag.se",
+    "jurio.com"
+   ],
+   "agare": "forsakringskassan + hejaolika",
+   "obs": "FK äger; hejaolika har 2026–2027-guide; funktionshindersguiden stark",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "k10-lonebidrag",
+   "query": "lönebidrag hur mycket arbetsgivare",
+   "topp": [
+    "arbetsformedlingen.se",
+    "danderyd.se",
+    "arbetsvarlden.se",
+    "svensktnaringsliv.se",
+    "hotellrevyn.se",
+    "fremia.se",
+    "a-kassa.se"
+   ],
+   "agare": "arbetsformedlingen + media/parter",
+   "obs": "AF äger termen; resten media och parter — ingen praktisk arbetsgivarguide; STÖDET SAKNAS I VÅR KUNSKAPSBAS (gate-blockerare)",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "k11-nystartsjobb",
+   "query": "nystartsjobb villkor arbetsgivare",
+   "topp": [
+    "arbetsformedlingen.se",
+    "danderyd.se",
+    "arbetsformedlingen.se",
+    "arbetsformedlingen.se",
+    "kompetensforetagen.se",
+    "jobbklar.se",
+    "akgsverige.se"
+   ],
+   "agare": "arbetsformedlingen",
+   "obs": "AF äger flera positioner; regeländring 2025-02 skapar förklaringsbehov; STÖDET SAKNAS I KUNSKAPSBASEN",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "k12-anstalla-med-stod",
+   "query": "anställa med stöd vilka bidrag finns",
+   "topp": [
+    "jobbafrisknpf.se",
+    "tillvaxtstod.se",
+    "akgsverige.se",
+    "spiris.se",
+    "swedbank-battreaffarer.se",
+    "verksamt.se",
+    "jobbklar.se",
+    "skatteverket.se",
+    "hejaolika.se"
+   ],
+   "agare": "ingen — fragmenterat (tillvaxtstod.se kommersiell konkurrent!)",
+   "obs": "väljar-SERP:en är öppen; verksamt.se enda myndighetsyta; kommersiella kunskapsbanker rankar; STÖDEN SAKNAS I KUNSKAPSBASEN",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "k13-starta-eget",
+   "query": "starta eget bidrag arbetsförmedlingen hur funkar det",
+   "topp": [
+    "spiris.se",
+    "foretagarna.se",
+    "foretagande.se",
+    "zmarta.se",
+    "fortnox.se",
+    "sparbankentanum.se",
+    "entreprenorsbladet.se",
+    "revisi.se"
+   ],
+   "agare": "kommersiella guider — AF frånvarande i toppen",
+   "obs": "AF rankar inte på sin egen folkterm; bokförings-/lånesajter äger; B8 ETTA-MÖJLIG bekräftad",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "k14-glasogonbidrag",
+   "query": "glasögonbidrag barn hur mycket region",
+   "topp": [
+    "1177.se (Skåne)",
+    "vardgivarguiden.se",
+    "regionvarmland.se",
+    "1177.se (Sthlm)",
+    "1177.se (Västmanland)",
+    "regionuppsala.se",
+    "1177.se (VGR)"
+   ],
+   "agare": "1177/regionwebbar — fragmenterat per region",
+   "obs": "ingen nationell sammanställning; B10 regionstabellen bekräftad — beloppen skiljer (500–1600 kr)",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "k15-bostadsanpassning",
+   "query": "bostadsanpassningsbidrag ansökan kommun",
+   "topp": [
+    "boverket.se",
+    "falkoping.se",
+    "umea.se",
+    "eskilstuna.se",
+    "botkyrka.se",
+    "boverket.se",
+    "malmo.se"
+   ],
+   "agare": "boverket + kommunwebbar",
+   "obs": "Boverkets BAB-handbok äger; kommunerna fragmenterade — nationell väg-in-guide saknas",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "k18-bidrag-barnfamilj",
+   "query": "bidrag barnfamilj låg inkomst",
+   "topp": [
+    "forsakringskassan.se",
+    "foraldrakalkylatorn.se",
+    "babyhjalp.se",
+    "forsakringskassan.se",
+    "fralsningsarmen.se",
+    "barnzonen.se",
+    "stadsmissionen.se",
+    "kunskapsguiden.se",
+    "tidningensyre.se"
+   ],
+   "agare": "FK + foraldrakalkylatorn (privat kalkylsajt rankar 2:a)",
+   "obs": "foraldrakalkylatorn.se bekräftar att verktygsformatet slår; civilsamhälle stark; B5 öppen",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "k19-arbetslos-tidslinjen",
+   "query": "blivit arbetslös vad gör jag med ekonomin",
+   "topp": [
+    "zmarta.se",
+    "kollega.se",
+    "jobbland.se",
+    "danskebank.se",
+    "sverigesingenjorer.se",
+    "adecco.com",
+    "jobbgarant.se"
+   ],
+   "agare": "lånesajter/fackmedia/banker — AF och FK frånvarande",
+   "obs": "hela tidslinje-SERP:en ägs av kommersiella aktörer; B9 ETTA-MÖJLIG bekräftad",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "k20-lag-pension",
+   "query": "låg pension äldreförsörjningsstöd hjälp",
+   "topp": [
+    "pensionsmyndigheten.se",
+    "60plusbanken.se",
+    "pensionsmyndigheten.se",
+    "pensionsmyndigheten.se (pdf)",
+    "munkfors.se",
+    "ap7.se",
+    "swedbank.se"
+   ],
+   "agare": "pensionsmyndigheten",
+   "obs": "PM äger inkl. PDF-faktablad; vår roll komplementär (avgörare + pre-check)",
+   "feasibility": "MYNDIGHET-ÄGER"
+  },
+  {
+   "familj": "k21-fonder-stipendier",
+   "query": "fonder att söka pengar ur privatperson",
+   "topp": [
+    "klokagubben.se",
+    "halmstad.se",
+    "swedbank.se",
+    "familjebubblan.se",
+    "smslånochfonder.se",
+    "ljusetitunneln.se",
+    "auris.nu"
+   ],
+   "agare": "listsajter (klokagubben, smslånochfonder!)",
+   "obs": "SERP:en ägs av lågkvalitativa listsajter — sms-lånesajt rankar på utsatta människors fråga; F2-lagret (riktig stiftelsedata) är rätt svar, uppskjutet tills licens klar",
+   "feasibility": "ETTA-MÖJLIG (efter F2)"
+  },
+  {
+   "familj": "k22-foreningsbidrag",
+   "query": "föreningsbidrag söka kommun förening",
+   "topp": [
+    "enkoping.se",
+    "mjolby.se",
+    "sodertalje.se",
+    "orebro.se",
+    "eskilstuna.se",
+    "folkspel.se",
+    "upplands-bro.se",
+    "foreningsinfo.se"
+   ],
+   "agare": "kommunwebbar — fragmenterat",
+   "obs": "ingen nationell karta; foreningsinfo.se enda tvärgående; B-kluster öppet",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "k23-eu-bidrag-foretag",
+   "query": "eu bidrag företag hur söker man",
+   "topp": [
+    "driva-eget.se",
+    "jinderman.se",
+    "driva-eget.se",
+    "entreprenorskola.se",
+    "tillvaxtstod.se",
+    "europa.eu",
+    "e-justice.europa.eu"
+   ],
+   "agare": "kommersiella guider + konsulter",
+   "obs": "tillvaxtstod.se återkommer; EU:s egna sidor svårnavigerade; komplementär roll möjlig",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "k24-laddstation",
+   "query": "bidrag laddstation företag brf",
+   "topp": [
+    "zaptec.com",
+    "go-e.com",
+    "efuel.se",
+    "molndalenergi.se",
+    "chargenode.eu",
+    "skjutebokraft.se",
+    "laddatillsammans.se",
+    "valt.se"
+   ],
+   "agare": "laddbox-leverantörer (säljande innehåll)",
+   "obs": "Naturvårdsverket frånvarande i toppen; alla träffar är säljare med egenintresse — neutral guide saknas; regeländring 2026-02-01 (föransökan) skapar förklaringsbehov",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "k25-startstod-jordbruk",
+   "query": "startstöd unga jordbrukare ta över gården",
+   "topp": [
+    "lansstyrelsen.se (Uppsala)",
+    "nya.jordbruksverket.se",
+    "ruokavirasto.fi (FINLAND)",
+    "jordbruksverket.se",
+    "lansstyrelsen.se (Östergötland)",
+    "bidragsportalen.se",
+    "lansstyrelsen.se (Skåne)"
+   ],
+   "agare": "jordbruksverket + länsstyrelser",
+   "obs": "finska livsmedelsverket rankar i svensk SERP (!); bidragsportalen.se = kommersiell konkurrent med inaktuell 2024-sida; SJV fragmenterat gammal/ny webb",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "s26-nyseparerad",
+   "query": "skiljer mig hur klarar jag ekonomin",
+   "topp": [
+    "saastopankki.fi",
+    "endbright.se",
+    "kollega.se",
+    "handelsbanken.se",
+    "e55.se",
+    "santanderconsumer.se"
+   ],
+   "agare": "banker + skilsmässosajter",
+   "obs": "ingen nämner stöden (bostadsbidrag/underhållsstöd) systematiskt; finsk banksida rankar; situationsmanualen öppen",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "s27-sjukskriven",
+   "query": "sjukskriven pengarna räcker inte",
+   "topp": [
+    "ledigajobb.se",
+    "arbetet.se",
+    "soctanter.malmo.se",
+    "arbetet.se",
+    "forsakringskassan.se",
+    "da.se",
+    "e55.se",
+    "1177.se"
+   ],
+   "agare": "media + forum — ingen äger hjälpfrågan",
+   "obs": "soctanter-forumet rankar på nödsituation; 1177 har översiktssida; situationsmanualen öppen",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "s28-nytt-barn",
+   "query": "väntar barn vilka bidrag kan vi få",
+   "topp": [
+    "fralsningsarmen.se",
+    "csn.se",
+    "forsakringskassan.se",
+    "zmarta.se",
+    "forsakringskassan.se",
+    "kunskapsguiden.se"
+   ],
+   "agare": "forsakringskassan (Vänta barn-guiden + checklista)",
+   "obs": "FK har verklig guide-produkt här — vår roll komplementär (helhet över myndighetsgränser: CSN-tillägg+bostadsbidrag)",
+   "feasibility": "MYNDIGHET-ÄGER-NÄRA"
+  },
+  {
+   "familj": "s29-ny-i-sverige",
+   "query": "ny i sverige vilka bidrag kan man få",
+   "topp": [
+    "csn.se",
+    "fralsningsarmen.se",
+    "forsakringskassan.se",
+    "familjensjurist.se",
+    "migrationsverket.se",
+    "driva-eget.se"
+   ],
+   "agare": "fragmenterat över tre myndigheter",
+   "obs": "ingen samlad tvärmyndighetsvy (FK/CSN/Migrationsverket/AF var för sig); situationssidan öppen",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "s30-barn-funktionsnedsattning",
+   "query": "barn med funktionsnedsättning vilka stöd finns",
+   "topp": [
+    "anhoriga.se",
+    "hassleholm.se",
+    "funktionshindersguiden.se",
+    "1177.se",
+    "barnombudsmannen.se",
+    "kunskapsguiden.se",
+    "unicef.se",
+    "mfof.se"
+   ],
+   "agare": "funktionshindersguiden + 1177 + kunskapsguiden",
+   "obs": "1177 nämner vårdbidrag (UTGÅNGET namn — heter omvårdnadsbidrag) = färskhetsfördel möjlig; ekonomidelen svag överallt",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "s31-student-med-barn",
+   "query": "plugga med barn ekonomi studiemedel tilläggsbidrag",
+   "topp": [
+    "norrtalje.se",
+    "csn.se",
+    "allastudier.se",
+    "nyheter24.se",
+    "studier.se",
+    "csn.se",
+    "studera.nu",
+    "studeravidare.se"
+   ],
+   "agare": "csn + studiesajter",
+   "obs": "CSN äger tilläggsbidraget; kombinationen (bostadsbidrag+tillägg+underhåll) samlad saknas",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "s32-flytta-hemifran",
+   "query": "flytta hemifrån ha råd bidrag",
+   "topp": [
+    "zmarta.se",
+    "gymnasium.se",
+    "lawline.se",
+    "utanmamma.se",
+    "fragasyv.se",
+    "lexly.se",
+    "familjensjurist.se",
+    "flyttjätten.se"
+   ],
+   "agare": "lånesajter + Q&A-forum",
+   "obs": "ingen myndighet i toppen; bostadsbidrag unga + inackorderingstillägg aldrig samlat; öppen",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "s35-starta-forening",
+   "query": "starta förening söka bidrag hur gör man",
+   "topp": [
+    "falkoping.se",
+    "medlemsfaktura.se",
+    "upplands-bro.se",
+    "goteborg.se",
+    "forening.se",
+    "svenskbidragsformedling.se",
+    "vasteras.se",
+    "foreningsinfo.se"
+   ],
+   "agare": "kommunwebbar + forening.se",
+   "obs": "svenskbidragsformedling.se = kommersiell förmedlare; nationell startguide + bidragskarta öppen",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "p38-avslag",
+   "query": "avslag på bidragsansökan varför vad gör man",
+   "topp": [
+    "soctanter.malmo.se",
+    "lawline.se",
+    "kulturfonden.fi",
+    "lawline.se",
+    "arvsfonden.se",
+    "regionstockholm.se",
+    "foreningenfvo.se",
+    "boverket.se"
+   ],
+   "agare": "forum + juridik-Q&A (finsk fond rankar)",
+   "obs": "Arvsfonden enda finansiär med egen avslagssida; tvärgående avslag→överklaga-guide saknas helt",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "j40-akassa-forsorjningsstod",
+   "query": "a-kassa eller försörjningsstöd vad gäller",
+   "topp": [
+    "socialstyrelsen.se",
+    "familjensjurist.se",
+    "arbetet.se",
+    "anslagstavlan.se",
+    "kunskapsguiden.se",
+    "socialstyrelsen.se",
+    "hejakassa.se",
+    "arbetsloshetskassa.nu"
+   ],
+   "agare": "socialstyrelsen + a-kasseportaler",
+   "obs": "ingen riktig jämförelsesida med beslutshjälp; anslagstavlan/hejakassa privatsajter",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "p39-deadlines",
+   "query": "bidrag att söka nu deadlines 2026",
+   "topp": [
+    "mucf.se",
+    "driva-eget.se",
+    "folkhalsomyndigheten.se",
+    "driva-eget.se",
+    "tillvaxtstod.se",
+    "skolverket.se",
+    "skaradet.se",
+    "swedbank.se"
+   ],
+   "agare": "per-myndighet-kalendrar (MUCF, Skolverket) + driva-eget",
+   "obs": "ingen tvärgående nationell bidragskalender existerar — länkmagneten Bidragskalendern har öppet fält; seedens opensAt/closesAt är datagrunden",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "p100-andringar-2026",
+   "query": "nya regler bidrag 2026 vad ändras",
+   "topp": [
+    "nyheter24.se",
+    "nyheter24.se",
+    "hejaolika.se",
+    "hejaolika.se",
+    "hejaolika.se",
+    "svt.se",
+    "nyheter24.se",
+    "skatteverket.se",
+    "hejaolika.se"
+   ],
+   "agare": "hejaolika + nyheter24",
+   "obs": "hejaolika äger ändringsbevakningen på funktionshinderområdet; VERIFIERADE ändringar: sanktionsavgift+bidragsspärr 1 juli 2026, aktivitetskrav försörjningsstöd 1 juli 2026, bidragstak 1 jan 2027, bostadsbidragets årsinkomstregel — kureringsunderlag för ändringssidan",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "p36-projektbudget",
+   "query": "projektbudget bidragsansökan hur skriver man",
+   "topp": [
+    "folkhalsomyndigheten.se",
+    "tillvaxtverket.se",
+    "sportadmin.se",
+    "4h.se (pdf 2002!)",
+    "kulturfonden.fi",
+    "regionstockholm.se",
+    "globalgrant.com"
+   ],
+   "agare": "per-finansiär-handböcker",
+   "obs": "en 24 år gammal PDF rankar — tvärgående budgetguide saknas; vår budgetmotor är unik tillgång",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "p41-medfinansiering",
+   "query": "medfinansiering bidrag vad betyder det",
+   "topp": [
+    "havochvatten.se",
+    "synonymer.se",
+    "vinnova.se",
+    "skatteverket.se",
+    "esf.se",
+    "tillvaxtverket.se",
+    "slu.se",
+    "trafikverket.se"
+   ],
+   "agare": "myndighetshandböcker (spridda)",
+   "obs": "synonymer.se rankar 2:a på begreppsfråga — förklaringssidan öppen; terminologi.json har definitionen",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "brand-bidragskoll",
+   "query": "bidragskoll",
+   "topp": [
+    "github.com/RobIsr",
+    "mindfulinnovations.se",
+    "github.com",
+    "sv.wikipedia.org (bidragskalkyl)",
+    "bjornlunden.com",
+    "hogia.se"
+   ],
+   "agare": "namngrannen Bidragskollen-appen + redovisningstermen bidragskalkyl",
+   "obs": "C4 bekräftad igen 2026-08-22: vi existerar inte; brand-SERP:en kräver deploy + entity footprint",
+   "feasibility": "BLOCKERAD-TILLS-DEPLOY"
+  },
+  {
+   "familj": "aud-ensamstaende",
+   "query": "bidrag ensamstående mamma vilka finns",
+   "topp": [
+    "familjeliv.se (forum)",
+    "lag24.se",
+    "fralsningsarmen.se",
+    "zmarta.se",
+    "ekbladet.se",
+    "vardnadsvalet.se",
+    "familjebubblan.se",
+    "varannanvecka.app",
+    "smslånochfonder.se"
+   ],
+   "agare": "forum + juridik + fondlistsajter",
+   "obs": "forum rankar 1:a på ledare A:s huvudfråga; smslånesajter i topp-10; B5 ETTA-MÖJLIG bekräftad; myndighet frånvarande",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "verktyg-kalkylator",
+   "query": "räkna ut bostadsbidrag kalkylator",
+   "topp": [
+    "homespotter.se",
+    "foraldrakalkylatorn.se",
+    "foraldrakalkylatorn.se",
+    "forsakringskassan.se",
+    "forsakringskassan.se",
+    "pensionsmyndigheten.se"
+   ],
+   "agare": "privata kalkylsajter FÖRE Försäkringskassan",
+   "obs": "homespotter+foraldrakalkylatorn slår FK:s egen kalkyl i ordningen — verktygsformatets kraft bevisad igen; Kassakollen finns men rankar under",
+   "feasibility": "ETTA-MÖJLIG (kalkylator krävs)"
+  },
+  {
+   "familj": "aud-stipendier-student",
+   "query": "stipendier studenter söka",
+   "topp": [
+    "lu.se",
+    "allastudier.se",
+    "studentum.se",
+    "studentstipendium.se",
+    "sokastipendium.se",
+    "studier.se",
+    "hb.se",
+    "studiestipendier.se"
+   ],
+   "agare": "stipendiedatabaser (studentstipendium/studiestipendier)",
+   "obs": "etablerade databaser äger; vår väg = F2-erfarenhetslagret, inte listkopia",
+   "feasibility": "ANGRIP-RUNT (efter F2)"
+  },
+  {
+   "familj": "energi-solceller",
+   "query": "bidrag solceller privatperson 2026",
+   "topp": [
+    "hemsol.se",
+    "offerta.se",
+    "solceller24.se",
+    "greenmatch.se",
+    "kopernicus.se",
+    "gronakrets.se",
+    "solpanelen.nu",
+    "gronkonsult.com"
+   ],
+   "agare": "solcellssäljare/affiliates helt",
+   "obs": "VERIFIERAT: grönt avdrag sänkt till 15% 1 juli 2025, 60-öringen slopad 2026 — ingen neutral aktör förklarar; ANGRÄNSANDE vår kärna (skatteavdrag ej bidrag) — orienteringsinnehåll",
+   "feasibility": "ANGRIP-RUNT (angränsande)"
+  },
+  {
+   "familj": "ent-omvardnadsbidrag",
+   "query": "omvårdnadsbidrag hur mycket nivåer",
+   "topp": [
+    "forsakringskassan.se",
+    "trygghansa.se",
+    "forsakringskassan.se",
+    "barndiabetesfonden.se",
+    "forsakringskassan.se (pdf)",
+    "autism.se",
+    "familjepsykiatri.se",
+    "npfguiden.se",
+    "hejaolika.se"
+   ],
+   "agare": "forsakringskassan + patientorganisationer",
+   "obs": "entity-mönstret: myndighet äger termen, patientorg+hejaolika tar guiderna; 2026-belopp 3083–12333 kr synliga",
+   "feasibility": "ANGRIP-RUNT (entity-mönster)"
+  },
+  {
+   "familj": "ent-lok-stod",
+   "query": "lok stöd ansökan idrottsförening",
+   "topp": [
+    "idrottonline.se",
+    "rf.se",
+    "swe3.se",
+    "hylte.se",
+    "svenskfotboll.se",
+    "scf.se",
+    "skidor.com",
+    "rfsisu.se",
+    "forening.se"
+   ],
+   "agare": "RF-sfären (idrottonline + förbund)",
+   "obs": "entity-mönstret: organisationssfären äger sin egen term helt",
+   "feasibility": "MYNDIGHET-ÄGER (RF-sfären)"
+  },
+  {
+   "familj": "ent-klimatklivet",
+   "query": "klimatklivet ansökan företag",
+   "topp": [
+    "naturvardsverket.se",
+    "ludvig.se",
+    "naturvardsverket.se",
+    "iucvast.se",
+    "naturvardsverket.se",
+    "lansstyrelsen.se"
+   ],
+   "agare": "naturvardsverket + konsulter",
+   "obs": "NV äger; konsulter (Ludvig & Co) säljer ansökningshjälp — vårt 19 kr-alternativ relevant; VERIFIERAT: nästa fönster 24 aug–4 sep 2026",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "ent-skapande-skola",
+   "query": "skapande skola bidrag ansökan",
+   "topp": [
+    "strangnas.se",
+    "kulturradet.se (pdf)",
+    "vasteras.se (pdf)",
+    "kulturradet.se",
+    "kulturradet.se",
+    "sverigeskonsumenter.se",
+    "ungaklara.se",
+    "regionsormland.se"
+   ],
+   "agare": "kulturradet + kommun-pdf:er",
+   "obs": "KR:s egen yta delvis PDF:er — strukturerad guide öppen; ansökan januari årligen",
+   "feasibility": "ANGRIP-RUNT"
+  },
+  {
+   "familj": "ent-csn-fribelopp",
+   "query": "csn fribelopp hur mycket får man tjäna",
+   "topp": [
+    "nordea.se",
+    "se.indeed.com",
+    "icabanken.se",
+    "8till5.se",
+    "csn.se",
+    "studentum.se"
+   ],
+   "agare": "banker + jobbsajter FÖRE CSN",
+   "obs": "CSN rankar 5:a på sin egen term; fribelopp 2026 = 114 676 kr/halvår VERIFIERAT; kalkylatorformat öppet",
+   "feasibility": "ETTA-MÖJLIG"
+  },
+  {
+   "familj": "ent-barnbidrag",
+   "query": "barnbidrag 2026 hur mycket",
+   "topp": [
+    "bluestep.se",
+    "familjeliv.se",
+    "sambla.se",
+    "dagens.se",
+    "forsakringskassan.se",
+    "hurbra.se",
+    "plus1.com",
+    "foraldrakalkylatorn.se",
+    "omprivatekonomi.se"
+   ],
+   "agare": "lånesajter/innehållssajter FÖRE FK",
+   "obs": "FK rankar 5:a på Sveriges mest kända bidrag; låneförmedlare (Bluestep, Sambla) toppar — angränsande term (automatiskt bidrag) men belyser lånesajternas dominans",
+   "feasibility": "ANGRIP-RUNT (angränsande)"
+  }
+ ]
+}

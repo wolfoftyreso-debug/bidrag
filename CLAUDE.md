@@ -48,6 +48,15 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
   antaganden HYPOTHESIS-märkta i `seo/demand-parametrar.json`),
   `docs/AUTHORITY_LOAD_MAP.md` (myndighetsbelastning ur seeden),
   `docs/LAUNCH_CONTROL_ROOM.md` (lanseringspaneler + spiklarm).
+- **Zero-Compromise Gate (GATE 0)** — `docs/ZERO_COMPROMISE_GATE.md`
+  (gaten + offsite-doktrinen: outbound först, Authority Desk, länkmagneter,
+  ALDRIG PBN/utgångna domäner, satellittestet) + `docs/GATE0_REPORT.md`
+  (senaste dom). Verktyg i verify: `tools/gate0.mjs` (totalcrawl, media,
+  länkgraf/PageRank, innehållsmatris), `tools/gatekeywords.mjs`
+  (332-rotregistret GREEN/YELLOW/RED/GREY mot `seo/serp-gate0.json`);
+  utanför verify: `npm run gate:ux` (320px+desktop, kräver Chromium),
+  `npm run gate:links` (extern länkhälsa, kräver nät — efter deploy).
+  **OFFSITE ÄR FRYST tills gaten är grön.**
 
 Historik: `git log` är detaljerad och ärlig; revisionsrapporter i
 `docs/reports/`.
@@ -225,7 +234,8 @@ miljön och handboken fördjupas då skärm för skärm.
    nedladdningslänkar).
 3. **De 25 bidragsklustren färdiga sökfråga→myndighetsöverlämning +
    belastningstest** — produktbeviset (`docs/LAUNCH_DEMAND_INTELLIGENCE.md`
-   §8). Innehåller innehållsmotorns F0→F1 (`docs/CONTENT_ENGINE.md`:
+   §8) och det som stänger GATE 0:s CONTENT-RED (`docs/GATE0_REPORT.md` —
+   0 av 332 sökområden GREEN; offsite fryst tills gaten är grön). Innehåller innehållsmotorns F0→F1 (`docs/CONTENT_ENGINE.md`:
    interaktiv behörighetskontroll, ändringshistorik, `/situationer/`,
    bevispaketet; `seo/questions-tier1.json` + `docs/SEO_ANSWER_CLUSTERS.md`
    styr) **plus** pre-check-vyn (grundvillkor + underlagslista före utklick),
