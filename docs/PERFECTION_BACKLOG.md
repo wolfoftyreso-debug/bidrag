@@ -35,6 +35,8 @@ kvalitetsfel av samma sort som stora.
 - M8 Länkhälsomotor för externa myndighetslänkar (§33) — körs i deployad miljö/CI (sandlådans proxy blockerar myndighetsdomäner; falska negativa lokalt).
 - M9 Skeleton-/empty-/error-states som systemkomponenter (§4) — designkällan först (design/), sedan ytorna.
 - M10 Quality dashboard (§46) — QUALITY_DASHBOARD_SPEC.md; först meningsfull efter deploy när fältdata finns.
+- M11 Numeriskt åldersfaktum (red team RT03-F4) — `person.age66Plus` är en grov proxy som används för fyra olika åldersgränser (60/62/66/67); en 63-åring passerar studiestödens hårdvillkor trots att texten säger 60/62. Inför ett exakt åldersfaktum (eller per-gräns-proxies) i intag + kriterier så att den visade regeltexten och matchningslogiken alltid stämmer. Bedömning ("ser ut att kunna"), inte beslut, mildrar tills dess.
+- M12 Kombinationssituationer i sysselsättningsintaget (red team RT03-F4/relevans) — enkelval härleder ömsesidigt uteslutande `receivesPension`/`selfEmployed`/`registeredUnemployed`, så en pensionär som driver enskild firma ser antingen bostadstillägg ELLER företagsstöden, aldrig båda. Kräver flerval eller en kombinationsgren i intaget (webb + demo) + relevanslogik som hanterar överlappande roller.
 
 ## LOW (öppna)
 

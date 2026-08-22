@@ -652,7 +652,7 @@ function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string;
         alreadyUnlocked?: boolean;
         paymentId?: string;
         instructions?: { method: string; message?: string; mockConfirmable?: boolean };
-      }>(`/v1/projects/${projectId}/analysis-unlock`, { immediateDeliveryConsent: true });
+      }>(`/v1/projects/${projectId}/analysis-unlock`, { immediateDeliveryConsent: consent });
       if (res.alreadyUnlocked) return onUnlocked();
       setPayment({ paymentId: res.paymentId!, instructions: res.instructions! });
     } catch (err) {

@@ -218,7 +218,7 @@ function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: str
     setError(null);
     try {
       const res = await post<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean } }>(
-        `/v1/projects/${projectId}/application-purchase`, { immediateDeliveryConsent: true },
+        `/v1/projects/${projectId}/application-purchase`, { immediateDeliveryConsent: consent },
       );
       setPayment(res);
     } catch (err) {

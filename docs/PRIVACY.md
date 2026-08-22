@@ -60,11 +60,21 @@ the LIMITATIONS register tracks it.
 
 ## Special category data (GDPR Art. 9) — health
 
-The intake contains exactly one health question: whether the user or a close
-family member has a disability or a long-term/serious illness. The answer is
-special category personal data under Art. 9.
+The intake contains two health-related questions, **both** carrying the full
+Art. 9 consent frame (red team 2026-08-22, finding RT03-S3 added the frame to
+the second one):
 
-How it is handled (hardening 2026-08-18, counter-audit finding A2):
+1. whether the user or a close family member has a disability or a
+   long-term/serious illness (`person.disabilityOrLongTermIllnessInFamily`);
+2. whether the user assesses their own work capacity as reduced for at least a
+   year (`person.reducedWorkCapacityLongTerm`) — asked only in the sick-leave
+   branch of the intake.
+
+Both answers are special category personal data under Art. 9 and are handled
+identically.
+
+How it is handled (hardening 2026-08-18, counter-audit finding A2; extended by
+red team RT03-S3 2026-08-22):
 
 - **Explicit consent at the point of collection.** The question screen states,
   before the answer buttons, that this is a health datum under Art. 9 and

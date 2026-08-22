@@ -29,6 +29,8 @@ interface Answers {
   businessForm?: 'sole_trader' | 'limited_company' | 'other';
   bizSector?: 'agriculture' | 'culture' | 'environment' | 'innovation' | 'other';
   reducedCapacity?: boolean;
+  /** Art. 9: användaren avböjde arbetsförmågefrågan — den ställs aldrig igen. */
+  capacityDeclined?: boolean;
   movingAbroad?: boolean;
   disabilityInFamily?: boolean;
   /** Art. 9: användaren avböjde hälsofrågan — den ställs aldrig igen. */
@@ -204,7 +206,13 @@ function personalFacts(a: Answers): Record<string, unknown> {
   // antingen gälla på riktigt eller uteslutas ärligt — aldrig ligga kvar som
   // "behöver utredas"-brus. OBS: sätts som project.sector i projectFacts.
 
-  if (a.reducedCapacity !== undefined) facts['person.reducedWorkCapacityLongTerm'] = a.reducedCapacity;
+  if (a.reducedCapacity !== undefined) {
+    facts['person.reducedWorkCapacityLongTerm'] = a.reducedCapacity;
+    // Art. 9: nedsatt arbetsförmåga p.g.a. långvarig sjukdom är en hälsouppgift —
+    // samma samtyckesram som funktionsnedsättningsfrågan (red team RT03-S3).
+    facts['person.sensitiveDataConsentAt'] = new Date().toISOString();
+  }
+  if (a.capacityDeclined) facts['person.sensitiveQuestionDeclined'] = true;
   if (a.incomeBand) {
     facts['person.monthlyIncomeBand'] = a.incomeBand;
     facts['person.lowHouseholdIncome'] = a.incomeBand === 'under15' || a.incomeBand === '15-25';
@@ -609,7 +617,16 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
           title="Bedömer du att din arbetsförmåga är nedsatt under minst ett år?"
           guidance="Det avgör om ersättningar vid längre sjukdom kan vara aktuella. Din egen bedömning räcker här — myndigheten gör alltid den medicinska prövningen."
         >
+          <p className="guidance" role="note" style={{ marginBottom: '0.6rem' }}>
+            Detta är en hälsouppgift — en känslig personuppgift enligt GDPR (artikel 9).
+            Svarar du Ja eller Nej samtycker du uttryckligen till att svaret behandlas för att
+            hitta stöd åt dig. Du kan när som helst radera alla dina uppgifter under
+            Konto &amp; data. Väljer du att inte svara ställs frågan aldrig igen.
+          </p>
           <YesNo onAnswer={(v) => onAnswer({ reducedCapacity: v })} />
+          <button className="subtle" style={{ marginTop: '0.6rem' }} onClick={() => onAnswer({ capacityDeclined: true })}>
+            Vill inte svara
+          </button>
         </Q>
       );
     case 'p-income':
@@ -676,7 +693,7 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
       );
     case 'p-extra':
       return (
-        <Q title="Är det något mer som påverkar din ekonomi?" guidance="Frivilligt — t.ex. skulder, sjukdom i familjen eller något annat du vill nämna.">
+        <Q title="Är det något mer som påverkar din ekonomi?" guidance="Frivilligt — t.ex. skulder, höga boendekostnader eller något annat du vill nämna. Skriv inte in känsliga hälsouppgifter här; sådant frågar vi om separat med samtycke.">
           <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Skriv fritt, eller hoppa över." />
           <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.8rem' }}>
             <button onClick={() => onAnswer({ extraContext: text })}>Visa vad jag kan ha rätt till</button>

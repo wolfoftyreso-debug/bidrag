@@ -27,8 +27,10 @@ export const BUSINESS_RELEVANT_SLUGS: ReadonlySet<string> = new Set([
   'vinnova-innovativa-startups',
   'tillvaxtverket-affarsutvecklingscheckar',
   'tillvaxtverket-regionalt-investeringsstod',
-  'jordbruksverket-startstod-unga',
-  'jordbruksverket-investeringsstod',
+  // Jordbruksstöden låg tidigare här (basmängden) och läckte då som "behöver
+  // utredas" till egenföretagare vars sektor ännu inte var satt (red team
+  // RT03-F3, F-RELEVANS på motornivå). De är sektorsspecifika och hör hemma i
+  // BUSINESS_SECTOR_SLUGS.agriculture — en icke-jordbrukare ser dem aldrig.
 ]);
 
 /**
@@ -37,8 +39,9 @@ export const BUSINESS_RELEVANT_SLUGS: ReadonlySet<string> = new Set([
  * Kunskapsbasen har ~50 sektorsmärkta stöd; utan detta såg en egenföretagare
  * inom kultur eller energi/miljö aldrig sina branschstöd i personspåret
  * (de nåddes bara via projektspåret). Nycklarna är sektorsvärdena som
- * intaget sätter; jordbruket ligger redan i basmängden (hårt grindat —
- * redovisas alltid, även som ärligt uteslutet).
+ * intaget sätter (culture/environment/innovation/agriculture). Jordbruksstöden
+ * ligger under 'agriculture' — en egenföretagare ser dem bara om hen deklarerat
+ * jordbrukssektorn, aldrig annars (red team RT03-F3).
  */
 export const BUSINESS_SECTOR_SLUGS: Readonly<Record<string, readonly string[]>> = {
   culture: [
@@ -57,6 +60,7 @@ export const BUSINESS_SECTOR_SLUGS: Readonly<Record<string, readonly string[]>> 
     'energimyndigheten-industriklivet',
   ],
   innovation: ['vinnova-planeringsbidrag-eu'],
+  agriculture: ['jordbruksverket-startstod-unga', 'jordbruksverket-investeringsstod'],
 };
 
 /** Företagsstöden en egenföretagare ska se: basmängden + deklarerad sektor. */

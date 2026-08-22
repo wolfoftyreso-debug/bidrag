@@ -254,11 +254,17 @@ describe('scenariomatris — personliga situationer', () => {
   });
 
   it('14. Funktionsnedsättningsspåret: gated bakom upptäcktsfrågan — tyst för alla andra', () => {
-    // Utan funktionsnedsättning/sjukdom i familjen: alla fyra stöden uteslutna och tysta.
+    // Utan funktionsnedsättning/sjukdom i familjen: de tre funktionsnedsättnings-
+    // grindade stöden uteslutna och tysta.
     const base = run(personalFacts({ household: 'partner', children: 'yes', separated: false, age: '29-65', employment: 'working', income: '25-40', paysHousing: true }));
-    for (const slug of ['fk-omvardnadsbidrag', 'fk-merkostnadsersattning', 'fk-bilstod', 'fk-narstaendepenning']) {
+    for (const slug of ['fk-omvardnadsbidrag', 'fk-merkostnadsersattning', 'fk-bilstod']) {
       expect(base.get(slug)!.eligibilityStatus, slug).toBe('excluded');
     }
+    // Red team RT03-F1: närståendepenning gäller vård av en svårt sjuk anhörig,
+    // inte funktionsnedsättning i familjen — den får INTE döljas av ett nej på
+    // funktionsnedsättningsfrågan, utan förblir synlig med sin egen följdfråga.
+    expect(base.get('fk-narstaendepenning')!.eligibilityStatus).toBe('unknown');
+    expect(allQuestions(base).some((q) => q.includes('hot mot livet'))).toBe(true);
     expect(allQuestions(base).some((q) => q.includes('funktionsnedsättning') || q.includes('omvårdnad'))).toBe(false);
 
     // Med ja på upptäcktsfrågan: spåret öppnas med riktiga följdfrågor.

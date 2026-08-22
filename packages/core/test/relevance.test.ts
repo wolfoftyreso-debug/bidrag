@@ -74,6 +74,18 @@ describe('relevantForTrack', () => {
     expect(businessRelevantSlugs(undefined)).toBe(BUSINESS_RELEVANT_SLUGS);
   });
 
+  it('RT03-F3: jordbruksstöd hör till agriculture-sektorn, aldrig basmängden (läcker inte till osatt/annan sektor)', () => {
+    // Regressionsvakt: jordbruksstöden låg tidigare i basmängden och läckte
+    // som "behöver utredas" till egenföretagare med osatt eller icke-jordbruks-
+    // sektor. De ska bara nås av en deklarerad jordbrukare.
+    expect(BUSINESS_RELEVANT_SLUGS.has('jordbruksverket-startstod-unga')).toBe(false);
+    expect(BUSINESS_RELEVANT_SLUGS.has('jordbruksverket-investeringsstod')).toBe(false);
+    expect(businessRelevantSlugs('agriculture').has('jordbruksverket-startstod-unga')).toBe(true);
+    expect(businessRelevantSlugs(undefined).has('jordbruksverket-startstod-unga')).toBe(false);
+    expect(businessRelevantSlugs('other').has('jordbruksverket-investeringsstod')).toBe(false);
+    expect(businessRelevantSlugs('culture').has('jordbruksverket-startstod-unga')).toBe(false);
+  });
+
   it('projektspåret: döljer personliga instrument som inte är eligible', () => {
     const visible = relevantForTrack(rows, 'project').map((r) => r.slug);
     expect(visible).not.toContain('kommun-forsorjningsstod');

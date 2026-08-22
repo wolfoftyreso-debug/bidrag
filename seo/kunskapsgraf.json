@@ -2,7 +2,7 @@
  "_kontrakt": "Kunskapsgrafen v1 — genererad av tools/genkgraf.mjs ur seeden + seo/intents-100.json; redigera ALDRIG för hand. Grafen är lager 6 i docs/CONTENT_ENGINE.md: internlänkning, relaterade stöd och situationsnoder hämtar härifrån. 'relaterad'-kanter = delar ≥2 kriteriefält och minst en målgruppshubb (deterministisk heuristik v1 — redaktionell kurering kan skärpa den senare, i generatorn, inte i filen). Regenerera vid seed-/intentändring; verify kör --check.",
  "genererad_ur_seed": "2026-08-13T00:00:00Z",
  "antal_noder": 250,
- "antal_kanter": 1273,
+ "antal_kanter": 1278,
  "noder_per_typ": {
   "intent": 42,
   "kriterium": 97,
@@ -2673,6 +2673,11 @@
   },
   {
    "from": "stod:csn-inackorderingstillagg",
+   "rel": "kraver",
+   "to": "kriterium:person.hasChildrenAtHome"
+  },
+  {
+   "from": "stod:csn-inackorderingstillagg",
    "rel": "relaterad",
    "to": "stod:csn-studiestartsstod"
   },
@@ -2710,6 +2715,11 @@
    "from": "stod:csn-inackorderingstillagg",
    "rel": "relaterad",
    "to": "stod:fk-omvardnadsbidrag"
+  },
+  {
+   "from": "stod:csn-inackorderingstillagg",
+   "rel": "relaterad",
+   "to": "stod:fk-underhallsstod"
   },
   {
    "from": "stod:csn-inackorderingstillagg",
@@ -4718,11 +4728,6 @@
   },
   {
    "from": "stod:fk-narstaendepenning",
-   "rel": "kraver",
-   "to": "kriterium:person.disabilityOrLongTermIllnessInFamily"
-  },
-  {
-   "from": "stod:fk-narstaendepenning",
    "rel": "relaterad",
    "to": "stod:fk-omvardnadsbidrag"
   },
@@ -4915,6 +4920,16 @@
    "from": "stod:fk-underhallsstod",
    "rel": "kraver",
    "to": "kriterium:person.separatedParent"
+  },
+  {
+   "from": "stod:fk-underhallsstod",
+   "rel": "relaterad",
+   "to": "stod:kommun-elevresor-gymnasiet"
+  },
+  {
+   "from": "stod:fk-underhallsstod",
+   "rel": "relaterad",
+   "to": "stod:kommun-skolskjuts"
   },
   {
    "from": "stod:fk-underhallsstod",
@@ -5428,6 +5443,11 @@
   },
   {
    "from": "stod:kommun-elevresor-gymnasiet",
+   "rel": "kraver",
+   "to": "kriterium:person.hasChildrenAtHome"
+  },
+  {
+   "from": "stod:kommun-elevresor-gymnasiet",
    "rel": "relaterad",
    "to": "stod:kommun-forsorjningsstod"
   },
@@ -5675,6 +5695,11 @@
    "from": "stod:kommun-skolskjuts",
    "rel": "kraver",
    "to": "kriterium:person.childSchoolDistanceQualifies"
+  },
+  {
+   "from": "stod:kommun-skolskjuts",
+   "rel": "kraver",
+   "to": "kriterium:person.hasChildrenAtHome"
   },
   {
    "from": "stod:kommun-skolskjuts",

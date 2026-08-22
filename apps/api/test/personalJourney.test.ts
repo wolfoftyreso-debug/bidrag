@@ -165,11 +165,17 @@ describe('företagarspåret (F-EGEN): löftet om genomlysning av företagandet i
     bizMatches = (res.json() as { matches: MatchRow[] }).matches;
   });
 
-  it('business supports enter the report — with real follow-up questions, never silently dropped', () => {
-    // Individuellt sökbara företagsstöd genomlyses med öppna frågor.
-    const jv = bySlug(bizMatches, 'jordbruksverket-startstod-unga');
-    expect(jv.eligibilityStatus).toBe('unknown');
-    expect(jv.result.missingFacts.length).toBeGreaterThan(0);
+  it('business supports enter the report — genuinely reviewed, never silently dropped', () => {
+    // F-EGEN: tvärsektoriella företagsstöd REDOVISAS för varje egenföretagare
+    // (starta eget m.fl.) — även när de honnest utesluts på ett hårt villkor,
+    // aldrig tyst borttappade. Denna persona (enskild firma, ej inskriven
+    // arbetssökande, ej företag) uppfyller inte deras hårda krav.
+    const start = bySlug(bizMatches, 'af-stod-start-naringsverksamhet');
+    expect(start).toBeDefined();
+    expect(start.result.reasons?.length ?? start.result.missingFacts.length).toBeGreaterThan(0);
+    // Sektorsspecifika stöd som jordbruk visas däremot BARA för en deklarerad
+    // jordbrukare (red team RT03-F3); den här personan har ingen sektor satt.
+    expect(bizMatches.find((m) => m.slug === 'jordbruksverket-startstod-unga')).toBeUndefined();
   });
 
   it('company-only supports are shown honestly as excluded with the reason, not hidden', () => {

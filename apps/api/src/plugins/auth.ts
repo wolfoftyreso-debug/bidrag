@@ -42,8 +42,18 @@ declare module 'fastify' {
 
 /** Roles allowed to write applicant data. */
 export const WRITER_ROLES: Role[] = ['owner', 'applicant', 'contributor', 'administrator'];
-/** Roles allowed to curate the shared funding knowledge graph. */
-export const CURATOR_ROLES: Role[] = ['administrator', 'data_curator'];
+/**
+ * Roles allowed to curate the SHARED funding knowledge graph.
+ *
+ * Deliberately ONLY `data_curator` — never `administrator`. `administrator` is
+ * a tenant-scoped team-management role that a self-service org owner can grant
+ * via /v1/tenant/invites; conflating it with curation would let anyone with
+ * two accounts escalate to platform-wide authority over the knowledge graph
+ * (rule versions, human_verified stamps, source registry) that every tenant
+ * matches against. `data_curator` is a platform-trusted role and is therefore
+ * NOT invitable (see INVITABLE_ROLES) — it is assigned out-of-band only.
+ */
+export const CURATOR_ROLES: Role[] = ['data_curator'];
 
 async function resolveAuth(request: FastifyRequest): Promise<AuthContext | null> {
   let token: string | undefined;

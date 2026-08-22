@@ -26,6 +26,7 @@ import {
   submissionReceipts,
   submissions,
   tenants,
+  users,
 } from '../db/schema.ts';
 import { audit } from '../audit.ts';
 import { getStorage } from '../services/storage.ts';
@@ -147,6 +148,22 @@ export async function gdprRoutes(app: FastifyInstance) {
 
       await db.delete(memberships).where(eq(memberships.tenantId, tenantId));
       await db.delete(tenants).where(eq(tenants.id, tenantId));
+
+      // Red team RT03-S2: raderingen tog tidigare bort tenanten men lämnade
+      // kvar användarens users-rad (e-post, lösenordshash) och alla
+      // autentiseringstoken — Art. 17-raderingen var ofullständig mot löftet
+      // "radera kontot och all data permanent". När användaren inte längre har
+      // NÅGOT medlemskap (den här var deras sista/enda tenant) raderas users-
+      // raden; FK-cascaden städar refresh-/återställnings-/recovery-tokens och
+      // ev. kvarvarande medlemskap. auditEvents.actorUserId saknar FK, så
+      // raderingsbeviset överlever.
+      const remaining = await db
+        .select({ id: memberships.id })
+        .from(memberships)
+        .where(eq(memberships.userId, request.auth!.userId));
+      if (remaining.length === 0) {
+        await db.delete(users).where(eq(users.id, request.auth!.userId));
+      }
 
       return { ok: true, message: 'Kontots data är raderad.' };
     },

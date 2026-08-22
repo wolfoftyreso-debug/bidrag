@@ -141,7 +141,7 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
     setError(null);
     try {
       const res = await post<{ paymentId: string; instructions: { method: string; message?: string } }>(
-        `/v1/projects/${projectId}/document-pack`, { pack: 'application', immediateDeliveryConsent: true },
+        `/v1/projects/${projectId}/document-pack`, { pack: 'application', immediateDeliveryConsent: consent },
       );
       setPayment(res);
     } catch (err) {
@@ -206,6 +206,9 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
         systemet förbereder ansökan åt dig kostar det {formatSek(prices.application)} per ansökan — alla
         dokument för den ansökan ingår. Kvittot hamnar under Mina köp.
       </p>
+      {/* Red team RT03-T3: samtycket står FÖRE prisknappen — läsordningen
+          ska vara villkor → pris → köp, inte tvärtom. */}
+      <PurchaseConsent checked={consent} onChange={setConsent} idSuffix="-dokument" />
       <div className="match-row" style={{ alignItems: 'center', border: '1px solid var(--primary)', borderRadius: 8, padding: '0.6rem 0.8rem' }}>
         <div style={{ flex: 1 }}>
           <strong>Förbered ansökan — alla dokument</strong>
@@ -213,7 +216,6 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
         </div>
         <button className="secondary" disabled={busy || !consent} onClick={buy}>{formatSek(prices.application)}</button>
       </div>
-      <PurchaseConsent checked={consent} onChange={setConsent} idSuffix="-dokument" />
       {error && <div className="alert error">{error}</div>}
     </div>
   );

@@ -13,7 +13,12 @@ import { audit } from '../audit.ts';
 import { sendEmail } from '../services/email.ts';
 import { config } from '../config.ts';
 
-const INVITABLE_ROLES = ['applicant', 'contributor', 'reviewer', 'finance', 'administrator', 'data_curator'] as const;
+// data_curator är ALDRIG inbjudningsbar: den ger åtkomst till den delade
+// kunskapsgrafens kurationskonsol (globala mutationer alla tenanter matchar
+// mot) och tilldelas endast utanför självbetjäning (DB/ops). Se
+// CURATOR_ROLES i plugins/auth.ts — annars kan vem som helst med två konton
+// eskalera till plattformsbred kuratorsbehörighet.
+const INVITABLE_ROLES = ['applicant', 'contributor', 'reviewer', 'finance', 'administrator'] as const;
 const INVITE_TTL_DAYS = 14;
 
 const hashToken = (t: string) => createHash('sha256').update(t).digest('hex');

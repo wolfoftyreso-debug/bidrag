@@ -145,7 +145,10 @@ function buildFacts(a: A): Facts {
     // antingen gälla på riktigt eller uteslutas ärligt — aldrig ligga kvar
     // som "behöver utredas"-brus.
     if (a.bizSector) f['project.sector'] = a.bizSector;
-    if (a.capacity !== undefined) f['person.reducedWorkCapacityLongTerm'] = a.capacity;
+    // Art. 9 (red team RT03-S3): arbetsförmågefrågan är en hälsouppgift — samma
+    // avböjandemönster som funktionsnedsättningsfrågan.
+    if (a.capacityDeclined) f['person.sensitiveQuestionDeclined'] = true;
+    else if (a.capacity !== undefined) f['person.reducedWorkCapacityLongTerm'] = a.capacity;
     f['person.consideringMovingAbroad'] = a.movingAbroad === true;
     // Funktionsnedsättningsspåret: samma gate-mönster som utvandringsspåret.
     // Art. 9: ett avböjt svar är INTE ett nej — faktumet lämnas osatt så att
@@ -351,15 +354,16 @@ function Teaser({ facts, track, onUnlocked }: { facts: Facts; track: 'personal' 
   const relevant = inScope.filter((r) => r.m.eligibilityStatus !== 'excluded');
   const excludedCount = inScope.length - relevant.length;
   const counts = { high: 0, possible: 0, needs_info: 0 };
-  // F-TEASER (användarfynd): raderna ska se ut som blurrade bidragsnamn, inte
-  // kategorietiketter. Namnet läcker aldrig — det som blurras är en
-  // formbevarande mask (X/x/0 per tecken), inte den riktiga titeln.
-  const maskName = (t: string) =>
-    t.slice(0, 42).replace(/[A-ZÅÄÖÉ]/g, 'X').replace(/[a-zåäöé]/g, 'x').replace(/[0-9]/g, '0');
-  const rows = relevant.map((r) => {
+  // F-TEASER + red team RT03: raderna ska se ut som blurrade bidragsnamn, inte
+  // kategorietiketter — men masken får INTE härledas ur den riktiga titeln.
+  // En teckenbevarande mask (X/x/0) läcker ordantal, ordlängder och versaler,
+  // ett formfingeravtryck. Använd fasta platshållare (samma princip som
+  // produktens Matches.tsx) så att inte ens formen bär information.
+  const MASKS = ['Xxxxxxxxxxxxxxx — Xxxxxxxxxxx xxxx xxxxxxxxx', 'Xxxxxxxx — Xxxxxxxxxxxx xxx xxxxxx', 'Xxxxxxxxxxxx — Xxxxxxxx xxxxxxxxxxx'];
+  const rows = relevant.map((r, i) => {
     const level = likelihoodOf(r.m);
     counts[level]++;
-    return { level, category: TEASER_CATEGORY[r.opp.instrumentType] ?? 'Stöd', masked: maskName(r.opp.title) };
+    return { level, category: TEASER_CATEGORY[r.opp.instrumentType] ?? 'Stöd', masked: MASKS[i % 3]! };
   });
   const [paying, setPaying] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
@@ -1049,7 +1053,15 @@ function App() {
       )}
       {step === 'p-capacity' && (
         <Q title="Bedömer du att din arbetsförmåga är nedsatt under minst ett år?" guidance="Din egen bedömning räcker här — myndigheten gör alltid den medicinska prövningen.">
+          <p className="guidance" role="note" style={{ margin: '0 0 0.6rem' }}>
+            Detta är en hälsouppgift — en känslig personuppgift (GDPR art. 9). Svarar du Ja eller Nej
+            samtycker du uttryckligen till att svaret används för att hitta stöd. Väljer du att inte
+            svara ställs frågan aldrig igen.
+          </p>
           <YesNo on={(v) => advance({ capacity: v })} />
+          <button className="btn subtle" style={{ marginTop: '0.5rem' }} onClick={() => advance({ capacityDeclined: true })}>
+            Vill inte svara
+          </button>
         </Q>
       )}
       {step === 'p-income' && (

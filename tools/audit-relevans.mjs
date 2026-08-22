@@ -132,6 +132,33 @@ const PERSONAS = [
     facts: { 'applicant.country': 'SE', 'applicant.type': 'company', 'project.sector': 'innovation' },
     mustSee: ['vinnova-innovativa-startups'],
   },
+  {
+    // Red team RT03-F2: barnlös person — de tre skol-/gymnasieresestöden saknade
+    // hasChildrenAtHome-grinden syskonstöden har och läckte som "behöver utredas".
+    name: 'Barnlös låginkomsttagare', venture: null,
+    facts: personal({
+      'person.employmentStatus': 'working', 'person.registeredUnemployed': false,
+      'person.receivesPension': false, 'person.selfEmployed': false,
+      'person.hasChildrenAtHome': false, 'person.lowHouseholdIncome': true,
+      'person.paysHousingCost': true,
+    }),
+    mustSee: [],
+    mustExclude: ['kommun-skolskjuts', 'kommun-elevresor-gymnasiet', 'csn-inackorderingstillagg',
+      'fk-bostadsbidrag-barnfamiljer', 'region-glasogonbidrag-barn'],
+  },
+  {
+    // Red team RT03-F1: vårdar en svårt sjuk anhörig men har ingen
+    // funktionsnedsättning i familjen — närståendepenning fick INTE döljas av
+    // den grova hälsogrinden.
+    name: 'Vårdar svårt sjuk anhörig (ingen funktionsnedsättning i familjen)', venture: null,
+    facts: personal({
+      'person.employmentStatus': 'working', 'person.registeredUnemployed': false,
+      'person.receivesPension': false, 'person.selfEmployed': false,
+      'person.disabilityOrLongTermIllnessInFamily': false,
+      'person.caringForSeriouslyIllRelative': true,
+    }),
+    mustSee: ['fk-narstaendepenning'],
+  },
 ];
 
 PERSONAS.push(

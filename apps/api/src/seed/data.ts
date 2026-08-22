@@ -198,7 +198,7 @@ export const opportunities: SeedOpportunity[] = [
     countries: ['SE'],
     sectors: ['culture'],
     minAmountMinor: null,
-    maxAmountMinor: 5_000_000, // 50 000 kr — typisk storleksordning; verifieras mot källan
+    maxAmountMinor: null, // Beloppet är inte fastställt mot källan — visa "Varierar, se källan" hellre än en gissning (red team F1)
     maxFundingSharePercent: null,
     excludesOtherPublicFunding: false,
     deadlineModel: 'recurring',
@@ -288,7 +288,10 @@ export const opportunities: SeedOpportunity[] = [
     countries: ['SE'],
     sectors: ['youth', 'civil_society'],
     minAmountMinor: null,
-    maxAmountMinor: 40_000_000,
+    // Red team RT03-F6: beloppen varierar per utlysning (sidan säger det själv)
+    // och ett fast tak kan både under- och överdriva — visa "Varierar, se
+    // källan" i stället för en gissad siffra.
+    maxAmountMinor: null,
     maxFundingSharePercent: null,
     excludesOtherPublicFunding: false,
     deadlineModel: 'upcoming_round',
@@ -1190,9 +1193,9 @@ export const opportunities: SeedOpportunity[] = [
     sourceKey: '1177-glasogon',
     programmeName: 'Glasögonbidrag',
     title: 'Din region — Glasögonbidrag för barn och unga (8–19 år)',
-    summary: 'Lagstadgat bidrag till glasögon eller linser för barn och unga; minst 800 kr per tillfälle, belopp och rutiner varierar per region.',
+    summary: 'Lagstadgat bidrag till glasögon eller linser för barn och unga; belopp och rutiner varierar per region — kontrollera din regions nivå.',
     description:
-      'Alla regioner är enligt lag (2016:35) skyldiga att ge bidrag för glasögon eller kontaktlinser till barn och unga 8–19 år som behöver synhjälpmedel. Bidraget är minst 800 kr per barn och tillfälle; flera regioner ger mer. Ansökan sker oftast via optikern eller direkt till regionen — rutinerna skiljer sig, kontrollera din regions sidor via 1177.',
+      'Alla regioner är enligt lag (2016:35) skyldiga att ge bidrag för glasögon eller kontaktlinser till barn och unga 8–19 år som behöver synhjälpmedel. Lagen fastställer inget nationellt belopp — nivån bestäms per region och varierar. Ansökan sker oftast via optikern eller direkt till regionen — rutinerna skiljer sig, kontrollera din regions sidor och aktuellt belopp via 1177.',
     objective: 'Alla barn ska ha råd med de synhjälpmedel de behöver.',
     instrumentType: 'social_benefit',
     applicantTypes: ['individual'],
@@ -1261,6 +1264,7 @@ export const opportunities: SeedOpportunity[] = [
     criteria: [
       c('skjuts-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Söks av vårdnadshavare'),
       c('skjuts-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Gäller elever folkbokförda i Sverige'),
+      c('skjuts-m0', 'mandatory', 'person.hasChildrenAtHome', 'is_true', undefined, 'Du ska ha barn som bor hos dig', 'Har du barn som bor hos dig, helt eller växelvis?'),
       c('skjuts-m1', 'mandatory', 'person.childInCompulsorySchool', 'is_true', undefined, 'Barnet går i grundskolan', 'Går något av dina barn i grundskolan?'),
       c('skjuts-m2', 'mandatory', 'person.childSchoolDistanceQualifies', 'is_true', undefined, 'Färdvägen kvalificerar (längd, trafik eller funktionsnedsättning — kommunens bedömning)', 'Har barnet lång, trafikfarlig eller på annat sätt besvärlig väg till skolan?'),
     ],
@@ -1288,6 +1292,7 @@ export const opportunities: SeedOpportunity[] = [
     criteria: [
       c('elevres-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Söks av eleven eller vårdnadshavare'),
       c('elevres-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Gäller elever folkbokförda i Sverige'),
+      c('elevres-m0', 'mandatory', 'person.hasChildrenAtHome', 'is_true', undefined, 'Du ska ha barn som bor hos dig', 'Har du barn som bor hos dig, helt eller växelvis?'),
       c('elevres-m1', 'mandatory', 'person.childInUpperSecondary', 'is_true', undefined, 'Barnet går på gymnasiet med studiehjälp', 'Går något av dina barn på gymnasiet?'),
       c('elevres-m2', 'mandatory', 'person.childGymnasiumLongTravel', 'is_true', undefined, 'Färdvägen till skolan är minst sex kilometer', 'Är resvägen mellan hemmet och gymnasieskolan minst sex kilometer?'),
     ],
@@ -1466,9 +1471,9 @@ export const opportunities: SeedOpportunity[] = [
     sourceKey: 'pm-bostadstillagg',
     programmeName: 'Äldreförsörjningsstöd',
     title: 'Pensionsmyndigheten — Äldreförsörjningsstöd',
-    summary: 'Stöd som garanterar en skälig levnadsnivå för dig som har låg eller ingen pension.',
+    summary: 'Behovsprövat stöd för dig som har låg eller ingen pension och behöver hjälp att nå en skälig levnadsnivå.',
     description:
-      'Äldreförsörjningsstöd kan lämnas från 66 års ålder till den som inte får sina grundläggande behov tillgodosedda genom pension och andra inkomster. Prövas tillsammans med bostadstillägg. Ansökan görs hos Pensionsmyndigheten.',
+      'Äldreförsörjningsstöd kan lämnas från riktåldern för pension (67 år från 2026) till den som inte får sina grundläggande behov tillgodosedda genom pension och andra inkomster. Prövas tillsammans med bostadstillägg. Ansökan görs hos Pensionsmyndigheten.',
     objective: 'Skälig levnadsnivå för äldre.',
     instrumentType: 'social_benefit',
     applicantTypes: ['individual'],
@@ -1482,7 +1487,7 @@ export const opportunities: SeedOpportunity[] = [
     criteria: [
       c('pm-afs-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Stödet söks av privatpersoner'),
       c('pm-afs-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Du ska bo i Sverige'),
-      c('pm-afs-m1', 'mandatory', 'person.age66Plus', 'is_true', undefined, 'Du ska ha fyllt 66 år', 'Har du fyllt 66 år?'),
+      c('pm-afs-m1', 'mandatory', 'person.age66Plus', 'is_true', undefined, 'Du ska ha uppnått riktåldern för pension (67 år från 2026)', 'Har du uppnått riktåldern för pension (67 år 2026)?'),
       c('pm-afs-m2', 'mandatory', 'person.veryLowOrNoPension', 'is_true', undefined, 'Pension och inkomster ska inte räcka till en skälig levnadsnivå', 'Har du svårt att klara dig på din pension och dina övriga inkomster?'),
     ],
   }),
@@ -2091,7 +2096,12 @@ export const opportunities: SeedOpportunity[] = [
     criteria: [
       c('fk-np-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Ersättningen söks av privatpersoner'),
       c('fk-np-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Du ska vara försäkrad i Sverige'),
-      c('fk-np-m0', 'mandatory', 'person.disabilityOrLongTermIllnessInFamily', 'is_true', undefined, 'Stödet är aktuellt när en anhörig är allvarligt sjuk', 'Har du eller någon nära anhörig en funktionsnedsättning eller en långvarig eller allvarlig sjukdom?'),
+      // Red team RT03-F1: närståendepenning gäller vård av en svårt sjuk
+      // närstående (t.ex. en döende förälder) — INTE funktionsnedsättning i den
+      // egna familjen. Den tidigare disability-grinden (m0) dolde stödet från
+      // exakt dem som behöver det: den som svarar "nej, ingen
+      // funktionsnedsättning hos oss" men vårdar en döende anhörig. Grindas nu
+      // bara på sitt faktiska villkor, som ytas som följdfråga.
       c('fk-np-m1', 'mandatory', 'person.caringForSeriouslyIllRelative', 'is_true', undefined, 'Du ska avstå från förvärvsarbete för att vårda eller vara nära en närstående vars sjukdom är ett påtagligt hot mot livet', 'Avstår du från arbete för att vårda eller vara nära en närstående som är så svårt sjuk att sjukdomen är ett hot mot livet?', undefined, ['medical_certificate']),
     ],
   }),
@@ -2201,6 +2211,7 @@ export const opportunities: SeedOpportunity[] = [
     criteria: [
       c('csn-it-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Söks av eleven eller vårdnadshavare'),
       c('csn-it-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Gäller elever folkbokförda i Sverige'),
+      c('csn-it-m0', 'mandatory', 'person.hasChildrenAtHome', 'is_true', undefined, 'Du ska ha barn som bor hos dig', 'Har du barn som bor hos dig, helt eller växelvis?'),
       c('csn-it-m1', 'mandatory', 'person.childInUpperSecondary', 'is_true', undefined, 'Eleven går på gymnasiet med studiehjälp', 'Går något av dina barn på gymnasiet?'),
       c('csn-it-m2', 'mandatory', 'person.childLivesAwayForStudies', 'is_true', undefined, 'Eleven behöver bo på studieorten på grund av lång eller besvärlig resväg', 'Behöver barnet bo på studieorten (inackordering) för att resvägen är för lång?'),
     ],

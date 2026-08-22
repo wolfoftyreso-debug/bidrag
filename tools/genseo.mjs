@@ -82,8 +82,11 @@ function pageTitle(o) {
   const short = cap(shortTitle(o));
   const auth = authorityByKey.get(o.authorityKey)?.name ?? '';
   const base = titleCollisions.has(short) ? `${short} – ${auth}` : short;
+  // Red team F8: lova bara "belopp" i titeln när stödet faktiskt har ett
+  // beloppstak att visa — annars utlovar titeln innehåll sidan inte har.
+  const hasAmount = o.maxAmountMinor != null || o.maxFundingSharePercent != null;
   const candidates = [
-    `${base} – villkor, belopp och ansökan | Bidragskoll`,
+    `${base} – ${hasAmount ? 'villkor, belopp och ansökan' : 'villkor och ansökan'} | Bidragskoll`,
     `${base} – så fungerar stödet | Bidragskoll`,
     `${base} | Bidragskoll`,
   ];
@@ -91,8 +94,18 @@ function pageTitle(o) {
   return `${base.slice(0, 55).replace(/\s+\S*$/, '')}… | Bidragskoll`;
 }
 function deadlineText(o) {
-  if (o.closesAt) return `Ansökan stänger ${o.closesAt.slice(0, 10)}`;
+  // Red team F5: ett closesAt-datum på ett återkommande stöd får inte renderas
+  // som en enda hård slutdeadline — då döljs att stödet öppnar igen, och ett
+  // passerat datum ser ut som den aktuella deadlinen. Rama in det som "nästa
+  // omgång" och behåll den återkommande naturen.
+  if (o.closesAt) {
+    const date = o.closesAt.slice(0, 10);
+    return o.deadlineModel === 'recurring'
+      ? `Återkommande stöd — nästa ansökningsomgång stänger ${date} (kontrollera aktuella datum hos källan)`
+      : `Ansökan stänger ${date}`;
+  }
   if (o.deadlineModel === 'rolling') return 'Löpande ansökan — ingen fast deadline';
+  if (o.deadlineModel === 'recurring') return 'Återkommande stöd — ansökan öppnar i omgångar, se den officiella källan';
   return 'Nästa ansökningsomgång är inte publicerad ännu';
 }
 
