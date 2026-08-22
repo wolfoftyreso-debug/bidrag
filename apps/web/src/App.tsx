@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { get, getActiveTenant, post, setActiveTenant } from './api';
 import TermsPage from './pages/Terms';
 import LoginPage from './pages/Login';
@@ -145,9 +145,25 @@ function Shell() {
           <Route path="/villkor" element={<TermsPage />} />
           <Route path="/kalender" element={<CalendarPage />} />
           <Route path="/inbjudan/:token" element={<InvitePage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
+    </div>
+  );
+}
+
+/** §40 i perfektionsdoktrinen: även fel ska kännas genomarbetade — lugnt
+ * språk, vägar vidare, aldrig en tyst omdirigering. */
+function NotFoundPage() {
+  return (
+    <div className="card" style={{ maxWidth: '34rem', margin: '3rem auto' }}>
+      <p className="meta-line" style={{ textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Fel 404</p>
+      <h1>Vi hittar inte sidan — men vi kan fortfarande hjälpa dig</h1>
+      <p className="guidance">Sidan kan ha flyttats, eller så blev adressen fel. Allt du sparat finns kvar.</p>
+      <p style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+        <Link className="btn" to="/">Till din översikt</Link>
+        <a className="btn secondary" href="/bidrag/">Se alla stöd</a>
+      </p>
     </div>
   );
 }

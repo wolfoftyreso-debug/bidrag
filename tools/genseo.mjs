@@ -140,6 +140,20 @@ function layout({ title, description, canonical, crumbs, jsonld, body }) {
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${canonical}">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="sv_SE">
+<meta property="og:image" content="${BASE}/og/bidragskoll-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bidragskoll.se — Berätta din situation. Se vilka stöd du ser ut att kunna ha rätt till.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(title)}">
+<meta name="twitter:description" content="${esc(description)}">
+<meta name="twitter:image" content="${BASE}/og/bidragskoll-og.png">
+<meta name="theme-color" content="#232c58">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<link rel="manifest" href="/site.webmanifest">
 <script type="application/ld+json">${JSON.stringify(jsonld)}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -368,4 +382,25 @@ writeFileSync(
   `User-agent: *\nAllow: /\n\n# Appens inloggade vyer är användarspecifika och ska inte indexeras.\nDisallow: /projekt\nDisallow: /ansokningar\nDisallow: /konto\nDisallow: /dokument\nDisallow: /admin\nDisallow: /inkorg\n\nSitemap: ${BASE}/sitemap.xml\n`,
 );
 
-console.log(`Genererade ${pages.length} publika sidor + sitemap.xml + robots.txt → ${OUT}`);
+// Äkta 404 (§40 i perfektionsdoktrinen): hjälpsam, lugn, med vägar vidare.
+// Serveras av Vercel med statuskod 404 för okända /bidrag/-vägar (SPA-
+// rewriten exkluderar /bidrag/ i vercel.json). Ingen sitemap-post, noindex.
+const notFound = layout({
+  title: 'Sidan finns inte | Bidragskoll',
+  description: 'Vi hittar inte sidan — men vi kan fortfarande hjälpa dig hitta stödet.',
+  canonical: `${BASE}/404`,
+  crumbs: [{ name: 'Bidrag', url: '/bidrag/' }, { name: 'Sidan finns inte' }],
+  jsonld: { '@context': 'https://schema.org', '@graph': [] },
+  body: `
+<p class="eyebrow">Fel 404</p>
+<h1>Vi hittar inte sidan — men vi kan fortfarande hjälpa dig hitta stödet</h1>
+<p class="lead">Sidan kan ha flyttats, eller så blev adressen fel. Ingen fara: allt vårt innehåll når du härifrån.</p>
+<div class="paths">
+<div class="path"><strong>Se alla stöd</strong>Hela kunskapsbasen, grupperad efter vem stödet gäller.<br><a class="knapp" href="/bidrag/">Till översikten</a></div>
+<div class="path"><strong>Berätta din situation</strong>Svara på några frågor så visar vi vilka stöd som ser ut att kunna gälla dig.<br><a class="knapp sekundar" href="/">Starta genomgången</a></div>
+</div>
+<p class="kalla">Verkar en länk vara trasig? Det vill vi veta — mejla oss så rättar vi den.</p>`,
+}).replace('</title>', '</title>\n<meta name="robots" content="noindex">');
+writeFileSync(join(OUT, '404.html'), notFound);
+
+console.log(`Genererade ${pages.length} publika sidor + 404.html + sitemap.xml + robots.txt → ${OUT}`);

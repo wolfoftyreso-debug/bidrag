@@ -179,6 +179,17 @@ aldrig i Production. `/v1/internal/readiness?probe=true` (Bearer
   Saknas den andra remoten i din klon:
   `git remote add bidragskoll https://github.com/wolfoftyreso-debug/bidragskoll.git`.
 
+## Perfektionsdoktrinen
+
+**PERFECTION IS THE PRODUCT** — perfektion = frånvaro av friktion,
+inkonsekvens och slarv i alla lager. Styrande dokument: `docs/PERFECTION_BASELINE.md`
+(graderad audit, omkörs efter varje större pass) + `docs/PERFECTION_BACKLOG.md`
+(CRITICAL/HIGH först — inga små trasigheter accepteras). Design:
+`docs/DESIGN_CONSTITUTION.md` (källa: `design/`). Språk: `docs/LANGUAGE_GUIDE.md`
++ `seo/terminologi.json`. Release: `docs/SEO_RELEASE_GATE.md` (gaten är kod i
+verify/CI, inte checklista). Entity/press: `docs/ENTITY_FOOTPRINT.md`,
+`docs/TRUST_CENTER_SPEC.md`. Återkommande: `docs/RED_TEAM_CHECKLIST.md`.
+
 ## Kända begränsningar
 
 `docs/LIMITATIONS.md` är den ärliga, numrerade listan — läs den innan du

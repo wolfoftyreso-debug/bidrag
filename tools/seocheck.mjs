@@ -68,6 +68,12 @@ for (const [path, html] of pages) {
 
   if (!/<html lang="sv">/.test(html)) err(`${path}: lang="sv" saknas`);
 
+  // Perfektionsgaten (§11–13): social metadata + varumärkes-head på varje sida.
+  if (!html.includes('property="og:image"')) err(`${path}: og:image saknas`);
+  if (!html.includes('name="twitter:card"')) err(`${path}: twitter:card saknas`);
+  if (!html.includes('rel="icon"')) err(`${path}: favicon-länk saknas`);
+  if (!html.includes('name="theme-color"')) err(`${path}: theme-color saknas`);
+
   const ld = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
   if (!ld) err(`${path}: JSON-LD saknas`);
   else {
@@ -103,6 +109,15 @@ else {
   const locs = [...readFileSync(sitemapPath, 'utf8').matchAll(/<loc>([^<]*)<\/loc>/g)].map((m) => m[1].replace(BASE, ''));
   for (const l of locs) if (!pages.has(l)) err(`sitemap listar ${l} som inte genererats`);
   for (const p of pages.keys()) if (!locs.includes(p)) err(`sitemap saknar ${p}`);
+}
+
+// 404-sidan (§40): måste finnas, vara noindex och stå utanför sitemapen.
+const nfPath = join(SITE, '404.html');
+if (!existsSync(nfPath)) err('404.html saknas');
+else {
+  const nf = readFileSync(nfPath, 'utf8');
+  if (!nf.includes('name="robots" content="noindex"')) err('404.html är inte noindex');
+  if (!/hjälpa dig/.test(nf)) err('404.html saknar den hjälpsamma texten (§40)');
 }
 
 // Robots.

@@ -20,7 +20,7 @@
       "destination": "/api/index"
     },
     {
-      "source": "/((?!api/|assets/|favicon).*)",
+      "source": "/((?!api/|assets/|favicon|bidrag/|og/|icon-|site\\.webmanifest|sitemap\\.xml|robots\\.txt|404).*)",
       "destination": "/index.html"
     }
   ],
