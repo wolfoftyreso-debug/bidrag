@@ -42,6 +42,12 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
   seeden vid varje Vercel-bygge; QA-crawlas av `tools/seocheck.mjs` i verify.
   Strategi/research i `docs/SEO_*.md`; keyword-databas i `seo/`
   (332 rötter, inga påhittade volymer — allt källmärkt).
+- **Launch & Demand Intelligence** — `docs/LAUNCH_DEMAND_INTELLIGENCE.md`
+  (fyra spår + QSDR/ARR-måtten), scenariomodellen `tools/demandmodel.mjs`
+  (`npm run demand:model`; trafik är INPUT i scenarier, aldrig prognos; alla
+  antaganden HYPOTHESIS-märkta i `seo/demand-parametrar.json`),
+  `docs/AUTHORITY_LOAD_MAP.md` (myndighetsbelastning ur seeden),
+  `docs/LAUNCH_CONTROL_ROOM.md` (lanseringspaneler + spiklarm).
 
 Historik: `git log` är detaljerad och ärlig; revisionsrapporter i
 `docs/reports/`.
@@ -217,14 +223,17 @@ miljön och handboken fördjupas då skärm för skärm.
    `renderDocument`, `validateDocumentAnswers` och demon bundlar core — visa
    dokumentet som text + kopiera-knapp (artefaktsandlådan blockerar
    nedladdningslänkar).
-3. **Innehållsmotorn enligt `docs/CONTENT_ENGINE.md`** — styrdokumentet för
-   allt redaktionellt/SEO-innehåll (fem doktriner, sju lager, gold standard,
-   Content Authority Score, förbudslista). Byggordning: **F0** (interaktiv
-   behörighetskontroll + ändringshistorik på entity-sidorna, `/situationer/`-
-   nodtypen — ren utveckling, kan starta direkt) → **F1** bevispaketet
-   (25 kluster, 10 situationsmanualer m.m. — de tidigare "Tier 1-guiderna"
-   ingår här; `seo/questions-tier1.json` + `docs/SEO_ANSWER_CLUSTERS.md` styr)
-   → **F2** erfarenhetslagret (licensgenomgång först; datakontrakt i
+3. **De 25 bidragsklustren färdiga sökfråga→myndighetsöverlämning +
+   belastningstest** — produktbeviset (`docs/LAUNCH_DEMAND_INTELLIGENCE.md`
+   §8). Innehåller innehållsmotorns F0→F1 (`docs/CONTENT_ENGINE.md`:
+   interaktiv behörighetskontroll, ändringshistorik, `/situationer/`,
+   bevispaketet; `seo/questions-tier1.json` + `docs/SEO_ANSWER_CLUSTERS.md`
+   styr) **plus** pre-check-vyn (grundvillkor + underlagslista före utklick),
+   instrumenteringseventen för QSDR/ARR, och belastningstest mot modellens
+   topptimmesvolymer (`scripts/loadtest.mjs`). Kända blockerare ur modellen:
+   kluster 10–12 (lönebidrag/nystartsjobb/anställa med stöd) saknar stöd i
+   kunskapsbasen — kurera innan sidorna byggs. Därefter **F2**
+   erfarenhetslagret (licensgenomgång först; datakontrakt i
    `seo/beviljade-projekt.schema.json` + `seo/erfarenheter.schema.json`) →
    **F3** länkbara tillgångar. Öppna beslut: CONTENT_ENGINE §11. Efter deploy:
    GSC-verifiering + `docs/SEO_BASELINE.md`-loopen.

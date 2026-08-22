@@ -30,7 +30,8 @@
     "verify:relevans": "node tools/audit-relevans.mjs",
     "seo:keywords": "node --experimental-strip-types tools/seokeywords.mjs",
     "seo:build": "node --experimental-strip-types tools/genseo.mjs",
-    "seo:check": "node --experimental-strip-types tools/genseo.mjs && node tools/seocheck.mjs"
+    "seo:check": "node --experimental-strip-types tools/genseo.mjs && node tools/seocheck.mjs",
+    "demand:model": "node --experimental-strip-types tools/demandmodel.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.25.12",

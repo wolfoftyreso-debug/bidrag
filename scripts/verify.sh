@@ -144,6 +144,7 @@ seo_check() {
   node --experimental-strip-types tools/seokeywords.mjs --check &&
   node --experimental-strip-types tools/genqueries.mjs --check &&
   node --experimental-strip-types tools/genkgraf.mjs --check &&
+  node --experimental-strip-types tools/demandmodel.mjs --check &&
   node --experimental-strip-types tools/genseo.mjs &&
   node tools/seocheck.mjs
 }

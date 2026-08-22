@@ -153,6 +153,7 @@ const SCRIPTS = {
   'seo:keywords': 'Bygger master keyword-databasen seo/keywords.json ur seeden + seo/roots-manual.json (aldrig påhittade volymer — se docs/SEO_STRATEGY.md).',
   'seo:build': 'Genererar den publika, indexerbara ytan (/bidrag/… + sitemap + robots) ur kunskapsbasen — samma sanningsmodell som produkten.',
   'seo:check': 'SEO-QA-crawlen: titlar, canonical, JSON-LD, intern länkgraf, orphans och sitemap-täckning för den genererade ytan.',
+  'demand:model': 'Lanseringsscenariomodellen (docs/LAUNCH_DEMAND_INTELLIGENCE.md): fördelar scenariotrafik (INPUT, aldrig prognos) över klustren, räknar tratt, myndighetsbelastning och teknisk last → artifacts/demand-model.json.',
 };
 
 // ── Samla fakta ur källorna ──────────────────────────────────────────────────

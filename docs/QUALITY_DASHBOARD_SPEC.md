@@ -3,6 +3,8 @@
 Mål (§46): en intern yta där kvalitetsläget syns i realtid, med målet
 **0 critical defects**. Status: spec (backlog M10) — meningsfull fullt ut
 först efter deploy när fältdata finns; datakällorna byggs redan nu.
+Lanseringspanelerna (trafik, tratt/QSDR/ARR, myndighetsbelastning, spiklarm)
+specas separat i `docs/LAUNCH_CONTROL_ROOM.md` och delar byggväg med denna.
 
 ## Datakällor (finns idag → matas in)
 

@@ -1,0 +1,125 @@
+{
+  "_kontrakt": "Indata till tools/demandmodel.mjs (Launch & Demand Intelligence, docs/LAUNCH_DEMAND_INTELLIGENCE.md). SANNINGSREGEL: trafikvolymerna under 'scenarier' är INPUT i en scenarioanalys — de är inte prognoser och får aldrig citeras som förväntad trafik. Varje beteendeparameter är märkt status HYPOTHESIS med motivering och en kalibreringskälla som ersätter den med fältdata efter deploy. Parametrar med status VERIFIED är avlästa ur kodbasen/seeden och är systemfakta, inte antaganden. Modellens uppgift är att visa VILKA flöden, myndigheter och tekniska delar som blir kritiska VID en given volym — inte att förutsäga volymen.",
+  "version": 1,
+
+  "scenarier": {
+    "beskrivning": "Organiska sessioner per månad till den publika ytan. Rena scenarioinputs (användarens direktiv: 10 000 / 100 000 / 1 000 000).",
+    "status": "INPUT",
+    "sessioner_per_manad": [10000, 100000, 1000000]
+  },
+
+  "klusterfordelning": {
+    "beskrivning": "Hur scenariots sessioner fördelas över de 25 bidragsklustren (seo/intents-100.json typ=kluster). Vikt = priovikt × feasibilitymultiplikator; sessionerna fördelas proportionellt mot vikten. Detta är en RELATIV fördelning av en given input — inte sökvolymdata (riktiga volymer: DATA_UNAVAILABLE tills GSC finns, se docs/SEO_DATA_ACCESS_MATRIX.md).",
+    "priovikt": {
+      "status": "HYPOTHESIS",
+      "motivering": "Prio 1-kluster valdes i Sprint 01 just för störst bedömd efterfrågan och bästa angreppsläge; 4:2:1 uttrycker den rangordningen utan att låtsas vara uppmätt.",
+      "kalibreras_mot": "GSC impressions per kluster-URL efter deploy (SEO_BASELINE-loopen)",
+      "varden": { "1": 4, "2": 2, "3": 1 }
+    },
+    "feasibilitymultiplikator": {
+      "status": "HYPOTHESIS",
+      "motivering": "SERP-feasibility ur seo/serp-sprint01.json styr hur stor andel av klustrets efterfrågan vi realistiskt kan nå: ETTA-MÖJLIG = full vikt; ANGRIP-RUNT = vi rankar på behovsfrågorna runt myndighetens term (delmängd); MYNDIGHET-ÄGER = endast långsvansen.",
+      "kalibreras_mot": "faktisk ranking + CTR per kluster i GSC",
+      "varden": { "ETTA-MÖJLIG": 1.0, "ANGRIP-RUNT": 0.45, "MYNDIGHET-ÄGER": 0.15 }
+    }
+  },
+
+  "tratt": {
+    "beskrivning": "Trattsteg från organisk session till myndighetsöverlämning. Alla andelar är hypoteser tills instrumenteringens events (docs/LAUNCH_DEMAND_INTELLIGENCE.md §5) ger fältdata. Stegen är kedjade: varje andel avser föregående stegs utfall.",
+    "andel_startar_genomgang": {
+      "status": "HYPOTHESIS",
+      "varde": 0.12,
+      "motivering": "Informationssökare som klickar vidare från en svarssida till den interaktiva genomgången. Sätts lågt: majoriteten av SEO-besök är läs-och-lämna; svarssidorna är byggda för att ge svaret direkt (doktrin A).",
+      "kalibreras_mot": "event seo_till_genomgang / sessioner"
+    },
+    "andel_slutfor_genomgang": {
+      "status": "HYPOTHESIS",
+      "varde": 0.60,
+      "motivering": "En fråga per skärm är byggd för hög slutförandegrad; sim30-körningarna slutför alltid men är skript, inte människor. 0,60 är ett konservativt mittvärde för frivilliga flerstegs-flöden.",
+      "kalibreras_mot": "event genomgang_slutford / genomgang_startad"
+    },
+    "andel_minst_en_verifierad_match": {
+      "status": "HYPOTHESIS",
+      "varde": 0.85,
+      "motivering": "Kunskapsbasen täcker breda basstöd (bostadsbidrag, CSN, a-kassa, försörjningsstöd) så de flesta fullständiga genomgångar ger minst en relevant kandidat; F-RELEVANS-revisionen tog bort falska matchningar, vilket sänker andelen något från 1,0. QSDR:s täljare börjar här.",
+      "kalibreras_mot": "event match_visad (antal>0) / genomgang_slutford"
+    },
+    "andel_klick_ut_till_myndighet": {
+      "status": "HYPOTHESIS",
+      "varde": 0.50,
+      "motivering": "Gratisvägen är avsiktligt främst: varje stöd länkar till officiell ansökan. Hälften av de matchade antas gå vidare till minst en myndighetslänk under sessionen.",
+      "kalibreras_mot": "event klick_ut_myndighet / match_visad"
+    },
+    "andel_paborjar_forberedelse": {
+      "status": "HYPOTHESIS",
+      "varde": 0.08,
+      "motivering": "Andel av matchade som påbörjar förberedd ansökan i systemet (betalväg 19 kr). Sätts lågt — betalvilja är obevisad och gratisvägen kommuniceras aktivt. OBS: hela detta steg är BLOCKERAT i produktion tills Swish-avtalet finns (ärlig 503) — modellen redovisar volymen som 'blockerad efterfrågan', inte intäkt.",
+      "kalibreras_mot": "event forberedelse_paborjad / match_visad (först efter Swish-aktivering)"
+    },
+    "andel_kop_analys": {
+      "status": "HYPOTHESIS",
+      "varde": 0.04,
+      "motivering": "Andel av matchade som låser upp analysen (39 kr). Samma Swish-blockering som ovan.",
+      "kalibreras_mot": "event analys_upplast / match_visad (först efter Swish-aktivering)"
+    }
+  },
+
+  "spik": {
+    "beskrivning": "Toppbelastning. Efterfrågan på stöd är inte jämnt fördelad: deadlinemodellen per stöd (seeden, VERIFIED) avgör hur spetsig efterfrågetoppen blir.",
+    "dygnsandel_toppdag": {
+      "status": "HYPOTHESIS",
+      "varde": 0.08,
+      "motivering": "Toppdagens andel av månadens sessioner (jämn fördelning = 1/30 ≈ 0,033; 0,08 ≈ 2,4× jämn dag). Motiveras av kända kalenderdrivna toppar: CSN vid terminsstart, deklarations-/beskedsdatum, mediepikar.",
+      "kalibreras_mot": "daglig sessionskurva i analytics/GSC"
+    },
+    "timandel_topptimme": {
+      "status": "HYPOTHESIS",
+      "varde": 0.12,
+      "motivering": "Topptimmens andel av toppdagens sessioner (jämn = 1/24 ≈ 0,042; 0,12 ≈ 2,9× jämn timme). Svensk vardagstrafik koncentreras till kvällstid.",
+      "kalibreras_mot": "timfördelning i analytics"
+    },
+    "deadline_multiplikator": {
+      "status": "HYPOTHESIS",
+      "motivering": "Stöd med fasta omgångar (recurring/upcoming_round) får spetsigare efterfrågan nära deadline än löpande stöd. Multiplikatorn appliceras på myndighetens toppdygn i spikanalysen.",
+      "kalibreras_mot": "utgående klick per stöd per dag efter deploy",
+      "varden": { "rolling": 1.0, "recurring": 2.5, "upcoming_round": 3.5, "one_time": 1.5 }
+    }
+  },
+
+  "teknik": {
+    "beskrivning": "Teknisk last per beteende. Arkitekturfakta är VERIFIED ur kodbasen; per-sessionsvolymer är hypoteser tills metrics finns.",
+    "publik_yta_serverless": {
+      "status": "VERIFIED",
+      "varde": 0,
+      "motivering": "Hela /bidrag/-ytan är statiska filer bakom Vercels CDN (tools/genseo.mjs) — organiska läsbesök genererar noll serverless-anrop och noll databaslast. Detta är lanseringsarkitekturens viktigaste egenskap."
+    },
+    "api_anrop_per_genomgang": {
+      "status": "HYPOTHESIS",
+      "varde": 40,
+      "motivering": "Registrering/inloggning + ett svar per frågesteg (~20–30 frågor med sparning) + matchning + hämtningar. Avläst storleksordning från uicheck-flödena, ej uppmätt i produktion.",
+      "kalibreras_mot": "/metrics (http_requests_total) per slutförd genomgång"
+    },
+    "db_fragor_per_api_anrop": {
+      "status": "HYPOTHESIS",
+      "varde": 3,
+      "motivering": "Typiskt mönster i routes: auth-uppslag + läs + skriv. Storleksordning, ej uppmätt.",
+      "kalibreras_mot": "pg_stat_statements / Supabase-dashboard"
+    },
+    "granser_verified": {
+      "status": "VERIFIED",
+      "beskrivning": "Hårda gränser avlästa ur kodbasen — de binder oavsett scenario.",
+      "varden": {
+        "rate_limit_global_per_ip_per_min": 300,
+        "rate_limit_registrering_per_ip_per_min": 10,
+        "rate_limit_login_per_ip_per_min": 10,
+        "rate_limit_losenordsaterstallning_per_ip_per_min": 5,
+        "rate_limit_betalwebhook_per_min": 120,
+        "rate_limit_lagring": "in-memory per serverless-instans — skalar ut med instanser och skyddar därmed svagare vid scale-out (inferens ur @fastify/rate-limit utan delad store)"
+      }
+    },
+    "granser_data_unavailable": {
+      "status": "DATA_UNAVAILABLE",
+      "beskrivning": "Gränser som beror på valda avtal/planer och inte får hittas på: Vercels samtidighets- och invocation-tak för kontots plan, Supabase-poolens max_connections och compute-nivå, Swish Handels transaktionstak. Modellen flaggar var de MÅSTE slås upp, med storleksordningen som triggar frågan."
+    }
+  }
+}
