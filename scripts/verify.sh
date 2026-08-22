@@ -142,6 +142,8 @@ step "Systemhandboken är aktuell och komplett (docs/MANUAL.md)" manual_check
 # full teknisk QA (titlar, canonical, länkgraf, sitemap, JSON-LD, orphans).
 seo_check() {
   node --experimental-strip-types tools/seokeywords.mjs --check &&
+  node --experimental-strip-types tools/genqueries.mjs --check &&
+  node --experimental-strip-types tools/genkgraf.mjs --check &&
   node --experimental-strip-types tools/genseo.mjs &&
   node tools/seocheck.mjs
 }
