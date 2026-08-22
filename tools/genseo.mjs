@@ -91,18 +91,21 @@ function deadlineText(o) {
 }
 
 // ── Gemensam sidram ──────────────────────────────────────────────────────────
+/* Designsystemet "Bläck" (design/bidragskoll.css) — varma neutraler, dämpad
+   indigo, Public Sans + Source Serif 4. Fonterna laddas via länk i layout()
+   (preconnect + display=swap) så sidan renderar direkt med fallback-stacken. */
 const CSS = `
-:root{--blue:#2050d8;--deep:#142f83;--ink:#16203a;--soft:#5b6579;--line:#e3e6ec;--bg:#f7f8fa;--card:#fff;--warnbg:#fdf6e3;--warn:#a05a08}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+:root{--blue:#3d4a8c;--deep:#232c58;--ink:#1f1d18;--soft:#57534a;--line:#e6e2d8;--bg:#f7f5f0;--card:#fffdf9;--warnbg:#f5edd8;--warn:#8a6510;--sans:'Public Sans',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
 .wrap{max-width:760px;margin:0 auto;padding:1.2rem 1rem 3rem}
 header.site{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.4rem 0 1rem}
-.brand{font-weight:800;font-size:1.15rem;color:var(--deep);text-decoration:none}.brand::before{content:'';display:inline-block;width:.6rem;height:.6rem;margin-right:.4rem;border-radius:3px;background:linear-gradient(135deg,var(--blue),var(--deep))}
-.cta{background:var(--blue);color:#fff;text-decoration:none;font-weight:600;padding:.5rem .95rem;border-radius:9px;font-size:.92rem;white-space:nowrap}
+.brand{font-family:var(--serif);font-weight:700;font-size:1.15rem;color:var(--deep);text-decoration:none}.brand::before{content:'';display:inline-block;width:.6rem;height:.6rem;margin-right:.4rem;border-radius:3px;background:linear-gradient(135deg,var(--blue),var(--deep))}
+.cta{background:var(--blue);color:#fff;text-decoration:none;font-weight:600;padding:.5rem .95rem;border-radius:10px;font-size:.92rem;white-space:nowrap;box-shadow:0 2px 6px rgba(35,44,88,.28)}
 nav.crumbs{font-size:.82rem;color:var(--soft);margin:0 0 .8rem}nav.crumbs a{color:var(--soft)}
-h1{font-size:1.65rem;line-height:1.25;letter-spacing:-.015em;margin:.1rem 0 .35rem}
+h1{font-family:var(--serif);font-weight:600;font-size:1.7rem;line-height:1.25;letter-spacing:-.015em;margin:.1rem 0 .35rem}
 .eyebrow{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--soft)}
 .lead{font-size:1.06rem;color:var(--ink);max-width:64ch}
-h2{font-size:1.22rem;margin:1.6rem 0 .5rem}
+h2{font-family:var(--serif);font-weight:600;font-size:1.25rem;margin:1.6rem 0 .5rem}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.1rem 1.3rem;margin:1rem 0}
 table.fakta{width:100%;border-collapse:collapse;font-size:.95rem}table.fakta th{text-align:left;font-weight:600;padding:.45rem .6rem .45rem 0;vertical-align:top;white-space:nowrap;color:var(--soft);font-size:.86rem}
 table.fakta td{padding:.45rem 0;border-bottom:1px solid var(--line)}table.fakta tr:last-child td{border-bottom:0}
@@ -111,8 +114,8 @@ ul{padding-left:1.2rem}li{margin:.35rem 0;max-width:62ch}
 .paths{display:grid;gap:.8rem;grid-template-columns:1fr;margin:.6rem 0}
 .path{border:1px solid var(--line);border-radius:10px;padding:.9rem 1.05rem;background:var(--card)}
 .path strong{display:block;margin-bottom:.2rem}
-.path a.knapp{display:inline-block;margin-top:.5rem;background:var(--blue);color:#fff;text-decoration:none;font-weight:600;padding:.45rem .9rem;border-radius:8px;font-size:.9rem}
-.path a.knapp.sekundar{background:#fff;color:var(--blue);border:1px solid var(--blue)}
+.path a.knapp{display:inline-block;margin-top:.5rem;background:var(--blue);color:#fff;text-decoration:none;font-weight:600;padding:.45rem .9rem;border-radius:8px;font-size:.9rem;box-shadow:0 2px 6px rgba(35,44,88,.28)}
+.path a.knapp.sekundar{background:var(--card);color:var(--blue);border:1px solid var(--blue);box-shadow:none}
 .stodlista{list-style:none;padding:0}.stodlista li{border-bottom:1px solid var(--line);padding:.7rem 0;margin:0;max-width:none}
 .stodlista a{font-weight:600;text-decoration:none;color:var(--blue)}.stodlista .sum{display:block;font-size:.9rem;color:var(--soft);max-width:70ch}
 .kalla{font-size:.86rem;color:var(--soft);border-top:1px solid var(--line);margin-top:1.6rem;padding-top:.9rem}
@@ -138,6 +141,9 @@ function layout({ title, description, canonical, crumbs, jsonld, body }) {
 <meta property="og:url" content="${canonical}">
 <meta property="og:type" content="website">
 <script type="application/ld+json">${JSON.stringify(jsonld)}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
 <style>${CSS}</style>
 </head>
 <body>

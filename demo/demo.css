@@ -1,59 +1,66 @@
 /*
- * Bidragskoll.se demo — produktens ljusa identitet, explicit målad på alla
- * ytor (artefakten ärver aldrig värdens tema). Moderniseringspasset
- * 2026-08-17: samma designspråk som webben — skiktade skuggor, större
- * radier, fokusringar, små snabba övergångar. Lugnt och sakligt.
+ * Bidragskoll.se demo — designsystemet "BLÄCK" (2026-08-22), explicit målat på
+ * alla ytor (artefakten ärver aldrig värdens tema). Källa:
+ * design/bidragskoll.css — ändra designspråket där först, för sedan hit.
+ * Varma neutraler, dämpad indigo, Public Sans + Source Serif 4, platta
+ * knappar. Lugnt och sakligt.
  */
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap');
+
 :root {
-  --bg: #f5f6f8; --bg-deep: #eef0f4; --surface: #ffffff; --text: #16203a; --muted: #5b6579;
-  --border: #e3e6ec; --border-strong: #cdd3dd;
-  --primary: #2050d8; --primary-dark: #1a3fae; --primary-deep: #142f83; --primary-soft: #edf2fe;
-  --primary-ring: rgba(32, 80, 216, 0.28);
-  --success: #157347; --success-soft: #eafaf1; --warning: #a05a08; --warning-soft: #fdf6e3;
+  --bg: #f7f5f0; --bg-deep: #efece4; --surface: #fffdf9; --text: #1f1d18; --muted: #57534a;
+  --border: #e6e2d8; --border-strong: #d5cfc0;
+  --primary: #3d4a8c; --primary-dark: #2f3a70; --primary-deep: #232c58; --primary-soft: #eef0f9;
+  --primary-ring: rgba(61, 74, 140, 0.28);
+  --success: #3f7050; --success-soft: #ecf3ed; --warning: #8a6510; --warning-soft: #f5edd8;
+  --danger: #a33d33;
+  --accent-card-border: #d9b96a;
+  --shadow-btn: 0 2px 6px rgba(35, 44, 88, 0.28);
+  --font-sans: 'Public Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Source Serif 4', Georgia, serif;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text);
-  font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  -webkit-font-smoothing: antialiased; }
+  font: 15px/1.6 var(--font-sans); -webkit-font-smoothing: antialiased; }
 .page { max-width: 680px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
 .masthead { margin-bottom: 1.5rem; }
-.brand { font-weight: 800; font-size: 1.3rem; letter-spacing: -0.02em; color: var(--primary-deep); }
+.brand { font-family: var(--font-serif); font-weight: 700; font-size: 1.3rem; letter-spacing: -0.01em; color: var(--primary-deep); }
 .brand::before { content: ''; display: inline-block; width: 0.62rem; height: 0.62rem; margin-right: 0.45rem;
   border-radius: 3px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%); }
 .tag { color: var(--muted); font-size: 0.85rem; }
-h1 { font-size: 1.4rem; font-weight: 750; letter-spacing: -0.02em; margin: 0; line-height: 1.3; }
-h2 { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.012em; margin: 0 0 0.5rem; }
+h1 { font-family: var(--font-serif); font-size: 1.45rem; font-weight: 600; letter-spacing: -0.015em; margin: 0; line-height: 1.3; }
+h2 { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 0.5rem; }
 ::selection { background: var(--primary-soft); }
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
   padding: 1.3rem 1.45rem; margin-bottom: 1.05rem;
-  box-shadow: 0 1px 2px rgba(18,27,52,0.05), 0 2px 8px rgba(18,27,52,0.06); }
-.card.accent { border-color: var(--warning); }
-.guidance { color: var(--muted); font-size: 0.86rem; margin: 0.3rem 0 0; }
+  box-shadow: 0 1px 3px rgba(40,36,28,0.07), 0 4px 14px rgba(40,36,28,0.08); }
+.card.accent { border-color: var(--accent-card-border); }
+.guidance { color: var(--muted); font-size: 0.9rem; margin: 0.3rem 0 0; font-weight: 400; }
 .choice { display: block; width: 100%; text-align: left; margin-bottom: 0.6rem; padding: 0.9rem 1.05rem;
   background: var(--surface); border: 1px solid var(--border-strong); border-radius: 11px; cursor: pointer;
-  font: inherit; color: var(--text); box-shadow: 0 1px 2px rgba(18,27,52,0.05);
+  font: inherit; color: var(--text); font-weight: 600; box-shadow: none;
   transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease, transform 80ms ease; }
-.choice:hover { background: var(--primary-soft); border-color: var(--primary);
-  box-shadow: 0 2px 6px rgba(18,27,52,0.09); }
+.choice:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(61,74,140,0.14); background: var(--surface); }
 .choice:active { transform: translateY(1px); }
-.choice-label { font-weight: 650; display: block; }
-.choice-sub { color: var(--muted); font-size: 0.84rem; display: block; margin-top: 0.12rem; }
-.btn { font: inherit; font-weight: 600; padding: 0.55rem 1.1rem; border-radius: 9px; cursor: pointer;
-  background: var(--surface); color: var(--primary-dark); border: 1px solid var(--border-strong);
-  box-shadow: 0 1px 2px rgba(18,27,52,0.06);
+.choice.vald { background: var(--primary-soft); border: 1.5px solid var(--primary); }
+.choice-label { font-weight: 600; display: block; }
+.choice-sub { color: var(--muted); font-size: 0.84rem; display: block; margin-top: 0.12rem; font-weight: 400; }
+.choice.ikon { display: flex; gap: 0.75rem; align-items: center; }
+.choice.ikon svg { width: 34px; height: 34px; flex-shrink: 0; }
+.btn { font: inherit; font-weight: 600; padding: 0.56rem 1.15rem; border-radius: 10px; cursor: pointer;
+  background: var(--surface); color: var(--primary); border: 1px solid var(--border-strong); box-shadow: none;
   transition: background 130ms ease, border-color 130ms ease, box-shadow 130ms ease, transform 80ms ease; }
 .btn:hover { background: var(--primary-soft); border-color: var(--primary); }
 .btn:active { transform: translateY(1px); }
-.btn.primary { background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
-  color: #fff; border-color: var(--primary); box-shadow: 0 1px 2px rgba(18,27,52,0.14); }
-.btn.primary:hover { background: var(--primary-dark); box-shadow: 0 2px 6px rgba(18,27,52,0.18); }
-.btn.small { padding: 0.3rem 0.9rem; }
-.btn.subtle { border-color: transparent; background: transparent; color: var(--muted); font-weight: 500; box-shadow: none; }
-.btn.subtle:hover { background: var(--bg-deep); border-color: transparent; }
+.btn.primary { background: var(--primary); color: #fff; border: none; box-shadow: var(--shadow-btn); }
+.btn.primary:hover { background: var(--primary-dark); }
+.btn.small { padding: 0.34rem 0.9rem; font-size: 0.9rem; }
+.btn.subtle { border: none; background: transparent; color: var(--muted); font-weight: 500; box-shadow: none; }
+.btn.subtle:hover { background: var(--bg-deep); border: none; }
 .row { display: flex; gap: 0.6rem; }
 .grow { flex: 1; }
-input[type=number] { font: inherit; width: 100%; padding: 0.55rem 0.7rem; border: 1px solid var(--border-strong);
-  border-radius: 9px; background: var(--surface); color: var(--text);
+input[type=number] { font: inherit; width: 100%; padding: 0.58rem 0.75rem; border: 1px solid var(--border-strong);
+  border-radius: 10px; background: var(--surface); color: var(--text);
   transition: border-color 120ms ease, box-shadow 120ms ease; }
 input[type=number]:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-ring); }
 .check-row { display: flex; gap: 0.55rem; align-items: center; margin: 0.5rem 0; cursor: pointer; }
@@ -64,12 +71,12 @@ input[type=number]:focus { outline: none; border-color: var(--primary); box-shad
 .badge.warning { background: var(--warning-soft); color: var(--warning); border-color: transparent; }
 .badge.info { background: var(--primary-soft); color: var(--primary-dark); border-color: transparent; }
 .match { display: flex; gap: 1rem; padding: 0.9rem 0.4rem; border-bottom: 1px solid var(--border);
-  border-radius: 9px; transition: background 120ms ease; }
+  border-radius: 10px; transition: background 120ms ease; }
 .match:hover { background: var(--bg); }
 .match:last-child { border-bottom: none; }
 .match.dim { padding: 0.6rem 0.4rem; }
 .score { min-width: 56px; text-align: center; }
-.score .n { font-size: 1.35rem; font-weight: 750; letter-spacing: -0.02em; }
+.score .n { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; }
 .score .of { color: var(--muted); font-size: 0.72rem; }
 .meta { color: var(--muted); font-size: 0.84rem; margin-top: 0.15rem; }
 .meta.warn { color: var(--warning); }
@@ -82,7 +89,7 @@ input[type=number]:focus { outline: none; border-color: var(--primary); box-shad
 .exp-item { display: flex; gap: 0.5rem; align-items: baseline; padding: 0.16rem 0; font-size: 0.88rem; }
 .exp-ic { width: 1rem; text-align: center; flex-shrink: 0; font-weight: 700; }
 .exp-ic.pass { color: var(--success); }
-.exp-ic.fail { color: #b42323; }
+.exp-ic.fail { color: var(--danger); }
 .exp-ic.unknown { color: var(--warning); }
 .srcline { margin-top: 0.6rem; padding-top: 0.5rem; border-top: 1px solid var(--border);
   font-size: 0.8rem; color: var(--muted); }
@@ -93,7 +100,17 @@ input[type=number]:focus { outline: none; border-color: var(--primary); box-shad
 button:focus-visible, .choice:focus-visible, .btn:focus-visible, input:focus-visible {
   outline: none; box-shadow: 0 0 0 3px var(--primary-ring); }
 
-.q-context { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.1rem; }
+.q-context { color: var(--muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.1rem; }
+
+/* Framhävd nyckelfråga (Bläck) — max en per flödessteg. */
+.fraga-framhavd { background: var(--primary-soft); border: 1.5px solid var(--primary);
+  border-radius: 16px; padding: 2rem 1.5rem; text-align: center; margin-bottom: 1.05rem;
+  box-shadow: 0 4px 10px rgba(35,44,88,0.10), 0 16px 40px rgba(35,44,88,0.14); }
+.fraga-framhavd .scen { display: inline-flex; background: var(--surface);
+  border: 1px solid var(--border-strong); border-radius: 50%; padding: 0.9rem; margin-bottom: 0.75rem; }
+.fraga-framhavd .scen svg { width: 96px; height: 96px; display: block; }
+.fraga-framhavd h1 { font-size: 1.6rem; margin-bottom: 0.35rem; }
+.fraga-framhavd .val { text-align: left; margin-top: 1rem; }
 
 /* Betalvägg */
 .paybox { margin-top: 1rem; padding: 0.95rem 1.05rem; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; }
@@ -112,18 +129,18 @@ button:focus-visible, .choice:focus-visible, .btn:focus-visible, input:focus-vis
    "Några frågor kvar" separeras med tunna avdelare så listan går att skumma. */
 .svar-kvitto { display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem; flex-wrap: wrap;
   background: var(--success-soft); color: var(--success); border: 1px solid var(--success);
-  border-radius: 9px; padding: 0.55rem 0.85rem; margin: 0.6rem 0; font-size: 0.9rem; }
+  border-radius: 10px; padding: 0.55rem 0.85rem; margin: 0.6rem 0; font-size: 0.9rem; }
 .card.accent .q-row { padding: 0.65rem 0; margin: 0; }
 .card.accent .q-row + .q-row { border-top: 1px solid var(--border); }
 /* F-STABIL: besvarade/inaktuella frågerader står kvar på sin plats, nedtonade. */
 .q-row-dim { opacity: 0.62; }
 .q-row-dim:hover { opacity: 1; }
 /* F-INFO: myndighetstydlig fördjupning vid varje fråga. */
-.info-knapp { font: inherit; font-weight: 700; font-size: 0.78rem; line-height: 1; cursor: pointer;
+.info-knapp { font: inherit; font-weight: 700; font-size: 0.72rem; line-height: 1; cursor: pointer;
   width: 1.25rem; height: 1.25rem; border-radius: 50%; border: 1.5px solid var(--primary);
-  color: var(--primary); background: var(--surface); vertical-align: 2px; }
+  color: var(--primary); background: var(--surface); vertical-align: 2px; padding: 0; }
 .info-knapp:hover, .info-knapp[aria-expanded="true"] { background: var(--primary); color: #fff; }
 .inforuta { background: var(--primary-soft); border-left: 3px solid var(--primary);
-  border-radius: 0 8px 8px 0; padding: 0.7rem 0.95rem; margin: 0.45rem 0; font-size: 0.9rem; }
+  border-radius: 0 10px 10px 0; padding: 0.7rem 0.95rem; margin: 0.45rem 0; font-size: 0.9rem; }
 .inforuta ul { margin: 0.35rem 0 0.45rem; padding-left: 1.1rem; }
 .inforuta li { margin-bottom: 0.3rem; }

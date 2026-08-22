@@ -399,14 +399,29 @@ function Q({ title, guidance, children }: { title: string; guidance?: string; ch
 
 function Choice({ label, onClick, sub }: { label: string; sub?: string; onClick: () => void }) {
   return (
-    <button
-      className="secondary"
-      onClick={onClick}
-      style={{ display: 'block', width: '100%', textAlign: 'left', marginBottom: '0.55rem', padding: '0.8rem 1rem' }}
-    >
-      <span style={{ fontWeight: 600 }}>{label}</span>
-      {sub && <span style={{ display: 'block', fontWeight: 400, color: 'var(--text-muted)', fontSize: '0.85rem' }}>{sub}</span>}
+    <button className="choice" onClick={onClick}>
+      <span className="choice-label">{label}</span>
+      {sub && <span className="choice-sub">{sub}</span>}
     </button>
+  );
+}
+
+/**
+ * Framhävd nyckelfråga (designsystemet Bläck, design/README.md): för de frågor
+ * som väger tyngst — indigo-mjuk panel, illustration i vit rundel (figuren
+ * speglar frågans ämne, alt="" eftersom rubriken bär betydelsen), max en per
+ * flödessteg. Samma fokushantering som Q (motförhöret B1).
+ */
+function QFramhavd({ title, guidance, ill, children }: { title: string; guidance?: string; ill: string; children: React.ReactNode }) {
+  const headingRef = useRef<HTMLHeadingElement | null>(null);
+  useEffect(() => { headingRef.current?.focus(); }, [title]);
+  return (
+    <div className="fraga-framhavd">
+      <span className="scen"><img src={`/illustrationer/${ill}.svg`} alt="" width={96} height={96} /></span>
+      <h1 ref={headingRef} tabIndex={-1} style={{ outline: 'none' }}>{title}</h1>
+      {guidance && <p className="guidance">{guidance}</p>}
+      <div className="val">{children}</div>
+    </div>
   );
 }
 
@@ -455,7 +470,8 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
   switch (step) {
     case 'entry':
       return (
-        <Q
+        <QFramhavd
+          ill="glodlampa"
           title="Vad behöver du hjälp med?"
           guidance="Berätta lite om din situation så hittar vi stöd som kan vara relevanta för dig — många stöd är sådana man inte vet att de finns. Du behöver inte veta vad något heter."
         >
@@ -469,25 +485,25 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
             sub="Bidrag, stipendier och finansiering — för dig, din förening eller ditt företag."
             onClick={() => onAnswer({ track: 'project' })}
           />
-        </Q>
+        </QFramhavd>
       );
 
     // ── Personligt spår ──────────────────────────────────────────────────────
     case 'p-household':
       return (
-        <Q title="Bor du själv eller tillsammans med någon?">
+        <QFramhavd ill="hus" title="Bor du själv eller tillsammans med någon?">
           <Choice label="Själv" onClick={() => onAnswer({ householdType: 'alone' })} />
           <Choice label="Med partner" onClick={() => onAnswer({ householdType: 'partner' })} />
           <Choice label="Med andra vuxna" onClick={() => onAnswer({ householdType: 'other' })} />
-        </Q>
+        </QFramhavd>
       );
     case 'p-children':
       return (
-        <Q title="Har du barn som bor hos dig?">
+        <QFramhavd ill="familj" title="Har du barn som bor hos dig?">
           <Choice label="Ja" onClick={() => onAnswer({ children: 'yes' })} />
           <Choice label="Ja, växelvis" onClick={() => onAnswer({ children: 'shared' })} />
           <Choice label="Nej" onClick={() => onAnswer({ children: 'no' })} />
-        </Q>
+        </QFramhavd>
       );
     case 'p-separated':
       return (

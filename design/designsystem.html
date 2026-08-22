@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+body { margin: 0; background: #f7f5f0; color: #1f1d18; font-family: 'Public Sans', ui-sans-serif, system-ui, sans-serif; font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+a { color: #3d4a8c; text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 2px; }
+::selection { background: #eef0f9; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+</style>
+</helmet>
+<div style="max-width:980px;margin:0 auto;padding:40px 24px 96px">
+
+<header style="background:#232c58;color:#fff;border-radius:16px;padding:40px 44px;margin-bottom:40px;box-shadow:0 6px 16px rgba(35,44,88,.20),0 20px 48px rgba(35,44,88,.16)">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+    <span style="width:12px;height:12px;border-radius:4px;background:linear-gradient(135deg,#8a97d4,#3d4a8c);display:inline-block"></span>
+    <span style="font-family:'Source Serif 4',serif;font-weight:700;font-size:21px;letter-spacing:-.01em">Bidragskoll.se</span>
+  </div>
+  <h1 style="font-family:'Source Serif 4',serif;font-size:34px;font-weight:600;letter-spacing:-.015em;line-height:1.25;margin:0 0 10px">Designsystem — riktning Bläck</h1>
+  <p style="color:#c8cfeb;max-width:62ch;margin:0 0 8px">Berätta din livssituation → se vilka stöd du <em>ser ut att kunna ha rätt till</em> → låt systemet förbereda ansökan. Varma neutraler, dämpad indigo och seriffrubriker: myndighetsnära förtroende med modern mjukhet. Lugnt, ljust, sakligt — aldrig flashigt.</p>
+  <p style="color:#8a97d4;font-size:13px;margin:0">Ersätter tidigare blå system · speglas tillbaka till apps/web/src/styles.css, demo/demo.css och tools/genseo.mjs · Produktprinciperna är orubbliga.</p>
+</header>
+
+<section style="margin-bottom:48px">
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 4px">0. Designprinciper (orubbliga)</h2>
+  <p style="color:#57534a;font-size:14px;margin:0 0 18px">Får inte designas bort — de definierar produkten.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)"><h3 style="font-size:15px;font-weight:700;margin:0 0 6px">En fråga per skärm</h3><p style="margin:0;font-size:14px;color:#4a463c">Onboardingen är aldrig en blankett. Varje skärm ställer exakt en fråga med stora klickbara val och progressindikator överst. Kompletteringar följer samma mönster.</p></div>
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)"><h3 style="font-size:15px;font-weight:700;margin:0 0 6px">Bedömning, aldrig beslut</h3><p style="margin:0;font-size:14px;color:#4a463c">Alltid <b>"ser ut att kunna ha rätt till"</b> — aldrig "du är berättigad". Varje analysyta bär: <i>"Slutligt beslut fattas alltid av myndigheten."</i> Poäng av max, aldrig löften i kronor.</p></div>
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)"><h3 style="font-size:15px;font-weight:700;margin:0 0 6px">F-STABIL — inget flyttar sig</h3><p style="margin:0;font-size:14px;color:#4a463c">Besvarade frågor står kvar på sin plats, nedtonade och ändringsbara in-place. Frågor som inte längre behövs märks — de försvinner aldrig.</p></div>
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)"><h3 style="font-size:15px;font-weight:700;margin:0 0 6px">F-INFO — myndighetstydlig fördjupning</h3><p style="margin:0;font-size:14px;color:#4a463c">Varje fråga har en ⓘ-knapp med inforuta: varför frågan ställs, vilka stöd som använder svaret, officiell källa, och: <i>"Svaret används bara för din bedömning."</i></p></div>
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)"><h3 style="font-size:15px;font-weight:700;margin:0 0 6px">Ärlighet före glans</h3><p style="margin:0;font-size:14px;color:#4a463c">Ej aktiverade integrationer visar ärliga felytor (503). Mockar märks tydligt. Blurrade teaser-rader är formbevarande masker. Gratisvägen sägs uttryckligen intill varje köpknapp.</p></div>
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)"><h3 style="font-size:15px;font-weight:700;margin:0 0 6px">Mobil först, text i centrum</h3><p style="margin:0;font-size:14px;color:#4a463c">Smal innehållskolumn (max 680px i flöden), inga dekorativa bilder. Fokusringar på allt interaktivt, WCAG AA, övergångar 80–200 ms, prefers-reduced-motion respekteras.</p></div>
+  </div>
+</section>
+
+<section style="margin-bottom:48px">
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 4px">1. Färger (tokens)</h2>
+  <p style="color:#57534a;font-size:14px;margin:0 0 18px">Varma neutraler bär ytan; indigo är identiteten och används sparsamt. Semantiska färger alltid med mjuk bakgrundsvariant.</p>
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 10px">Ytor &amp; text</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:22px">
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#f7f5f0"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--bg</b>#f7f5f0 · sidbakgrund</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#efece4"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--bg-deep</b>#efece4 · nedsänkt yta</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#fffdf9;border-bottom:1px solid #e6e2d8"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--surface</b>#fffdf9 · kort/fält</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#1f1d18"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--text</b>#1f1d18 · brödtext</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#57534a"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--text-muted</b>#57534a · sekundär</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#e6e2d8"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--border</b>#e6e2d8 · linje</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#d5cfc0"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--border-strong</b>#d5cfc0 · fältkant</div></div>
+  </div>
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 10px">Primär (indigo-identitet)</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:22px">
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#3d4a8c"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary</b>#3d4a8c · knappar, länkar</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#2f3a70"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary-dark</b>#2f3a70 · hover</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#232c58"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary-deep</b>#232c58 · varumärke/hero</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#eef0f9"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary-soft</b>#eef0f9 · markerat val, info</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:rgba(61,74,140,.28)"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary-ring</b>rgba(61,74,140,.28) · fokusring 3px</div></div>
+  </div>
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 10px">Semantiska</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#3f7050"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--success</b>#3f7050</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#ecf3ed"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--success-soft</b>#ecf3ed</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#8a6510"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--warning</b>#8a6510</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#f5edd8"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--warning-soft</b>#f5edd8</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#a33d33"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--danger</b>#a33d33</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#f8ebe9"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--danger-soft</b>#f8ebe9</div></div>
+  </div>
+</section>
+
+<section style="margin-bottom:48px">
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 4px">2. Typografi, form &amp; rörelse</h2>
+  <p style="color:#57534a;font-size:14px;margin:0 0 18px">Source Serif 4 för rubriker och poängsiffror · Public Sans för allt övrigt. Två typsnitt, aldrig fler.</p>
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+    <div style="display:flex;align-items:baseline;gap:20px;padding:10px 0;border-bottom:1px dashed #e6e2d8"><span style="min-width:250px;font-size:12px;color:#57534a;font-family:ui-monospace,Menlo,monospace">h1 · serif 28px/600 · ls -.015em</span><span style="font-family:'Source Serif 4',serif;font-size:28px;font-weight:600;letter-spacing:-.015em">Din analys är klar</span></div>
+    <div style="display:flex;align-items:baseline;gap:20px;padding:10px 0;border-bottom:1px dashed #e6e2d8"><span style="min-width:250px;font-size:12px;color:#57534a;font-family:ui-monospace,Menlo,monospace">h2 · serif 21px/600 · ls -.01em</span><span style="font-family:'Source Serif 4',serif;font-size:21px;font-weight:600;letter-spacing:-.01em">Stöd som ser lovande ut</span></div>
+    <div style="display:flex;align-items:baseline;gap:20px;padding:10px 0;border-bottom:1px dashed #e6e2d8"><span style="min-width:250px;font-size:12px;color:#57534a;font-family:ui-monospace,Menlo,monospace">h3 · sans 15px/700</span><span style="font-size:15px;font-weight:700">Bostadsbidrag</span></div>
+    <div style="display:flex;align-items:baseline;gap:20px;padding:10px 0;border-bottom:1px dashed #e6e2d8"><span style="min-width:250px;font-size:12px;color:#57534a;font-family:ui-monospace,Menlo,monospace">brödtext · 15px/1.6</span><span>Utifrån dina svar ser du ut att kunna ha rätt till fyra stöd.</span></div>
+    <div style="display:flex;align-items:baseline;gap:20px;padding:10px 0;border-bottom:1px dashed #e6e2d8"><span style="min-width:250px;font-size:12px;color:#57534a;font-family:ui-monospace,Menlo,monospace">.guidance · 13.5px muted</span><span style="color:#57534a;font-size:13.5px">Räkna med inkomst före skatt, per månad.</span></div>
+    <div style="display:flex;align-items:baseline;gap:20px;padding:10px 0;border-bottom:1px dashed #e6e2d8"><span style="min-width:250px;font-size:12px;color:#57534a;font-family:ui-monospace,Menlo,monospace">.q-context · 12px uppercase</span><span style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a">Fråga 3 av 7 · Boende</span></div>
+    <div style="display:flex;align-items:baseline;gap:20px;padding:10px 0;border-bottom:1px dashed #e6e2d8"><span style="min-width:250px;font-size:12px;color:#57534a;font-family:ui-monospace,Menlo,monospace">poäng · serif 26px/600</span><span style="font-family:'Source Serif 4',serif;font-size:26px;font-weight:600">86 <span style="font-family:'Public Sans',sans-serif;font-size:12px;color:#57534a;font-weight:400">av 100</span></span></div>
+    <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:14px 0 0"><b>Radier:</b> kort 14px · knappar/fält 10px · val 11px · piller 999px. <b>Skuggor:</b> skiktade, tydligt djup — kort: 0 1px 3px rgba(40,36,28,.07), 0 4px 14px rgba(40,36,28,.08) · lyft (skärmar/paneler): 0 3px 8px rgba(40,36,28,.08), 0 14px 34px rgba(40,36,28,.13) · primärknapp: 0 2px 6px rgba(35,44,88,.28). <b>Rörelse:</b> 80 ms tryck · 120–130 ms hover · 200 ms progress · prefers-reduced-motion stänger av allt. Inga gradienter på knappar — platta ytor, djup skapas med kant och skugga.</p>
+  </div>
+</section>
+
+<section style="margin-bottom:48px">
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 4px">3. Illustrationer</h2>
+  <p style="color:#57534a;font-size:14px;margin:0 0 18px">Små geometriska figurer — gubbar, hus, träd, städer, hundar — som förstärker och förtydligar. Alltid intill den text de förklarar, aldrig ren dekor.</p>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Bibliotek — en figur per ämne</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px">
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Hus">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
+          <polygon points="20,46 48,24 76,46" fill="#3d4a8c"></polygon>
+          <rect x="42" y="58" width="12" height="19" rx="1" fill="#232c58"></rect>
+          <rect x="31" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
+          <rect x="58" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Hus</div><div style="color:#57534a;font-size:12px">Boende</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Familj">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <circle cx="32" cy="30" r="9" fill="#3d4a8c"></circle>
+          <rect x="22" y="42" width="20" height="34" rx="10" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
+          <circle cx="62" cy="32" r="8" fill="#232c58"></circle>
+          <rect x="53" y="43" width="18" height="33" rx="9" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
+          <circle cx="47" cy="56" r="6" fill="#8a97d4"></circle>
+          <rect x="41" y="63" width="12" height="13" rx="6" fill="#eef0f9" stroke="#232c58" stroke-width="2"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Familj</div><div style="color:#57534a;font-size:12px">Barn &amp; hushåll</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Mynt">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <circle cx="40" cy="52" r="22" fill="#f5edd8" stroke="#8a6510" stroke-width="2.5"></circle>
+          <text x="40" y="59" text-anchor="middle" font-family="Source Serif 4, serif" font-size="19" font-weight="600" fill="#8a6510">kr</text>
+          <circle cx="66" cy="40" r="13" fill="#fffdf9" stroke="#8a6510" stroke-width="2"></circle>
+          <text x="66" y="45" text-anchor="middle" font-family="Source Serif 4, serif" font-size="12" font-weight="600" fill="#8a6510">kr</text>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Mynt</div><div style="color:#57534a;font-size:12px">Ekonomi &amp; inkomst</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Stad">
+          <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="16" y="42" width="17" height="34" rx="1.5" fill="#3d4a8c"></rect>
+          <rect x="37" y="28" width="20" height="48" rx="1.5" fill="#232c58"></rect>
+          <rect x="61" y="48" width="17" height="28" rx="1.5" fill="#fffdf9" stroke="#232c58" stroke-width="2"></rect>
+          <rect x="20" y="47" width="4" height="4" fill="#eef0f9"></rect><rect x="27" y="47" width="4" height="4" fill="#eef0f9"></rect><rect x="20" y="55" width="4" height="4" fill="#eef0f9"></rect><rect x="27" y="55" width="4" height="4" fill="#eef0f9"></rect>
+          <rect x="42" y="34" width="4" height="4" fill="#8a97d4"></rect><rect x="49" y="34" width="4" height="4" fill="#8a97d4"></rect><rect x="42" y="42" width="4" height="4" fill="#8a97d4"></rect><rect x="49" y="42" width="4" height="4" fill="#8a97d4"></rect><rect x="42" y="50" width="4" height="4" fill="#8a97d4"></rect><rect x="49" y="50" width="4" height="4" fill="#8a97d4"></rect>
+          <rect x="65" y="53" width="4" height="4" fill="#d5cfc0"></rect><rect x="72" y="53" width="4" height="4" fill="#d5cfc0"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Stad</div><div style="color:#57534a;font-size:12px">Arbete &amp; kommun</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Träd">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="44" y="50" width="8" height="26" rx="2" fill="#7a6248"></rect>
+          <circle cx="48" cy="36" r="18" fill="#3f7050"></circle>
+          <circle cx="33" cy="46" r="11" fill="#6d9179"></circle>
+          <circle cx="63" cy="46" r="11" fill="#6d9179"></circle>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Träd</div><div style="color:#57534a;font-size:12px">Fritid &amp; vardag</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Hund">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="26" y="48" width="36" height="17" rx="8.5" fill="#232c58"></rect>
+          <rect x="30" y="62" width="6" height="14" rx="3" fill="#232c58"></rect>
+          <rect x="52" y="62" width="6" height="14" rx="3" fill="#232c58"></rect>
+          <circle cx="66" cy="44" r="10" fill="#232c58"></circle>
+          <polygon points="60,36 64,26 68,36" fill="#3d4a8c"></polygon>
+          <polygon points="68,36 72,27 75,37" fill="#3d4a8c"></polygon>
+          <circle cx="70" cy="44" r="1.8" fill="#fffdf9"></circle>
+          <rect x="18" y="42" width="10" height="6" rx="3" fill="#3d4a8c"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Hund</div><div style="color:#57534a;font-size:12px">Husdjur &amp; sällskap</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Gubbe">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <circle cx="48" cy="28" r="11" fill="#3d4a8c"></circle>
+          <rect x="34" y="42" width="28" height="34" rx="13" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Gubbe</div><div style="color:#57534a;font-size:12px">Du &amp; ditt konto</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Dokument">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="30" y="20" width="36" height="48" rx="3" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
+          <rect x="36" y="30" width="24" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="36" y="38" width="24" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="36" y="46" width="16" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <circle cx="62" cy="62" r="11" fill="#3f7050"></circle>
+          <rect x="56" y="61" width="6" height="2.5" rx="1.2" fill="#fffdf9" transform="rotate(45 59 62)"></rect>
+          <rect x="59" y="63" width="10" height="2.5" rx="1.2" fill="#fffdf9" transform="rotate(-50 64 64)"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Dokument</div><div style="color:#57534a;font-size:12px">Ansökan &amp; valv</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Skola">
+          <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="22" y="46" width="52" height="31" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
+          <polygon points="16,48 48,28 80,48" fill="#232c58"></polygon>
+          <rect x="46" y="18" width="3" height="12" fill="#232c58"></rect>
+          <polygon points="49,18 62,21.5 49,25" fill="#3d4a8c"></polygon>
+          <rect x="42" y="58" width="12" height="19" rx="1" fill="#3d4a8c"></rect>
+          <rect x="28" y="53" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
+          <rect x="60" y="53" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Skola</div><div style="color:#57534a;font-size:12px">Utbildning &amp; CSN</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Vård">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <circle cx="48" cy="48" r="26" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></circle>
+          <rect x="43" y="34" width="10" height="28" rx="2" fill="#3d4a8c"></rect>
+          <rect x="34" y="43" width="28" height="10" rx="2" fill="#3d4a8c"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Vård</div><div style="color:#57534a;font-size:12px">Hälsa &amp; sjukersättning</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Bil">
+          <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="18" y="50" width="60" height="18" rx="7" fill="#3d4a8c"></rect>
+          <rect x="30" y="38" width="34" height="16" rx="6" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
+          <circle cx="32" cy="68" r="8" fill="#232c58"></circle><circle cx="32" cy="68" r="3" fill="#fffdf9"></circle>
+          <circle cx="64" cy="68" r="8" fill="#232c58"></circle><circle cx="64" cy="68" r="3" fill="#fffdf9"></circle>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Bil</div><div style="color:#57534a;font-size:12px">Resor &amp; fordon</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Cykel">
+          <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <circle cx="28" cy="62" r="14" fill="none" stroke="#232c58" stroke-width="2.5"></circle>
+          <circle cx="68" cy="62" r="14" fill="none" stroke="#232c58" stroke-width="2.5"></circle>
+          <polygon points="28,62 46,62 40,44 62,44 68,62 46,62" fill="none" stroke="#3d4a8c" stroke-width="2.5"></polygon>
+          <rect x="36" y="38" width="10" height="4" rx="2" fill="#232c58"></rect>
+          <rect x="62" y="36" width="9" height="4" rx="2" fill="#232c58"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Cykel</div><div style="color:#57534a;font-size:12px">Vardag &amp; pendling</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Katt">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="36" y="44" width="24" height="32" rx="11" fill="#3d4a8c"></rect>
+          <circle cx="48" cy="34" r="11" fill="#3d4a8c"></circle>
+          <polygon points="39,28 41,16 47,25" fill="#232c58"></polygon>
+          <polygon points="57,28 55,16 49,25" fill="#232c58"></polygon>
+          <circle cx="44" cy="33" r="1.8" fill="#fffdf9"></circle>
+          <circle cx="52" cy="33" r="1.8" fill="#fffdf9"></circle>
+          <rect x="58" y="58" width="16" height="6" rx="3" fill="#232c58"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Katt</div><div style="color:#57534a;font-size:12px">Husdjur</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Barnvagn">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="26" y="38" width="42" height="20" rx="9" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
+          <rect x="66" y="24" width="3" height="20" rx="1.5" fill="#232c58" transform="rotate(20 67 34)"></rect>
+          <circle cx="36" cy="66" r="8" fill="#232c58"></circle><circle cx="36" cy="66" r="3" fill="#fffdf9"></circle>
+          <circle cx="58" cy="66" r="8" fill="#232c58"></circle><circle cx="58" cy="66" r="3" fill="#fffdf9"></circle>
+          <circle cx="38" cy="46" r="5" fill="#3d4a8c"></circle>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Barnvagn</div><div style="color:#57534a;font-size:12px">Föräldrapenning</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Portfölj">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="38" y="30" width="20" height="12" rx="4" fill="none" stroke="#232c58" stroke-width="2.5"></rect>
+          <rect x="22" y="38" width="52" height="38" rx="5" fill="#3d4a8c"></rect>
+          <rect x="22" y="52" width="52" height="3" fill="#232c58"></rect>
+          <rect x="43" y="49" width="10" height="9" rx="2" fill="#eef0f9" stroke="#232c58" stroke-width="2"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Portfölj</div><div style="color:#57534a;font-size:12px">Arbete &amp; a-kassa</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Pensionär">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <circle cx="42" cy="28" r="10" fill="#232c58"></circle>
+          <rect x="30" y="41" width="24" height="35" rx="11" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
+          <rect x="63" y="44" width="3.5" height="32" rx="1.75" fill="#3d4a8c"></rect>
+          <rect x="58" y="42" width="12" height="3.5" rx="1.75" fill="#3d4a8c"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Pensionär</div><div style="color:#57534a;font-size:12px">Pension &amp; äldre</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Flyttlåda">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="26" y="42" width="44" height="34" rx="2" fill="#d5cfc0" stroke="#232c58" stroke-width="2.5"></rect>
+          <rect x="45" y="42" width="6" height="34" fill="#3d4a8c"></rect>
+          <polygon points="26,42 14,32 40,32 48,42" fill="#efece4" stroke="#232c58" stroke-width="2.5"></polygon>
+          <polygon points="70,42 82,32 56,32 48,42" fill="#efece4" stroke="#232c58" stroke-width="2.5"></polygon>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Flyttlåda</div><div style="color:#57534a;font-size:12px">Flytt &amp; bostadsbyte</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Glödlampa">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <circle cx="48" cy="40" r="17" fill="#f5edd8" stroke="#8a6510" stroke-width="2.5"></circle>
+          <rect x="42" y="57" width="12" height="10" rx="2" fill="#232c58"></rect>
+          <rect x="46.5" y="10" width="3" height="9" rx="1.5" fill="#8a6510"></rect>
+          <rect x="70" y="20" width="9" height="3" rx="1.5" fill="#8a6510" transform="rotate(45 74 21)"></rect>
+          <rect x="17" y="20" width="9" height="3" rx="1.5" fill="#8a6510" transform="rotate(-45 22 21)"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Glödlampa</div><div style="color:#57534a;font-size:12px">El &amp; energistöd</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Student">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <circle cx="48" cy="46" r="11" fill="#3d4a8c"></circle>
+          <rect x="34" y="60" width="28" height="16" rx="8" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
+          <polygon points="48,18 78,30 48,42 18,30" fill="#232c58"></polygon>
+          <rect x="74" y="30" width="2.5" height="14" fill="#8a6510"></rect>
+          <circle cx="75.2" cy="46" r="3" fill="#8a6510"></circle>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Student</div><div style="color:#57534a;font-size:12px">Studier &amp; examen</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Rullstol">
+          <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <circle cx="42" cy="60" r="16" fill="none" stroke="#232c58" stroke-width="2.5"></circle>
+          <circle cx="68" cy="70" r="6" fill="#232c58"></circle>
+          <circle cx="44" cy="24" r="8" fill="#3d4a8c"></circle>
+          <rect x="36" y="34" width="16" height="24" rx="7" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
+          <rect x="50" y="52" width="18" height="3" rx="1.5" fill="#3d4a8c"></rect>
+          <rect x="65" y="52" width="3" height="14" rx="1.5" fill="#3d4a8c"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Rullstol</div><div style="color:#57534a;font-size:12px">Funktionsstöd</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Sol">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <circle cx="48" cy="44" r="16" fill="#f5edd8" stroke="#8a6510" stroke-width="2.5"></circle>
+          <rect x="46.5" y="16" width="3" height="9" rx="1.5" fill="#8a6510"></rect>
+          <rect x="46.5" y="63" width="3" height="9" rx="1.5" fill="#8a6510"></rect>
+          <rect x="20" y="42.5" width="9" height="3" rx="1.5" fill="#8a6510"></rect>
+          <rect x="67" y="42.5" width="9" height="3" rx="1.5" fill="#8a6510"></rect>
+          <rect x="26" y="22" width="9" height="3" rx="1.5" fill="#8a6510" transform="rotate(45 30 23)"></rect>
+          <rect x="61" y="22" width="9" height="3" rx="1.5" fill="#8a6510" transform="rotate(-45 66 23)"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Sol</div><div style="color:#57534a;font-size:12px">Fritid &amp; semester</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Nyckel">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <circle cx="34" cy="40" r="14" fill="none" stroke="#3d4a8c" stroke-width="5"></circle>
+          <rect x="46" y="37" width="32" height="6" rx="3" fill="#232c58"></rect>
+          <rect x="66" y="42" width="5" height="10" rx="2" fill="#232c58"></rect>
+          <rect x="74" y="42" width="5" height="14" rx="2" fill="#232c58"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Nyckel</div><div style="color:#57534a;font-size:12px">Kontrakt &amp; bostadskö</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:14px 0 0"><b>Stilregler:</b> byggda enbart av enkla geometriska former (cirkel, rektangel, triangel) · max 3 färger per figur, alltid ur paletten · kontur 2,5px i --primary-deep där form behöver hållas ihop · alltid en varm markrad (#d5cfc0) som jordar figuren · inga ansiktsdetaljer, ingen skuggning, inga gradienter. <b>Storlekar:</b> 24px inline-ikon · 72px spot vid frågor och kategorier · 120px scen i tomma lägen och bekräftelser.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Användning: spot vid fråga</h3>
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <svg viewBox="0 0 96 96" width="64" height="64" style="flex-shrink:0" aria-hidden="true">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
+          <polygon points="20,46 48,24 76,46" fill="#3d4a8c"></polygon>
+          <rect x="42" y="58" width="12" height="19" rx="1" fill="#232c58"></rect>
+        </svg>
+        <div>
+          <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a">Fråga 4 av 7 · Boende</div>
+          <b>Hur bor du?</b>
+          <p style="color:#57534a;font-size:13px;margin:2px 0 0">Figuren speglar frågans ämne och står till vänster om, eller ovanför, frågan. En figur per skärm — aldrig fler.</p>
+        </div>
+      </div>
+    </div>
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Användning: tomt läge</h3>
+      <div style="text-align:center;padding:8px 0">
+        <svg viewBox="0 0 96 96" width="96" height="96" aria-hidden="true">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="26" y="48" width="36" height="17" rx="8.5" fill="#232c58"></rect>
+          <rect x="30" y="62" width="6" height="14" rx="3" fill="#232c58"></rect>
+          <rect x="52" y="62" width="6" height="14" rx="3" fill="#232c58"></rect>
+          <circle cx="66" cy="44" r="10" fill="#232c58"></circle>
+          <polygon points="60,36 64,26 68,36" fill="#3d4a8c"></polygon>
+          <polygon points="68,36 72,27 75,37" fill="#3d4a8c"></polygon>
+          <circle cx="70" cy="44" r="1.8" fill="#fffdf9"></circle>
+        </svg>
+        <div style="font-weight:650;margin-top:4px">Inga ansökningar ännu</div>
+        <p style="color:#57534a;font-size:13px;margin:2px 0 10px">När du förbereder en ansökan hamnar den här.</p>
+        <button style="font:inherit;font-weight:600;padding:8px 16px;border-radius:10px;border:1px solid #d5cfc0;background:#fffdf9;color:#3d4a8c;cursor:pointer;font-size:13.5px" style-hover="background:#eef0f9">Gå till din analys</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#eef0f9;border:1.5px solid #3d4a8c;border-radius:16px;padding:32px 28px;margin-top:16px;box-shadow:0 4px 10px rgba(35,44,88,.10),0 16px 40px rgba(35,44,88,.14)">
+    <div style="max-width:560px;margin:0 auto;text-align:center">
+      <div style="display:inline-flex;background:#fffdf9;border:1px solid #d5cfc0;border-radius:50%;padding:14px;margin-bottom:12px">
+        <svg viewBox="0 0 96 96" width="96" height="96" aria-hidden="true">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
+          <polygon points="20,46 48,24 76,46" fill="#3d4a8c"></polygon>
+          <rect x="42" y="58" width="12" height="19" rx="1" fill="#232c58"></rect>
+          <rect x="31" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
+          <rect x="58" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
+        </svg>
+      </div>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#2f3a70;margin-bottom:4px">Nyckelfråga · Boende</div>
+      <div style="font-family:'Source Serif 4',serif;font-size:29px;font-weight:600;letter-spacing:-.015em;line-height:1.25;color:#1f1d18;margin-bottom:6px">Hur bor du?</div>
+      <p style="color:#4a5170;font-size:14px;margin:0 0 18px">Den här frågan påverkar din bedömning mest — flera stöd bygger direkt på svaret.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left">
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;padding:13px 15px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
+          <svg viewBox="0 0 96 96" width="34" height="34" style="flex-shrink:0" aria-hidden="true"><rect x="30" y="24" width="36" height="52" rx="2" fill="#3d4a8c"></rect><rect x="37" y="32" width="6" height="6" fill="#eef0f9"></rect><rect x="53" y="32" width="6" height="6" fill="#eef0f9"></rect><rect x="37" y="44" width="6" height="6" fill="#eef0f9"></rect><rect x="53" y="44" width="6" height="6" fill="#eef0f9"></rect><rect x="43" y="60" width="10" height="16" fill="#232c58"></rect></svg>
+          Hyresrätt</button>
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;padding:13px 15px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
+          <svg viewBox="0 0 96 96" width="34" height="34" style="flex-shrink:0" aria-hidden="true"><rect x="26" y="30" width="44" height="46" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="3"></rect><rect x="34" y="38" width="7" height="7" fill="#3d4a8c"></rect><rect x="55" y="38" width="7" height="7" fill="#3d4a8c"></rect><rect x="34" y="52" width="7" height="7" fill="#3d4a8c"></rect><rect x="55" y="52" width="7" height="7" fill="#3d4a8c"></rect></svg>
+          Bostadsrätt</button>
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;padding:13px 15px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
+          <svg viewBox="0 0 96 96" width="34" height="34" style="flex-shrink:0" aria-hidden="true"><rect x="28" y="46" width="40" height="30" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="3"></rect><polygon points="22,48 48,28 74,48" fill="#3d4a8c"></polygon><rect x="43" y="58" width="10" height="18" fill="#232c58"></rect></svg>
+          Äger hus</button>
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;padding:13px 15px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
+          <svg viewBox="0 0 96 96" width="34" height="34" style="flex-shrink:0" aria-hidden="true"><circle cx="36" cy="32" r="10" fill="#3d4a8c"></circle><rect x="25" y="45" width="22" height="31" rx="10" fill="#eef0f9" stroke="#232c58" stroke-width="3"></rect><circle cx="64" cy="36" r="8" fill="#232c58"></circle><rect x="55" y="47" width="18" height="29" rx="9" fill="#fffdf9" stroke="#232c58" stroke-width="3"></rect></svg>
+          Inneboende</button>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:12px 0 0"><b>Framhävd fråga:</b> används för de 3–5 frågor som påverkar bedömningen mest. Indigo-mjuk panel med markerad kant, scen 96px i vit rundel, rubrik 29px seriff, centrerad text och illustrerade val (ikon 34px till vänster i varje val). Alla andra frågor behåller standardmönstret — max en framhävd fråga per flödessteg.</p>
+</section>
+
+<section style="margin-bottom:48px">
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 16px">4. Komponentbibliotek</h2>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Knappar</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:none;background:#3d4a8c;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(35,44,88,.28)" style-hover="background:#2f3a70">Primär</button>
+      <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:1px solid #d5cfc0;background:#fffdf9;color:#3d4a8c;cursor:pointer" style-hover="background:#eef0f9;border-color:#3d4a8c">Sekundär</button>
+      <button style="font:inherit;font-weight:600;padding:6px 14px;border-radius:9px;border:1px solid #d5cfc0;background:#fffdf9;color:#3d4a8c;cursor:pointer;font-size:13.5px" style-hover="background:#eef0f9">Liten</button>
+      <button style="font:inherit;font-weight:500;padding:9px 14px;border-radius:10px;border:none;background:transparent;color:#57534a;cursor:pointer" style-hover="background:#efece4">Subtil</button>
+      <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:none;background:#3d4a8c;color:#fff;opacity:.45;cursor:not-allowed" disabled="disabled">Inaktiverad</button>
+      <button style="font:inherit;font-weight:600;border:none;background:none;padding:0;color:#3d4a8c;cursor:pointer" style-hover="text-decoration:underline">Länk-knapp</button>
+    </div>
+    <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:14px 0 0">Max en primär per skärm. Köp-knappar är alltid primära och åtföljs av gratisvägen i text. Subtil för "Hoppa över"/"Ändra". Fokus: 3px ring rgba(61,74,140,.28).</p>
+  </div>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Svarsval — .choice (kärnan i en-fråga-per-skärm)</h3>
+    <div style="display:flex;flex-direction:column;gap:9px;max-width:560px">
+      <button style="font:inherit;text-align:left;padding:14px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;color:#1f1d18" style-hover="border-color:#3d4a8c;background:#eef0f9"><span style="font-weight:600;display:block">Jag bor i hyresrätt</span><span style="color:#57534a;font-size:13px;display:block;margin-top:2px">Även andrahandskontrakt och inneboende</span></button>
+      <button style="font:inherit;text-align:left;padding:14px 16px;background:#eef0f9;border:1.5px solid #3d4a8c;border-radius:11px;cursor:pointer;color:#1f1d18"><span style="font-weight:600;display:block">Jag bor i bostadsrätt</span><span style="color:#57534a;font-size:13px;display:block;margin-top:2px">Vald — indigo yta och kant, ingen ikon behövs</span></button>
+      <button style="font:inherit;text-align:left;padding:14px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;color:#1f1d18" style-hover="border-color:#3d4a8c;background:#eef0f9"><span style="font-weight:600;display:block">Jag äger hus</span></button>
+    </div>
+  </div>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Fält &amp; formulär</h3>
+    <label style="display:block;font-weight:600;margin:0 0 4px">Hushållets inkomst per månad</label>
+    <p style="color:#57534a;font-size:13.5px;margin:0 0 8px">Före skatt. Ta med lön, a-kassa och andra ersättningar.</p>
+    <input type="number" placeholder="t.ex. 24 000" style="font:inherit;width:100%;max-width:260px;padding:9px 12px;border:1px solid #d5cfc0;border-radius:10px;background:#fffdf9;color:#1f1d18" style-focus="border-color:#3d4a8c;outline:none;box-shadow:0 0 0 3px rgba(61,74,140,.28)">
+    <div style="display:flex;align-items:flex-start;gap:9px;margin-top:16px;max-width:560px">
+      <input type="checkbox" id="d-ang" checked="checked" style="width:auto;margin-top:4px;accent-color:#3d4a8c">
+      <label for="d-ang" style="font-weight:500;font-size:14px">Jag samtycker till att tjänsten påbörjas direkt och förstår att ångerrätten därmed inte gäller för genomförd analys.</label>
+    </div>
+  </div>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Badges &amp; alerts</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;background:#efece4;color:#57534a;border:1px solid #e6e2d8">Neutral</span>
+      <span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;background:#ecf3ed;color:#3f7050">Betald</span>
+      <span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;background:#f5edd8;color:#8a6510">AI-sammanställd — ej granskad av människa</span>
+      <span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;background:#eef0f9;color:#2f3a70">Under förberedelse</span>
+      <span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;background:#f8ebe9;color:#a33d33">Avvisad</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="border-radius:10px;padding:11px 15px;font-size:14px;background:#eef0f9;color:#2f3a70;border:1px solid rgba(61,74,140,.16)">Svaret används bara för din bedömning. Slutligt beslut fattas alltid av myndigheten.</div>
+      <div style="border-radius:10px;padding:11px 15px;font-size:14px;background:#ecf3ed;color:#3f7050;border:1px solid rgba(63,112,80,.18)">Din ansökan är förberedd. Alla dokument finns i dokumentvalvet.</div>
+      <div style="border-radius:10px;padding:11px 15px;font-size:14px;background:#f5edd8;color:#8a6510;border:1px solid rgba(138,101,16,.18)">Betalningar är inte aktiverade i denna miljö ännu (Swish-avtal saknas). Inget debiteras.</div>
+      <div style="border-radius:10px;padding:11px 15px;font-size:14px;background:#f8ebe9;color:#a33d33;border:1px solid rgba(163,61,51,.16)">Tjänsten kunde inte nås (503). Vi visar hellre ett ärligt fel än låtsas att det fungerar.</div>
+    </div>
+  </div>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Matchrad med poäng och förklaring</h3>
+    <div style="display:flex;gap:18px;align-items:flex-start;padding:14px 6px">
+      <div style="min-width:60px;text-align:center"><div style="font-family:'Source Serif 4',serif;font-size:26px;font-weight:600;letter-spacing:-.01em">86</div><div style="color:#57534a;font-size:11.5px">av 100</div></div>
+      <div style="flex:1">
+        <b>Bostadsbidrag</b> <span style="display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:650;background:#f5edd8;color:#8a6510;margin-left:4px">AI-sammanställd</span>
+        <div style="color:#57534a;font-size:13px;margin-top:2px">Försäkringskassan · löpande ansökan</div>
+        <div style="margin-top:10px;padding:12px 15px;background:#f7f5f0;border:1px solid #e6e2d8;border-radius:10px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;gap:8px;align-items:baseline;font-size:13.5px"><span style="width:16px;text-align:center;font-weight:700;color:#3f7050;flex-shrink:0">✓</span> Du har hemmavarande barn — ett villkor för barnfamiljsdelen</div>
+          <div style="display:flex;gap:8px;align-items:baseline;font-size:13.5px"><span style="width:16px;text-align:center;font-weight:700;color:#3f7050;flex-shrink:0">✓</span> Hushållets inkomst ligger under gränsen för prövning</div>
+          <div style="display:flex;gap:8px;align-items:baseline;font-size:13.5px"><span style="width:16px;text-align:center;font-weight:700;color:#8a6510;flex-shrink:0">?</span> Bostadskostnaden saknas — svara nedan så räknas poängen om</div>
+          <div style="display:flex;gap:8px;align-items:baseline;font-size:13.5px"><span style="width:16px;text-align:center;font-weight:700;color:#a33d33;flex-shrink:0">✕</span> Förmögenhet över gränsen skulle sänka bedömningen</div>
+        </div>
+        <div style="border-top:1px solid #e6e2d8;margin-top:12px;padding-top:10px;font-size:13px;color:#57534a">Källa: <a href="#">forsakringskassan.se — Bostadsbidrag</a> · hämtad 2026-08-12</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">F-STABIL + F-INFO: frågelistan som står stilla</h3>
+    <div style="background:#fffdf9;border:1px solid #d9b96a;border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 4px">Några frågor kvar <span style="display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:650;background:#eef0f9;color:#2f3a70;margin-left:4px">2 besvarade</span></h3>
+      <div style="padding:12px 0;border-bottom:1px solid #e6e2d8;opacity:.62" style-hover="opacity:1">
+        <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a;display:flex;align-items:center;gap:6px">Boende <button style="font:inherit;font-weight:700;font-size:11px;line-height:1;cursor:pointer;width:19px;height:19px;border-radius:50%;border:1.5px solid #3d4a8c;color:#3d4a8c;background:#fffdf9;padding:0" style-hover="background:#3d4a8c;color:#fff">i</button></div>
+        <b>Hur bor du?</b>
+        <div style="margin-top:6px"><button style="font:inherit;text-align:left;padding:10px 14px;background:#eef0f9;border:1.5px solid #3d4a8c;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18">Hyresrätt</button></div>
+        <div style="color:#3f7050;font-size:13px;margin-top:5px">✓ Sparat — går att ändra</div>
+      </div>
+      <div style="padding:12px 0;border-bottom:1px solid #e6e2d8">
+        <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a;display:flex;align-items:center;gap:6px">Ekonomi <button style="font:inherit;font-weight:700;font-size:11px;line-height:1;cursor:pointer;width:19px;height:19px;border-radius:50%;border:1.5px solid #3d4a8c;color:#fff;background:#3d4a8c;padding:0" aria-expanded="true">i</button></div>
+        <b>Vad är din bostadskostnad per månad?</b>
+        <div style="background:#eef0f9;border-left:3px solid #3d4a8c;border-radius:0 10px 10px 0;padding:12px 16px;margin:8px 0;font-size:13.5px">
+          <b>Varför frågar vi detta?</b>
+          <ul style="margin:6px 0 8px;padding-left:18px">
+            <li style="margin-bottom:4px"><b>Bostadsbidrag</b> — villkor: bostadskostnaden avgör bidragets storlek. <a href="#">Om stödet</a> · <a href="#">Officiell källa</a></li>
+            <li><b>Bostadstillägg</b> — väger in: används i beräkningen av tillägget.</li>
+          </ul>
+          Svaret används bara för din bedömning. Slutligt beslut fattas alltid av myndigheten.
+        </div>
+        <input type="number" placeholder="kr/mån" style="font:inherit;width:100%;max-width:220px;padding:9px 12px;border:1px solid #d5cfc0;border-radius:10px;background:#fffdf9;color:#1f1d18" style-focus="border-color:#3d4a8c;outline:none;box-shadow:0 0 0 3px rgba(61,74,140,.28)">
+      </div>
+      <div style="padding:12px 0;opacity:.62" style-hover="opacity:1">
+        <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a">Arbete</div>
+        <span style="text-decoration:line-through">Driver du företaget som huvudsyssla?</span>
+        <div style="color:#57534a;font-size:13px">Behövdes inte längre efter ditt svar ovan — påverkar inte bedömningen.</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:14px 0 0">Tre radlägen: <b>aktiv</b> (full opacitet, inmatning), <b>besvarad</b> (opacitet .62, markerat val, ändringsbar in-place, grön kvittensrad), <b>inaktuell</b> (dim + genomstruken + förklaring). Rader byter aldrig plats. Kortet med kvarvarande frågor bär varningsgul kant (#d9b96a).</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Betalyta — .paybox</h3>
+      <div style="padding:14px 16px;background:#f7f5f0;border:1px solid #e6e2d8;border-radius:12px">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14.5px"><span style="color:#57534a">Analysupplåsning</span><span>39 kr</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14.5px"><span style="color:#57534a">Moms (25 % ingår)</span><span>7,80 kr</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14.5px;font-weight:700"><span>Att betala</span><span>39 kr</span></div>
+      </div>
+      <p style="color:#57534a;font-size:13px;margin:10px 0 8px">Att ansöka själv direkt hos myndigheten är alltid gratis. Det här köpet gäller vår analys och förberedelse.</p>
+      <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:none;background:#3d4a8c;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(35,44,88,.28)" style-hover="background:#2f3a70">Betala med Swish</button>
+    </div>
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Teaser — blurrade rader</h3>
+      <div style="display:flex;gap:16px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #e6e2d8">
+        <div style="min-width:56px;text-align:center"><div style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600">86</div><div style="color:#57534a;font-size:11px">av 100</div></div>
+        <div><span style="filter:blur(4.5px);user-select:none;opacity:.85">Bostadsstöd för barnfamiljer</span><div style="color:#57534a;font-size:13px">Statlig myndighet · löpande ansökan</div></div>
+      </div>
+      <div style="display:flex;gap:16px;align-items:flex-start;padding:10px 0">
+        <div style="min-width:56px;text-align:center"><div style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600">71</div><div style="color:#57534a;font-size:11px">av 100</div></div>
+        <div><span style="filter:blur(4.5px);user-select:none;opacity:.85">Ekonomiskt stödprogram AB</span><div style="color:#57534a;font-size:13px">Kommun · ansökan året runt</div></div>
+      </div>
+      <p style="font-size:13px;color:#57534a;margin:10px 0 0">Det blurrade är en formbevarande platshållarmask — riktiga namn lämnar aldrig servern före betalning.</p>
+    </div>
+  </div>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Tabell, nyckel/värde &amp; kvittens</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:14px">
+      <thead><tr>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0">Kvitto</th>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0">Datum</th>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0">Belopp</th>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0">Status</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">Analysupplåsning</td><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">2026-08-12</td><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">39 kr</td><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8"><span style="display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:650;background:#ecf3ed;color:#3f7050">Betald</span></td></tr>
+        <tr><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">Ansökan: Bostadsbidrag</td><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">2026-08-13</td><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">19 kr</td><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8"><span style="display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:650;background:#ecf3ed;color:#3f7050">Betald</span></td></tr>
+      </tbody>
+    </table>
+    <dl style="display:grid;grid-template-columns:190px 1fr;gap:6px 16px;font-size:14px;margin:16px 0 0">
+      <dt style="color:#57534a">Organisationsnummer</dt><dd style="margin:0">556000-0000 (exempel)</dd>
+      <dt style="color:#57534a">Momsregistrering</dt><dd style="margin:0">SE556000000001</dd>
+    </dl>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;background:#ecf3ed;color:#3f7050;border:1px solid #3f7050;border-radius:10px;padding:9px 14px;margin:14px 0 0;font-size:14px"><span>✓ Sparat — går att ändra</span><button style="font:inherit;font-weight:600;color:#57534a;background:none;border:none;padding:0;cursor:pointer" style-hover="text-decoration:underline">Ändra</button></div>
+  </div>
+</section>
+
+<section style="margin-bottom:48px">
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 16px">5. Nyckelskärmar</h2>
+
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">5.1 Onboarding — en fråga per skärm</h3>
+  <div data-screen-label="Onboarding" style="border:1px solid #d5cfc0;border-radius:14px;overflow:hidden;box-shadow:0 3px 8px rgba(40,36,28,.08),0 14px 34px rgba(40,36,28,.13);margin:0 0 28px;background:#f7f5f0">
+    <div style="background:#efece4;border-bottom:1px solid #e6e2d8;padding:7px 14px;font-size:12px;color:#57534a;display:flex;gap:8px;align-items:center"><span style="letter-spacing:2px;color:#d5cfc0;font-size:9px">● ● ●</span> bidragskoll.se/start · mobilbredd i praktiken</div>
+    <div style="padding:28px 24px;max-width:620px;margin:0 auto">
+      <div style="display:flex;gap:5px;margin-bottom:20px"><span style="flex:1;height:4px;border-radius:2px;background:#3d4a8c"></span><span style="flex:1;height:4px;border-radius:2px;background:#3d4a8c"></span><span style="flex:1;height:4px;border-radius:2px;background:#3d4a8c"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span></div>
+      <svg viewBox="0 0 96 96" width="80" height="80" style="display:block;margin-bottom:10px;background:#eef0f9;border-radius:50%;padding:9px" aria-hidden="true">
+        <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+        <circle cx="32" cy="30" r="9" fill="#3d4a8c"></circle>
+        <rect x="22" y="42" width="20" height="34" rx="10" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
+        <circle cx="62" cy="32" r="8" fill="#232c58"></circle>
+        <rect x="53" y="43" width="18" height="33" rx="9" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
+        <circle cx="47" cy="56" r="6" fill="#8a97d4"></circle>
+        <rect x="41" y="63" width="12" height="13" rx="6" fill="#eef0f9" stroke="#232c58" stroke-width="2"></rect>
+      </svg>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a;display:flex;align-items:center;gap:6px;margin-bottom:4px">Fråga 3 av 7 · Familj <button style="font:inherit;font-weight:700;font-size:11px;line-height:1;cursor:pointer;width:19px;height:19px;border-radius:50%;border:1.5px solid #3d4a8c;color:#3d4a8c;background:#fffdf9;padding:0" style-hover="background:#3d4a8c;color:#fff">i</button></div>
+      <div style="font-family:'Source Serif 4',serif;font-size:25px;font-weight:600;letter-spacing:-.01em;line-height:1.3;margin-bottom:4px">Har du hemmavarande barn?</div>
+      <p style="color:#57534a;font-size:13.5px;margin:0 0 16px">Räkna barn under 18 år som bor hos dig hela eller delar av tiden.</p>
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;text-align:left;padding:13px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
+          <svg viewBox="0 0 96 96" width="32" height="32" style="flex-shrink:0" aria-hidden="true"><circle cx="48" cy="30" r="13" fill="#3d4a8c"></circle><rect x="32" y="46" width="32" height="30" rx="14" fill="#eef0f9" stroke="#232c58" stroke-width="3"></rect></svg>
+          Ja, på heltid</button>
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;text-align:left;padding:13px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
+          <svg viewBox="0 0 96 96" width="32" height="32" style="flex-shrink:0" aria-hidden="true"><rect x="14" y="52" width="28" height="24" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="3"></rect><polygon points="10,54 28,40 46,54" fill="#3d4a8c"></polygon><rect x="54" y="52" width="28" height="24" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="3"></rect><polygon points="50,54 68,40 86,54" fill="#232c58"></polygon></svg>
+          Ja, växelvis boende</button>
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;text-align:left;padding:13px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
+          <svg viewBox="0 0 96 96" width="32" height="32" style="flex-shrink:0" aria-hidden="true"><circle cx="48" cy="48" r="26" fill="none" stroke="#57534a" stroke-width="4"></circle><rect x="36" y="45" width="24" height="6" rx="3" fill="#57534a"></rect></svg>
+          Nej</button>
+      </div>
+      <button style="font:inherit;font-weight:500;padding:9px 14px;border-radius:10px;border:none;background:transparent;color:#57534a;cursor:pointer;margin-top:10px" style-hover="background:#efece4">← Tillbaka</button>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">5.2 Teaser — gratis upptäckt före betalvägg</h3>
+  <div data-screen-label="Teaser" style="border:1px solid #d5cfc0;border-radius:14px;overflow:hidden;box-shadow:0 3px 8px rgba(40,36,28,.08),0 14px 34px rgba(40,36,28,.13);margin:0 0 28px;background:#f7f5f0">
+    <div style="background:#efece4;border-bottom:1px solid #e6e2d8;padding:7px 14px;font-size:12px;color:#57534a;display:flex;gap:8px;align-items:center"><span style="letter-spacing:2px;color:#d5cfc0;font-size:9px">● ● ●</span> bidragskoll.se/analys (låst läge)</div>
+    <div style="padding:28px 24px;max-width:620px;margin:0 auto">
+      <div style="display:flex;gap:14px;align-items:flex-end;margin-bottom:6px">
+        <svg viewBox="0 0 96 96" width="56" height="56" style="flex-shrink:0" aria-hidden="true">
+          <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="16" y="42" width="17" height="34" rx="1.5" fill="#3d4a8c"></rect>
+          <rect x="37" y="28" width="20" height="48" rx="1.5" fill="#232c58"></rect>
+          <rect x="61" y="48" width="17" height="28" rx="1.5" fill="#fffdf9" stroke="#232c58" stroke-width="2"></rect>
+          <rect x="42" y="34" width="4" height="4" fill="#8a97d4"></rect><rect x="49" y="34" width="4" height="4" fill="#8a97d4"></rect><rect x="42" y="42" width="4" height="4" fill="#8a97d4"></rect><rect x="49" y="42" width="4" height="4" fill="#8a97d4"></rect>
+          <rect x="20" y="47" width="4" height="4" fill="#eef0f9"></rect><rect x="27" y="47" width="4" height="4" fill="#eef0f9"></rect>
+        </svg>
+        <div style="font-family:'Source Serif 4',serif;font-size:25px;font-weight:600;letter-spacing:-.01em;line-height:1.3">Vi hittade 6 stöd som ser lovande ut</div>
+      </div>
+      <p style="margin:0 0 14px;font-size:14.5px">Utifrån dina svar <b>ser du ut att kunna ha rätt till</b> följande. Lås upp analysen för att se vilka stöden är, exakta villkor och vad som saknas.</p>
+      <div style="display:flex;gap:16px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #e6e2d8"><div style="min-width:56px;text-align:center"><div style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600">86</div><div style="color:#57534a;font-size:11px">av 100</div></div><div><span style="filter:blur(4.5px);user-select:none;opacity:.85">Bostadsstöd för barnfamiljer</span><div style="color:#57534a;font-size:13px">Statlig myndighet</div></div></div>
+      <div style="display:flex;gap:16px;align-items:flex-start;padding:10px 0"><div style="min-width:56px;text-align:center"><div style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600">74</div><div style="color:#57534a;font-size:11px">av 100</div></div><div><span style="filter:blur(4.5px);user-select:none;opacity:.85">Studiefinansieringsstöd</span><div style="color:#57534a;font-size:13px">Statlig myndighet</div></div></div>
+      <div style="padding:14px 16px;background:#fffdf9;border:1px solid #e6e2d8;border-radius:12px;margin-top:12px"><div style="display:flex;justify-content:space-between;font-size:14.5px"><span style="color:#57534a">Analysupplåsning (engångsbelopp)</span><span>39 kr</span></div></div>
+      <div style="display:flex;align-items:flex-start;gap:9px;margin:14px 0">
+        <input type="checkbox" id="d-ang2" style="width:auto;margin-top:4px;accent-color:#3d4a8c">
+        <label for="d-ang2" style="font-weight:500;font-size:14px">Jag samtycker till att analysen levereras direkt och att ångerrätten därmed inte gäller den.</label>
+      </div>
+      <button style="font:inherit;font-weight:600;padding:10px 20px;border-radius:10px;border:none;background:#3d4a8c;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(35,44,88,.28)" style-hover="background:#2f3a70">Lås upp analysen — 39 kr</button>
+      <p style="color:#57534a;font-size:13px;margin:10px 0 0">Att ansöka själv direkt hos myndigheten är alltid gratis — det här köpet gäller vår analys. Slutligt beslut fattas alltid av myndigheten.</p>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">5.3 Analysvyn — stabil frågelista + Dina svar</h3>
+  <div data-screen-label="Analys" style="border:1px solid #d5cfc0;border-radius:14px;overflow:hidden;box-shadow:0 3px 8px rgba(40,36,28,.08),0 14px 34px rgba(40,36,28,.13);margin:0 0 28px;background:#f7f5f0">
+    <div style="background:#efece4;border-bottom:1px solid #e6e2d8;padding:7px 14px;font-size:12px;color:#57534a;display:flex;gap:8px;align-items:center"><span style="letter-spacing:2px;color:#d5cfc0;font-size:9px">● ● ●</span> bidragskoll.se/analys (upplåst)</div>
+    <div style="padding:28px 24px;max-width:620px;margin:0 auto">
+      <div style="font-family:'Source Serif 4',serif;font-size:25px;font-weight:600;letter-spacing:-.01em;margin-bottom:12px">Din analys</div>
+      <div style="display:flex;gap:16px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #e6e2d8">
+        <div style="min-width:56px;text-align:center"><div style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600">86</div><div style="color:#57534a;font-size:11px">av 100</div></div>
+        <div style="flex:1"><b>Bostadsbidrag</b> <span style="display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:650;background:#f5edd8;color:#8a6510;margin-left:4px">AI-sammanställd</span>
+          <div style="color:#57534a;font-size:13px;margin-top:2px">Försäkringskassan · löpande ansökan</div>
+          <button style="font:inherit;font-weight:600;color:#3d4a8c;background:none;border:none;padding:0;cursor:pointer;font-size:14px;margin-top:4px" style-hover="text-decoration:underline">Visa varför ↓</button></div>
+        <button style="font:inherit;font-weight:600;padding:6px 14px;border-radius:9px;border:1px solid #d5cfc0;background:#fffdf9;color:#3d4a8c;cursor:pointer;font-size:13.5px;flex-shrink:0" style-hover="background:#eef0f9">Förbered ansökan · 19 kr</button>
+      </div>
+      <div style="background:#fffdf9;border:1px solid #d9b96a;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-top:16px">
+        <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">Några frågor kvar</h3>
+        <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a;display:flex;align-items:center;gap:6px;margin-bottom:4px">Ekonomi <button style="font:inherit;font-weight:700;font-size:11px;line-height:1;cursor:pointer;width:19px;height:19px;border-radius:50%;border:1.5px solid #3d4a8c;color:#3d4a8c;background:#fffdf9;padding:0" style-hover="background:#3d4a8c;color:#fff">i</button></div>
+        <b>Vad är din bostadskostnad per månad?</b>
+        <div style="margin-top:8px"><input type="number" placeholder="kr/mån" style="font:inherit;width:100%;max-width:220px;padding:9px 12px;border:1px solid #d5cfc0;border-radius:10px;background:#fffdf9;color:#1f1d18" style-focus="border-color:#3d4a8c;outline:none;box-shadow:0 0 0 3px rgba(61,74,140,.28)"></div>
+      </div>
+      <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-top:14px">
+        <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">Dina svar</h3>
+        <div style="padding:8px 0;border-bottom:1px solid #e6e2d8;opacity:.62;display:flex;justify-content:space-between;gap:10px;align-items:baseline" style-hover="opacity:1"><span><b>Hur bor du?</b> — Hyresrätt</span><button style="font:inherit;font-weight:600;color:#57534a;background:none;border:none;padding:0;cursor:pointer;font-size:13.5px" style-hover="text-decoration:underline">Ändra</button></div>
+        <div style="padding:8px 0;opacity:.62;display:flex;justify-content:space-between;gap:10px;align-items:baseline" style-hover="opacity:1"><span><b>Har du hemmavarande barn?</b> — Ja, på heltid</span><button style="font:inherit;font-weight:600;color:#57534a;background:none;border:none;padding:0;cursor:pointer;font-size:13.5px" style-hover="text-decoration:underline">Ändra</button></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">5.4 Ansökningsarbetsyta &amp; dokumentstudio</h3>
+  <div data-screen-label="Arbetsyta" style="border:1px solid #d5cfc0;border-radius:14px;overflow:hidden;box-shadow:0 3px 8px rgba(40,36,28,.08),0 14px 34px rgba(40,36,28,.13);margin:0 0 28px;background:#f7f5f0">
+    <div style="background:#efece4;border-bottom:1px solid #e6e2d8;padding:7px 14px;font-size:12px;color:#57534a;display:flex;gap:8px;align-items:center"><span style="letter-spacing:2px;color:#d5cfc0;font-size:9px">● ● ●</span> bidragskoll.se/ansokningar/… · skrivbordsbredd med sidomeny</div>
+    <div style="display:flex">
+      <nav style="width:230px;flex-shrink:0;background:#fffdf9;border-right:1px solid #e6e2d8;padding:22px 12px;display:flex;flex-direction:column;gap:3px">
+        <div style="display:flex;align-items:center;gap:8px;padding:0 10px 16px"><span style="width:10px;height:10px;border-radius:3px;background:linear-gradient(135deg,#3d4a8c,#232c58)"></span><span style="font-family:'Source Serif 4',serif;font-weight:700;font-size:16px;color:#232c58">Bidragskoll</span></div>
+        <a href="#" style="padding:8px 11px;border-radius:9px;color:#1f1d18;font-weight:500;border-left:3px solid transparent" style-hover="background:#efece4;text-decoration:none">Översikt</a>
+        <a href="#" style="padding:8px 11px;border-radius:9px;background:#eef0f9;color:#2f3a70;font-weight:650;border-left:3px solid #3d4a8c" style-hover="text-decoration:none">Ansökningar</a>
+        <a href="#" style="padding:8px 11px;border-radius:9px;color:#1f1d18;font-weight:500;border-left:3px solid transparent" style-hover="background:#efece4;text-decoration:none">Dokument</a>
+        <a href="#" style="padding:8px 11px;border-radius:9px;color:#1f1d18;font-weight:500;border-left:3px solid transparent" style-hover="background:#efece4;text-decoration:none">Mina köp</a>
+        <a href="#" style="padding:8px 11px;border-radius:9px;color:#1f1d18;font-weight:500;border-left:3px solid transparent" style-hover="background:#efece4;text-decoration:none">Konto</a>
+      </nav>
+      <div style="flex:1;padding:24px 26px">
+        <div style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin-bottom:10px">Bostadsbidrag <span style="display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:650;background:#eef0f9;color:#2f3a70;font-family:'Public Sans',sans-serif;vertical-align:3px;margin-left:4px">Under förberedelse</span></div>
+        <div style="display:flex;gap:5px;max-width:420px;margin-bottom:16px"><span style="flex:1;height:4px;border-radius:2px;background:#3d4a8c"></span><span style="flex:1;height:4px;border-radius:2px;background:#3d4a8c"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span></div>
+        <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+          <h3 style="font-size:15px;font-weight:700;margin:0 0 10px">Ansökningsunderlag</h3>
+          <label style="display:block;font-weight:600;margin:0 0 4px">Beskriv din boendesituation</label>
+          <p style="color:#57534a;font-size:13.5px;margin:0 0 8px">Förifyllt från dina svar — kontrollera och justera.</p>
+          <textarea style="font:inherit;width:100%;min-height:70px;padding:9px 12px;border:1px solid #d5cfc0;border-radius:10px;background:#fffdf9;color:#1f1d18;resize:vertical" style-focus="border-color:#3d4a8c;outline:none;box-shadow:0 0 0 3px rgba(61,74,140,.28)">Jag bor i hyresrätt tillsammans med två barn…</textarea>
+          <div style="display:flex;gap:10px;margin-top:12px">
+            <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:1px solid #d5cfc0;background:#fffdf9;color:#3d4a8c;cursor:pointer" style-hover="background:#eef0f9">Föreslå formulering</button>
+            <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:none;background:#3d4a8c;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(35,44,88,.28)" style-hover="background:#2f3a70">Spara utkast</button>
+          </div>
+          <div style="border-top:1px solid #e6e2d8;margin-top:14px;padding-top:12px;font-size:13px;color:#57534a">Dokumentet renderas ur mallen för Försäkringskassans ansökan. Du skickar själv in det till myndigheten — det är alltid gratis.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">5.5 Publik SEO-sida (mall)</h3>
+  <div data-screen-label="SEO-sida" style="border:1px solid #d5cfc0;border-radius:14px;overflow:hidden;box-shadow:0 3px 8px rgba(40,36,28,.08),0 14px 34px rgba(40,36,28,.13);margin:0 0 8px;background:#f7f5f0">
+    <div style="background:#efece4;border-bottom:1px solid #e6e2d8;padding:7px 14px;font-size:12px;color:#57534a;display:flex;gap:8px;align-items:center"><span style="letter-spacing:2px;color:#d5cfc0;font-size:9px">● ● ●</span> bidragskoll.se/bidrag/bostadsbidrag · statiskt genererad</div>
+    <div style="padding:28px 24px;max-width:620px;margin:0 auto">
+      <p style="color:#57534a;font-size:13px;margin:0 0 8px"><a href="#">Bidrag</a> › <a href="#">För privatpersoner</a> › Bostadsbidrag</p>
+      <div style="display:flex;gap:14px;align-items:flex-end;margin-bottom:8px">
+        <svg viewBox="0 0 96 96" width="56" height="56" style="flex-shrink:0" aria-hidden="true">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
+          <polygon points="20,46 48,24 76,46" fill="#3d4a8c"></polygon>
+          <rect x="42" y="58" width="12" height="19" rx="1" fill="#232c58"></rect>
+          <rect x="31" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
+          <rect x="58" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
+        </svg>
+        <div style="font-family:'Source Serif 4',serif;font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:1.3">Bostadsbidrag — vem kan få det och hur det fungerar</div>
+      </div>
+      <p style="margin:0 0 14px;font-size:14.5px"><b>Kort svar:</b> Bostadsbidrag är ett statligt stöd från Försäkringskassan till hushåll med låga inkomster… (answer-first, YMYL-språk, alltid källa).</p>
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        <tbody>
+          <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;color:#57534a;width:190px">Myndighet</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Försäkringskassan</td></tr>
+          <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;color:#57534a">Ansökan</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Löpande</td></tr>
+          <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;color:#57534a">Senast kontrollerad</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">2026-08-12</td></tr>
+        </tbody>
+      </table>
+      <div style="border-radius:10px;padding:11px 15px;font-size:14px;background:#eef0f9;color:#2f3a70;border:1px solid rgba(61,74,140,.16);margin-top:14px">Vill du veta om just du ser ut att kunna ha rätt till det här stödet? <a href="#">Gör den kostnadsfria genomgången</a>.</div>
+      <div style="border-top:1px solid #e6e2d8;margin-top:14px;padding-top:12px;font-size:13px;color:#57534a">Källa: forsakringskassan.se · Innehållet är AI-sammanställt från officiell källa — ej granskat av människa. Slutligt beslut fattas alltid av myndigheten.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 16px">6. Röst &amp; ton</h2>
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+    <table style="width:100%;border-collapse:collapse;font-size:14px">
+      <thead><tr>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0">Skriv</th>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0">Skriv aldrig</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">"ser ut att kunna ha rätt till"</td><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">"du är berättigad", "du får", "garanterat"</td></tr>
+        <tr><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">"Slutligt beslut fattas alltid av myndigheten"</td><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">något som låter som myndighetsbeslut</td></tr>
+        <tr><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">"Att ansöka själv är alltid gratis"</td><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">att dölja gratisvägen nära köpknappen</td></tr>
+        <tr><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">"AI-sammanställd från officiell källa — ej granskad av människa"</td><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">låtsad mänsklig granskning</td></tr>
+        <tr><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">"Tjänsten är inte aktiverad ännu" (ärlig 503)</td><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">låtsad funktion, tomma löften</td></tr>
+        <tr><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">Klarspråk: du-tilltal, korta meningar, vardagsord</td><td style="padding:9px 10px;border-bottom:1px solid #e6e2d8">kanslisvenska, förkortningar utan förklaring, moraliserande</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:14px 0 0">Personnummer efterfrågas aldrig, någonstans. Aldrig skam eller brådska som säljmedel — ingen countdown, inga dark patterns, inga förkryssade rutor. Tonen är lugn och respektfull, som en kunnig handläggare på användarens sida.</p>
+  </div>
+</section>
+
+<footer style="border-top:1px solid #e6e2d8;margin-top:48px;padding-top:16px;font-size:13px;color:#57534a">Bidragskoll.se designsystem · riktning Bläck (1a) · 2026-08-22 · för tillbaka ändringar till apps/web/src/styles.css, demo/demo.css och tools/genseo.mjs.</footer>
+</div>
+</x-dc>
+</body>
+</html>

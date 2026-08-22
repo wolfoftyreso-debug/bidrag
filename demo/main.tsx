@@ -229,6 +229,40 @@ function Q({ title, guidance, children }: { title: string; guidance?: string; ch
   );
 }
 
+/* Illustrationer (designsystemet Bläck, design/illustrationer/): geometriska
+   figurer, max 3 färger ur paletten, kontur i --primary-deep, varm markrad.
+   Inlinas här eftersom demon är en enda fil. aria-hidden — rubriken bär betydelsen. */
+const ILL: Record<string, React.ReactNode> = {
+  glodlampa: (
+    <svg viewBox="0 0 96 96" aria-hidden="true">
+      <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0" /><circle cx="48" cy="40" r="17" fill="#f5edd8" stroke="#8a6510" strokeWidth="2.5" /><rect x="42" y="57" width="12" height="10" rx="2" fill="#232c58" /><rect x="46.5" y="10" width="3" height="9" rx="1.5" fill="#8a6510" /><rect x="70" y="20" width="9" height="3" rx="1.5" fill="#8a6510" transform="rotate(45 74 21)" /><rect x="17" y="20" width="9" height="3" rx="1.5" fill="#8a6510" transform="rotate(-45 22 21)" />
+    </svg>
+  ),
+  hus: (
+    <svg viewBox="0 0 96 96" aria-hidden="true">
+      <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0" /><rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#232c58" strokeWidth="2.5" /><polygon points="20,46 48,24 76,46" fill="#3d4a8c" /><rect x="42" y="58" width="12" height="19" rx="1" fill="#232c58" /><rect x="31" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" strokeWidth="1.5" /><rect x="58" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" strokeWidth="1.5" />
+    </svg>
+  ),
+  familj: (
+    <svg viewBox="0 0 96 96" aria-hidden="true">
+      <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0" /><circle cx="32" cy="30" r="9" fill="#3d4a8c" /><rect x="22" y="42" width="20" height="34" rx="10" fill="#eef0f9" stroke="#232c58" strokeWidth="2.5" /><circle cx="62" cy="32" r="8" fill="#232c58" /><rect x="53" y="43" width="18" height="33" rx="9" fill="#fffdf9" stroke="#232c58" strokeWidth="2.5" /><circle cx="47" cy="56" r="6" fill="#8a97d4" /><rect x="41" y="63" width="12" height="13" rx="6" fill="#eef0f9" stroke="#232c58" strokeWidth="2" />
+    </svg>
+  ),
+};
+
+/* Framhävd nyckelfråga (Bläck): för frågorna som väger tyngst — max en per
+   flödessteg, figuren speglar frågans ämne. */
+function QFramhavd({ title, guidance, ill, children }: { title: string; guidance?: string; ill: keyof typeof ILL; children: React.ReactNode }) {
+  return (
+    <div className="fraga-framhavd">
+      <span className="scen">{ILL[ill]}</span>
+      <h1>{title}</h1>
+      {guidance && <p className="guidance">{guidance}</p>}
+      <div className="val">{children}</div>
+    </div>
+  );
+}
+
 function Likelihood({ m }: { m: ReturnType<typeof runEngine>[number]['m'] }) {
   const level = likelihoodOf(m);
   if (level === 'high') return <span className="badge success">hög sannolikhet</span>;
@@ -927,25 +961,25 @@ function App() {
       )}
 
       {step === 'entry' && (
-        <Q title="Vad behöver du hjälp med?" guidance="Berätta lite om din situation så hittar vi stöd som kan vara relevanta för dig — många stöd är sådana man inte vet att de finns. En fråga i taget.">
+        <QFramhavd ill="glodlampa" title="Vad behöver du hjälp med?" guidance="Berätta lite om din situation så hittar vi stöd som kan vara relevanta för dig — många stöd är sådana man inte vet att de finns. En fråga i taget.">
           <Choice label="Jag har svårt att få ekonomin att gå ihop" sub="Vi tar reda på vilka stöd och ersättningar du kan ha rätt till." onClick={() => advance({ track: 'personal' })} />
           <Choice label="Jag söker pengar till ett projekt eller en verksamhet" sub="Bidrag, stipendier och finansiering — för dig, din förening eller ditt företag." onClick={() => advance({ track: 'project' })} />
-        </Q>
+        </QFramhavd>
       )}
 
       {step === 'p-household' && (
-        <Q title="Bor du själv eller tillsammans med någon?">
+        <QFramhavd ill="hus" title="Bor du själv eller tillsammans med någon?">
           <Choice label="Själv" onClick={() => advance({ household: 'alone' })} />
           <Choice label="Med partner" onClick={() => advance({ household: 'partner' })} />
           <Choice label="Med andra vuxna" onClick={() => advance({ household: 'other' })} />
-        </Q>
+        </QFramhavd>
       )}
       {step === 'p-children' && (
-        <Q title="Har du barn som bor hos dig?">
+        <QFramhavd ill="familj" title="Har du barn som bor hos dig?">
           <Choice label="Ja" onClick={() => advance({ children: 'yes' })} />
           <Choice label="Ja, växelvis" onClick={() => advance({ children: 'shared' })} />
           <Choice label="Nej" onClick={() => advance({ children: 'no' })} />
-        </Q>
+        </QFramhavd>
       )}
       {step === 'p-separated' && (
         <Q title="Bor du och barnets andra förälder på skilda håll?"><YesNo on={(v) => advance({ separated: v })} /></Q>

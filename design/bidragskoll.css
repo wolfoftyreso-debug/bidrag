@@ -1,0 +1,217 @@
+/* ═══════════════════════════════════════════════════════════════
+   BIDRAGSKOLL.SE — DESIGNSYSTEM "BLÄCK" (2026-08-22)
+   Ersätter tidigare blå system. Speglar Designsystem.dc.html.
+   Förs tillbaka till: apps/web/src/styles.css, demo/demo.css,
+   tools/genseo.mjs (inbäddad CSS).
+   ═══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap');
+
+:root {
+  /* Ytor & text — varma neutraler */
+  --bg: #f7f5f0;            /* sidbakgrund */
+  --bg-deep: #efece4;       /* nedsänkta ytor, hover på subtila knappar */
+  --surface: #fffdf9;       /* kort, paneler, fält */
+  --text: #1f1d18;          /* brödtext */
+  --text-muted: #57534a;    /* sekundär text (höjd kontrast, ~6.5:1) */
+  --border: #e6e2d8;        /* standardlinje */
+  --border-strong: #d5cfc0; /* fältkanter, tabellhuvuden */
+
+  /* Primär (dämpad indigo-identitet) */
+  --primary: #3d4a8c;
+  --primary-dark: #2f3a70;
+  --primary-deep: #232c58;  /* varumärke, hero, konturer i illustrationer */
+  --primary-soft: #eef0f9;  /* markerade val, info-ytor, framhävd fråga */
+  --primary-ring: rgba(61, 74, 140, 0.28); /* fokusring 3px */
+
+  /* Semantiska */
+  --success: #3f7050; --success-soft: #ecf3ed;
+  --warning: #8a6510; --warning-soft: #f5edd8;
+  --danger:  #a33d33; --danger-soft:  #f8ebe9;
+  --accent-card-border: #d9b96a; /* kort med kvarvarande frågor */
+
+  /* Form */
+  --radius: 14px;      /* kort */
+  --radius-sm: 10px;   /* knappar, fält */
+  --radius-choice: 11px;
+  --shadow: 0 1px 3px rgba(40,36,28,.07), 0 4px 14px rgba(40,36,28,.08);
+  --shadow-lift: 0 3px 8px rgba(40,36,28,.08), 0 14px 34px rgba(40,36,28,.13);
+  --shadow-btn: 0 2px 6px rgba(35,44,88,.28);
+
+  /* Typsnitt: sans för UI, seriff för rubriker & poäng */
+  --font-sans: 'Public Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  font-family: var(--font-sans);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-size: 15px;
+  line-height: 1.6; font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+h1 { font-family: var(--font-serif); font-size: 1.75rem; font-weight: 600; letter-spacing: -.015em; margin: 0 0 .5rem; line-height: 1.25; }
+h2 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; letter-spacing: -.01em; margin: 1.5rem 0 .75rem; }
+h3 { font-size: 1rem; font-weight: 700; margin: 1rem 0 .5rem; } /* h3 förblir sans */
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 2px; }
+p { margin: .4rem 0; }
+::selection { background: var(--primary-soft); }
+
+/* ── Kort ──────────────────────────────────────────────────────── */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.35rem 1.5rem; margin-bottom: 1.05rem; box-shadow: var(--shadow); }
+.card h2:first-child, .card h3:first-child { margin-top: 0; }
+.card.accent { border-color: var(--accent-card-border); }
+
+/* ── Knappar (platta — inga gradienter; djup via kant + skugga) ── */
+button, .btn { font: inherit; font-weight: 600; border: none; color: #fff;
+  background: var(--primary); padding: .56rem 1.15rem; border-radius: var(--radius-sm);
+  cursor: pointer; display: inline-block; box-shadow: var(--shadow-btn);
+  transition: background 130ms ease, box-shadow 130ms ease, transform 80ms ease; }
+button:hover, .btn:hover { background: var(--primary-dark); text-decoration: none; }
+button:active, .btn:active { transform: translateY(1px); }
+button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+button:focus-visible, .btn:focus-visible, a:focus-visible, input:focus-visible {
+  outline: none; box-shadow: 0 0 0 3px var(--primary-ring); }
+button.secondary, .btn.secondary { background: var(--surface); color: var(--primary);
+  border: 1px solid var(--border-strong); box-shadow: none; }
+button.secondary:hover, .btn.secondary:hover { background: var(--primary-soft); border-color: var(--primary); }
+button.subtle, .btn.subtle { background: transparent; border: none; color: var(--text-muted);
+  font-weight: 500; box-shadow: none; }
+button.subtle:hover, .btn.subtle:hover { background: var(--bg-deep); }
+.btn.small { padding: .34rem .9rem; font-size: .9rem; }
+
+/* ── Svarsval ─────────────────────────────────────────────────── */
+.choice { display: block; width: 100%; text-align: left; margin-bottom: .6rem; padding: .9rem 1.05rem;
+  background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-choice);
+  cursor: pointer; font: inherit; color: var(--text); box-shadow: none; font-weight: 600;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease, transform 80ms ease; }
+.choice:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(61,74,140,.14); background: var(--surface); }
+.choice:active { transform: translateY(1px); }
+.choice.vald { background: var(--primary-soft); border: 1.5px solid var(--primary); }
+.choice-label { font-weight: 600; display: block; }
+.choice-sub { color: var(--text-muted); font-size: .84rem; display: block; margin-top: .12rem; font-weight: 400; }
+/* Illustrerat val: ikon 32-34px till vänster */
+.choice.ikon { display: flex; gap: .75rem; align-items: center; }
+.choice.ikon svg { width: 34px; height: 34px; flex-shrink: 0; }
+
+/* ── Framhävd fråga (nyckelfrågor — max en per flödessteg) ────── */
+.fraga-framhavd { background: var(--primary-soft); border: 1.5px solid var(--primary);
+  border-radius: 16px; padding: 2rem 1.75rem; text-align: center;
+  box-shadow: 0 4px 10px rgba(35,44,88,.10), 0 16px 40px rgba(35,44,88,.14); }
+.fraga-framhavd .scen { display: inline-flex; background: var(--surface);
+  border: 1px solid var(--border-strong); border-radius: 50%; padding: .9rem; margin-bottom: .75rem; }
+.fraga-framhavd .scen svg { width: 96px; height: 96px; }
+.fraga-framhavd h1 { font-size: 1.8rem; margin-bottom: .35rem; }
+.fraga-framhavd .val { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; text-align: left; }
+@media (max-width: 560px) { .fraga-framhavd .val { grid-template-columns: 1fr; } }
+
+/* ── Fält & formulär ──────────────────────────────────────────── */
+label { display: block; font-weight: 600; margin: .85rem 0 .3rem; }
+.guidance { color: var(--text-muted); font-size: .9rem; margin: .1rem 0 .35rem; font-weight: 400; }
+input, textarea, select { font: inherit; width: 100%; padding: .58rem .75rem; border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm); background: var(--surface); color: var(--text);
+  transition: border-color 120ms ease, box-shadow 120ms ease; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-ring); }
+.checkbox-row { display: flex; align-items: flex-start; gap: .55rem; margin: .85rem 0; }
+.checkbox-row input { width: auto; margin-top: .28rem; accent-color: var(--primary); }
+.checkbox-row label { margin: 0; font-weight: 500; }
+
+/* ── Badges & alerts ──────────────────────────────────────────── */
+.badge { display: inline-block; padding: .14rem .6rem; border-radius: 999px; font-size: .77rem; font-weight: 650;
+  letter-spacing: .01em; background: var(--bg-deep); color: var(--text-muted); border: 1px solid var(--border); }
+.badge.success { background: var(--success-soft); color: var(--success); border-color: transparent; }
+.badge.warning { background: var(--warning-soft); color: var(--warning); border-color: transparent; }
+.badge.danger  { background: var(--danger-soft);  color: var(--danger);  border-color: transparent; }
+.badge.info    { background: var(--primary-soft); color: var(--primary-dark); border-color: transparent; }
+
+.alert { border-radius: var(--radius-sm); padding: .75rem 1rem; margin: .75rem 0; font-size: .92rem; border: 1px solid transparent; }
+.alert.error   { background: var(--danger-soft);  color: var(--danger);  border-color: rgba(163,61,51,.16); }
+.alert.warning { background: var(--warning-soft); color: var(--warning); border-color: rgba(138,101,16,.18); }
+.alert.success { background: var(--success-soft); color: var(--success); border-color: rgba(63,112,80,.18); }
+.alert.info    { background: var(--primary-soft); color: var(--primary-dark); border-color: rgba(61,74,140,.16); }
+
+/* ── Matchrad & förklaring ────────────────────────────────────── */
+.match-row { display: flex; align-items: flex-start; gap: 1.1rem; padding: 1rem .4rem;
+  border-bottom: 1px solid var(--border); border-radius: var(--radius-sm); transition: background 120ms ease; }
+.match-row:hover { background: var(--bg); }
+.match-row:last-child { border-bottom: none; }
+.match-score { min-width: 64px; text-align: center; }
+.match-score .n { font-family: var(--font-serif); font-size: 1.65rem; font-weight: 600; letter-spacing: -.01em; }
+.match-score .of { color: var(--text-muted); font-size: .75rem; }
+
+.explain { margin-top: .6rem; padding: .75rem .95rem; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; }
+.exp-item { display: flex; gap: .5rem; align-items: baseline; padding: .16rem 0; font-size: .88rem; }
+.exp-ic { width: 1rem; text-align: center; flex-shrink: 0; font-weight: 700; }
+.exp-ic.pass { color: var(--success); } .exp-ic.fail { color: var(--danger); } .exp-ic.unknown { color: var(--warning); }
+
+/* ── Tabell & nyckel/värde ────────────────────────────────────── */
+table.data { width: 100%; border-collapse: collapse; font-size: .92rem; }
+table.data th { text-align: left; color: var(--text-muted); font-weight: 650; font-size: .8rem;
+  text-transform: uppercase; letter-spacing: .045em; padding: .45rem .6rem; border-bottom: 1px solid var(--border-strong); }
+table.data td { padding: .55rem .6rem; border-bottom: 1px solid var(--border); }
+table.data tr:hover td { background: var(--bg); }
+.kv { display: grid; grid-template-columns: 190px 1fr; gap: .35rem 1rem; font-size: .92rem; }
+.kv dt { color: var(--text-muted); } .kv dd { margin: 0; }
+.meta-line { color: var(--text-muted); font-size: .85rem; }
+.source-line { border-top: 1px solid var(--border); margin-top: 1rem; padding-top: .8rem; font-size: .85rem; color: var(--text-muted); }
+
+/* ── Progress & frågelista (F-STABIL / F-INFO) ────────────────── */
+.progress-steps { display: flex; gap: .35rem; margin-bottom: 1.25rem; }
+.progress-steps span { flex: 1; height: 4px; border-radius: 2px; background: #ddd8cc; transition: background 200ms ease; }
+.progress-steps span.done { background: var(--primary); }
+
+.q-context { color: var(--text-muted); font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .1rem; }
+.q-row { margin: .7rem 0; }
+.card.accent .q-row { padding: .65rem 0; margin: 0; }
+.card.accent .q-row + .q-row { border-top: 1px solid var(--border); }
+.q-row-dim { opacity: .62; } .q-row-dim:hover { opacity: 1; }
+
+.info-knapp { font: inherit; font-weight: 700; font-size: .72rem; line-height: 1; cursor: pointer;
+  width: 1.25rem; height: 1.25rem; border-radius: 50%; border: 1.5px solid var(--primary);
+  color: var(--primary); background: var(--surface); vertical-align: 2px; padding: 0; box-shadow: none; }
+.info-knapp:hover, .info-knapp[aria-expanded="true"] { background: var(--primary); color: #fff; }
+.inforuta { background: var(--primary-soft); border-left: 3px solid var(--primary);
+  border-radius: 0 10px 10px 0; padding: .7rem .95rem; margin: .45rem 0; font-size: .9rem; }
+.inforuta ul { margin: .35rem 0 .45rem; padding-left: 1.1rem; }
+.inforuta li { margin-bottom: .3rem; }
+
+.svar-kvitto { display: flex; justify-content: space-between; align-items: baseline; gap: .8rem; flex-wrap: wrap;
+  background: var(--success-soft); color: var(--success); border: 1px solid var(--success);
+  border-radius: var(--radius-sm); padding: .55rem .85rem; margin: .6rem 0; font-size: .9rem; }
+
+/* ── Betalyta & teaser ────────────────────────────────────────── */
+.paybox { margin-top: 1rem; padding: .95rem 1.05rem; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; }
+.payrow { display: flex; justify-content: space-between; padding: .3rem 0; font-size: .95rem; }
+.payrow span:first-child { color: var(--text-muted); }
+.blurred { filter: blur(4.5px); user-select: none; -webkit-user-select: none; opacity: .85; }
+
+.linkish { font: inherit; font-weight: 600; color: var(--primary); background: none; border: none;
+  padding: 0; cursor: pointer; text-align: left; box-shadow: none; }
+.linkish:hover { text-decoration: underline; text-underline-offset: 2px; background: none; }
+.linkish.dim { color: var(--text-muted); }
+
+/* ── Varumärke & sidomeny ─────────────────────────────────────── */
+.brand { font-family: var(--font-serif); font-weight: 700; font-size: 1.3rem; letter-spacing: -.01em; color: var(--primary-deep); }
+.brand::before { content: ''; display: inline-block; width: .62rem; height: .62rem; margin-right: .45rem;
+  border-radius: 3px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%); }
+.sidebar-demo { width: 236px; background: var(--surface); border-right: 1px solid var(--border);
+  padding: 1.35rem .9rem; display: flex; flex-direction: column; gap: .2rem; }
+.sidebar-demo a { padding: .52rem .65rem; border-radius: var(--radius-sm); color: var(--text); font-weight: 500;
+  border-left: 3px solid transparent; }
+.sidebar-demo a:hover { background: var(--bg-deep); text-decoration: none; }
+.sidebar-demo a.active { background: var(--primary-soft); color: var(--primary-dark); font-weight: 650; border-left-color: var(--primary); }
+
+/* ── Illustrationer ───────────────────────────────────────────────
+   Geometriska figurer (cirkel, rektangel, triangel) ur illustrationer/.
+   Regler: max 3 färger per figur ur paletten · kontur 2.5px i
+   --primary-deep · alltid varm markrad (#d5cfc0) · inga ansikts-
+   detaljer, ingen skuggning, inga gradienter · alltid intill text
+   den förtydligar, aldrig ren dekor · en figur per skärm.
+   Storlekar: 24px inline-ikon · 72px spot · 96-120px scen. */
+.ill-spot { width: 72px; height: 72px; }
+.ill-scen { width: 120px; height: 120px; }
+.ill-halo { background: var(--primary-soft); border-radius: 50%; padding: 9px; }
+
+.tomt-lage { text-align: center; padding: 1.5rem 1rem; }
+.tomt-lage svg { width: 96px; height: 96px; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
