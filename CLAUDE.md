@@ -206,10 +206,16 @@ miljön och handboken fördjupas då skärm för skärm.
    `renderDocument`, `validateDocumentAnswers` och demon bundlar core — visa
    dokumentet som text + kopiera-knapp (artefaktsandlådan blockerar
    nedladdningslänkar).
-3. **SEO Tier 1-guiderna** — 12 redaktionella guide-/jämförelsesidor under
-   `/guider/` enligt `docs/SEO_STRATEGY.md` (frågematrisen i
-   `seo/questions-tier1.json` styr; answer-first, YMYL-språk, källor).
-   SERP-luckorna är belagda i `docs/SEO_SERP_RESEARCH.md`. Efter deploy:
+3. **Innehållsmotorn enligt `docs/CONTENT_ENGINE.md`** — styrdokumentet för
+   allt redaktionellt/SEO-innehåll (fem doktriner, sju lager, gold standard,
+   Content Authority Score, förbudslista). Byggordning: **F0** (interaktiv
+   behörighetskontroll + ändringshistorik på entity-sidorna, `/situationer/`-
+   nodtypen — ren utveckling, kan starta direkt) → **F1** bevispaketet
+   (25 kluster, 10 situationsmanualer m.m. — de tidigare "Tier 1-guiderna"
+   ingår här; `seo/questions-tier1.json` + `docs/SEO_ANSWER_CLUSTERS.md` styr)
+   → **F2** erfarenhetslagret (licensgenomgång först; datakontrakt i
+   `seo/beviljade-projekt.schema.json` + `seo/erfarenheter.schema.json`) →
+   **F3** länkbara tillgångar. Öppna beslut: CONTENT_ENGINE §11. Efter deploy:
    GSC-verifiering + `docs/SEO_BASELINE.md`-loopen.
 4. **Mänsklig gransknings-kö** — arbetsflöde som lyfter stöd från
    `ai_curated` till `human_verified` mot levande källor (motförhörets A-fynd).

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bidragskoll.se/schemas/beviljat-projekt.json",
+  "title": "Beviljat projekt — normaliserad post i erfarenhetslagret",
+  "description": "Datakontrakt för lager 4 (erfarenhetslagret) i docs/CONTENT_ENGINE.md §6. Poster får ENDAST skapas ur publicerade officiella källor (Vinnovas projektdatabas/API, Arvsfondens projektdatabas, Tillväxtverkets Projektbank, Jordbruksverkets stödmottagarsökning m.fl.) och först efter licens-/villkorsgenomgång per källa (beslut §11.3). Ingen post utan käll-URL. Analys­sidor som bygger på datasetet ska redovisa metod, avgränsning, analysdatum, antal poster och vad som inte går att slutleda.",
+  "type": "object",
+  "required": ["id", "kalla", "kall_url", "hamtad", "finansiar", "program", "beslutsar", "mottagartyp", "evidensniva"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "description": "Bidragskolls stabila ID, t.ex. 'bp-vinnova-2023-01234'." },
+    "kalla": { "type": "string", "enum": ["vinnova", "arvsfonden", "tillvaxtverket", "jordbruksverket", "mucf", "esf", "formas", "energimyndigheten", "kulturradet", "annan_officiell"], "description": "Källdatabasen. 'annan_officiell' kräver att kall_url pekar på en offentligt publicerad databas/beslutslista." },
+    "kall_id": { "type": ["string", "null"], "description": "Källdatabasens eget diarie-/projekt-ID, om publicerat." },
+    "kall_url": { "type": "string", "format": "uri", "description": "URL till originalposten. Obligatorisk — varje analys länkar till originalen." },
+    "kall_licens": { "type": ["string", "null"], "description": "Licens/villkor för vidareutnyttjande enligt källans egen dokumentation (t.ex. 'CC0', 'egen villkorstext, se URL'). null = ännu ej bedömd ⇒ posten får inte publiceras." },
+    "hamtad": { "type": "string", "format": "date", "description": "Datum då posten hämtades/kontrollerades mot källan." },
+    "finansiar": { "type": "string", "description": "Finansiärens namn som källan anger." },
+    "program": { "type": "string", "description": "Program/utlysning som källan anger." },
+    "beslutsar": { "type": "integer", "minimum": 1970, "maximum": 2100 },
+    "projektnamn": { "type": ["string", "null"], "description": "Publicerat projektnamn. Utelämnas (null) om publicering av namnet inte är förenlig med källans villkor." },
+    "belopp_sek": { "type": ["integer", "null"], "minimum": 0, "description": "Beviljat belopp i SEK om publicerat; annars null — aldrig uppskattat." },
+    "belopp_kommentar": { "type": ["string", "null"], "description": "T.ex. 'delfinansiering', 'ram över 3 år' — endast ur källan." },
+    "mottagartyp": { "type": "string", "enum": ["ideell_forening", "stiftelse", "aktiebolag", "enskild_firma", "kommun", "region", "universitet_hogskola", "myndighet", "ekonomisk_forening", "trossamfund", "privatperson", "annan", "okand"], "description": "Normaliserad typ. 'okand' när källan inte anger — gissa aldrig." },
+    "geografi": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "lan": { "type": ["string", "null"] },
+        "kommun": { "type": ["string", "null"] },
+        "nationellt": { "type": ["boolean", "null"] }
+      },
+      "description": "Endast vad källan publicerar."
+    },
+    "amneskategori": { "type": "array", "items": { "type": "string" }, "description": "Bidragskolls normaliserade kategorier (samma vokabulär som seedens kategorier där möjligt)." },
+    "malgrupp": { "type": ["string", "null"], "description": "Projektets målgrupp enligt källans beskrivning." },
+    "sammanfattning_kalla": { "type": ["string", "null"], "description": "Kort citat/referat av källans egen projektbeskrivning. Analys och slutsatser bor ALDRIG här — de bor i analysdokumenten med metodredovisning." },
+    "medfinansiering": { "type": ["boolean", "null"], "description": "true/false endast om källan anger det; annars null." },
+    "samarbetsform": { "type": ["string", "null"], "description": "T.ex. 'konsortium', 'ensam sökande' — endast ur källan." },
+    "evidensniva": { "type": "string", "const": "A", "description": "Beviljade projekt ur officiella databaser är per definition nivå A (officiellt verifierad). Andra nivåer hör hemma i erfarenheter.schema.json." },
+    "relaterade_stod_slugs": { "type": "array", "items": { "type": "string" }, "description": "Slugs i Bidragskolls kunskapsbas som programmet motsvarar/liknar — kopplingen till innehållsgrafen." },
+    "noteringar": { "type": ["string", "null"], "description": "Redaktionell anteckning (t.ex. dubblettmisstanke, källkonflikt). Publiceras inte." }
+  }
+}

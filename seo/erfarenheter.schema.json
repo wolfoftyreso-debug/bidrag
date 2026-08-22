@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bidragskoll.se/schemas/erfarenhet.json",
+  "title": "Verifierad erfarenhet — strukturerad post i erfarenhetsbanken",
+  "description": "Datakontrakt för erfarenhetsbanken i docs/CONTENT_ENGINE.md §6. Erfarenheter lämnas via strukturerat formulär och genomgår redaktionell granskning före publicering — aldrig öppet forum. Evidensnivån styr hur innehållet får användas: A/B får presenteras som kunskap, C som redovisad intervju, D endast som forskningsfråga internt. Ingen post innehåller personnummer eller onödig persondata; hälso- och andra art. 9-uppgifter får inte förekomma i fritextfälten (redaktionen stryker före lagring).",
+  "type": "object",
+  "required": ["id", "stod_slug", "sokandetyp", "omgang", "utfall", "evidensniva", "granskad_av_redaktionen", "inlamnad", "samtycke_publicering"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "description": "Stabilt ID, t.ex. 'erf-2026-0001'." },
+    "stod_slug": { "type": "string", "description": "Slug i Bidragskolls kunskapsbas som ansökan gällde. Okänt stöd ⇒ posten kan inte publiceras mot en stödsida." },
+    "program_precisering": { "type": ["string", "null"], "description": "Utlysning/omgångsnamn om det preciserar stödet." },
+    "sokandetyp": { "type": "string", "enum": ["privatperson", "ideell_forening", "stiftelse", "aktiebolag", "enskild_firma", "ekonomisk_forening", "kommun_region", "universitet_hogskola", "annan"], "description": "Typ — aldrig identitet. Storlek i eget fält; namn lagras aldrig i denna post (kontaktuppgifter för verifiering hålls separat och raderas enligt rutin)." },
+    "sokandestorlek": { "type": ["string", "null"], "description": "Grov storleksklass, t.ex. '0 anställda', '1–9', '10–49', 'förening ~200 medlemmar'." },
+    "omgang": { "type": "string", "description": "Ansökningsomgång/tidsperiod, t.ex. '2025 höst'." },
+    "sokt_belopp": { "type": ["string", "null"], "description": "Belopp eller intervall som text, t.ex. '150 000 kr' eller '100–200 tkr'. Intervall föredras för avidentifiering." },
+    "utfall": { "type": "string", "enum": ["beviljad", "delvis_beviljad", "avslag", "avvisad", "aterkallad", "vantar"], "description": "'avvisad' = föll på formell grund utan sakprövning." },
+    "avslagsgrund_kategori": { "type": ["array", "null"], "items": { "type": "string", "enum": ["obehorig_sokande", "for_sen_ansokan", "fel_malgrupp", "svag_syfteskoppling", "orealistiska_mal", "svag_aktivitetsplan", "inkonsekvent_budget", "saknade_bilagor", "bristande_kapacitet", "otillaten_kostnad", "dubbel_finansiering", "otillracklig_medfinansiering", "demokrativillkor", "otillracklig_dokumentation", "medelsbrist_konkurrens", "annan", "okand"] }, "description": "Avslagsbibliotekets kategorier (CONTENT_ENGINE §4.7). Endast vad beslutet/underlaget faktiskt anger; 'okand' hellre än gissning." },
+    "avslagsgrund_rattbar": { "type": ["boolean", "null"], "description": "Redaktionens klassning: går bristen att åtgärda i ny ansökan? null tills bedömd." },
+    "handlaggningstid_dagar": { "type": ["integer", "null"], "minimum": 0, "description": "Faktiskt observerad tid ansökan→beslut, om känd." },
+    "komplettering": { "type": ["string", "null"], "description": "Vad som efterfrågades under handläggningen." },
+    "svaraste_moment": { "type": ["string", "null"], "description": "T.ex. 'budgeten', 'målformuleringen', 'bilagorna'." },
+    "viktigaste_lardom": { "type": ["string", "null"], "description": "Vad sökanden skulle göra annorlunda — sökandens egna ord, redaktionellt varsamt redigerade." },
+    "evidensniva": { "type": "string", "enum": ["A", "B", "C", "D"], "description": "A = officiellt verifierad (publicerat beslut/databas). B = dokumentverifierad (underlag kontrollerat + avidentifierat av redaktionen). C = intervjubaserad (identifierad person, inget dokument). D = obekräftad — publiceras aldrig som kunskap." },
+    "verifieringsnot": { "type": ["string", "null"], "description": "Hur verifieringen gjordes (t.ex. 'beslutsbrev uppvisat 2026-05-02, avidentifierat'). Publiceras i sammandrag på nivå B/C." },
+    "granskad_av_redaktionen": { "type": "boolean", "description": "Måste vara true innan posten används i något publikt innehåll." },
+    "granskare": { "type": ["string", "null"], "description": "Intern signatur för granskningen (publiceras ej)." },
+    "inlamnad": { "type": "string", "format": "date" },
+    "samtycke_publicering": { "type": "boolean", "description": "Uppgiftslämnarens uttryckliga samtycke till publicering i avidentifierad form. false ⇒ posten får endast användas aggregerat internt." },
+    "noteringar": { "type": ["string", "null"], "description": "Interna anteckningar. Publiceras aldrig." }
+  }
+}
