@@ -46,3 +46,5 @@ dessutom webbappen (`npm run dev:web`).
 - `gendocs.mjs`, `gendocs-long.mjs` — genererar alla dokumentmallar för granskning av rendering och radbrytning
 
 Rapporterna från revisionerna ligger i `docs/reports/`.
+
+- `seoaudit.mjs` — SEO-revisionens mätverktyg: moduler mot gold standard-20, länkdjup, ordmängd, sidvikt, täckning mot intents-100/query-universum → `artifacts/seo-audit.json` (kör `node tools/genseo.mjs && node tools/seoaudit.mjs`; rapport i docs/SEO_REVISION_01.md)
