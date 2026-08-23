@@ -42,6 +42,13 @@ F-EGEN, F-RELEVANS-metodiken och a11y-passet — metoden fungerar.
 - [ ] Konkurrentsvep: har namngrannen, foraldrakalkylatorn, hejaolika,
       lånesajterna byggt något bättre sedan sist?
 
+**Bedrägeri & attacker (stående svit + nya försök)**
+- [ ] Kör `apps/api/test/adversarial.test.ts` — den stående sviten (pris/belopp,
+      consent, gratisväg, replay, kredit-race A1, cross-tenant, mass-assignment,
+      rolleskalering, mock-gate). Lägg till ett nytt attackscenario varje pass.
+- [ ] Nya bedrägerivägar: kan något köp ge mer än det betalda? Nya race/TOCTOU
+      i kredit-/tillståndsförbrukning? (samtidighetstest, inte bara sekventiellt.)
+
 **Säkerhet & integritet (stickprov)**
 - [ ] Försök nå annan användares data (tenant-isolation testas i sviten —
       försök förbi den). Ligger något känsligt i URL:er/loggar?

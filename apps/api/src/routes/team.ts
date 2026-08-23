@@ -204,8 +204,19 @@ export async function teamRoutes(app: FastifyInstance) {
         });
       }
 
+      // Red team RT03-adversariell (LOW): gör accepteringen atomisk. Den
+      // villkorade UPDATE:n (acceptedAt endast om fortfarande null) är gaten —
+      // bara vinnaren av två samtidiga anrop får en rad tillbaka och skapar
+      // medlemskapet; förloraren möts av 410. Utan detta kunde en kapplöpning
+      // ge dubbla medlemskapsrader (rollen tas alltid från inbjudan, så ingen
+      // privilegie-eskalering — men en dublett).
+      const claim = await db
+        .update(invites)
+        .set({ acceptedAt: new Date() })
+        .where(and(eq(invites.id, invite.id), isNull(invites.acceptedAt)))
+        .returning({ id: invites.id });
+      if (claim.length === 0) return reply.code(410).send({ error: 'already_accepted' });
       await db.insert(memberships).values({ userId: request.auth!.userId, tenantId: invite.tenantId, role: invite.role });
-      await db.update(invites).set({ acceptedAt: new Date() }).where(eq(invites.id, invite.id));
       await audit({
         tenantId: invite.tenantId,
         actorType: 'user',

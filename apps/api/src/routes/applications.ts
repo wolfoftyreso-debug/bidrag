@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import { InvalidTransitionError, generationGuards, type ApplicationState } from '@bidrag/core';
 import { db } from '../db/client.ts';
 import {
@@ -93,8 +93,37 @@ export async function applicationRoutes(app: FastifyInstance) {
       // Prismodellen: att förbereda en ansökan i systemet kostar 19 kr per
       // ansökan. Gaten ligger efter roll- (403) och ägarskapskontrollen (404)
       // så att svaren aldrig läcker information om främmande projekt.
-      const credits = await applicationCredits(tenantId, projectId);
-      if (credits.remaining <= 0) {
+      //
+      // Red team RT03-adversariell HIGH (TOCTOU): kontroll-och-förbrukning MÅSTE
+      // vara atomisk. Utan lås läser N parallella anrop alla remaining=1 och
+      // multiplicerar ett enda 19-kr-köp till många ansökningar. Ett
+      // pg_advisory_xact_lock på (tenant, projekt) serialiserar re-kontrollen
+      // och case-skapandet i samma transaktion — den andra samtidiga
+      // förfrågan ser den förbrukade krediten och möts av 402.
+      const lockKey = `appcredit:${tenantId}:${projectId}`;
+      let outcome: { row: typeof applicationCases.$inferSelect } | 'payment_required' | 'retry' = 'retry';
+      // Icke-blockerande try-lock med bounded retry: en samtidig förfrågan som
+      // inte får låset committar direkt (släpper pool-connectionen) och försöker
+      // igen — aldrig blockerande väntan som håller en connection och svälter
+      // poolen. Låset serialiserar kontroll-och-förbrukning så att en kredit ger
+      // exakt en ansökan även under en burst.
+      try {
+        for (let attempt = 0; attempt < 60 && outcome === 'retry'; attempt++) {
+          outcome = await db.transaction(async (tx) => {
+            const got = await tx.execute(sql`SELECT pg_try_advisory_xact_lock(hashtext(${lockKey})) AS ok`);
+            if (!(got.rows[0] as { ok: boolean }).ok) return 'retry' as const;
+            const credits = await applicationCredits(tenantId, projectId, tx);
+            if (credits.remaining <= 0) return 'payment_required' as const;
+            return { row: await createCase({ tenantId, userId: request.auth!.userId, projectId, opportunityId }, tx) };
+          });
+        }
+      } catch (err) {
+        const status = (err as { statusCode?: number }).statusCode;
+        if (status) return reply.code(status).send({ error: (err as Error).message });
+        throw err;
+      }
+      if (outcome === 'retry') return reply.code(409).send({ error: 'busy', message: 'Försök igen om en stund.' });
+      if (outcome === 'payment_required') {
         return reply.code(402).send({
           error: 'payment_required',
           message: 'Att förbereda en ansökan i systemet kostar 19 kr per ansökan.',
@@ -102,15 +131,7 @@ export async function applicationRoutes(app: FastifyInstance) {
           currency: 'SEK',
         });
       }
-
-      try {
-        const row = await createCase({ tenantId, userId: request.auth!.userId, projectId, opportunityId });
-        return reply.code(201).send({ application: row });
-      } catch (err) {
-        const status = (err as { statusCode?: number }).statusCode;
-        if (status) return reply.code(status).send({ error: (err as Error).message });
-        throw err;
-      }
+      return reply.code(201).send({ application: outcome.row });
     },
   );
 

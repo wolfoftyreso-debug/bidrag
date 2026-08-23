@@ -28,7 +28,9 @@ import {
   type EvidenceRequirement,
   type FieldValidationIssue,
 } from '@bidrag/core';
-import { db } from '../db/client.ts';
+import { db, type Db } from '../db/client.ts';
+/** En körande transaktion (samma yta som db) — låter createCase köra i tenant-lås. */
+type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 import {
   applicantProfiles,
   applicationCases,
@@ -710,8 +712,8 @@ export async function createCase(opts: {
   userId: string;
   projectId: string;
   opportunityId: string;
-}): Promise<typeof applicationCases.$inferSelect> {
-  const [opp] = await db
+}, conn: Db | Tx = db): Promise<typeof applicationCases.$inferSelect> {
+  const [opp] = await conn
     .select()
     .from(fundingOpportunities)
     .where(eq(fundingOpportunities.id, opts.opportunityId))
@@ -722,9 +724,9 @@ export async function createCase(opts: {
   if (!opp.currentRuleVersionId) {
     throw Object.assign(new Error('opportunity has no published rules'), { statusCode: 422 });
   }
-  const [rv] = await db.select().from(ruleVersions).where(eq(ruleVersions.id, opp.currentRuleVersionId)).limit(1);
+  const [rv] = await conn.select().from(ruleVersions).where(eq(ruleVersions.id, opp.currentRuleVersionId)).limit(1);
 
-  const [schemaRow] = await db
+  const [schemaRow] = await conn
     .select()
     .from(applicationSchemas)
     .where(eq(applicationSchemas.opportunityId, opp.id))
@@ -735,7 +737,7 @@ export async function createCase(opts: {
   let answers: Answers = {};
   let answerProvenance: Record<string, string> = {};
   if (schemaRow) {
-    const canonicalRows = await db
+    const canonicalRows = await conn
       .select()
       .from(canonicalAnswers)
       .where(eq(canonicalAnswers.tenantId, opts.tenantId));
@@ -754,7 +756,7 @@ export async function createCase(opts: {
     schemaVersion: schemaRow?.version ?? null,
   };
 
-  const [row] = await db
+  const [row] = await conn
     .insert(applicationCases)
     .values({
       tenantId: opts.tenantId,

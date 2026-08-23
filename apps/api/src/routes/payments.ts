@@ -9,6 +9,7 @@
 import type { FastifyInstance } from 'fastify';
 import { and, count, desc, eq, sql } from 'drizzle-orm';
 import { db } from '../db/client.ts';
+type CreditConn = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
 import { applicationCases, payments, projects, receipts } from '../db/schema.ts';
 import { audit } from '../audit.ts';
 import { config } from '../config.ts';
@@ -41,8 +42,8 @@ export async function isProjectUnlocked(tenantId: string, projectId: string): Pr
  * application_unlock-köp för projektet minus antal redan skapade ansökningar.
  * Härlett ur betalningskedjan varje gång — ingen räknare som kan glida.
  */
-export async function applicationCredits(tenantId: string, projectId: string) {
-  const [bought] = await db
+export async function applicationCredits(tenantId: string, projectId: string, conn: CreditConn = db) {
+  const [bought] = await conn
     .select({ total: sql<number>`coalesce(sum(${payments.credits}), 0)` })
     .from(payments)
     .where(
@@ -53,7 +54,7 @@ export async function applicationCredits(tenantId: string, projectId: string) {
         eq(payments.state, 'confirmed'),
       ),
     );
-  const [used] = await db
+  const [used] = await conn
     .select({ n: count() })
     .from(applicationCases)
     .where(and(eq(applicationCases.tenantId, tenantId), eq(applicationCases.projectId, projectId)));

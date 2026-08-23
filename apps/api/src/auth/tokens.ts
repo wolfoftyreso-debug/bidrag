@@ -21,7 +21,9 @@ export async function signAccessToken(claims: AccessTokenClaims): Promise<string
 
 export async function verifyAccessToken(token: string): Promise<AccessTokenClaims | null> {
   try {
-    const { payload } = await jwtVerify(token, secret, { issuer: 'bidragskoll.se' });
+    // Pinna algoritmen explicit (defense-in-depth mot alg-förväxling) — vi
+    // signerar bara HS256; acceptera inget annat vid verifiering.
+    const { payload } = await jwtVerify(token, secret, { issuer: 'bidragskoll.se', algorithms: ['HS256'] });
     if (!payload.sub) return null;
     return { sub: payload.sub, email: String(payload.email ?? '') };
   } catch {

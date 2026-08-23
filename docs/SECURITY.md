@@ -8,7 +8,12 @@
   (Secure in production).
 - Refresh tokens: 256-bit random, stored as SHA-256 hashes, rotated on every
   use, revocable, 30-day TTL, path-scoped cookie.
-- Rate limits: 10/min on register/login, 300/min globally.
+- Rate limits: 10/min on register/login, 300/min globally — **per instance
+  (in-memory store)**; in the Vercel serverless model these are not shared
+  across instances, so the effective limit scales with instance count. Honest
+  caveat + shared-store fix tracked in LIMITATIONS §12 / backlog M13.
+- Source fetching re-validates every redirect hop against private-address
+  blocklists (no redirect-follow SSRF); DNS-rebinding residual in LIMITATIONS §13.
 
 ## Tenant isolation (§27)
 

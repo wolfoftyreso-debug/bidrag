@@ -32,8 +32,10 @@ const PACKS = {
   application: { credits: 99, price: () => config.applicationPriceMinor, label: 'Förbered ansökan — alla dokument' },
 } as const;
 
-async function creditState(tenantId: string, projectId: string) {
-  const [bought] = await db
+type DocCreditConn = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+async function creditState(tenantId: string, projectId: string, conn: DocCreditConn = db) {
+  const [bought] = await conn
     .select({ total: sql<number>`coalesce(sum(${payments.credits}), 0)` })
     .from(payments)
     .where(
@@ -44,7 +46,7 @@ async function creditState(tenantId: string, projectId: string) {
         eq(payments.state, 'confirmed'),
       ),
     );
-  const [used] = await db
+  const [used] = await conn
     .select({ n: count() })
     .from(generatedDocuments)
     .where(and(eq(generatedDocuments.tenantId, tenantId), eq(generatedDocuments.projectId, projectId)));
@@ -268,20 +270,43 @@ export async function documentStudioRoutes(app: FastifyInstance) {
         date: new Date().toISOString().slice(0, 10),
       });
 
-      const [row] = await db
-        .insert(generatedDocuments)
-        .values({
-          tenantId,
-          projectId: id,
-          opportunitySlug: body.opportunitySlug ?? null,
-          opportunityTitle,
-          templateKey: template.key,
-          title: rendered.title,
-          content: rendered.text,
-          answers: body.answers,
-          createdBy: request.auth!.userId,
-        })
-        .returning();
+      // Red team RT03-adversariell MEDIUM (TOCTOU): samma race som ansöknings-
+      // krediten — kontroll-och-förbrukning måste serialiseras per (tenant,
+      // projekt), annars kan parallella anrop överskrida dokumentkrediterna.
+      const lockKey = `doccredit:${tenantId}:${id}`;
+      let result: { row: typeof generatedDocuments.$inferSelect } | 'no_credits' | 'retry' = 'retry';
+      for (let attempt = 0; attempt < 60 && result === 'retry'; attempt++) {
+        result = await db.transaction(async (tx) => {
+          const got = await tx.execute(sql`SELECT pg_try_advisory_xact_lock(hashtext(${lockKey})) AS ok`);
+          if (!(got.rows[0] as { ok: boolean }).ok) return 'retry' as const;
+          const recheck = await creditState(tenantId, id, tx);
+          if (recheck.remaining <= 0) return 'no_credits' as const;
+          const [inserted] = await tx
+            .insert(generatedDocuments)
+            .values({
+              tenantId,
+              projectId: id,
+              opportunitySlug: body.opportunitySlug ?? null,
+              opportunityTitle,
+              templateKey: template.key,
+              title: rendered.title,
+              content: rendered.text,
+              answers: body.answers,
+              createdBy: request.auth!.userId,
+            })
+            .returning();
+          return { row: inserted! };
+        });
+      }
+      if (result === 'retry') return reply.code(409).send({ error: 'busy', message: 'Försök igen om en stund.' });
+      if (result === 'no_credits') {
+        return reply.code(402).send({
+          error: 'no_document_credits',
+          message: 'Köp dokumentförberedelse för att skapa dokument.',
+          prices: { application: config.applicationPriceMinor },
+        });
+      }
+      const row = result.row;
 
       await audit({
         tenantId,

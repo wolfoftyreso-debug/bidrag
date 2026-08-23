@@ -84,15 +84,28 @@ export async function fetchSource(sourceId: string): Promise<FetchOutcome> {
   let error: string | undefined;
 
   try {
-    const url = await assertSafeUrl(source.url);
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
     try {
-      const res = await fetch(url, {
-        signal: controller.signal,
-        redirect: 'follow',
-        headers: { 'User-Agent': 'Bidragskoll.se source monitor (+https://bidragskoll.se)' },
-      });
+      // Red team RT03-adversariell SSRF: följ redirects MANUELLT och kör
+      // assertSafeUrl på VARJE hop. Med redirect:'follow' återvaliderades
+      // aldrig Location, så en källa kunde 302:a till 169.254.169.254 (moln-
+      // metadata) eller 127.0.0.1 och läcka interna adresser. Nu blockeras
+      // varje hop mot privata adresser; redirect-kedjan är bounded.
+      let url = await assertSafeUrl(source.url);
+      let res: Response;
+      for (let hop = 0; ; hop++) {
+        res = await fetch(url, {
+          signal: controller.signal,
+          redirect: 'manual',
+          headers: { 'User-Agent': 'Bidragskoll.se source monitor (+https://bidragskoll.se)' },
+        });
+        if (res.status < 300 || res.status >= 400) break;
+        if (hop >= 5) throw new Error('Too many redirects');
+        const location = res.headers.get('location');
+        if (!location) break;
+        url = await assertSafeUrl(new URL(location, url).href); // varje hop revalideras
+      }
       httpStatus = res.status;
       contentType = res.headers.get('content-type');
       const buf = Buffer.from(await res.arrayBuffer());

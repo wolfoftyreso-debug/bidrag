@@ -259,3 +259,33 @@ Also from the counter-audit, still open: full WCAG review (targeted fixes
 shipped: focus management in the one-question intake, progressbar semantics,
 aria-live on payment status — the rest of the app is unreviewed); external
 user testing beyond one session; commercial validation with real customers.
+
+## 12. Rate limiting is per-instance in the serverless model (red team RT03)
+
+The API's rate limits (10/min register/login, 5/min password-reset, 300/min
+global — `apps/api/src/server.ts`, `routes/auth.ts`) use `@fastify/rate-limit`
+with its **default in-memory store**. In the primary Vercel deploy the API
+runs as a serverless function: each container has isolated memory and the
+platform scales out horizontally under load, so per-IP counters are not shared
+between instances — the effective limit becomes roughly
+`instances × configured_limit`, and cold starts reset the counters. This
+materially weakens brute-force/credential-stuffing protection on `/v1/auth/*`
+and registration spam in that model. It does NOT weaken the one-time codes
+themselves (~73 bits of entropy, not brute-forceable) or any money/tenant
+invariant. The honest fix is a shared store (Vercel KV / Upstash Redis) wired
+into `@fastify/rate-limit` — tracked as backlog M13. Until then the limits are
+best-effort per instance, and this is the accurate statement (SECURITY.md
+corrected accordingly).
+
+## 13. SSRF residual: DNS rebinding on source fetch (red team RT03)
+
+Source fetching (`apps/api/src/services/ingestion.ts`) validates the URL and
+now re-validates every redirect hop against private-address blocklists
+(`assertSafeUrl`), closing the redirect-follow SSRF. A narrow residual remains:
+`assertSafeUrl` resolves DNS and `fetch` resolves again separately, so an
+attacker-controlled DNS that returns a public IP at validation and a private
+IP at fetch time (rebinding) could still be reached. Fully closing it requires
+connecting to a pinned resolved IP with an explicit Host header. The realistic
+exposure is low: registering a source URL requires the `data_curator` role,
+which is not self-service (RT03-S1), so only a compromised legitimate source
+could trigger it. Tracked as backlog M14.
