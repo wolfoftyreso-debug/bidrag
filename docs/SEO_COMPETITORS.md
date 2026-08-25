@@ -149,15 +149,50 @@ systemkrav → SEO-konsekvens → testkriterium.**
 2. **Grantigo kräver organisation + projekt före värde** — bekräftat. Vår
    teaser-före-allt (kandidater före betalning/formulär) är den skarpaste
    differentiatorn.
-3. **Grantigo är segment-drivet (org-typ), inte situations-drivet** — bekräftat.
-   Vårt finare situationslager (`docs/SEO_SITUATION_ONTOLOGY.md`) är ytan de
-   inte täcker. (Detta korrigerar vår tidigare "bidragsnamn-driven"-hypotes.)
+3. **Grantigos PRODUKTINGÅNG är segment-drivet (org-typ), inte situations-
+   drivet** — bekräftat. Vårt finare situationslager
+   (`docs/SEO_SITUATION_ONTOLOGY.md`) är ytan produkten inte täcker. (Korrigerar
+   vår tidigare "bidragsnamn-driven"-hypotes.) **Viktig nyans (batch 2):** deras
+   *marknadsföring* är däremot brett situations-/behovsdriven — se §D3c. Skilj
+   på produktingången (org-gatad) och contentmotorn (situationsdriven).
 4. **Grantigo delar vår "informationsproblem"-insikt** — differentieringen måste
    ligga i *vem* och *hur lite man behöver veta/göra*, aldrig i insikten ensam.
 5. **Grantigo = R&D/innovation/EU + konsult/sälj + AI-skrivhjälp (Selma).**
    Bidragskoll = bred självbetjäning, bedömning-ej-beslut. Överlapp endast i
    R&D/innovations-företagsstöd (där vi ändå är kurerings-blockerade — bygg inte
    huvudlöst in i deras starkaste zon).
+
+### D3c. Content marketing (Facebook) — verifierat batch 2 (2026-08-25)
+
+Fem ytterligare skärmdumpar (Grantigos publika FB, inlägg 3 juli–16 aug 2026)
+visar **contentmotorn** — som ger en annan bild än den org-nr-gatade produkten:
+
+| Datum | Vinkel | Mekanik | Vår lärdom |
+|---|---|---|---|
+| 3 juli | Lantbruk (SAM/EU-landsbygd) | "Du missar stöd du redan kvalificerar för … ett informationsproblem, inte ett kunskapsproblem." 3 ofta missade stöd (miljöersättning, kompensationsstöd, investeringsstöd) + engagemangsfråga "Vilket kollar du först?". #jordbruksstöd #EUstöd | Situations-/behovsdriven copy i plain language, med **exakt vår doktrins insikt** — men i verksamhetsram. Engagemangsfråga som interaktionsdrivare. |
+| 10 juli | Process/värdeprop | "Förbered idag. Säkra finansiering i höst." 5 steg: Hitta rätt bidrag · Tolka & förstå · Matcha rätt möjlighet · Skriva ansökan · Bevaka & påminna. "Vi gör det svåra enkelt. Allt-i-ett. Hela vägen." | Bekräftar fullservice lager 2–4 inkl. deadline-bevakning (vi har kalender). Positionering: byrå/allt-i-ett, inte självbetjäning. |
+| 8 aug | Founder-led ("Max tipsar") | "Tänk inte att ert projekt är för litet": aktivitet i bygden, barn/unga, "gör orten bättre". "20 000–50 000 kr räcker långt." CTA "Beskriv vad ni vill göra i Grantigo och se vilka möjligheter ni matchas med." | Founder-röst + **upptäckt-framing i marknadsföringen** ("beskriv → matchas") — men produkten kräver ändå org-nr. Belopps-transparens. |
+| ~10 aug | Kultur/event-jacking (medeltidsveckan) | Kategorikort Scenkonst/Hantverk/Musik/Kulturarv med VEM KAN SÖKA · EXEMPEL · BELOPP (upp till 1,5 Mkr) · ANSÖKNINGSDATUM. | Programmatisk-liknande, detaljrik kategori-education med **belopp + deadlines**, kopplad till evenemang. Stark SEO/social-hybrid. |
+| 16 aug | Policy-news-jacking | "FRITIDSKORTET BREDDAS — vad kan det betyda för er förening?" upp till 2 500 kr/barn, 31 mars 2027. | Nyhetsanknuten content på färska policyförändringar, riktad till föreningar. |
+
+**Fynd (batch 2):**
+
+1. **Contentmotorn är situations-/behovsdriven och bred** (lantbruk, småprojekt,
+   kultur, förening, barn/unga) — i skarp kontrast till den org-nr-gatade
+   produkten. Grantigo exekverar redan "situation → möjlighet"-content-spelet vi
+   planerat, men **enbart i projekt-/organisationsramen** ("ert projekt", "er
+   förening") — aldrig privatpersonen/hushållet.
+2. **Löftes-/leverans-gap att utnyttja:** marknadsföringens löfte ("beskriv vad
+   ni vill göra, se vad ni matchas med") krockar med produktens org-nr +
+   adressformulär före värde. **Bidragskoll kan faktiskt leverera det
+   låg-friktionslöftet** — teaser före allt, inget org-nr.
+3. **Personspåret förblir okontesterat** även i contenten — allt är
+   verksamhets-/projektramat.
+4. **Taktiker att notera (inte kopiera blint):** engagemangsfrågor, founder-röst
+   (Max/Marcus), event-/policy-news-jacking, kategorikort med belopp + deadlines.
+   Förenliga med vår doktrin **endast källmärkta** — och offsite/social är
+   **FRYST tills GATE 0 är grön** (`docs/ZERO_COMPROMISE_GATE.md`). Detta matas
+   in i F2/F3-planen, inte i omedelbar handling.
 
 ### D4. Vad som INTE ska kopieras
 

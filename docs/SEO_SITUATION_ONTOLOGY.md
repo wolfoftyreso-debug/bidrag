@@ -136,10 +136,16 @@ prioriteringen:
   det är ändå kurerings-blockerat (¹). Vår vinkel är plain-language *behov*
   ("anställa första", "köpa maskin", "energieffektivisera"), inte
   finansiärnamn, för den SME som inte är en innovationssökande R&D-aktör.
-- **Differentiatorn i copy:** Grantigo använder samma "informationsproblem"-
-  insikt. Situationssidorna ska aldrig sälja *insikten* — de ska bevisa *hur
-  lite användaren behöver veta och göra* (ingen org-nr, inget formulär, inget
-  projekt) innan en förklarad kandidatlista.
+- **Contentmotorn är bredare än produkten.** Grantigos marknadsföring (§D3c) är
+  situations-/behovsdriven över lantbruk, småprojekt, kultur, förening och barn/
+  unga — men alltid i verksamhets-/projektram, aldrig privatperson. På förening/
+  kultur/lantbruk möter vi alltså aktiv content; på privatperson gör vi det inte.
+- **Löftes-/leverans-gapet är copy-kilen.** Grantigos content lovar "beskriv vad
+  ni vill göra → se vad ni matchas med", men produkten kräver org-nr +
+  adressformulär före värde. Situationssidorna ska aldrig sälja *insikten*
+  (Grantigo äger den redan) — de ska bevisa *hur lite användaren behöver veta
+  och göra* (ingen org-nr, inget formulär, inget projekt) innan en förklarad
+  kandidatlista. Det är löftet Grantigo ger men inte håller.
 
 ## 5. Mätning
 
