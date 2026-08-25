@@ -194,6 +194,17 @@ aldrig i Production. `/v1/internal/readiness?probe=true` (Bearer
   Saknas den andra remoten i din klon:
   `git remote add bidragskoll https://github.com/wolfoftyreso-debug/bidragskoll.git`.
 
+## Produktdoktrinen
+
+**Från situation till möjlighet — inte från bidragsnamn till ansökan.**
+Bidragskoll är en **upptäcktsmotor**, inte en sökmotor: användaren ska aldrig
+behöva känna till stödets namn, kategori, myndighet eller stödform för att få
+värde. Styrande dokument: `docs/PRODUCT_DOCTRINE.md` (positionering, de fyra
+lagren, den bärande invarianten). Doktrinen är **kod** — `tools/doctrine.mjs`
+körs i verify och fäller bygget om en intagsyta börjar kräva förkunskap eller om
+värde-före-betalning-ordningen bryts. Nulägesdom: `docs/DOCTRINE_AUDIT.md`.
+Situations-SEO-ontologin (vallgraven före namnsökningar): `docs/SEO_SITUATION_ONTOLOGY.md`.
+
 ## Perfektionsdoktrinen
 
 **PERFECTION IS THE PRODUCT** — perfektion = frånvaro av friktion,

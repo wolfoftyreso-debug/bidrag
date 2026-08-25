@@ -46,6 +46,7 @@ kvalitetsfel av samma sort som stora.
 - L2 favicon-presentation verifieras på iOS/Android/SERP efter deploy (§12).
 - L3 Deadline-textens berikning ur källmönster (SEO_REVISION_01 R9).
 - L4 Begreppsbiblioteket i samhällsdebatten (bidragsgapet, stöddjungeln, sökfriktion, bidragsblindhet, stödkartan) — aktiveras med F3-rapporterna: varje begrepp får definition + egen datapunkt + metodik innan det används publikt.
+- L5 Transparensparitet i intaget (DOCTRINE_AUDIT yta 7) — demon har "Varför ställs frågan?"-knapp vid varje fråga (`demo/main.tsx`), webbappens `Onboarding.tsx` saknar den. Den betalda produkten bör inte vara mindre transparent än demon; för över affordansen till webben. Stödjer produktdoktrinen §2.
 
 ## Åtgärdat
 

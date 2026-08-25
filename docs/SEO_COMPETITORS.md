@@ -71,3 +71,68 @@ sitter på företagssidan eller i stipendienischen. Konsumentluckan är öppen.
 
 Fullständig källista: se researchkörningen 2026-08-21 (18 sökningar,
 URL:er dokumenterade i agentens rapport, arkiverad i sessionshistoriken).
+
+---
+
+## D. Grantigo — djupanalys (fyndmatris under uppbyggnad)
+
+Tillagt 2026-08-25. **Bevisläge:** ingen verifierad produktåtkomst ännu — alla
+påståenden om Grantigos faktiska flöde är `HYPOTHESIS` tills skärmdumparna
+inkommer. Denna sektion är den strukturerade mottagaren; den fylls rad för rad
+när materialet skickas (adressfält synligt eller notis om sida/steg). Vi
+fabricerar aldrig hur en konkurrents flöde ser ut (repo-regel #1).
+
+### D1. Strategisk hypotes (att pröva mot bevis)
+
+Arbetshypotesen är att Grantigo är **projekt- och ansökningsdrivet** ("jag vet
+ungefär vilket projekt jag vill finansiera, hjälp mig hitta/skriva ansökan"),
+medan Bidragskoll är **person-, situations- och behörighetsdrivet** ("här är vem
+jag är — tala om vad som kan vara aktuellt"). Om hypotesen håller börjar Grantigo
+vid **lager 2–3** i doktrinens fyrlagermodell (`docs/PRODUCT_DOCTRINE.md` §3)
+och förutsätter förkunskap; Bidragskoll börjar vid **lager 1**. Detta är
+konkurrentens sannolika strategiska svaghet — men det är en hypotes tills
+skärmdumparna bekräftar den. Vi kopierar aldrig konkurrentens komplexitet; vi
+gör skillnaden tydligare.
+
+### D2. Bedömningsperspektiv (fem linser per skärmdump)
+
+Varje skärmdump behandlas som bevismaterial och bedöms i fem perspektiv:
+
+| Perspektiv | Vad vi bedömer |
+|---|---|
+| **Friktion** | Hur mycket måste användaren förstå och göra före första värdet? |
+| **Förkunskapskrav** | Förutsätter flödet att användaren känner till stöd, projektform eller terminologi? |
+| **Produktlogik** | Är produkten en upptäcktsmotor, sökmotor eller ansökningsassistent? |
+| **Konverteringsrisk** | Var riskerar användaren att avbryta, bli osäker eller känna att arbetet är för stort? |
+| **Möjlighet för Bidragskoll** | Vilket konkret krav ska byggas in i vår produkt, kommunikation och SEO? |
+
+### D3. Fyndmatris (fylls per skärmdump)
+
+Kontrollpost-format: **Observation → konsekvens → Bidragskolls motposition →
+systemkrav → SEO-konsekvens → testkriterium.**
+
+| # | Sida/steg | Observation | Konsekvens | Bidragskolls motposition | Systemkrav | SEO-konsekvens | Testkriterium | Belägg |
+|---|---|---|---|---|---|---|---|---|
+| _ex_ | (onboarding steg 1) | _Grantigo ber användaren beskriva vilket projekt den söker finansiering för_ | _Användaren måste själv förstå att situationen är stödberättigad och översätta behovet till ett projekt_ | _Användaren beskriver situation + mål på vanlig svenska_ | _Semantisk profilering identifierar stödtyper utan att namnet anges_ | _Innehåll kring problem/situation, inte enbart bidragskategorier_ | _Testperson utan stödkunskap får ≥3 förklarade kandidater utan att ange bidragsnamn_ | HYPOTHESIS — inväntar skärmdump |
+| 1 | | | | | | | | |
+| 2 | | | | | | | | |
+| … | | | | | | | | |
+
+### D4. Vad som INTE ska kopieras
+
+När matrisen fyllts, skilj mekaniskt på fyra kategorier — undvik att härma
+komplexitet:
+
+1. Sådant Grantigo gör bra och vi saknar → bygg.
+2. Sådant som ser avancerat ut men skapar friktion → undvik medvetet.
+3. Sådant som är irrelevant för Bidragskolls modell → ignorera.
+4. Möjligheter där vår produktlogik är objektivt starkare → förstärk och
+   kommunicera.
+
+### D5. Utdata när matrisen är klar
+
+- Nya/ändrade rader i `docs/SEO_SITUATION_ONTOLOGY.md` (SEO-konsekvenserna).
+- Nya poster i `docs/PERFECTION_BACKLOG.md` (systemkraven).
+- Ev. skärpning av `docs/PRODUCT_DOCTRINE.md` om ett fynd rör positioneringen.
+- Testkriterierna → personor i `tools/simulate30.mjs` / kontroller i
+  `tools/doctrine.mjs`.
