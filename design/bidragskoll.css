@@ -18,11 +18,11 @@
   --border-strong: #d5cfc0; /* fältkanter, tabellhuvuden */
 
   /* Primär (dämpad indigo-identitet) */
-  --primary: #3d4a8c;
-  --primary-dark: #2f3a70;
-  --primary-deep: #232c58;  /* varumärke, hero, konturer i illustrationer */
-  --primary-soft: #eef0f9;  /* markerade val, info-ytor, framhävd fråga */
-  --primary-ring: rgba(61, 74, 140, 0.28); /* fokusring 3px */
+  --primary: #0056A3;
+  --primary-dark: #004481;
+  --primary-deep: #003a6d;  /* varumärke, hero, konturer i illustrationer */
+  --primary-soft: #e8f0f8;  /* markerade val, info-ytor, framhävd fråga */
+  --primary-ring: rgba(0, 86, 163, 0.28); /* fokusring 3px */
 
   /* Semantiska */
   --success: #3f7050; --success-soft: #ecf3ed;
@@ -36,7 +36,7 @@
   --radius-choice: 11px;
   --shadow: 0 1px 3px rgba(40,36,28,.07), 0 4px 14px rgba(40,36,28,.08);
   --shadow-lift: 0 3px 8px rgba(40,36,28,.08), 0 14px 34px rgba(40,36,28,.13);
-  --shadow-btn: 0 2px 6px rgba(35,44,88,.28);
+  --shadow-btn: 0 2px 6px rgba(0, 86, 163,.28);
 
   /* Typsnitt: sans för UI, seriff för rubriker & poäng */
   --font-sans: 'Public Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -63,10 +63,10 @@ p { margin: .4rem 0; }
 /* ── Knappar (platta — inga gradienter; djup via kant + skugga) ── */
 button, .btn { font: inherit; font-weight: 700; border: none; color: #fff;
   background: var(--primary); padding: .62rem 1.3rem; border-radius: var(--radius-sm);
-  cursor: pointer; display: inline-block; box-shadow: 0 3px 10px rgba(35,44,88,.35);
+  cursor: pointer; display: inline-block; box-shadow: 0 3px 10px rgba(0, 86, 163,.35);
   transition: background 130ms ease, box-shadow 130ms ease, transform 120ms ease; }
 button:hover, .btn:hover { background: var(--primary-dark); text-decoration: none;
-  transform: translateY(-1px); box-shadow: 0 5px 16px rgba(35,44,88,.40); }
+  transform: translateY(-1px); box-shadow: 0 5px 16px rgba(0, 86, 163,.40); }
 button:active, .btn:active { transform: translateY(1px); }
 button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
 button:focus-visible, .btn:focus-visible, a:focus-visible, input:focus-visible {
@@ -83,10 +83,10 @@ button.subtle:hover, .btn.subtle:hover { background: var(--bg-deep); }
 .choice { display: block; width: 100%; text-align: left; margin-bottom: .6rem; padding: .95rem 1.1rem;
   background: var(--surface); border: 1.5px solid var(--border-strong); border-radius: var(--radius-choice);
   cursor: pointer; font: inherit; color: var(--text); font-weight: 600;
-  box-shadow: 0 1px 3px rgba(40,36,28,.08), 0 3px 10px rgba(35,44,88,.07);
+  box-shadow: 0 1px 3px rgba(40,36,28,.08), 0 3px 10px rgba(0, 86, 163,.07);
   transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease, transform 120ms ease; }
 .choice:hover { border-color: var(--primary); background: var(--surface);
-  transform: translateY(-1px); box-shadow: 0 4px 14px rgba(35,44,88,.20); }
+  transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0, 86, 163,.20); }
 .choice:active { transform: translateY(1px); }
 .choice.vald { background: var(--primary-soft); border: 1.5px solid var(--primary); }
 .choice-label { font-weight: 600; display: block; }
@@ -98,7 +98,7 @@ button.subtle:hover, .btn.subtle:hover { background: var(--bg-deep); }
 /* ── Framhävd fråga (nyckelfrågor — max en per flödessteg) ────── */
 .fraga-framhavd { background: var(--primary-soft); border: 1.5px solid var(--primary);
   border-radius: 16px; padding: 2rem 1.75rem; text-align: center;
-  box-shadow: 0 4px 10px rgba(35,44,88,.10), 0 16px 40px rgba(35,44,88,.14); }
+  box-shadow: 0 4px 10px rgba(0, 86, 163,.10), 0 16px 40px rgba(0, 86, 163,.14); }
 .fraga-framhavd .scen { display: inline-flex; background: var(--surface);
   border: 1px solid var(--border-strong); border-radius: 50%; padding: .9rem; margin-bottom: .75rem; }
 .fraga-framhavd .scen svg { width: 96px; height: 96px; }
@@ -107,7 +107,7 @@ button.subtle:hover, .btn.subtle:hover { background: var(--bg-deep); }
 /* CTA-pop: valen är skärmens handling — vit yta med djup mot den tonade
    panelen och en riktningspil som svarar på hovring. */
 .fraga-framhavd .choice { position: relative; padding-right: 2.4rem;
-  box-shadow: 0 2px 6px rgba(35,44,88,.12), 0 8px 22px rgba(35,44,88,.10); }
+  box-shadow: 0 2px 6px rgba(0, 86, 163,.12), 0 8px 22px rgba(0, 86, 163,.10); }
 .fraga-framhavd .choice::after { content: '›' / ''; position: absolute; right: 1.05rem; top: 50%;
   transform: translateY(-52%); font-size: 1.3rem; font-weight: 700; color: var(--primary);
   opacity: .55; transition: opacity 120ms ease, transform 120ms ease; }
@@ -138,7 +138,7 @@ input:focus, textarea:focus, select:focus { outline: none; border-color: var(--p
 .alert.error   { background: var(--danger-soft);  color: var(--danger);  border-color: rgba(163,61,51,.16); }
 .alert.warning { background: var(--warning-soft); color: var(--warning); border-color: rgba(138,101,16,.18); }
 .alert.success { background: var(--success-soft); color: var(--success); border-color: rgba(63,112,80,.18); }
-.alert.info    { background: var(--primary-soft); color: var(--primary-dark); border-color: rgba(61,74,140,.16); }
+.alert.info    { background: var(--primary-soft); color: var(--primary-dark); border-color: rgba(0, 86, 163,.16); }
 
 /* ── Matchrad & förklaring ────────────────────────────────────── */
 .match-row { display: flex; align-items: flex-start; gap: 1.1rem; padding: 1rem .4rem;
@@ -201,9 +201,8 @@ table.data tr:hover td { background: var(--bg); }
 .linkish.dim { color: var(--text-muted); }
 
 /* ── Varumärke & sidomeny ─────────────────────────────────────── */
-.brand { font-family: var(--font-serif); font-weight: 700; font-size: 1.3rem; letter-spacing: -.01em; color: var(--primary-deep); }
-.brand::before { content: ''; display: inline-block; width: .62rem; height: .62rem; margin-right: .45rem;
-  border-radius: 3px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%); }
+.brand { display:flex; align-items:center; gap:.5rem; font-family: var(--font-sans); font-weight: 800; font-size: 1.32rem; letter-spacing: -.015em; color: var(--primary); }
+.brand-mark { width:1.6rem; height:1.6rem; flex-shrink:0; display:block; }
 .sidebar-demo { width: 236px; background: var(--surface); border-right: 1px solid var(--border);
   padding: 1.35rem .9rem; display: flex; flex-direction: column; gap: .2rem; }
 .sidebar-demo a { padding: .52rem .65rem; border-radius: var(--radius-sm); color: var(--text); font-weight: 500;

@@ -99,7 +99,7 @@ function Shell() {
   return (
     <div className="app-shell">
       <nav className="sidebar">
-        <div className="brand">Bidragskoll.se</div>
+        <div className="brand"><img className="brand-mark" src="/logo-mark.svg" alt="" aria-hidden="true" />Bidragskoll</div>
         {(session?.tenants.length ?? 0) > 1 && (
           <select
             aria-label="Aktiv organisation"

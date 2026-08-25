@@ -946,7 +946,18 @@ function App() {
   return (
     <div className="page">
       <header className="masthead">
-        <div className="brand">Bidragskoll.se</div>
+        <div className="brand">
+          <svg className="brand-mark" viewBox="0 0 100 100" aria-hidden="true">
+            <g fill="none" stroke="#0056A3" strokeWidth="15.5" strokeLinecap="round">
+              <line x1="44.5" y1="56" x2="27.5" y2="38" />
+              <line x1="44.5" y1="56" x2="77.5" y2="23" />
+              <line x1="44.5" y1="56" x2="22.5" y2="85" />
+              <line x1="44.5" y1="56" x2="73.5" y2="86" />
+            </g>
+            <circle cx="36.5" cy="19" r="12.5" fill="#0056A3" />
+          </svg>
+          Bidragskoll
+        </div>
         <div className="tag">Demo — den riktiga matchningsmotorn och 72 kurerade stöd, körda helt i din webbläsare</div>
       </header>
 
