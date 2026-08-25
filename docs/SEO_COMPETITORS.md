@@ -41,6 +41,7 @@ konkurrenter kunde inte verifieras: DATA_UNAVAILABLE.
 | Domän | Typ | Syns på | Svaghet |
 |---|---|---|---|
 | bidragskollen.app | Ny SEO-sajt, företagsbidrag | "Bidragskollen", företagstermer | Nylanserad, anonym avsändare, endast företag |
+| grantigo.com | B2B-plattform: ansökningseditor + AI ("Selma"), R&D/innovation/EU | org-typ-segment, forsknings-/EU-finansiärer | Endast organisationer (kräver org-nr); ingen privatpersonsväg; projekt/formulär före värde — se §D |
 | bidragsportalen.se | B2B-SaaS-databas | "bidragsportalen" | Inlåst bakom konto/licens; ej privatpersoner |
 | driva-eget.se | Företagarmagasin | "bidrag starta företag", "eu bidrag företag" | Årsuppdaterade listor, inga verktyg; URL "bidrag-att-soka-2024" med 2026-rubrik (recycling) |
 | tillvaxtstod.se | Konsult (resultatarvode) | "företagsstöd", jämförelser | Affärsmodell = konsult, ej självbetjäning |
@@ -76,23 +77,45 @@ URL:er dokumenterade i agentens rapport, arkiverad i sessionshistoriken).
 
 ## D. Grantigo — djupanalys (fyndmatris under uppbyggnad)
 
-Tillagt 2026-08-25. **Bevisläge:** ingen verifierad produktåtkomst ännu — alla
-påståenden om Grantigos faktiska flöde är `HYPOTHESIS` tills skärmdumparna
-inkommer. Denna sektion är den strukturerade mottagaren; den fylls rad för rad
-när materialet skickas (adressfält synligt eller notis om sida/steg). Vi
-fabricerar aldrig hur en konkurrents flöde ser ut (repo-regel #1).
+Tillagt 2026-08-25. **Bevisläge:** 5 skärmdumpar mottagna 2026-08-25 (23:49–
+00:09) — grantigo.com (startsida, onboarding, ansökningseditor),
+portal.grantigo.com (organisationsformulär) och Grantigos publika
+Facebook-sida. Fynden nedan är `CONFIRMED` från dessa; det jag inte sett
+(prislista, resultatvyn efter "Hitta finansiering", ev. dold privatpersonsväg)
+är fortsatt `DATA_UNAVAILABLE`. Vi fabricerar aldrig hur en konkurrents flöde
+ser ut (repo-regel #1).
 
-### D1. Strategisk hypotes (att pröva mot bevis)
+### D1. Strategisk dom (prövad mot bevis) — BEKRÄFTAD med nyans
 
-Arbetshypotesen är att Grantigo är **projekt- och ansökningsdrivet** ("jag vet
-ungefär vilket projekt jag vill finansiera, hjälp mig hitta/skriva ansökan"),
-medan Bidragskoll är **person-, situations- och behörighetsdrivet** ("här är vem
-jag är — tala om vad som kan vara aktuellt"). Om hypotesen håller börjar Grantigo
-vid **lager 2–3** i doktrinens fyrlagermodell (`docs/PRODUCT_DOCTRINE.md` §3)
-och förutsätter förkunskap; Bidragskoll börjar vid **lager 1**. Detta är
-konkurrentens sannolika strategiska svaghet — men det är en hypotes tills
-skärmdumparna bekräftar den. Vi kopierar aldrig konkurrentens komplexitet; vi
-gör skillnaden tydligare.
+Hypotesen höll, men skärmdumparna skärper den på två punkter:
+
+- **Bekräftat:** Grantigo är **B2B/B2G, projekt- och ansökningsdrivet** och
+  börjar i praktiken vid **lager 2–3** (`docs/PRODUCT_DOCTRINE.md` §3).
+  Kärnprodukten är en ansökningseditor (Sammanfattning/Mål/Genomförandeplan/
+  Budget) med AI-experten "Selma", och matchningen sker mot forsknings-/
+  innovations-/EU-finansiärer (Vinnova, Horizon Europe, Formas, ERC, EIC,
+  Energimyndigheten, Tillväxtverket, Arvsfonden). Portalen kräver
+  **organisationsnummer + ett obligatoriskt adressformulär** tidigt — värde
+  ligger bakom registrering. Positioneringen är uttrycklig: "FÖR FÖRETAGARE
+  (SME) & STORA FÖRETAG".
+- **Korrigering av vår hypotes:** Grantigo är **inte** bidragsnamn-drivet vid
+  ingång — deras onboarding ("Vem söker finansiering?") är **segment-/
+  organisationstypsdriven** (Företag, Startups, Forskare, Föreningar, Lantbruk,
+  Kommun, Lärosäten, "Något annat/osäker"). De ber dig alltså välja *vem du är*
+  på grov org-nivå, inte namnge ett bidrag. Det är mer upptäckts-orienterat än
+  vi antog — men (a) uteslutande för organisationer och (b) bara på segment-
+  nivå; de gissar aldrig på din faktiska situation.
+- **Den stora, bekräftade flanken:** Grantigo har **ingen privatperson-/
+  hushållsväg alls.** Varje ingång är en organisationstyp; portalen kräver
+  org-nr. Hela Bidragskolls personspår (bostadsbidrag, sjukskriven,
+  ensamstående, pensionär, barnfamilj) är ett segment Grantigo strukturellt
+  inte kan betjäna. Öppen flank, inte hypotes.
+- **Delad insikt — kräver skärpt differentiering:** Grantigos hero använder
+  *exakt* vår "informationsproblem, många vet inte vilka bidrag som finns"-
+  insikt. Vår differentiering kan därför aldrig vara insikten ensam — den måste
+  ligga i **vem vi tjänar (alla, även privatpersoner)** och **hur lite man
+  behöver veta och göra innan värde**. Vi kopierar aldrig deras komplexitet
+  (org-formulär, projekt-skrivande som ingång); vi gör skillnaden tydligare.
 
 ### D2. Bedömningsperspektiv (fem linser per skärmdump)
 
@@ -113,10 +136,28 @@ systemkrav → SEO-konsekvens → testkriterium.**
 
 | # | Sida/steg | Observation | Konsekvens | Bidragskolls motposition | Systemkrav | SEO-konsekvens | Testkriterium | Belägg |
 |---|---|---|---|---|---|---|---|---|
-| _ex_ | (onboarding steg 1) | _Grantigo ber användaren beskriva vilket projekt den söker finansiering för_ | _Användaren måste själv förstå att situationen är stödberättigad och översätta behovet till ett projekt_ | _Användaren beskriver situation + mål på vanlig svenska_ | _Semantisk profilering identifierar stödtyper utan att namnet anges_ | _Innehåll kring problem/situation, inte enbart bidragskategorier_ | _Testperson utan stödkunskap får ≥3 förklarade kandidater utan att ange bidragsnamn_ | HYPOTHESIS — inväntar skärmdump |
-| 1 | | | | | | | | |
-| 2 | | | | | | | | |
-| … | | | | | | | | |
+| 1 | Startsida/hero (grantigo.com) | "Du kvalificerar oftare än du tror" · "FÖR FÖRETAGARE (SME) & STORA FÖRETAG". Samma "informationsproblem"-insikt som vår. CTA: "Boka strategisk genomgång" + "Se priser". | Löftet gäller bara redan investerande företag; privatpersoner/hushåll adresseras inte. Konsult/pris-CTA = högre tröskel och pris. | Bidragskoll tjänar alla — privatperson, hushåll, förening, företag — självbetjäning 39/19 kr, ingen bokning. | Håll privatperson/situations-spåret som förstahandsyta; ingen sälj-gate före värde. | Hela privatperson/hushålls-universumet är okontesterat — prioritera ontologins 2a-noder. | Privatperson (ej företag) får ≥3 kandidater — vilket Grantigo strukturellt inte kan. | grantigo.com 00:07 · CONFIRMED |
+| 2 | Onboarding "Vem söker finansiering?" | Första steget = val av **organisationstyp** (Företag, Startups, Forskare, Föreningar, Lantbruk, Kommun, Lärosäten, "Något annat/osäker") → "så visar vi rätt bidrag, rätt exempel och en demo". Ingen privatpersonsväg. "24 000+ möjligheter". "Jag tittar bara runt". | Grantigo ÄR upptäckts-orienterat men bara på grov segment-nivå (vem = org-typ) och enbart B2B/B2G. De gissar aldrig på din situation; en privatperson har ingen väg in. | Bidragskoll frågar efter **situation**, inte segment ("Vad behöver du hjälp med?" → "Jag har svårt att få ekonomin att gå ihop"), och har ett privatpersonsspår. | Behåll situations-först (finare än org-typ) + privatpersonsspår; `tools/doctrine.mjs` steg A vaktar. | Konkurrera på situation/behov-sökningar (finare än org-typ), där Grantigo bara har segmentsidor. | Sökare utan org-nr/segmentsäkerhet får ändå kandidater. | grantigo.com 23:58 · CONFIRMED (korrigerar tidigare "bidragsnamn-driven"-hypotes) |
+| 3 | Portal, Organisation-formulär (portal.grantigo.com) | Kräver **organisationsnummer** ("så hämtar vi uppgifterna automatiskt") + obligatoriska Namn/Adress/Postnummer/Ort tidigt (progress ~15 %). | Du måste ha en organisation och fylla ett registreringsformulär **innan värde** — lager 2–3-tröskel; hushåll utestängda (inget org-nr). | Bidragskoll kräver aldrig org-nr/personnummer, aldrig ett formulär före värde; teasern visar kandidater först. | Värde-före-underlag (doktrin §4) — bevakas av `tools/doctrine.mjs` steg C. | Vinkla innehåll mot "se direkt / utan konto / utan att fylla i". | Kandidatlista utan att ange org-nr eller fylla adressformulär. | portal.grantigo.com 00:09 · CONFIRMED |
+| 4 | Ansökningseditor + "matchar mot" | Kärnprodukt = ansökningseditor (Ansökningar/Projekt/Organisation/Feedback/Plan; Sammanfattning/Mål/Genomförandeplan/Budget) + AI-expert "Selma — hela vägen". Matchar mot Vinnova, Horizon Europe, Formas, Tillväxtverket, Energimyndigheten, ERC, EIC, Arvsfonden. | Projekt-/ansökningsdrivet (lager 3), tyngdpunkt R&D/innovation/EU för företag/forskare. Förutsätter att du redan har ett projekt att skriva. | Bidragskoll börjar vid lager 1 (upptäckt ur situation) och täcker konsument-/SME-/föreningsstöd som Grantigos finansiärlista inte rör. | Behåll upptäckt→kvalificering→förberedelse; förberedelse (19 kr) efter upptäckt, aldrig som ingång. | Äg lager-1-sökningar. Överlappszon = R&D/innovation-företagsstöd (konkurrera inte huvudlöst — dessutom kurerings-blockerat, se ontologin ¹). | Användare utan färdigt projekt får ändå relevanta kandidater. | grantigo.com 00:02 · CONFIRMED |
+| 5 | Publik Facebook-sida | Content-marketing: "63 miljoner till svenska projekt" (MUCF 5 867 535 € till 72 projekt: ungdomsutbyten, idrottsprojekt, solidaritetsinsatser) + case "stötta Precision Pulmo". "Grantigo Spotlight". Låg interaktion (2 gilla). | Bygger auktoritet via beviljade-projekt-berättelser och rör in i förening/ungdom (MUCF) trots B2B-positionering. Tidigt skede. | Vårt F2/F3-lager (erfarenhetslagret, beviljade projekt, länkbara tillgångar) är samma spel men bredare (även privatpersoner) och källmärkt. | Aktivera F2 beviljade-projekt-datakontraktet (`seo/beviljade-projekt.schema.json`) efter licensgenomgång. | Beviljade-projekt-berättelser + Authority Desk — men offsite FRYST tills GATE 0 är grön. | (F3) minst en länkbar tillgång med källmärkt data publicerad. | FB Grantigo 23:49 · CONFIRMED (publikt) |
+
+### D3b. Bekräftade strategiska fynd (destillat)
+
+1. **Grantigo har ingen privatperson-/hushållsväg** — bekräftat (org-typ-
+   onboarding + org-nr-krav i portalen). Vår bredaste, mest okontesterade flank.
+2. **Grantigo kräver organisation + projekt före värde** — bekräftat. Vår
+   teaser-före-allt (kandidater före betalning/formulär) är den skarpaste
+   differentiatorn.
+3. **Grantigo är segment-drivet (org-typ), inte situations-drivet** — bekräftat.
+   Vårt finare situationslager (`docs/SEO_SITUATION_ONTOLOGY.md`) är ytan de
+   inte täcker. (Detta korrigerar vår tidigare "bidragsnamn-driven"-hypotes.)
+4. **Grantigo delar vår "informationsproblem"-insikt** — differentieringen måste
+   ligga i *vem* och *hur lite man behöver veta/göra*, aldrig i insikten ensam.
+5. **Grantigo = R&D/innovation/EU + konsult/sälj + AI-skrivhjälp (Selma).**
+   Bidragskoll = bred självbetjäning, bedömning-ej-beslut. Överlapp endast i
+   R&D/innovations-företagsstöd (där vi ändå är kurerings-blockerade — bygg inte
+   huvudlöst in i deras starkaste zon).
 
 ### D4. Vad som INTE ska kopieras
 

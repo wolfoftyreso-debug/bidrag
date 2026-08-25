@@ -119,6 +119,28 @@ Situationsnoderna är innehållsmotorns F0→F1-leverabler (`docs/CONTENT_ENGINE
 5. Varje nod passerar SEO Release Gate (`docs/SEO_RELEASE_GATE.md`) +
    gate0/gatekeywords innan publik. Ingen tunn sida.
 
+## 4b. Konkurrensläge (Grantigo, bekräftat 2026-08-25)
+
+Skärmdumpsbelagd konkurrentanalys (`docs/SEO_COMPETITORS.md` §D) skärper
+prioriteringen:
+
+- **Privatpersonslagret (2a) är okontesterat.** Grantigo är B2B/B2G, kräver
+  organisationsnummer och saknar helt en privatpersonsväg. Situationsnoderna i
+  2a har ingen direkt kommersiell motståndare — **högsta prioritet**.
+- **Föreningslagret (2c) är delvis omtvistat.** Grantigo rör in i förening/
+  ungdom via MUCF/Arvsfonden i sin content-marketing, men utan situations-
+  ingång. Vår finare situationsnod ("idrottsförening med ungdomsverksamhet")
+  slår deras segmentsida ("Föreningar & idrott").
+- **Företagslagret (2b) överlappar Grantigos kärna** (R&D/innovation/EU:
+  Vinnova, Horizon, Formas, ERC, EIC). Konkurrera **inte** huvudlöst där — och
+  det är ändå kurerings-blockerat (¹). Vår vinkel är plain-language *behov*
+  ("anställa första", "köpa maskin", "energieffektivisera"), inte
+  finansiärnamn, för den SME som inte är en innovationssökande R&D-aktör.
+- **Differentiatorn i copy:** Grantigo använder samma "informationsproblem"-
+  insikt. Situationssidorna ska aldrig sälja *insikten* — de ska bevisa *hur
+  lite användaren behöver veta och göra* (ingen org-nr, inget formulär, inget
+  projekt) innan en förklarad kandidatlista.
+
 ## 5. Mätning
 
 När GSC är kopplat: mät situationsnoderna mot D2/D3-frågor
