@@ -154,6 +154,7 @@ seo_check() {
 }
 step "Publika SEO-ytan genereras och klarar QA-crawlen" seo_check
 step "Maskinförståelse: de 10 kärnpåståendena finns i publik text (FAS SEO-2)" node tools/semantictest.mjs
+step "Indexability-domar i synk (Query Pages, SEO-3)" node --experimental-strip-types tools/indexability.mjs --check
 
 # ── 6. Hemlighetsskanning (versionshanterade filer) ──────────────────────────
 secrets_scan() {

@@ -37,17 +37,23 @@ function walk(dir, rel) {
   }
 }
 if (!existsSync(join(SITE, 'bidrag'))) { err(`${SITE}/bidrag saknas — kör tools/genseo.mjs först`); process.exit(1); }
-// Crawla hela den genererade ytan: /bidrag/ + flaggskeppssidorna på rot.
+// Crawla hela den genererade ytan: /bidrag/ + flaggskepp + Query Pages på rot.
 walk(SITE, '/');
 // Statiska sidprefix (allt annat i href, t.ex. /villkor, /konto, /, är SPA-vyer
-// som inte genereras här och därför inte länkgranskas).
-const STATIC = ['/bidrag/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/'];
+// som inte genereras här och därför inte länkgranskas). Query Pages ligger under
+// målgruppsprefixen /foretag/ /privatperson/ /forening/ /enskild-firma/.
+const STATIC = ['/bidrag/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/', '/bidragsstatus/', '/foretag/', '/privatperson/', '/forening/', '/enskild-firma/'];
+// Toppnivåingångar för orphan-BFS (faktiska sidor, länkade från appens nav /
+// katalogindex). Query Pages nås därifrån via målgruppshubbarnas länkar.
+const BFS_SEEDS = ['/bidrag/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/', '/bidragsstatus/'];
+const noindexPages = new Set();
 
 const titles = new Map();
 const descriptions = new Map();
 const linkGraph = new Map();
 
 for (const [path, html] of pages) {
+  if (/name="robots" content="noindex/.test(html)) noindexPages.add(path);
   const h1s = html.match(/<h1[\s>]/g) ?? [];
   if (h1s.length !== 1) err(`${path}: ${h1s.length} st <h1> (ska vara exakt 1)`);
 
@@ -100,7 +106,7 @@ for (const [path, html] of pages) {
 // Orphan-koll: BFS från de statiska ingångarna (katalogen + flaggskeppssidorna,
 // som är toppnivåingångar länkade från appens nav).
 const reachable = new Set();
-const queue = STATIC.filter((p) => pages.has(p));
+const queue = BFS_SEEDS.filter((p) => pages.has(p));
 while (queue.length) {
   const p = queue.shift();
   if (reachable.has(p)) continue;
@@ -115,7 +121,9 @@ if (!existsSync(sitemapPath)) err('sitemap.xml saknas');
 else {
   const locs = [...readFileSync(sitemapPath, 'utf8').matchAll(/<loc>([^<]*)<\/loc>/g)].map((m) => m[1].replace(BASE, ''));
   for (const l of locs) if (!pages.has(l)) err(`sitemap listar ${l} som inte genererats`);
-  for (const p of pages.keys()) if (!locs.includes(p)) err(`sitemap saknar ${p}`);
+  if (locs.some((l) => noindexPages.has(l))) err('sitemap listar en NOINDEX-sida (ska stå utanför sitemapen)');
+  // NOINDEX_FOLLOW-sidor genereras men står medvetet utanför sitemapen.
+  for (const p of pages.keys()) if (!locs.includes(p) && !noindexPages.has(p)) err(`sitemap saknar ${p}`);
 }
 
 // 404-sidan (§40): måste finnas, vara noindex och stå utanför sitemapen.

@@ -23,6 +23,7 @@
 import { mkdirSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadIntents, resolveIntent, indexabilityVerdict } from './lib/intents.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outFlag = process.argv.indexOf('--out');
@@ -369,7 +370,7 @@ ${rel.length ? `<h2>Relaterade stöd</h2>
 }
 
 // ── Hubbar ───────────────────────────────────────────────────────────────────
-function hubPage(hub, entries) {
+function hubPage(hub, entries, queryLinks = []) {
   const canonical = `${BASE}/bidrag/${hub.slug}/`;
   const crumbs = [{ name: 'Bidrag', url: '/bidrag/' }, { name: hub.short, url: `/bidrag/${hub.slug}/` }];
   const title = `${hub.title} | Bidragskoll`;
@@ -386,6 +387,8 @@ function hubPage(hub, entries) {
 <p class="lead">${entries.length} stöd i Bidragskolls kunskapsbas riktar sig till ${esc(hub.short.toLowerCase())}.
 Varje stöd visas med villkor, belopp och officiell källa. Osäker på vad som gäller dig?
 <a href="/">Bidragskolls utredning</a> ställer frågorna åt dig — en i taget.</p>
+${queryLinks.length ? `<h2>Vanliga sökningar</h2>
+<ul class="stodlista">${queryLinks.map((q) => `<li><a href="${q.url}">${esc(q.label)}</a></li>`).join('')}</ul>` : ''}
 ${[...byInstrument.entries()]
   .sort(([a], [b]) => a.localeCompare(b, 'sv'))
   .map(
@@ -417,6 +420,7 @@ Myndigheterna beskriver sina egna stöd var för sig; här får du överblicken,
 <div class="path"><strong>Vilka bidrag kan jag få?</strong>Det beror på vem du är. Kontrollera gratis — du behöver inte veta vad bidraget heter.<br><a class="knapp" href="/vilka-bidrag-kan-jag-fa/">Kontrollera din situation</a></div>
 <div class="path"><strong>Hitta bidrag gratis</strong>Upptäckten och resultaten är kostnadsfria och inte låsta. Ansök själv hos källan.<br><a class="knapp sekundar" href="/hitta-bidrag-gratis/">Så fungerar det</a></div>
 </div>
+<p class="lead" style="margin-top:.4rem">Se också <a href="/bidragsstatus/">bidragsstatus</a> — hur många stöd som är öppna, återkommande och har satt deadline, uppdaterat ur kunskapsbasen.</p>
 ${hubEntries
   .map(
     ({ hub, entries }) => `<h2><a href="/bidrag/${hub.slug}/">${esc(hub.title)}</a></h2>
@@ -534,16 +538,117 @@ villkor hos källan.</div>
   return { path, html: layout({ title, description, canonical, crumbs, jsonld, body }) };
 }
 
+// ── Query Pages (SEO-3/§4): vyer över grafen, "own the answer" ───────────────
+// applicant_type → målgruppshubb, för internlänkning tillbaka in i katalogen.
+const HUB_FOR_APPLICANT = { individual: 'privatpersoner', company: 'foretag', association: 'foreningar' };
+
+function queryPage(intent, supports, verdict) {
+  const path = intent.canonical_url; // t.ex. /foretag/energistod/
+  const canonical = `${BASE}${path}`;
+  const hubSlug = HUB_FOR_APPLICANT[intent.applicant_type] ?? 'privatpersoner';
+  const hub = HUBS.find((h) => h.slug === hubSlug) ?? HUBS[0];
+  const crumbs = [
+    { name: 'Bidrag', url: '/bidrag/' },
+    { name: hub.short, url: `/bidrag/${hub.slug}/` },
+    { name: intent.title_q, url: path },
+  ];
+  const noindex = verdict.verdict === 'NOINDEX_FOLLOW';
+  const title = `${intent.title_q} | Bidragskoll`.slice(0, 70);
+  const description = `${intent.answer} Kontrollera gratis vilka som passar — resultaten är inte låsta.`.slice(0, 168);
+  const sorted = [...supports].sort((a, b) => shortTitle(a).localeCompare(shortTitle(b), 'sv'));
+  const faq = [
+    { q: intent.canonical_query.charAt(0).toUpperCase() + intent.canonical_query.slice(1) + '?', a: `${intent.answer} Kontrollen i Bidragskoll är gratis och resultaten är inte låsta — du kan alltid ansöka själv hos den officiella källan.` },
+    { q: 'Kostar det att kontrollera?', a: 'Nej. Att se vilka stöd som kan passa är gratis. Du betalar bara om du väljer att låta systemet förbereda en ansökan (19 kr per ansökan).' },
+    { q: 'Måste jag veta vilket stöd jag söker?', a: 'Nej. Du behöver inte känna till stödets namn — beskriv din situation, så visar Bidragskoll vad som kan passa.' },
+  ];
+  const jsonld = { '@context': 'https://schema.org', '@graph': [...baseGraph(canonical, title, crumbs), faqJsonld(faq)] };
+
+  const dataView = sorted.length
+    ? `<ul class="stodlista">${sorted.map((o) => `<li><a href="/bidrag/${o.slug}/">${esc(anchorTitle(o))}</a><span class="sum">${esc(o.summary)} <em>· ${esc(deadlineText(o))}</em></span></li>`).join('')}</ul>`
+    : '<p>Inga aktuella stöd för den här kombinationen i kunskapsbasen just nu.</p>';
+
+  const body = `
+<p class="eyebrow">${esc(intent.audience_label)}</p>
+<h1>${esc(intent.title_q)}</h1>
+<p class="lead">${esc(intent.answer)}</p>
+<a class="bigcta" href="/">Kontrollera vilka som passar dig — gratis</a>
+
+<h2>Stöd som kan vara aktuella (${sorted.length})</h2>
+<p>Listan bygger på Bidragskolls kunskapsbas och uppdateras när stöden ändras — varje stöd har officiell källa och senast kontrollerad-datum.</p>
+${dataView}
+
+<div class="snabbsvar"><h2>Vanliga frågor</h2>
+<dl>${faq.map((f) => `<dt>${esc(f.q)}</dt><dd>${esc(f.a)}</dd>`).join('')}</dl></div>
+
+<div class="honest">Bidragskoll är en oberoende tjänst — inte en myndighet. Bedömningar är vägledande; beslut fattas
+alltid av ansvarig myndighet eller finansiär. Innehållet är AI-sammanställt från officiella källor och ännu inte
+granskat av människa. Att ansöka själv direkt hos källan är alltid gratis.</div>
+<p class="kalla"><strong>Senast kontrollerad:</strong> ${CHECKED} · Se alla stöd för ${esc(hub.short.toLowerCase())} på <a href="/bidrag/${hub.slug}/">${esc(hub.short.toLowerCase())}-hubben</a>.</p>
+`;
+  let html = layout({ title, description, canonical, crumbs, jsonld, body });
+  if (noindex) html = html.replace('</title>', '</title>\n<meta name="robots" content="noindex,follow">');
+  return { path, html, noindex };
+}
+
+// ── Bidragsstatus (SEO-3/§12): citerbar datavy, beräknad ur seeden ───────────
+function bidragsstatusPage() {
+  const path = '/bidragsstatus/';
+  const canonical = `${BASE}${path}`;
+  const crumbs = [{ name: 'Bidrag', url: '/bidrag/' }, { name: 'Bidragsstatus', url: path }];
+  const title = 'Bidragsstatus – öppna stöd, deadlines och nya möjligheter | Bidragskoll';
+  const description = `Aktuell status för ${opportunities.length} bidrag och stöd: hur många som är löpande öppna, återkommande och har satt deadline — per målgrupp. Uppdaterad ur kunskapsbasen.`.slice(0, 168);
+  const rolling = opportunities.filter((o) => o.deadlineModel === 'rolling');
+  const recurring = opportunities.filter((o) => o.deadlineModel === 'recurring');
+  const dated = opportunities.filter((o) => o.closesAt);
+  const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title.slice(0, 70), crumbs) };
+  const perHub = HUBS.map((h) => ({ h, n: opportunities.filter((o) => (o.applicantTypes ?? []).some((t) => h.types.includes(t))).length }));
+  const body = `
+<p class="eyebrow">Levande datavy</p>
+<h1>Bidragsstatus</h1>
+<p class="lead">Aktuell överblick över de ${opportunities.length} bidrag och stöd som finns i Bidragskolls kunskapsbas,
+från ${authorities.length} myndigheter och finansiärer. Siffrorna beräknas direkt ur kunskapsbasen. Öppettider
+och deadlines ändras hos källan — kontrollera alltid det aktuella hos respektive finansiär.</p>
+<div class="card"><table class="fakta">
+<tr><th scope="row">Löpande öppna (ingen fast deadline)</th><td>${rolling.length} stöd</td></tr>
+<tr><th scope="row">Återkommande (öppnar i omgångar)</th><td>${recurring.length} stöd</td></tr>
+<tr><th scope="row">Med satt datum i kunskapsbasen</th><td>${dated.length} stöd</td></tr>
+<tr><th scope="row">Totalt i kunskapsbasen</th><td>${opportunities.length} stöd</td></tr>
+</table></div>
+<h2>Per målgrupp</h2>
+<ul class="stodlista">${perHub.map(({ h, n }) => `<li><a href="/bidrag/${h.slug}/">${esc(h.title)}</a><span class="sum">${n} stöd</span></li>`).join('')}</ul>
+<div class="honest">Detta är en överblick ur kunskapsbasen, inte en realtidskälla. Enskilda stöds öppet/stängt-status
+avgörs alltid hos den officiella källan, som varje bidragssida länkar till.</div>
+<p class="kalla"><strong>Senast uppdaterad ur kunskapsbasen:</strong> ${CHECKED} · <a href="/vilka-bidrag-kan-jag-fa/">Kontrollera din situation</a></p>
+`;
+  return { path, html: layout({ title: title.slice(0, 70), description, canonical, crumbs, jsonld, body }) };
+}
+
 // ── Bygg ─────────────────────────────────────────────────────────────────────
 if (outFlag === -1) rmSync(OUT, { recursive: true, force: true });
 mkdirSync(join(OUT, 'bidrag'), { recursive: true });
 
 const pages = [];
-function emit(path, html) {
+const noindexPaths = new Set(); // genererade men EJ i sitemap (NOINDEX_FOLLOW)
+function emit(path, html, opts = {}) {
   const dir = join(OUT, path);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, 'index.html'), html);
-  pages.push(`/${path.replace(/\\/g, '/')}/`.replace(/\/+/g, '/'));
+  const url = `/${path.replace(/\\/g, '/')}/`.replace(/\/+/g, '/');
+  pages.push(url);
+  if (opts.noindex) noindexPaths.add(url);
+}
+
+// ── Indexability-motorn: resolvera intentioner mot grafen, döm varje kandidat ─
+const INTENTS = loadIntents(ROOT).map((intent) => {
+  const supports = resolveIntent(intent, opportunities);
+  return { intent, supports, ...indexabilityVerdict(intent, supports) };
+});
+// Query-länkar per hubb (INDEX + NOINDEX; DO_NOT_GENERATE länkas aldrig).
+const queryLinksByHub = {};
+for (const r of INTENTS) {
+  if (r.verdict === 'DO_NOT_GENERATE') continue;
+  const hubSlug = HUB_FOR_APPLICANT[r.intent.applicant_type] ?? 'privatpersoner';
+  (queryLinksByHub[hubSlug] ??= []).push({ url: r.intent.canonical_url, label: r.intent.title_q });
 }
 
 const hubEntries = HUBS.map((hub) => ({
@@ -552,17 +657,27 @@ const hubEntries = HUBS.map((hub) => ({
 })).filter(({ entries }) => entries.length >= 3);
 
 emit('bidrag', indexPage(hubEntries));
-for (const { hub, entries } of hubEntries) emit(join('bidrag', hub.slug), hubPage(hub, entries));
+for (const { hub, entries } of hubEntries) emit(join('bidrag', hub.slug), hubPage(hub, entries, queryLinksByHub[hub.slug] ?? []));
 for (const o of [...opportunities].sort((a, b) => a.slug.localeCompare(b.slug))) emit(join('bidrag', o.slug), entityPage(o));
 
-// Flaggskeppssidorna (root). Länkas från /bidrag/-index (indexPage) så de nås
-// i orphan-BFS:en, och länkar tillbaka in i katalogen.
-for (const p of [flagshipHittaGratis(), flagshipVilkaBidrag()]) emit(p.path.replace(/^\/|\/$/g, ''), p.html);
+// Flaggskeppssidorna + bidragsstatus (root). Länkas från /bidrag/-index så de
+// nås i orphan-BFS:en, och länkar tillbaka in i katalogen.
+for (const p of [flagshipHittaGratis(), flagshipVilkaBidrag(), bidragsstatusPage()]) emit(p.path.replace(/^\/|\/$/g, ''), p.html);
 
-// Sitemap + robots. OBS: skriver bara sina egna filer — rör aldrig appens.
+// Query Pages (vyer över grafen). Endast INDEX + NOINDEX_FOLLOW genereras.
+let idx = 0, noidx = 0, skipped = 0;
+for (const r of INTENTS) {
+  if (r.verdict === 'DO_NOT_GENERATE') { skipped++; continue; }
+  const p = queryPage(r.intent, r.supports, r);
+  emit(p.path.replace(/^\/|\/$/g, ''), p.html, { noindex: p.noindex });
+  if (p.noindex) noidx++; else idx++;
+}
+
+// Sitemap + robots. NOINDEX_FOLLOW-sidor genereras men står UTANFÖR sitemapen.
+const sitemapUrls = pages.filter((p) => !noindexPaths.has(p));
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${pages.map((p) => `  <url><loc>${BASE}${p}</loc><lastmod>${CHECKED}</lastmod></url>`).join('\n')}
+${sitemapUrls.map((p) => `  <url><loc>${BASE}${p}</loc><lastmod>${CHECKED}</lastmod></url>`).join('\n')}
 </urlset>
 `;
 writeFileSync(join(OUT, 'sitemap.xml'), sitemap);
@@ -592,4 +707,4 @@ const notFound = layout({
 }).replace('</title>', '</title>\n<meta name="robots" content="noindex">');
 writeFileSync(join(OUT, '404.html'), notFound);
 
-console.log(`Genererade ${pages.length} publika sidor + 404.html + sitemap.xml + robots.txt → ${OUT}`);
+console.log(`Genererade ${pages.length} publika sidor (${idx} INDEX + ${noidx} NOINDEX query pages, ${skipped} DO_NOT_GENERATE) + 404.html + sitemap.xml + robots.txt → ${OUT}`);

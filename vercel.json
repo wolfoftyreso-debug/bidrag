@@ -20,7 +20,7 @@
       "destination": "/api/index"
     },
     {
-      "source": "/((?!api/|assets/|favicon|bidrag/|hitta-bidrag-gratis/|vilka-bidrag-kan-jag-fa/|og/|icon-|site\\.webmanifest|sitemap\\.xml|robots\\.txt|404).*)",
+      "source": "/((?!api/|assets/|favicon|bidrag/|hitta-bidrag-gratis/|vilka-bidrag-kan-jag-fa/|bidragsstatus/|foretag/|privatperson/|forening/|enskild-firma/|og/|icon-|site\\.webmanifest|sitemap\\.xml|robots\\.txt|404).*)",
       "destination": "/index.html"
     }
   ],

@@ -192,3 +192,41 @@ Arbetsströmmar (§28): 1 Core product · 2 Discovery/matching ·
 - **Deferred (Release B/C):** situations-SEO-familjen (`/privatperson/*`,
   `/foretag/*`), citerbara datavyer (`/aktuella-bidrag/`, `/bidragskalender/`,
   `/nya-bidrag/`), per-stöd GovernmentService-ontologi, `semantictest --llm` i CI.
+
+## 2026-08-26 — SEO-3/4: Bidragsgrafen + Query Pages + Own the Answer (Release A)
+
+- **Ström:** 7 (SEO/content), 2 (Discovery/matching), 4 (Grant data)
+- **Beslut:** Produktägaren: SEO-sidor ska vara VYER över kunskapsgrafen, inte
+  fristående artiklar; Query Pages med hård Indexability-motor mot
+  kombinationsspam; "own the answer" (svar→verktyg→data→förklaring). Husregel:
+  ingen påhittad sökvolym/SERP-data.
+- **Vad:**
+  - **Sökintentionsregister** `seo/search-intents.json` (13 intentioner, filter
+    över grafen, query_variants; search_volume=null — inga påhittade siffror).
+  - **Query Pages** genererade som vyer över seeden (`tools/genseo.mjs`):
+    svar → CTA → levande datavy (matchande aktiva stöd) → FAQ (FAQPage) →
+    honesty. Länkade från målgruppshubbarna ("Vanliga sökningar") + tillbaka.
+  - **Indexability-motorn** (delad `tools/lib/intents.mjs`): INDEX (≥3 stöd) /
+    NOINDEX_FOLLOW (1–2, robots noindex + utanför sitemap) / DO_NOT_GENERATE (0).
+    Dom: 13 kandidater → **9 INDEX · 1 NOINDEX · 3 DO_NOT_GENERATE** (aktiviteterna
+    anställa/maskiner/investering saknar kurerat stöd → ärligt vägrade).
+  - **Citerbar datavy** `/bidragsstatus/` — öppna/återkommande/daterade stöd +
+    per målgrupp, beräknat ur seeden (deterministiskt, CURATED_AT).
+  - **seocheck** crawlar hela ytan, NOINDEX-medveten sitemap-paritet, nya
+    målgruppsprefix; **vercel.json** serverar de nya rot-prefixen statiskt.
+  - **Rapport** `docs/SEO_QUERY_PAGES.md` (`tools/indexability.mjs`, `--check` i
+    verify) + `docs/SEO_FUNDING_GRAPH.md` (entitetsmodell, kontrollrapport §20,
+    deferred).
+- **Filer:** `seo/search-intents.json`, `tools/lib/intents.mjs`,
+  `tools/indexability.mjs`, `docs/SEO_{FUNDING_GRAPH,QUERY_PAGES}.md` (nya);
+  `tools/genseo.mjs`, `tools/seocheck.mjs`, `vercel.json`, `scripts/verify.sh`.
+- **Databas/API/webbapp/demo:** inga ändringar (ren SEO/generatoryta).
+- **Tester:** verify 18/18 (nytt steg: Indexability-domar i synk). SEO-ytan
+  79 → 90 sidor. verify:ui/demo:check ej berörda (ingen app-/demokod ändrad).
+- **Status:** PASS (Release A).
+- **Deferred (Release B/C — kräver extern data/produktarbete):** situations-/
+  aktivitetsnoder + kurering (öppnar DO_NOT_GENERATE-intentionerna),
+  `/bidragskalender/` + `/nya-bidrag/`-feed + `/bidragsindex/` + förändrings-
+  historik + proveniensgraf, SERP Intelligence + Content Gap Engine + SEO Control
+  Center + opportunity queue (kräver GSC/SERP), "Why this/Why not" + "Similar
+  grants" (appfunktioner), org-nr → första bidragsbild (licensierad datakälla).
