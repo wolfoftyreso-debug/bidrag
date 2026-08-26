@@ -338,3 +338,22 @@ Arbetsströmmar (§28): 1 Core product · 2 Discovery/matching ·
 - **Tester:** verify 19/19. SEO-ytan 126 → 128 sidor.
 - **Status:** PASS (reproducerbar grund). Deferred: historik (live-DB+cron),
   awards (officiell öppen data), API Core, ANTHROPIC_API_KEY — inget på gissad data.
+
+## 2026-08-26 — Bindande indexerbarhetsregel (§29): full beslutsvokabulär + enforcement
+
+- **Ström:** 7 (SEO/content)
+- **Beslut:** Produktägaren fullbordade §29: ingen sida indexeras enbart för att
+  den går att generera; ingen mall-swap (ort/bransch/år/målgrupp/bidragsnamn) utan
+  eget värde. Full vokabulär: INDEX / NOINDEX_FOLLOW / CANONICAL_TO_PARENT / MERGE /
+  REMOVE_410 / DO_NOT_GENERATE.
+- **Vad:** `tools/lib/intents.mjs` — hela vokabulären som konstanter + regeln i
+  headern + `parentOverlapVerdict` (CANONICAL_TO_PARENT när en kandidat inte
+  smalnar av sin målgruppshubb). Wire:at i genseo + indexability.mjs (realiseras
+  som noindex,follow — samma effekt, inget foreign-canonical). **Enforcement:**
+  `tools/seo-dataqa.mjs` fäller bygget om en INDEX-ad programmatisk sida saknar
+  ≥1 verkligt stöd eller en konkret CTA-handling. Verifierat: 24 INDEX
+  programmatiska sidor har alla data + CTA; 0 CANONICAL_TO_PARENT idag.
+- **Filer:** tools/lib/intents.mjs, tools/genseo.mjs, tools/indexability.mjs,
+  tools/seo-dataqa.mjs, docs/{SEO_FUNDING_GRAPH,SEO_QUERY_PAGES}.md.
+- **Tester:** verify 19/19.
+- **Status:** PASS.

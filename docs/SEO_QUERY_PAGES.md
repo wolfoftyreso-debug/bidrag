@@ -4,7 +4,7 @@
 > Query Pages är vyer över kunskapsgrafen; Indexability-motorn avgör vilka kombinationer
 > som förtjänar en indexerbar sida utifrån VERKLIG datatäckning (inga påhittade sökvolymer).
 
-Kurerat läge: **2026-08-13T00:00:00Z**. Kandidater: **13** · INDEX **9** · NOINDEX_FOLLOW **1** · DO_NOT_GENERATE **3**.
+Kurerat läge: **2026-08-13T00:00:00Z**. Kandidater: **13** · INDEX **9** · NOINDEX_FOLLOW **1** · CANONICAL_TO_PARENT **0** · DO_NOT_GENERATE **3**.
 
 ## Domar
 
@@ -28,7 +28,9 @@ Kurerat läge: **2026-08-13T00:00:00Z**. Kandidater: **13** · INDEX **9** · NO
 
 - **INDEX** — ≥3 matchande stöd: self-canonical + i sitemap.
 - **NOINDEX_FOLLOW** — 1–2 stöd: genereras för människor, `robots noindex,follow`, utanför sitemap.
+- **CANONICAL_TO_PARENT** — smalnar inte av målgruppshubben (samma stöduppsättning): inget eget sökvärde, realiseras som noindex,follow (inte ett självständigt sökresultat; länkar följs).
 - **DO_NOT_GENERATE** — 0 stöd: sidan skapas inte (t.ex. aktiviteter som saknar kurerat stöd i KB:n).
+- Full beslutsvokabulär (§29): INDEX / NOINDEX_FOLLOW / CANONICAL_TO_PARENT / MERGE / REMOVE_410 / DO_NOT_GENERATE. MERGE och REMOVE_410 är motorstödda men triggas inte av dagens kandidater.
 
 Aktivitetsintentioner (anställa, köpa maskiner, investering enskild firma) landar i DO_NOT_GENERATE
 tills kunskapsbasen kurerats för dessa aktiviteter — motorn vägrar ärligt en tom sida.

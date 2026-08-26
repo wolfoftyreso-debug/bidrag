@@ -53,4 +53,37 @@ export function indexabilityVerdict(intent, supports) {
   return { verdict, count, reasons, score: count };
 }
 
-export const VERDICTS = ['INDEX', 'NOINDEX_FOLLOW', 'DO_NOT_GENERATE'];
+/**
+ * Den BINDANDE indexerbarhetsregeln (§29): ingen sida indexeras enbart för att
+ * den tekniskt går att generera, och ingen sida publiceras/indexeras om den bara
+ * byter ut ort/bransch/årtal/målgrupp/bidragsnamn i en i övrigt identisk mall.
+ * Varje indexerbar sida måste ha egen verifierad sökintention, självständigt
+ * användarvärde, aktuell bidragsdata, relevanta villkor, officiella källor,
+ * internlänkar OCH en konkret handling. Full beslutsvokabulär:
+ *
+ *   INDEX               besvarar en verklig, unik fråga → self-canonical + sitemap
+ *   NOINDEX_FOLLOW      användbar i produkten men saknar eget sökvärde
+ *   CANONICAL_TO_PARENT överlappar en starkare huvudsida → canonical dit, ur sitemap
+ *   MERGE               unikt innehåll ska flyttas till en annan sida
+ *   REMOVE_410          varaktigt värdelös utan relevant ersättare → 410
+ *   DO_NOT_GENERATE     saknar reellt värde → skapas aldrig
+ *
+ * Produkten får skapa obegränsat med personliga/filtrerade resultat; Google får
+ * bara sidorna som förtjänar att vara självständiga sökresultat.
+ */
+export const VERDICTS = ['INDEX', 'NOINDEX_FOLLOW', 'CANONICAL_TO_PARENT', 'MERGE', 'REMOVE_410', 'DO_NOT_GENERATE'];
+
+/**
+ * CANONICAL_TO_PARENT-detektion: om en kandidat inte SMALNAR AV sin förälderhubb
+ * (samma stöduppsättning som hela föräldern) tillför den inget eget sökvärde och
+ * ska canonicala till föräldern i stället för att konkurrera. Returnerar
+ * 'CANONICAL_TO_PARENT' eller null.
+ */
+export function parentOverlapVerdict(supports, parentSupports) {
+  if (!parentSupports || !parentSupports.length || !supports.length) return null;
+  const set = new Set(supports.map((o) => o.slug));
+  const parentSet = new Set(parentSupports.map((o) => o.slug));
+  // Ingen avsmalning: kandidaten täcker hela föräldern (och tvärtom) → dubblett.
+  const narrows = [...parentSet].some((s) => !set.has(s));
+  return narrows ? null : 'CANONICAL_TO_PARENT';
+}

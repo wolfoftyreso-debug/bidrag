@@ -39,9 +39,22 @@ Bara för att en kombination finns i databasen ska den inte indexeras. Varje
 kandidat får en dom utifrån **verklig datatäckning** — vi har ingen verifierad
 sökvolym (`search_volume: null`), så vi påstår aldrig efterfrågan vi inte mätt:
 
+Den **bindande regeln (§29):** ingen sida indexeras enbart för att den tekniskt
+går att generera, och ingen sida indexeras om den bara byter ut ort/bransch/
+årtal/målgrupp/bidragsnamn i en identisk mall. Varje indexerbar sida måste ha
+egen verifierad sökintention, självständigt användarvärde, aktuell bidragsdata,
+relevanta villkor, officiella källor, internlänkar **och en konkret handling**.
+Full beslutsvokabulär (`tools/lib/intents.mjs`):
+
 - **INDEX** (≥3 matchande stöd) — self-canonical + i sitemap.
 - **NOINDEX_FOLLOW** (1–2 stöd) — genereras för människor, `robots noindex,follow`, utanför sitemap.
+- **CANONICAL_TO_PARENT** — smalnar inte av målgruppshubben (samma stöduppsättning): inget eget sökvärde. Realiseras som noindex,follow (inte ett självständigt sökresultat; länkar följs). Motorstödd via `parentOverlapVerdict`; triggas inte av dagens kandidater.
+- **MERGE / REMOVE_410** — motorstödda outcomes (flytta unikt värde / permanent borttagen utan ersättare); inga kandidater idag.
 - **DO_NOT_GENERATE** (0 stöd) — skapas inte.
+
+**Enforcement (kod, i verify):** `tools/seo-dataqa.mjs` fäller bygget om en
+INDEX-ad programmatisk sida (query/finansiär) saknar ≥1 verkligt stöd eller en
+konkret handling (CTA in i kontrollen) — mall-swap utan eget värde blockeras.
 
 Aktivitetsintentioner (anställa, köpa maskiner, investering enskild firma)
 landar korrekt i DO_NOT_GENERATE tills kunskapsbasen kurerats för aktiviteterna

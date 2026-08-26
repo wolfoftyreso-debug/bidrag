@@ -61,6 +61,28 @@ if (existsSync(fbiHtml)) {
   }
 }
 
+// §29 bindande indexerbarhetsregel: varje INDEXERAD programmatisk sida (query +
+// finansiär) måste ha självständigt användarvärde (≥1 verkligt stöd listat) OCH
+// en konkret handling (CTA in i kontrollen) — aldrig en tom mall-swap.
+const SITE = join(ROOT, 'artifacts', 'seo-site');
+if (existsSync(SITE)) {
+  const { readdirSync, statSync } = await import('node:fs');
+  const ACTION = ['href="/"', 'href="/vilka-bidrag-kan-jag-fa/"', 'href="/hitta-bidrag-gratis/"'];
+  const prog = [];
+  (function walk(dir, rel) {
+    for (const name of readdirSync(dir)) {
+      const p = join(dir, name);
+      if (statSync(p).isDirectory()) walk(p, `${rel}${name}/`);
+      else if (name === 'index.html' && /^\/(foretag|privatperson|forening|enskild-firma|finansiarer)\/[^/]+\/$/.test(rel)) prog.push([rel, readFileSync(p, 'utf8')]);
+    }
+  })(SITE, '/');
+  for (const [rel, html] of prog) {
+    if (/name="robots" content="noindex/.test(html)) continue; // NOINDEX undantas
+    if (!ACTION.some((a) => html.includes(a))) err(`§29: INDEX-sida ${rel} saknar konkret handling (CTA in i kontrollen)`);
+    if (!/href="\/bidrag\/[^"]+\/"/.test(html)) err(`§29: INDEX-sida ${rel} listar inget verkligt stöd — otillräckligt självständigt värde`);
+  }
+}
+
 if (errors) {
   console.error(`\nSEO data-QA: ${errors} brott mot DoD-invarianterna. Blockerar release.`);
   process.exit(1);

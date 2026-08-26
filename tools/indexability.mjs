@@ -12,19 +12,29 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadIntents, resolveIntent, indexabilityVerdict } from './lib/intents.mjs';
+import { loadIntents, resolveIntent, indexabilityVerdict, parentOverlapVerdict } from './lib/intents.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'docs', 'SEO_QUERY_PAGES.md');
 const CHECK = process.argv.includes('--check');
 const { opportunities, CURATED_AT } = await import(join(ROOT, 'apps/api/src/seed/data.ts'));
 
+const HUB_TYPES = { individual: ['individual'], company: ['company', 'economic_association'], association: ['association', 'informal_group'] };
 const rows = loadIntents(ROOT)
-  .map((intent) => ({ intent, ...(() => { const s = resolveIntent(intent, opportunities); return { supports: s, ...indexabilityVerdict(intent, s) }; })() }))
+  .map((intent) => {
+    const supports = resolveIntent(intent, opportunities);
+    const base = indexabilityVerdict(intent, supports);
+    // §29 CANONICAL_TO_PARENT-förfining (samma som genseo).
+    const parent = opportunities.filter((o) => (o.applicantTypes ?? []).some((t) => (HUB_TYPES[intent.applicant_type] ?? []).includes(t)));
+    if (base.verdict === 'INDEX' && parentOverlapVerdict(supports, parent)) {
+      return { intent, supports, verdict: 'CANONICAL_TO_PARENT', count: supports.length, reasons: ['smalnar inte av målgruppshubben — inget eget sökvärde'], score: supports.length };
+    }
+    return { intent, supports, ...base };
+  })
   .sort((a, b) => a.intent.canonical_url.localeCompare(b.intent.canonical_url, 'sv'));
 
-const tally = { INDEX: 0, NOINDEX_FOLLOW: 0, DO_NOT_GENERATE: 0 };
-for (const r of rows) tally[r.verdict]++;
+const tally = { INDEX: 0, NOINDEX_FOLLOW: 0, CANONICAL_TO_PARENT: 0, DO_NOT_GENERATE: 0 };
+for (const r of rows) tally[r.verdict] = (tally[r.verdict] ?? 0) + 1;
 
 const L = [];
 L.push('# Query Pages & Indexability-domar (SEO-3)');
@@ -33,7 +43,7 @@ L.push('> **Byggprodukt — redigera aldrig för hand.** `node --experimental-st
 L.push('> Query Pages är vyer över kunskapsgrafen; Indexability-motorn avgör vilka kombinationer');
 L.push('> som förtjänar en indexerbar sida utifrån VERKLIG datatäckning (inga påhittade sökvolymer).');
 L.push('');
-L.push(`Kurerat läge: **${CURATED_AT}**. Kandidater: **${rows.length}** · INDEX **${tally.INDEX}** · NOINDEX_FOLLOW **${tally.NOINDEX_FOLLOW}** · DO_NOT_GENERATE **${tally.DO_NOT_GENERATE}**.`);
+L.push(`Kurerat läge: **${CURATED_AT}**. Kandidater: **${rows.length}** · INDEX **${tally.INDEX}** · NOINDEX_FOLLOW **${tally.NOINDEX_FOLLOW}** · CANONICAL_TO_PARENT **${tally.CANONICAL_TO_PARENT}** · DO_NOT_GENERATE **${tally.DO_NOT_GENERATE}**.`);
 L.push('');
 L.push('## Domar');
 L.push('');
@@ -49,7 +59,9 @@ L.push('## Domtröskeln');
 L.push('');
 L.push('- **INDEX** — ≥3 matchande stöd: self-canonical + i sitemap.');
 L.push('- **NOINDEX_FOLLOW** — 1–2 stöd: genereras för människor, `robots noindex,follow`, utanför sitemap.');
+L.push('- **CANONICAL_TO_PARENT** — smalnar inte av målgruppshubben (samma stöduppsättning): inget eget sökvärde, realiseras som noindex,follow (inte ett självständigt sökresultat; länkar följs).');
 L.push('- **DO_NOT_GENERATE** — 0 stöd: sidan skapas inte (t.ex. aktiviteter som saknar kurerat stöd i KB:n).');
+L.push('- Full beslutsvokabulär (§29): INDEX / NOINDEX_FOLLOW / CANONICAL_TO_PARENT / MERGE / REMOVE_410 / DO_NOT_GENERATE. MERGE och REMOVE_410 är motorstödda men triggas inte av dagens kandidater.');
 L.push('');
 L.push('Aktivitetsintentioner (anställa, köpa maskiner, investering enskild firma) landar i DO_NOT_GENERATE');
 L.push('tills kunskapsbasen kurerats för dessa aktiviteter — motorn vägrar ärligt en tom sida.');
@@ -63,5 +75,5 @@ if (CHECK) {
   console.log(`SEO_QUERY_PAGES.md i synk (${rows.length} kandidater).`);
 } else {
   writeFileSync(OUT, body);
-  console.log(`Skrev ${OUT}: ${rows.length} kandidater (INDEX ${tally.INDEX} / NOINDEX ${tally.NOINDEX_FOLLOW} / DO_NOT_GENERATE ${tally.DO_NOT_GENERATE}).`);
+  console.log(`Skrev ${OUT}: ${rows.length} kandidater (INDEX ${tally.INDEX} / NOINDEX ${tally.NOINDEX_FOLLOW} / CANONICAL_TO_PARENT ${tally.CANONICAL_TO_PARENT} / DO_NOT_GENERATE ${tally.DO_NOT_GENERATE}).`);
 }

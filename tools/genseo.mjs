@@ -23,7 +23,7 @@
 import { mkdirSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadIntents, resolveIntent, indexabilityVerdict } from './lib/intents.mjs';
+import { loadIntents, resolveIntent, indexabilityVerdict, parentOverlapVerdict } from './lib/intents.mjs';
 import { computeFundingIndex } from './lib/foretagsindex.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -556,7 +556,7 @@ function queryPage(intent, supports, verdict) {
     { name: hub.short, url: `/bidrag/${hub.slug}/` },
     { name: intent.title_q, url: path },
   ];
-  const noindex = verdict.verdict === 'NOINDEX_FOLLOW';
+  const noindex = verdict.verdict === 'NOINDEX_FOLLOW' || verdict.verdict === 'CANONICAL_TO_PARENT';
   const title = `${intent.title_q} | Bidragskoll`.slice(0, 70);
   const description = `${intent.answer} Kontrollera gratis vilka som passar — resultaten är inte låsta.`.slice(0, 168);
   const sorted = [...supports].sort((a, b) => shortTitle(a).localeCompare(shortTitle(b), 'sv'));
@@ -780,9 +780,18 @@ function emit(path, html, opts = {}) {
 }
 
 // ── Indexability-motorn: resolvera intentioner mot grafen, döm varje kandidat ─
+const HUB_TYPES = { individual: ['individual'], company: ['company', 'economic_association'], association: ['association', 'informal_group'] };
 const INTENTS = loadIntents(ROOT).map((intent) => {
   const supports = resolveIntent(intent, opportunities);
-  return { intent, supports, ...indexabilityVerdict(intent, supports) };
+  const base = indexabilityVerdict(intent, supports);
+  // §29 CANONICAL_TO_PARENT: om intentionen inte smalnar av sin målgruppshubb
+  // (samma stöduppsättning) tillför den inget eget sökvärde. Realiseras som
+  // noindex (samma effekt: inte ett självständigt sökresultat; länkar följs).
+  const parentSupports = opportunities.filter((o) => (o.applicantTypes ?? []).some((t) => (HUB_TYPES[intent.applicant_type] ?? []).includes(t)));
+  if (base.verdict === 'INDEX' && parentOverlapVerdict(supports, parentSupports)) {
+    return { intent, supports, verdict: 'CANONICAL_TO_PARENT', count: supports.length, reasons: ['smalnar inte av målgruppshubben — inget eget sökvärde'], score: supports.length };
+  }
+  return { intent, supports, ...base };
 });
 // Query-länkar per hubb (INDEX + NOINDEX; DO_NOT_GENERATE länkas aldrig).
 const queryLinksByHub = {};
