@@ -18,6 +18,13 @@ Skala: BLOCKER (extern, hindrar produktion) · HIGH · MEDIUM · LOW.
 | X4 | Resend API-nyckel (e-post) | `.env` `RESEND_API_KEY` | Ja — ärlig 503 utan |
 | X5 | ANTHROPIC_API_KEY (fritext/språkförslag) | `.env` `ANTHROPIC_API_KEY` | Ja — ärlig 503 + val-baserat fallback |
 
+## Beslut som kräver produktägaren (BLOCKER för respektive bygge)
+
+| Id | Beslut | Konflikt | Status |
+|---|---|---|---|
+| R9 | **Personnummer som identifieringsnyckel för privatperson** (Open Discovery-korrigeringen §5/steg 2) | Bryter grundregel "Personnummer efterfrågas aldrig" (CLAUDE.md #1); GDPR/DPIA-vikt; rör sannolikt BankID | **AVVAKTAR uttryckligt beslut** — ej byggt |
+| R10 | Open Discovery-pivoten river den byggda 39 kr-teaser/paywall-modellen (Matches.tsx, payments, entitlements) | Vänder en byggd+testad intäktsmodell (task #58) | Auktoriserad av produktägaren 2026-08-26; sekvenseras som egen fas |
+
 ## Produktluckor (från FAS 0)
 
 | Id | Risk | Prio | Fas |

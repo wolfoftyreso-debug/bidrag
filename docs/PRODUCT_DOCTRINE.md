@@ -1,144 +1,163 @@
 # PRODUCT DOCTRINE — Bidragskoll.se
 
-> Detta är ett **styrdokument**, inte en vision. Principerna nedan är låsta och
-> försvaras av kod: `tools/doctrine.mjs` körs i `npm run verify` och fäller
-> bygget om en användarvänd yta börjar bryta mot den bärande invarianten.
-> Ändra aldrig doktrinen utan att samtidigt uppdatera kontrollen — och
-> tvärtom.
+> Styrdokument, inte vision. Principerna nedan är låsta och försvaras av kod:
+> `tools/doctrine.mjs` körs i `npm run verify`. **Reviderad 2026-08-26** med
+> den viktigaste produktkorrigeringen hittills: **Open Discovery** — betalning
+> flyttas från att *se resultat* till att *använda arbetsverktyg*.
 
-Status: LÅST 2026-08-25. Revideras efter varje större produkt- eller
-positioneringsändring. Nulägesdom mot doktrinen: `docs/DOCTRINE_AUDIT.md`.
+Status: LÅST (v2, 2026-08-26). Nulägesdom: `docs/DOCTRINE_AUDIT.md`.
+Migreringsstatus: se §12 (den byggda 39 kr-teaser-modellen ersätts fasvis).
 
 ---
 
 ## 1. Positioneringen (en mening)
 
-**Bidragskoll är inte en sökmotor där du själv måste veta vad du söker. Det är
-en upptäcktsmotor som tar reda på vad du kan ha rätt till.**
+**Bidragskoll är en upptäcktsmotor, inte en sökmotor eller informationsportal.**
+Användaren ska inte lära sig bidragssystemet. Användaren vill veta: *Finns det
+pengar eller stöd jag kan få?* — och därefter: *Vad behöver jag göra för att få
+dem?*
 
-Direkt tilltal:
+Affärsmodellen i en mening:
 
-> Du behöver inte veta vilket bidrag du söker. Berätta vem du är, så
-> kontrollerar vi vad som kan vara aktuellt.
+> **Gratis att upptäcka. Betalt att genomföra, bevaka och administrera.**
 
-Produktmässigt:
+Publik kärnformulering:
 
-> Från situation till möjlighet — inte från bidragsnamn till ansökan.
+> Se vilka bidrag du kan få. Ansök själv — eller låt Bidragskoll göra ansökan klar.
 
-## 2. Den bärande invarianten (det som är kod)
+Den bärande mentala modellen är **en personlig bidragsinkorg**: användaren
+identifierar sig, och möjligheterna kommer till användaren (öppna nu · behöver
+kontrolleras · öppnar senare · bevakas · påbörjad ansökan · redo att skicka).
+Användaren ska aldrig behöva navigera i ett bidragsuniversum.
 
-**Användaren ska aldrig behöva känna till stödet — dess namn, dess kategori,
-dess myndighet eller dess stödform — för att få värde ur systemet.**
+## 2. Den bärande invarianten (kod)
 
-Detta är inte en känsla. Det är ett testbart krav, och det är vad
-`tools/doctrine.mjs` verifierar. Konsekvenser:
+**Användaren ska aldrig behöva känna till stödet — namn, kategori, myndighet
+eller stödform — för att få värde.** Testbart; vaktas av `tools/doctrine.mjs`.
 
-- Intaget frågar aldrig efter myndighetsbegrepp när svaret kan härledas ur
-  vanlig svenska. "Vad vill ni genomföra?" — inte "Vilken stödberättigande
-  insats avser projektet?".
-- Ingen skärm ber användaren välja eller namnge ett bidrag som inträdesbiljett.
-- Systemet översätter internt vardagssvenska → stödtyp, kostnadsslag,
-  statsstödsregler, målgrupp och behörighetskriterier. Användaren ser aldrig
-  översättningen som ett krav på sig.
+## 3. De sju bindande produktprinciperna
 
-## 3. De fyra lagren — och var vi börjar
+1. **Open Discovery** — alla användare ska kunna se möjliga bidrag och en
+   grundläggande matchningsförklaring **utan betalning**. Ingen betalvägg
+   framför resultatet.
+2. **Progressive Eligibility** — behörighetsfrågor ställs huvudsakligen **efter**
+   att en specifik möjlighet valts, per bidrag — inte som ett stort generellt
+   formulär före första resultatet.
+3. **Official Exit** — varje relevant bidrag ska kostnadsfritt kunna länka
+   användaren till den officiella ansökningskanalen.
+4. **Paid Execution Layer** — betalning utlöses av **användning av
+   arbetsverktyg** (bevakning, förberedelse, administration), aldrig av att
+   offentlig information eller grundläggande matchningsresultat visas.
+5. **Radical Simplicity** — standardflödet får inte kräva att användaren lär sig
+   bidragstermer eller läser långa texter.
+6. **Progressive Disclosure** — detaljer visas när användaren öppnar en möjlighet
+   eller behöver fatta ett beslut, inte allt på en gång.
+7. **One Primary Action** — varje skärm har en tydlig primär handling; sekundära
+   val konkurrerar inte visuellt med huvuduppgiften.
 
-En komplett bidragsresa har fyra lager. Konkurrenter som är projekt-/
-ansökningsdrivna börjar typiskt vid **lager 2–3** och förutsätter att
-användaren redan har ett projekt, ett syfte och ibland ett underlag att bifoga.
-Det gör dem relevanta främst för redan bidragsvana. **Bidragskoll börjar vid
-lager 1.**
+## 4. Gratis kontra betalt (den nya gränsen)
 
-| Lager | Fråga | Vår hållning |
-|---|---|---|
-| **1. Upptäckt** | Vilka stöd kan över huvud taget vara relevanta för mig? | **Här börjar vi.** Berätta vem du är. |
-| 2. Kvalificering | Uppfyller jag villkoren, och vad saknas för att avgöra det? | Motorn utreder; öppna frågor sorteras efter informationsvärde. |
-| 3. Ansökningsförberedelse | Vilka uppgifter, dokument och formuleringar behöver jag? | Systemet förbereder — 19 kr/ansökan, alla dokument ingår. |
-| 4. Genomförande | Hur ansöker jag, följer ärendet och hanterar nästa steg? | Kalender, deadlines, "ansök själv gratis"-väg alltid synlig. |
-
-Användaren vet inte vad hen inte vet: inte vad stödet heter, vilken myndighet
-som hanterar det, vilken stödform som gäller, vilka egenskaper i situationen som
-är relevanta, eller vilka möjligheter hen borde fråga efter. **Att lösa det är
-hela poängen.**
-
-## 4. Ordningen — värde före underlag
-
-Första värdet ska komma **innan** dokumentuppladdning och **innan** betalning.
-Ingen ska behöva leta fram affärsplan, årsredovisning, projektbeskrivning eller
-andra underlag innan systemet visat att det sannolikt finns något relevant.
-
-Rätt ordning:
-
-1. Lätt profilering (situation, vanlig svenska).
-2. Preliminära relevanta möjligheter (teaser: att de finns, hur många, på
-   vilken nivå — aldrig namn/källa före upplåsning).
-3. Några intelligenta följdfrågor (sorterade efter hur många stöd de avgör).
-4. Prioriterad analys (39 kr upplåsning).
-5. **Först därefter** eventuella dokument (19 kr/ansökan).
-
-Dokument används för att **fördjupa och verifiera**, aldrig som inträdesbiljett.
-
-## 5. Frågor användaren förstår
-
-Bidragskoll frågar aldrig efter myndighetsbegrepp när systemet kan härleda
-svaret från vanlig svenska.
-
-| Dålig fråga (förbjuden i intag) | Bra fråga |
+| Gratis (Open Discovery) | Betalt (Paid Execution Layer) |
 |---|---|
-| "Vilken typ av stödberättigande insats avser projektet?" | "Vad vill ni genomföra?" |
-| "Ange stödform" | "Vad kommer pengarna främst att användas till?" |
-| "Vilket bidrag söker du?" | "Har ni redan börjat köpa in eller beställa något?" |
-| "Välj finansiär" | "Vilka kommer att få nytta av satsningen?" |
+| Skapa grundprofil | Fullständig bidragsbevakning (flera aktiva) |
+| Se relevanta stöd | SMS-/e-postaviseringar, förändringsbevakning |
+| Se **varför** de kan vara relevanta | Ansökningsarbetsyta + dokumenthantering |
+| Svara på grundläggande kvalificeringsfrågor | Återanvända verksamhetsuppgifter automatiskt |
+| Se sannolik status + deadline | Formulering av ansökningssvar, projektplan, budget |
+| Se officiella källor | Medfinansieringskontroll, dokumentchecklistor |
+| Gå till myndigheten och **ansöka själv** | Versionshistorik, uppgifter, påminnelser, samarbete |
+| Spara ett begränsat antal möjligheter | Flera parallella ansökningar, slutkontroll, uppföljning |
 
-Systemet mappar internt svaren till stödtyp, kostnadsslag, statsstödsregler,
-målgrupp och behörighetskriterier.
+Det betalda värdet är inte att hålla information gisslan — **det är att göra
+arbetet**. Användaren jämför inte "ska jag betala för en lista?" utan "ska jag
+göra hela ansökningsarbetet själv eller använda verktyget?".
 
-## 6. Var doktrinen ska genomsyra
+## 5. Grundflödet
 
-Startsidan · onboardingflödet · annonser · SEO-sidor · resultatkort ·
-betalningssteget · jämförelsesidor · produktdemonstrationer. En yta som bryter
-mot §2 är en bugg, inte en smaksak.
+1. **Vem gäller kontrollen?** Privatperson · Företag · Enskild firma · Förening.
+   Ingen intro, ingen artikel ovanför knappen.
+2. **Identifiera** person/verksamhet (organisationsnummer för företag/förening;
+   privatpersons-identitet — se §11, öppet beslut). Enskild firma = dubbelkontext
+   (privat + näring).
+3. **En eller ett fåtal inledande frågor** (frivillig fritext: "Berätta kort vad
+   som händer just nu"). Ska förbättra första urvalet — aldrig en projektansökan
+   i miniatyr.
+4. **Visa möjligheter tidigt**: "Vi har hittat N möjligheter" uppdelat i starkt
+   relevanta / behöver uppgifter / öppnar senare / bör kontrolleras.
+5. **Kvalificering per bidrag** (Progressive Eligibility): först när användaren
+   väljer ett bidrag ställs just dess villkorsfrågor.
 
-## 7. SEO-konsekvensen — situation före bidragsnamn
+## 6. Resultatkort (stängt läge)
 
-Vi konkurrerar självklart om namn-/kategorisökningar ("projektbidrag",
-"bostadsbidrag", "skriva bidragsansökan"), men vår försvarbara vallgrav är
-**lagret före** dessa sökningar — där användaren beskriver sig själv, inte ett
-bidrag:
+Endast: namn · en mening · status · ungefärligt värde (om korrekt) · deadline/
+nästa öppning · antal återstående frågor · **en** primär knapp. Progressive
+Disclosure vid öppning: varför det matchar · vad som saknas · centrala villkor ·
+officiell källa · nästa steg.
 
-- vilka bidrag kan jag få · har jag rätt till något bidrag · bidrag jag inte
-  visste fanns
-- stöd för ensamstående · ekonomiskt stöd vid låg inkomst · bidrag när man är
-  sjukskriven · stöd för barnfamiljer
-- stöd för nystartat företag · stöd för företag som vill anställa · stöd för att
-  köpa maskiner · stöd för energieffektivisering
-- bidrag för idrottsföreningar · vilka stöd kan vår förening söka · hjälp att
-  hitta rätt bidrag
+## 7. Tre handlingar per kontrollerat bidrag
 
-Ontologin organiseras därför kring **vem användaren är, vilken situation hen är
-i, vad hen vill uppnå, vilken förändring som inträffat, vilka resurser/
-begränsningar som finns, och vilken kombination av villkor som skapar
-behörighet** — inte enbart kring bidragsnamn och myndigheter. Detaljerad
-struktur och gap-map: `docs/SEO_SITUATION_ONTOLOGY.md`. Artikeln informerar;
-motorn avgör relevansen.
+- **Ansök själv** (gratis) — officiell sida, deadline, dokumentlista, villkor.
+- **Förbered i Bidragskoll** (betalt) — startar arbetsflödet.
+- **Bevaka** — stängt stöd, okänd nästa period, ej redo, väntade
+  villkorsändringar, deadlinepåminnelser. Skapar produktloopen.
 
-## 8. Testkriteriet (acceptans)
+## 8. Konverteringslogiken
 
-> En testperson **utan** förkunskap om svenska stöd ska kunna få minst tre
-> förklarade kandidater **utan att ange ett bidragsnamn**.
+Inte "betala för att låsa upp resultat", utan: starta gratis kontroll → upptäck
+möjlighet → kontrollera grundvillkor → uppleva att systemet förstår situationen
+→ välj att hantera ansökan i Bidragskoll → betala för verktygslagret. Användaren
+får **bevis på värdet innan betalning**. Bevakning fångar den som inte har något
+öppet relevant just nu ("din profil kan användas för framtida möjligheter").
 
-Detta är den mänskliga motsvarigheten till §2. Körs i praktiken av
-`tools/simulate30.mjs` (personor utan bidragskunskap) och bevakas strukturellt
-av `tools/doctrine.mjs`.
+## 9. Search Surface vs Product Surface
 
-## 9. Förhållande till övriga doktriner
+Två skilda lager (detaljer: `docs/SEO_SEARCH_SURFACE.md`):
 
-- **Perfektionsdoktrinen** (`docs/PERFECTION_BASELINE.md`) — frånvaro av
-  friktion. Denna doktrin är dess produktstrategiska rot: den största
-  friktionen är att kräva förkunskap.
-- **Perfect Application Constitution** (`docs/APPLICATION-INTELLIGENCE.md`) —
-  styr lager 3 (kvaliteten i det förberedda). Denna doktrin skyddar lager 1.
-- **Språkguiden** (`docs/LANGUAGE_GUIDE.md`) — vardagssvenska; §5 här är dess
-  produktkrav.
-- **SEO Release Gate** (`docs/SEO_RELEASE_GATE.md`) — §7 här styr ontologin
-  gaten mäter.
+- **Search Surface** — den stora publika, indexerbara kunskapsytan; får vara
+  enorm, men konkret (viktigast först, långa förklaringar bakom "Visa
+  fullständig information"). Leder mot "Kontrollera om detta gäller dig".
+- **Product Surface** — den personliga Bidragskoll; **minimal**. En fråga i
+  taget, resultatkort, handlingar. Inga artiklar, inga säljavsnitt, inga
+  textmassor. SEO-innehåll får aldrig sippra in i produkten.
+
+## 10. Hårda kontrollkriterier (implementationen underkänns om)
+
+- betalning möter användaren **innan** relevanta bidrag visas;
+- användaren måste ange ett känt bidragsnamn;
+- ett långt generellt formulär krävs före första resultatet;
+- dokument krävs innan ett konkret bidrag valts;
+- startsidan domineras av långa textavsnitt;
+- resultatkort saknar tydlig nästa handling;
+- officiell ansökningslänk göms för gratisanvändare;
+- myndighetsspråk krävs för att komma vidare;
+- samma uppgift efterfrågas flera gånger;
+- användaren måste läsa en guide för att förstå produkten.
+
+## 11. Öppet beslut — identifiering av privatperson (personnummer)
+
+Korrigeringen föreslår personnummer som **säker identifieringsnyckel** för
+privatperson (uttryckligen INTE automatisk hämtning av inkomst/hushåll/hälsa).
+**Detta står i konflikt med en grundregel i repot** ("Personnummer efterfrågas
+aldrig någonstans", CLAUDE.md regel #1) och har GDPR-/DPIA-vikt (och rör
+sannolikt BankID). **Ej adopterat i doktrinen tills produktägaren uttryckligen
+beslutar.** Se `docs/OPEN_RISKS.md` R9. Företag/förening: organisationsnummer är
+oproblematiskt (offentlig uppgift) och adopteras.
+
+## 12. Migreringsstatus (39 kr-modellen → Open Discovery)
+
+Den byggda modellen (39 kr analysupplåsning + teaser som döljer namn/källa)
+ersätts fasvis. Tills dess gäller den byggda modellen i drift.
+
+- `tools/doctrine.mjs` check C bevakar idag "värde före betalning" mot den
+  befintliga teasern. **När paywall-före-resultat tas bort revideras check C**
+  till att i stället fälla bygget om resultat/matchningsförklaring döljs bakom
+  betalning (Open Discovery-vakten). Doc + check + kod ändras i samma fas.
+- Prismodellen (39 kr analys / 19 kr ansökan) omdefinieras: grundläggande
+  matchning gratis; 19 kr/ansökan och bevakningspaket blir det betalda lagret.
+  Produkter/priser/entitlements ska vara konfigurerbara, aldrig hårdkodade.
+
+## 13. Förhållande till övriga doktriner
+
+Perfektionsdoktrinen (friktion) · Application Constitution (lager 3-kvalitet) ·
+Språkguiden (vardagssvenska) · SEO Release Gate + `docs/SEO_SEARCH_SURFACE.md`
+(§9). Situationsontologin: `docs/SEO_SITUATION_ONTOLOGY.md`.

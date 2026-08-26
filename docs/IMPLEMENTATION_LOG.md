@@ -52,3 +52,24 @@ Arbetsströmmar (§28): 1 Core product · 2 Discovery/matching ·
   ANTHROPIC_API_KEY) + demons intagsparitet (LOW, marknadsartefakt).
 - **Rollback:** `git revert` av FAS 1-committen; onboarding återgår till
   situations-tvåval som steg 0.
+
+## 2026-08-26 — Doktrinkorrigering: Open Discovery (betalmodellen vänds)
+
+- **Ström:** 1, 7
+- **Beslut:** Produktägaren (masterkorrigering): bort med betalvägg-före-
+  resultat som huvudmodell → **Open Discovery** (gratis att upptäcka; betalt att
+  genomföra/bevaka/administrera). Auktoriserad; sekvenseras fasvis.
+- **Vad (denna commit — doc/intent only):** `docs/PRODUCT_DOCTRINE.md` omskriven
+  till v2 (7 bindande principer, gratis/betalt-gränsen, per-bidrag-kvalificering,
+  bidragsinkorg, hårda kontrollkriterier, Search vs Product Surface,
+  migreringsstatus §12). `docs/SEO_SEARCH_SURFACE.md` ny (Master SEO Expansion:
+  intent graph, search_language, sex efterfrågelager, quality gate, entity-ID,
+  freshness, changelog, question graph, AI-sök). `OPEN_RISKS` R9/R10.
+- **Databas/API/kod:** inga ändringar ännu. `tools/doctrine.mjs` check C
+  OFÖRÄNDRAD (speglar fortfarande den byggda teasern) — revideras i paywall-
+  removal-fasen så doc+check+kod ändras ihop.
+- **Öppet beslut (BLOCKER):** R9 personnummer — ej byggt, avvaktar produktägaren.
+- **Status:** PASS (doc/intent). Nästa faser: (P) paywall-removal → Open
+  Discovery i Matches/payments; (Q) per-bidrag-kvalificering; (R) bevakningslager;
+  (S) SEO search surface. Verify 15/15.
+- **Rollback:** `git revert` av denna commit återställer doktrin v1.
