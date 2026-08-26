@@ -46,7 +46,7 @@ export default function CalendarPage() {
           date: new Date(c.deadlineAt),
           kind: 'application',
           title: c.opportunityTitle,
-          sub: `Din ansökan · ${STATE_LABELS[c.state]?.label ?? c.state} · ${days} dagar kvar`,
+          sub: `Din ansökan · ${STATE_LABELS[c.state]?.label ?? c.state} · ${days === 0 ? 'sista dagen idag' : `${days} ${days === 1 ? 'dag' : 'dagar'} kvar`}`,
           link: `/ansokningar/${c.id}`,
           tone: days <= 7 ? 'danger' : days <= 14 ? 'warning' : 'info',
         });

@@ -287,3 +287,30 @@ Arbetsströmmar (§28): 1 Core product · 2 Discovery/matching ·
 - **Tester:** verify 18→19 steg, allt grönt. SEO-ytan 90 → 126 sidor.
 - **Status:** PASS (batch 1). Nästa oblockerade: SEO-087/090 (kalender/deadlines),
   SEO-059/061/062 (flaggskepp), SEO-064 (situationssidor), SEO-030 (sitemap-index).
+
+## 2026-08-26 — SEO Hardening Audit: verifiera verkligheten + åtgärda fynd
+
+- **Ström:** 7 (SEO/content), 1 (Core product)
+- **Beslut:** Produktägaren: adversarial revision — lita inte på tidigare
+  påståenden, verifiera mot faktisk yta/kod, åtgärda fynd med bevis.
+- **Vad:** Körde revisionen (§2–29) mot `artifacts/seo-site` + koden. Domar i
+  `docs/SEO_HARDENING_AUDIT.md`. Tre reella fynd åtgärdade:
+  - **F1 (§2, allvarligast):** startsidan `/` hade 0 crawlbart innehåll utan JS
+    (ingen H1/text/länk; utloggad renderar dessutom inloggning). Fix: `<noscript>`-
+    fallback i `apps/web/index.html` med H1 + gratis-modellen + 8 interna länkar
+    in i statiska ytan.
+  - **F2 (§4):** kannibaliseringsdetektorn gav falska 0.5-träffar från titel-
+    boilerplate. Fix: `tools/seo-cannibalization.mjs` jämför distinkt titelsegment
+    + H1 → 0 reella risker på 105 sidor.
+  - **F3 (§12):** grammatik "1 dagar kvar" → "1 dag kvar"/"sista dagen idag" i
+    `Calendar.tsx` (kärninvarianten — ingen stale-open — var redan korrekt).
+  - **F4 (§2, djupare, EJ åtgärdat):** utloggad `/` = inloggning även med JS →
+    uppföljningsticket (publik landningssida, SEO-049-fördjupning).
+- **Verifierat (inte påstått):** §3 indexeringssimulation (sitemap 105 indexerbara,
+  canonicals self-ref), §11/13 databassanning (`seo-dataqa`), §14 transparens,
+  §15 inga fabricerade ratings, §29 programmatic spamrisk (Indexability-motorn).
+  Externt/obyggt (§16 full LLM, §17–28) märkt N/A/BLOCKED_EXTERNAL — inte PASS.
+- **Filer:** `docs/SEO_HARDENING_AUDIT.md` (ny); `apps/web/index.html`,
+  `tools/seo-cannibalization.mjs`, `apps/web/src/pages/Calendar.tsx`.
+- **Tester:** verify 19/19 · verify:ui KLAR · typecheck rent.
+- **Status:** PASS.

@@ -19,7 +19,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = process.argv[2] ? join(ROOT, process.argv[2]) : join(ROOT, 'artifacts', 'seo-site');
 if (!existsSync(SITE)) { console.error(`${SITE} saknas — kör tools/genseo.mjs först`); process.exit(1); }
 
-const STOP = new Set(['och', 'för', 'att', 'i', 'på', 'du', 'din', 'ditt', 'kan', 'få', 'med', 'en', 'ett', 'de', 'som', 'är', 'bidragskoll', '|', '–', '-', 'so', 'fungerar', 'stödet']);
+const STOP = new Set(['och', 'för', 'att', 'i', 'på', 'du', 'din', 'ditt', 'kan', 'få', 'med', 'en', 'ett', 'de', 'som', 'är', 'so']);
 const pages = [];
 function walk(dir, rel) {
   for (const name of readdirSync(dir)) {
@@ -30,12 +30,18 @@ function walk(dir, rel) {
 }
 walk(SITE, '/');
 
-const norm = (s) => s.toLowerCase().replace(/[|–—:]/g, ' ').replace(/[^a-zåäö0-9\s]/g, '').split(/\s+/).filter((w) => w && !STOP.has(w));
+// Precision-fix (hardening-audit fynd 1): jämför den DISTINKTIVA delen av titeln —
+// segmentet före "–"/"|" (entitetens/intentionens namn) — inte titelboilerplaten
+// ("… – villkor, belopp och ansökan | Bidragskoll", "… – stöd och bidrag"). Utan
+// detta ger den delade mallen falska 0.5-träffar mellan alla entitetssidor.
+const norm = (s) => s.split(/[–|]/)[0].toLowerCase().replace(/[^a-zåäö0-9\s]/g, '').split(/\s+/).filter((w) => w && !STOP.has(w));
 const docs = pages
   .filter(([, html]) => !/name="robots" content="noindex/.test(html)) // bara indexerbara tävlar
   .map(([path, html]) => {
     const title = html.match(/<title>([^<]*)<\/title>/)?.[1] ?? '';
-    return { path, title, tokens: new Set(norm(title)) };
+    const h1 = html.match(/<h1[^>]*>([^<]*)<\/h1>/)?.[1] ?? '';
+    // Signalen = distinkt titelsegment + H1 (fångar intention även när titelnamnet är kort).
+    return { path, title, tokens: new Set([...norm(title), ...norm(h1 + ' |')]) };
   });
 
 const jaccard = (a, b) => {
