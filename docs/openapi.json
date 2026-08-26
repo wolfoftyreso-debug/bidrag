@@ -9,6 +9,15 @@
     "schemas": {}
   },
   "paths": {
+    "/metrics": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
     "/healthz": {
       "get": {
         "responses": {
@@ -135,6 +144,145 @@
         "tags": [
           "auth"
         ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/auth/request-password-reset": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 320
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/auth/reset-password": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "token",
+                  "password"
+                ],
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 200
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 200
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/auth/recovery-codes": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/auth/recover-with-code": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "code",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 320
+                  },
+                  "code": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 40
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 200
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Default Response"
@@ -841,6 +989,49 @@
         }
       }
     },
+    "/v1/applications/{id}/suggest-field": {
+      "post": {
+        "tags": [
+          "applications"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "fieldKey"
+                ],
+                "properties": {
+                  "fieldKey": {
+                    "type": "string",
+                    "maxLength": 100
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
     "/v1/applications/{id}/transition": {
       "post": {
         "tags": [
@@ -907,6 +1098,29 @@
         }
       }
     },
+    "/v1/applications/{id}/review": {
+      "get": {
+        "tags": [
+          "applications"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
     "/v1/applications/{id}/budget-lines": {
       "post": {
         "tags": [
@@ -934,6 +1148,11 @@
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 500
+                  },
+                  "activity": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
                   },
                   "quantity": {
                     "type": "integer",
@@ -1535,6 +1754,732 @@
         }
       }
     },
+    "/v1/tenant/export": {
+      "get": {
+        "tags": [
+          "gdpr"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/tenant": {
+      "delete": {
+        "tags": [
+          "gdpr"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "confirm"
+                ],
+                "properties": {
+                  "confirm": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/tenants": {
+      "post": {
+        "tags": [
+          "team"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 200
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/tenant/members": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/tenant/invites": {
+      "post": {
+        "tags": [
+          "team"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "role"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 320
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "applicant",
+                      "contributor",
+                      "reviewer",
+                      "finance",
+                      "administrator"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      },
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/tenant/invites/{id}": {
+      "delete": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/invites/{token}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "in": "path",
+            "name": "token",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/invites/{token}/accept": {
+      "post": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "in": "path",
+            "name": "token",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/projects/{id}/application-purchase": {
+      "post": {
+        "tags": [
+          "payments"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 320
+                  },
+                  "immediateDeliveryConsent": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false,
+                "nullable": true
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/payments/{id}/mock-confirm": {
+      "post": {
+        "tags": [
+          "payments"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/payments/{id}/status": {
+      "get": {
+        "tags": [
+          "payments"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/payments/{id}/qr": {
+      "get": {
+        "tags": [
+          "payments"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/payments/{id}/receipt-email": {
+      "post": {
+        "tags": [
+          "payments"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 320
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/payments/{id}/resend-receipt": {
+      "post": {
+        "tags": [
+          "payments"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/purchases": {
+      "get": {
+        "tags": [
+          "payments"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/payments/{id}/receipt": {
+      "get": {
+        "tags": [
+          "payments"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/payments/{id}/receipt.pdf": {
+      "get": {
+        "tags": [
+          "payments"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/projects/{id}/receipt": {
+      "get": {
+        "tags": [
+          "payments"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/webhooks/payments/{provider}": {
+      "post": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "provider",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/projects/{id}/document-credits": {
+      "get": {
+        "tags": [
+          "documents"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/projects/{id}/document-pack": {
+      "post": {
+        "tags": [
+          "documents"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "pack"
+                ],
+                "properties": {
+                  "pack": {
+                    "type": "string",
+                    "enum": [
+                      "application"
+                    ]
+                  },
+                  "immediateDeliveryConsent": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/projects/{id}/generated-documents": {
+      "post": {
+        "tags": [
+          "documents"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "templateKey",
+                  "answers"
+                ],
+                "properties": {
+                  "templateKey": {
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "answers": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "opportunitySlug": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "documents"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/generated-documents/{id}/download": {
+      "get": {
+        "tags": [
+          "documents"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pdf",
+                "text"
+              ]
+            },
+            "in": "query",
+            "name": "format",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/internal/cron/{job}": {
+      "get": {
+        "tags": [
+          "internal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 40
+            },
+            "in": "path",
+            "name": "job",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "internal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 40
+            },
+            "in": "path",
+            "name": "job",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/internal/readiness": {
+      "get": {
+        "tags": [
+          "internal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            },
+            "in": "query",
+            "name": "probe",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
     "/v1/admin/sources": {
       "get": {
         "tags": [
@@ -1673,6 +2618,41 @@
         }
       }
     },
+    "/v1/admin/opportunities": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/admin/opportunities/{id}/verify": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
     "/v1/admin/review-queue/{id}/resolve": {
       "post": {
         "tags": [
@@ -1698,6 +2678,50 @@
                   "note": {
                     "type": "string",
                     "maxLength": 2000
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/admin/review-queue/{id}/apply": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "proposalIndex"
+                ],
+                "properties": {
+                  "proposalIndex": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 50
                   }
                 },
                 "additionalProperties": false

@@ -67,7 +67,7 @@ om. Inget regelinnehåll autopubliceras någonsin.
 
 ## 4. Funktionskatalog — hela API-ytan
 
-Samtliga 92 operationer, grupperade. Webbappen använder exakt dessa ytor —
+Samtliga 90 operationer, grupperade. Webbappen använder exakt dessa ytor —
 katalogen är därmed också webbens funktionskarta.
 
 ### Konto & inloggning
@@ -104,10 +104,8 @@ katalogen är därmed också webbens funktionskarta.
 | `GET /v1/projects/:id/generated-documents` | Lista projektets genererade dokument. |
 | `GET /v1/projects/:id/matches` | Hämta analysen. Före betalning: låst teaser (antal + sannolikhetsfördelning, inga namn). Efter: fullständig med förklaringar per kriterium. |
 | `GET /v1/projects/:id/receipt` | Analysupplåsningens kvitto för projektet. |
-| `GET /v1/projects/:id/unlock-status` | Är analysen upplåst? Inkluderar priserna (analysPriceMinor/applicationPriceMinor) för UI:t. |
 | `PATCH /v1/projects/:id` | Uppdatera projektets fakta/intention; svar på öppna följdfrågor sparas hit. |
 | `POST /v1/projects` | Skapa projekt: profil + intention (fritext) + fakta. Detta är intagets slutresultat. |
-| `POST /v1/projects/:id/analysis-unlock` | Köp analysupplåsningen (39 kr). Kräver `immediateDeliveryConsent: true` (ångerrätten) — annars 400. Utan betalprovider: ärlig 503. |
 | `POST /v1/projects/:id/application-purchase` | Köp en ansökningsförberedelse (19 kr — alla dokument för den ansökan ingår). Samma samtyckeskrav och 503-ärlighet. |
 | `POST /v1/projects/:id/document-pack` | Köp dokumentpaket i dokumentstudion (samtyckeskrav + 503-ärlighet som övriga köp). |
 | `POST /v1/projects/:id/funding-stack` | Bygg finansieringsplan av valda stöd; kontrollerar kombinerbarhet och dubbelfinansiering. |

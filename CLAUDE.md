@@ -7,10 +7,13 @@ Läs den här filen först. Den är skriven för Claude-agenter (och människor)
 
 **Bidragskoll.se** — svensk konsumenttjänst: berätta din livssituation, systemet
 utreder vilka stöd du kan ha rätt till (bostadsbidrag, försörjningsstöd, CSN,
-stipendier, projektbidrag m.m.) och förbereder hela ansökan. Affärsmodell:
-gratis upptäckt → **39 kr** analysupplåsning → **19 kr per ansökan** som
-förbereds i systemet (alla dokument för den ansökan ingår); att ansöka själv
-direkt hos myndigheten är alltid gratis och sägs uttryckligen.
+stipendier, projektbidrag m.m.) och förbereder hela ansökan. Affärsmodell
+(**Open Discovery**, produktdoktrinen v2): **gratis att upptäcka** — se
+matchningar, varför de matchar, grundvillkor, deadline, källa och "ansök
+själv"-länk utan betalning → **betalt arbetslager: 19 kr per förberedd ansökan**
+(alla dokument ingår; bevakning planeras). Ingen betalvägg framför resultaten;
+att ansöka själv direkt hos myndigheten är alltid gratis och sägs uttryckligen.
+(Den tidigare 39 kr-analysupplåsningen är borttagen — se `docs/PRODUCT_DOCTRINE.md`.)
 
 Två orubbliga produktprinciper: **en fråga per skärm** (ingen blankett) och
 **bedömning, aldrig beslut** ("ser ut att kunna ha rätt till", aldrig "du är

@@ -20,23 +20,6 @@ import { confirmPendingPayment, verifySwishPayment } from '../services/payments.
 import { fetchQrPng, swishConfigured } from '../services/integrations/swish.ts';
 import { WRITER_ROLES } from '../plugins/auth.ts';
 
-export async function isProjectUnlocked(tenantId: string, projectId: string): Promise<boolean> {
-  const [row] = await db
-    .select({ id: payments.id })
-    .from(payments)
-    .where(
-      and(
-        eq(payments.tenantId, tenantId),
-        eq(payments.projectId, projectId),
-        eq(payments.state, 'confirmed'),
-        // Ett dokumentköp är inte en analysupplåsning — kind avgör entitlement.
-        eq(payments.kind, 'analysis_unlock'),
-      ),
-    )
-    .limit(1);
-  return Boolean(row);
-}
-
 /**
  * Ansökningskrediter (19 kr per ansökan): summan av bekräftade
  * application_unlock-köp för projektet minus antal redan skapade ansökningar.
@@ -66,31 +49,11 @@ export async function applicationCredits(tenantId: string, projectId: string, co
 export async function paymentRoutes(app: FastifyInstance) {
   app.addHook('preHandler', app.requireAuth);
 
-  app.get(
-    '/v1/projects/:id/unlock-status',
-    { schema: { tags: ['payments'], params: { type: 'object', properties: { id: { type: 'string', format: 'uuid' } }, required: ['id'] } } },
-    async (request, reply) => {
-      const { id } = request.params as { id: string };
-      const tenantId = request.auth!.tenantId;
-      const [project] = await db
-        .select({ id: projects.id })
-        .from(projects)
-        .where(and(eq(projects.id, id), eq(projects.tenantId, tenantId)))
-        .limit(1);
-      if (!project) return reply.code(404).send({ error: 'not_found' });
-      return {
-        unlocked: await isProjectUnlocked(tenantId, id),
-        priceMinor: config.analysisPriceMinor,
-        applicationPriceMinor: config.applicationPriceMinor,
-        currency: 'SEK',
-      };
-    },
-  );
-
   /**
-   * Köp en ansökan i systemet (19 kr per ansökan). Samma sanningskedja som
-   * analysen: betalning bekräftad → kvitto → kredit; POST /v1/applications
-   * förbrukar en kredit per skapad ansökan (402 utan).
+   * Köp en ansökan i systemet (19 kr per ansökan) — det betalda arbetslagret
+   * (Open Discovery: matchningar är gratis, verktyget kostar). Sanningskedjan:
+   * betalning bekräftad → kvitto → kredit; POST /v1/applications förbrukar en
+   * kredit per skapad ansökan (402 utan).
    */
   app.post(
     '/v1/projects/:id/application-purchase',
@@ -175,106 +138,6 @@ export async function paymentRoutes(app: FastifyInstance) {
           after: { projectId: id, kind: 'application_unlock', amountMinor: config.applicationPriceMinor, provider: provider.id },
         });
         return reply.code(201).send({ paymentId: payment!.id, amountMinor: config.applicationPriceMinor, instructions: created.instructions });
-      } catch (err) {
-        await db.update(payments).set({ state: 'failed' }).where(eq(payments.id, payment!.id));
-        const status = (err as { statusCode?: number }).statusCode ?? 502;
-        return reply.code(status).send({ error: 'payment_create_failed', message: (err as Error).message });
-      }
-    },
-  );
-
-  /**
-   * Skapa betalning för att låsa upp analysen. Idempotent om redan upplåst.
-   * E-postadressen för kvittot samlas in här — precis före betalningen, med
-   * tydligt syfte — men kan kompletteras i efterhand via receipt-email.
-   */
-  app.post(
-    '/v1/projects/:id/analysis-unlock',
-    {
-      preHandler: app.requireRole(...WRITER_ROLES),
-      schema: {
-        tags: ['payments'],
-        params: { type: 'object', properties: { id: { type: 'string', format: 'uuid' } }, required: ['id'] },
-        body: {
-          type: 'object',
-          properties: {
-            email: { type: 'string', format: 'email', maxLength: 320 },
-            immediateDeliveryConsent: { type: 'boolean' },
-          },
-          additionalProperties: false,
-          nullable: true,
-        },
-      },
-    },
-    async (request, reply) => {
-      const { id } = request.params as { id: string };
-      const tenantId = request.auth!.tenantId;
-      const { email, immediateDeliveryConsent } = (request.body ?? {}) as { email?: string; immediateDeliveryConsent?: boolean };
-      const [project] = await db
-        .select({ id: projects.id, title: projects.title })
-        .from(projects)
-        .where(and(eq(projects.id, id), eq(projects.tenantId, tenantId)))
-        .limit(1);
-      if (!project) return reply.code(404).send({ error: 'not_found' });
-
-      if (await isProjectUnlocked(tenantId, id)) {
-        return { alreadyUnlocked: true };
-      }
-
-      // Distansavtalslagen: uttryckligt samtycke till omedelbar leverans
-      // (= ångerrättens upphörande) är ett hårt krav på varje köp.
-      if (immediateDeliveryConsent !== true) {
-        return reply.code(400).send({
-          error: 'consent_required',
-          message:
-            'Köpet kräver uttryckligt samtycke till omedelbar leverans. När det digitala innehållet levereras direkt upphör ångerrätten enligt distansavtalslagen (2005:59) — kryssa i samtycket för att fortsätta.',
-        });
-      }
-
-      const provider = activeProvider();
-      if (!provider) {
-        return reply.code(503).send({
-          error: 'no_payment_provider',
-          message: 'Betalning är inte tillgänglig just nu. Swish kräver att tjänstens handelsavtal och certifikat är konfigurerade.',
-        });
-      }
-
-      const [payment] = await db
-        .insert(payments)
-        .values({
-          tenantId,
-          projectId: id,
-          amountMinor: config.analysisPriceMinor,
-          provider: provider.id,
-          state: 'pending',
-          receiptEmail: email?.trim().toLowerCase() ?? null,
-          withdrawalConsentAt: new Date(),
-        })
-        .returning();
-
-      try {
-        const created = await provider.create({
-          id: payment!.id,
-          amountMinor: config.analysisPriceMinor,
-          currency: 'SEK',
-          message: 'Bidragskoll.se — bidragsanalys',
-        });
-        if (created.providerReference || created.providerToken) {
-          await db
-            .update(payments)
-            .set({ providerReference: created.providerReference, providerToken: created.providerToken ?? null })
-            .where(eq(payments.id, payment!.id));
-        }
-        await audit({
-          tenantId,
-          actorType: 'user',
-          actorUserId: request.auth!.userId,
-          action: 'payment.created',
-          entityType: 'payment',
-          entityId: payment!.id,
-          after: { projectId: id, amountMinor: config.analysisPriceMinor, provider: provider.id },
-        });
-        return reply.code(201).send({ paymentId: payment!.id, amountMinor: config.analysisPriceMinor, instructions: created.instructions });
       } catch (err) {
         await db.update(payments).set({ state: 'failed' }).where(eq(payments.id, payment!.id));
         const status = (err as { statusCode?: number }).statusCode ?? 502;

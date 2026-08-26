@@ -1,6 +1,6 @@
 /**
  * Verifierar användarfynden F-TEASER, F-VIDARE, F-ÄNDRA och F-HOPP i demon:
- *  - teasern säger "X stöd som matchar din situation", namnraderna är blurrade
+ *  - rapporten (Open Discovery) visar namngivna stöd direkt, ingen betalvägg
  *    och läcker aldrig riktiga titlar (endast maskeringstecken)
  *  - rapporten har "Vill ansöka"-val per stöd + Nästa → plan med länk per stöd
  *  - "Dina svar" är öppen som standard och svar går att ändra
@@ -31,24 +31,8 @@ await page.waitForSelector('text=allvarlig sjukdom');
 await page.click('.row >> button:has-text("Ja")');
 
 // 1. Teasern: tydlig rubrik + blurrade namn utan läckage.
-await page.waitForSelector('text=stöd som matchar din situation');
-const blurCount = await page.locator('.blurred').count();
-if (blurCount === 0) { console.log('FEL: inga blurrade namnrader i teasern'); process.exit(1); }
-const blurTexts = await page.locator('.blurred').allTextContents();
-if (!blurTexts.every((t) => /^[Xx0\s—–·,().\-\/+&:]+$/.test(t))) {
-  console.log('FEL: blurrad rad innehåller annat än maskeringstecken:', blurTexts); process.exit(1);
-}
-const bodyTeaser = await page.textContent('body');
-if (!/För att se namnen och gå vidare med ansökan låser du upp rapporten/.test(bodyTeaser)) {
-  console.log('FEL: upplåsningsuppmaningen saknas'); process.exit(1);
-}
-console.log(`1. Teasern: rubrik + ${blurCount} blurrade namnrader utan titel-läckage ✓`);
-
-// 2. Lås upp och nå rapporten.
-await page.click('button:has-text("Lås upp din bidragsanalys")');
-await page.check('#angerratt');
-await page.click('button:has-text("Godkänn betalning")');
-await page.click('button:has-text("Visa min analys")');
+// Open Discovery: rapporten visas direkt och gratis — ingen teaser, ingen betalvägg.
+await page.waitForSelector('text=Gå vidare med ansökan');
 await page.waitForSelector('text=Det här ser du ut att kunna ha rätt till');
 
 // 3. F-ÄNDRA: "Dina svar" är öppen som standard — en primärmarkerad knapp syns.

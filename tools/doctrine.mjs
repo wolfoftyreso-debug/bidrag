@@ -63,12 +63,13 @@ const BANNED = [
   { re: /sök på (bidragets|stödets) namn/i, why: 'gör namnkunskap till förutsättning' },
 ];
 
-// ── C. Värde-före-betalning i Matches-vyn ────────────────────────────────────
-const MATCHES = 'apps/web/src/pages/Matches.tsx';
-const VALUE_BEFORE_PAY = [
-  { needle: 'interface Teaser', why: 'teaser-strukturen (kandidater före upplåsning) saknas' },
-  { needle: 'AnalysisPaywall', why: 'upplåsningssteget saknas — kan inte verifiera ordningen' },
-  { needle: 'aldrig namn eller källor', why: 'invarianten att teasern döljer namn/källa är borttagen' },
+// ── C. Open Discovery: matchningar gratis, ingen betalvägg framför resultatet ─
+// (produktdoktrinen v2 §3.1/§4). Fäller bygget om paywall-före-resultat
+// återinförs — i api (matches-gate) eller i webben (paywall-UI).
+const OPEN_DISCOVERY_FORBIDDEN = [
+  { file: 'apps/api/src/routes/projects.ts', needle: 'buildTeaser', why: 'teaser-gate framför matchningarna återinförd i API:t' },
+  { file: 'apps/api/src/routes/projects.ts', needle: 'isProjectUnlocked', why: 'matchningsvisning gatead bakom betalning igen' },
+  { file: 'apps/web/src/pages/Matches.tsx', needle: 'AnalysisPaywall', why: 'betalvägg-UI framför resultaten återinförd' },
 ];
 
 const findings = [];
@@ -102,15 +103,12 @@ for (const f of INTAKE) {
 }
 
 // C ---------------------------------------------------------------------------
-{
-  const src = read(MATCHES);
-  for (const c of VALUE_BEFORE_PAY) {
-    if (!src.includes(c.needle)) note(MATCHES, 'C · värde före betalning', c.why);
-  }
+for (const c of OPEN_DISCOVERY_FORBIDDEN) {
+  if (read(c.file).includes(c.needle)) note(c.file, 'C · Open Discovery', c.why);
 }
 
 // ── Dom ──────────────────────────────────────────────────────────────────────
-const RULES = ['A · situations-först', 'B · ingen entry-gate', 'C · värde före betalning'];
+const RULES = ['A · situations-först', 'B · ingen entry-gate', 'C · Open Discovery'];
 console.log('PRODUKTDOKTRINEN — konformanskontroll (docs/PRODUCT_DOCTRINE.md §2)\n');
 for (const r of RULES) {
   const hits = findings.filter((x) => x.rule === r);

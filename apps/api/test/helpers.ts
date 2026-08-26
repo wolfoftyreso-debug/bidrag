@@ -60,13 +60,13 @@ export async function api(
 }
 
 /** Lås upp analysen via mock-betalningen (testar samtidigt köpflödet). */
-export async function unlockProject(app: FastifyInstance, user: TestUser, projectId: string): Promise<void> {
-  const create = await api(app, user, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { immediateDeliveryConsent: true });
-  if (create.statusCode === 200 && (create.json() as { alreadyUnlocked?: boolean }).alreadyUnlocked) return;
-  if (create.statusCode !== 201) throw new Error(`unlock create failed: ${create.statusCode} ${create.body}`);
-  const { paymentId } = create.json() as { paymentId: string };
-  const confirm = await api(app, user, 'POST', `/v1/payments/${paymentId}/mock-confirm`);
-  if (confirm.statusCode !== 200) throw new Error(`mock confirm failed: ${confirm.statusCode} ${confirm.body}`);
+/**
+ * Open Discovery (produktdoktrinen v2): matchningar är alltid gratis — det finns
+ * ingen analysupplåsning längre. Behållen som no-op så befintliga tester som
+ * förr "låste upp" innan de läste matchningar fortsätter fungera oförändrat.
+ */
+export async function unlockProject(_app: FastifyInstance, _user: TestUser, _projectId: string): Promise<void> {
+  // no-op — resultat är fria.
 }
 
 /** Köp en ansökningskredit (19 kr/ansökan) via mock-betalningen. */

@@ -4,39 +4,16 @@ import { detectTrack, proposeStack, relevantForTrack, type StackableOpportunity 
 import { db } from '../db/client.ts';
 import { applicantProfiles, fundingOpportunities, fundingStacks, matches, projects } from '../db/schema.ts';
 import { audit } from '../audit.ts';
-import { config } from '../config.ts';
 import { WRITER_ROLES } from '../plugins/auth.ts';
 import { listMatchesForProject, recomputeMatchesForProject, type MatchRow } from '../services/matching.ts';
-import { isProjectUnlocked } from './payments.ts';
 
 /**
- * Teaser före upplåsning (§68): värdet ska synas — antal per nivå och
- * stödkategori — men aldrig exakta namn, källor eller frågor. Användaren
- * betalar för analysen, inte för att få veta om den är värd något.
+ * Open Discovery (produktdoktrinen v2, 2026-08-26): matchningar visas ALLTID
+ * gratis — namn, varför, status, deadline och källa. Ingen betalvägg framför
+ * resultatet. Betalning utlöses först av arbetsverktygen (19 kr/ansökan m.m.),
+ * aldrig av att se om det finns något att söka. Den tidigare teasern och
+ * 39 kr-analysupplåsningen är borttagna.
  */
-const TEASER_CATEGORY: Record<string, string> = {
-  social_benefit: 'Ekonomiskt stöd eller ersättning',
-  educational_support: 'Studiestöd',
-  travel_grant: 'Resebidrag',
-  project_grant: 'Projektbidrag',
-  public_grant: 'Offentligt bidrag',
-  eu_grant: 'EU-finansiering',
-  scholarship: 'Stipendium',
-  stipend: 'Stipendium',
-};
-
-/**
- * Sannolikhetsnivån (F3 + kuratorsbeslut a, 30-simuleringen): "hög" kräver
- * att även de viktande kriterierna talar för — en familj med hög inkomst som
- * svarat ja på skolutflyktsfrågan ser Majblomman som "möjlig", inte "hög".
- * Nivån är alltid en bedömning, aldrig ett beslut.
- */
-function likelihoodOf(m: MatchRow): 'high' | 'possible' | 'needs_info' {
-  if (m.eligibilityStatus !== 'eligible') return 'needs_info';
-  if (m.result.confidence !== 'high') return 'possible';
-  const weightedAgainst = m.result.explanation.some((e) => e.kind === 'weighted' && e.outcome === 'fail');
-  return weightedAgainst ? 'possible' : 'high';
-}
 
 /**
  * Spårmedveten relevans (F1, 30-simuleringen; F-RELEVANS): policyn ligger i
@@ -46,26 +23,6 @@ function likelihoodOf(m: MatchRow): 'high' | 'possible' | 'needs_info' {
  * Re-exporteras här för testernas och övriga modulers skull.
  */
 export { detectTrack, relevantForTrack };
-
-function buildTeaser(rows: MatchRow[]) {
-  const relevant = rows.filter((m) => m.eligibilityStatus !== 'excluded');
-  const counts = { high: 0, possible: 0, needsInfo: 0 };
-  const teaserRows = relevant.map((m) => {
-    const likelihood = likelihoodOf(m);
-    if (likelihood === 'high') counts.high++;
-    else if (likelihood === 'possible') counts.possible++;
-    else counts.needsInfo++;
-    return { likelihood, category: TEASER_CATEGORY[m.instrumentType] ?? 'Stöd' };
-  });
-  return {
-    locked: true as const,
-    priceMinor: config.analysisPriceMinor,
-    total: relevant.length,
-    counts,
-    rows: teaserRows,
-    excludedCount: rows.length - relevant.length,
-  };
-}
 
 /** Matchningar för projektet, filtrerade till spårets relevans (F1). */
 async function trackRelevantMatches(
@@ -234,9 +191,6 @@ export async function projectRoutes(app: FastifyInstance) {
           after: { count },
         });
         const { rows, facts } = await trackRelevantMatches(request.auth!.tenantId, id);
-        if (!(await isProjectUnlocked(request.auth!.tenantId, id))) {
-          return { computed: count, ...buildTeaser(rows) };
-        }
         return { computed: count, matches: rows, facts };
       } catch (err) {
         const status = (err as { statusCode?: number }).statusCode ?? 500;
@@ -258,11 +212,9 @@ export async function projectRoutes(app: FastifyInstance) {
         .limit(1);
       if (!project) return reply.code(404).send({ error: 'not_found' });
       const { rows, facts } = await trackRelevantMatches(request.auth!.tenantId, id);
-      if (!(await isProjectUnlocked(request.auth!.tenantId, id))) {
-        return buildTeaser(rows);
-      }
-      // facts följer med i den upplåsta vyn så att "Dina svar" kan visa och
-      // ändra besvarade frågor — en fråga försvinner aldrig för att den fått svar.
+      // Open Discovery: fulla matchningar gratis. facts följer med så att "Dina
+      // svar" kan visa och ändra besvarade frågor — en fråga försvinner aldrig
+      // för att den fått svar.
       return { matches: rows, facts };
     },
   );
@@ -291,10 +243,8 @@ export async function projectRoutes(app: FastifyInstance) {
         .where(and(eq(projects.id, id), eq(projects.tenantId, tenantId)))
         .limit(1);
       if (!project) return reply.code(404).send({ error: 'not_found' });
-      // Finansieringsplanen avslöjar stödnamnen — den ingår i analysen.
-      if (!(await isProjectUnlocked(tenantId, id))) {
-        return reply.code(402).send({ error: 'analysis_locked', message: 'Lås upp bidragsanalysen för att se finansieringsplanen.', priceMinor: config.analysisPriceMinor });
-      }
+      // Open Discovery: finansieringsplanen är en del av det gratis
+      // matchningsresultatet — ingen betalvägg.
       if (!project.totalBudgetMinor) {
         return reply.code(422).send({
           error: 'missing_budget',

@@ -76,34 +76,27 @@ describe('bedrägeri: pris- och beloppsmanipulation', () => {
       expect(res.statusCode).toBe(400);
     }
   });
-
-  it('serverns pris gäller — analysupplåsning debiteras alltid konfigurerat pris', async () => {
-    const { projectId } = await rawProject(attacker);
-    const res = await api(app, attacker, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { immediateDeliveryConsent: true });
-    expect(res.statusCode).toBe(201);
-    expect((res.json() as { amountMinor: number }).amountMinor).toBe(config.analysisPriceMinor);
-  });
 });
 
 // ── Money-path: ångerrätts-consent tvingas server-side ───────────────────────
 describe('bedrägeri: samtyckesgrinden kan inte kringgås från klienten', () => {
   it('utan consent → 400 consent_required, ingen betalning skapas', async () => {
     const { projectId } = await rawProject(attacker);
-    const noField = await api(app, attacker, 'POST', `/v1/projects/${projectId}/analysis-unlock`, {});
+    const noField = await api(app, attacker, 'POST', `/v1/projects/${projectId}/application-purchase`, {});
     expect(noField.statusCode).toBe(400);
     expect((noField.json() as { error: string }).error).toBe('consent_required');
-    const falseField = await api(app, attacker, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { immediateDeliveryConsent: false });
+    const falseField = await api(app, attacker, 'POST', `/v1/projects/${projectId}/application-purchase`, { immediateDeliveryConsent: false });
     expect(falseField.statusCode).toBe(400);
   });
 });
 
 // ── Money-path: gratisväg-bypass (få det som kostar utan att betala) ──────────
 describe('bedrägeri: kan inte få upplåst innehåll utan betalning', () => {
-  it('finansieringsplanen (avslöjar stödnamnen) är 402-gatead innan analysen låsts upp', async () => {
+  it('Open Discovery: finansieringsplanen är INTE en betalvägg (aldrig 402 analysis_locked)', async () => {
     const { projectId } = await rawProject(attacker);
     const res = await api(app, attacker, 'POST', `/v1/projects/${projectId}/funding-stack`, {});
-    expect(res.statusCode).toBe(402);
-    expect((res.json() as { error: string }).error).toBe('analysis_locked');
+    expect(res.statusCode).not.toBe(402);
+    expect((res.json() as { error?: string }).error).not.toBe('analysis_locked');
   });
 
   it('ansökan utan köpt kredit ger 402 payment_required', async () => {
@@ -172,7 +165,7 @@ function parallel_count(results: { statusCode: number }[], code: number): number
 describe('attack: cross-tenant på pengaflödet', () => {
   it('angriparen kan inte bekräfta offrets betalning (404) och offret förblir obetalt', async () => {
     const { projectId } = await rawProject(victim);
-    const create = await api(app, victim, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { immediateDeliveryConsent: true });
+    const create = await api(app, victim, 'POST', `/v1/projects/${projectId}/application-purchase`, { immediateDeliveryConsent: true });
     const paymentId = (create.json() as { paymentId: string }).paymentId;
 
     const steal = await api(app, attacker, 'POST', `/v1/payments/${paymentId}/mock-confirm`);
@@ -185,7 +178,7 @@ describe('attack: cross-tenant på pengaflödet', () => {
 
   it('angriparen kan inte se offrets betalstatus eller kvitto (404)', async () => {
     const { projectId } = await rawProject(victim);
-    const create = await api(app, victim, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { immediateDeliveryConsent: true });
+    const create = await api(app, victim, 'POST', `/v1/projects/${projectId}/application-purchase`, { immediateDeliveryConsent: true });
     const paymentId = (create.json() as { paymentId: string }).paymentId;
     const status = await api(app, attacker, 'GET', `/v1/payments/${paymentId}/status`);
     expect(status.statusCode).toBe(404);

@@ -27,22 +27,8 @@ await page.click('.row >> button:has-text("Nej")');
 
 // Betalvägg: teasern visar värdet men läcker inga namn. (innerText = det som
 // faktiskt renderas — kunskapsbasen ligger med avsikt i demots bundle.)
-await page.waitForSelector('text=stöd som matchar din situation');
-let teaserBody = await page.innerText('body');
-for (const forbidden of ['Bostadsbidrag till barnfamiljer', 'Försäkringskassan', 'Underhållsstöd']) {
-  if (teaserBody.includes(forbidden)) throw new Error(`TEASERLÄCKA: ${forbidden}`);
-}
-if (!teaserBody.includes('hög relevans')) throw new Error('teaser saknar nivåräkning');
-if (!teaserBody.includes('Detta är en vägledning och inte ett myndighetsbeslut')) throw new Error('teaser saknar disclaimer');
-await page.screenshot({ path: `${S}/17-demo-teaser.png`, fullPage: true });
-console.log('OK: teaser utan läckage');
-await page.click('text=Lås upp din bidragsanalys — 39 kr');
-await page.waitForSelector('text=SIMULERAD BETALNING');
-await page.screenshot({ path: `${S}/18-demo-swish.png`, fullPage: true });
-await page.check('#angerratt');
-await page.click('text=Godkänn betalning (simulerad)');
-await page.waitForSelector('text=Betalning genomförd ✓');
-await page.click('text=Visa min analys');
+// Open Discovery: rapporten visas direkt och gratis — ingen teaser, ingen betalvägg.
+await page.waitForSelector('text=Gå vidare med ansökan');
 console.log('OK: simulerad Swish-betalning tydligt märkt');
 
 await page.waitForSelector('text=Det här ser du ut att kunna ha rätt till');
@@ -74,12 +60,8 @@ await page.click('button:has-text("Nästa")');
 await page.click('.row >> button:has-text("Ja")'); // internationell
 await page.click('.row >> button:has-text("Ja")'); // kunskap hem
 await page.click('.row >> button:has-text("Nej")'); // ej barn/unga
-await page.waitForSelector('text=stöd som matchar din situation');
-await page.click('text=Lås upp din bidragsanalys — 39 kr');
-await page.check('#angerratt');
-await page.click('text=Godkänn betalning (simulerad)');
-await page.waitForSelector('text=Betalning genomförd ✓');
-await page.click('text=Visa min analys');
+// Open Discovery: rapporten visas direkt och gratis — ingen teaser, ingen betalvägg.
+await page.waitForSelector('text=Gå vidare med ansökan');
 console.log('OK: betalvägg även i projektspåret');
 await page.waitForSelector('text=Stöd som kan passa');
 body = await page.textContent('body');

@@ -58,16 +58,6 @@ interface Project {
   intent: string;
 }
 
-/** Teaser före upplåsning: antal per nivå och kategori — aldrig namn eller källor. */
-interface Teaser {
-  locked: true;
-  priceMinor: number;
-  total: number;
-  counts: { high: number; possible: number; needsInfo: number };
-  rows: { likelihood: string; category: string }[];
-  excludedCount: number;
-}
-
 /**
  * F-INFO (användarfynd): myndighetstydlig fördjupning vid varje fråga —
  * därför ställs den, vilket villkor den prövar per stöd, med länk till
@@ -114,7 +104,6 @@ export default function MatchesPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [matches, setMatches] = useState<MatchRow[]>([]);
   const [facts, setFacts] = useState<Record<string, unknown>>({});
-  const [teaser, setTeaser] = useState<Teaser | null>(null);
   const [busy, setBusy] = useState(false);
   // F-STABIL: frågelistan är ett stabilt papper — visade frågor står kvar på
   // sin plats (frusen ordning), besvarade tonas ner och kan ändras direkt.
@@ -132,16 +121,11 @@ export default function MatchesPage() {
 
   const load = useCallback(() => {
     if (!projectId) return;
-    get<{ matches?: MatchRow[] } | Teaser>(`/v1/projects/${projectId}/matches`)
+    // Open Discovery: matchningarna är alltid fria — ingen teaser, ingen paywall.
+    get<{ matches: MatchRow[]; facts?: Record<string, unknown> }>(`/v1/projects/${projectId}/matches`)
       .then((body) => {
-        if ('locked' in body && body.locked) {
-          setTeaser(body);
-          setMatches([]);
-        } else {
-          setTeaser(null);
-          setMatches((body as { matches: MatchRow[] }).matches);
-          setFacts((body as { facts?: Record<string, unknown> }).facts ?? {});
-        }
+        setMatches(body.matches);
+        setFacts(body.facts ?? {});
       })
       .finally(() => setLoaded(true));
   }, [projectId]);
@@ -265,16 +249,6 @@ export default function MatchesPage() {
   }
 
   if (!loaded) return <p>Laddar matchningar…</p>;
-
-  if (teaser) {
-    return (
-      <div>
-        <h1>{project?.title ?? 'Projekt'}</h1>
-        {project?.intent && <p className="meta-line" style={{ marginBottom: '1rem' }}>”{project.intent}”</p>}
-        <AnalysisPaywall projectId={projectId} teaser={teaser} onUnlocked={load} />
-      </div>
-    );
-  }
 
   const PERSONAL_INSTRUMENTS = new Set(['social_benefit', 'educational_support', 'loan']);
   const relevant = matches.filter((m) => m.eligibilityStatus !== 'excluded');
@@ -591,204 +565,6 @@ function ReceiptLine({ projectId }: { projectId: string }) {
         <summary style={{ cursor: 'pointer' }}>Visa kvitto</summary>
         <pre style={{ background: 'var(--card-bg, #f8f8f8)', padding: '0.8rem', borderRadius: 8, overflowX: 'auto', fontSize: '0.8rem' }}>{doc}</pre>
       </details>
-    </div>
-  );
-}
-
-const LIKELIHOOD_TEASER: Record<string, { dot: string; label: string }> = {
-  high: { dot: '🟢', label: 'hög relevans' },
-  possible: { dot: '🟡', label: 'möjlig' },
-  needs_info: { dot: '⚪', label: 'kräver mer information' },
-};
-
-/**
- * Betalvägg (§68): visa värdet — antal och nivåer — innan betalning, men
- * aldrig detaljerna. Ett engångsköp låser upp den här analysen; språket är
- * "lås upp din bidragsanalys", aldrig "köp ett bidrag".
- *
- * Kedjan är alltid betalning bekräftad → kvitto → upplåsning. E-postadressen
- * för kvittot samlas in precis före betalningen (tydligt syfte), och kan
- * kompletteras på bekräftelseskärmen om den missades.
- */
-function AnalysisPaywall({ projectId, teaser, onUnlocked }: { projectId: string; teaser: Teaser; onUnlocked: () => void }) {
-  const [busy, setBusy] = useState(false);
-  const [consent, setConsent] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [payment, setPayment] = useState<{
-    paymentId: string;
-    instructions: { method: string; message?: string; mockConfirmable?: boolean; deepLink?: string; qrAvailable?: boolean };
-  } | null>(null);
-  const [confirmed, setConfirmed] = useState<{ receiptNumber: string; email: string | null } | null>(null);
-
-  // F-SCROLL: betalväggens interna vyer (erbjudande → betalning → kvitto)
-  // passerar aldrig routern — utan egen återställning startar de i botten.
-  useEffect(() => { window.scrollTo(0, 0); }, [payment, confirmed]);
-
-  // Swish: betalningen bekräftas av banken, inte av klienten — vi pollar
-  // status tills servern (som själv verifierar mot Swish) säger confirmed.
-  useEffect(() => {
-    if (!payment || payment.instructions.method !== 'swish' || confirmed) return;
-    let stopped = false;
-    const tick = async () => {
-      try {
-        const res = await get<{ state: string; receipt?: { receiptNumber: string; email: string | null } | null }>(
-          `/v1/payments/${payment.paymentId}/status`,
-        );
-        if (stopped) return;
-        if (res.state === 'confirmed' && res.receipt) setConfirmed(res.receipt);
-        else if (res.state === 'failed') setError('Betalningen genomfördes inte. Du kan försöka igen — inget har debiterats.');
-      } catch {
-        /* tillfälligt nätverksfel — nästa poll försöker igen */
-      }
-    };
-    const iv = setInterval(tick, 2500);
-    return () => { stopped = true; clearInterval(iv); };
-  }, [payment, confirmed]);
-  const startUnlock = async () => {
-    setBusy(true);
-    setError(null);
-    try {
-      const res = await post<{
-        alreadyUnlocked?: boolean;
-        paymentId?: string;
-        instructions?: { method: string; message?: string; mockConfirmable?: boolean };
-      }>(`/v1/projects/${projectId}/analysis-unlock`, { immediateDeliveryConsent: consent });
-      if (res.alreadyUnlocked) return onUnlocked();
-      setPayment({ paymentId: res.paymentId!, instructions: res.instructions! });
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Betalningen kunde inte startas. Försök igen.');
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const confirmMock = async () => {
-    if (!payment) return;
-    setBusy(true);
-    setError(null);
-    try {
-      const res = await post<{ receipt: { receiptNumber: string; email: string | null } }>(
-        `/v1/payments/${payment.paymentId}/mock-confirm`,
-      );
-      setConfirmed(res.receipt);
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Bekräftelsen misslyckades.');
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  // Betalning genomförd — kvittobekräftelse före rapporten. Kvittot är en
-  // förstaklassfunktion i kontot: alltid åtkomligt under Mina köp, ingen
-  // e-post inblandad.
-  if (confirmed) {
-    return (
-      <div className="card" style={{ maxWidth: '32rem' }}>
-        <h2>Betalning genomförd ✓</h2>
-        <p style={{ fontSize: '1.05rem' }}>Din bidragsanalys är nu upplåst.</p>
-        <p className="guidance">
-          Kvitto <strong>{confirmed.receiptNumber}</strong> är sparat på ditt konto — du hittar det när som helst under{' '}
-          <Link to="/konto">Konto &amp; data → Mina köp</Link>.
-        </p>
-        {error && <div className="alert error">{error}</div>}
-        <button onClick={onUnlocked} style={{ fontSize: '1.05rem', marginTop: '0.5rem' }}>Visa min analys</button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="rapport-lock" style={{ maxWidth: '40rem' }}>
-      <span className="rapport-etikett">Personlig bidragsanalys · klar att låsa upp</span>
-      <h2 style={{ marginTop: 0 }}>Vi hittade {teaser.total} stöd som matchar din situation</h2>
-      <p className="guidance">
-        Dina svar har körts mot hela kunskapsbasen. Bidragens namn och hur du går vidare visas när rapporten är upplåst.
-      </p>
-      <hr className="rapport-guld" />
-      <p style={{ fontSize: '1.05rem', margin: '0.75rem 0' }}>
-        {[
-          teaser.counts.high > 0 && <span key="h">🟢 <strong>{teaser.counts.high}</strong> med hög relevans</span>,
-          teaser.counts.possible > 0 && <span key="p">🟡 <strong>{teaser.counts.possible}</strong> möjliga</span>,
-          teaser.counts.needsInfo > 0 && <span key="n">⚪ <strong>{teaser.counts.needsInfo}</strong> kräver mer information</span>,
-        ].filter(Boolean).map((el, i) => <span key={i}>{i > 0 && ' · '}{el}</span>)}
-      </p>
-
-      <div className="rapport-rader">
-        {teaser.rows.map((r, i) => {
-          const t = LIKELIHOOD_TEASER[r.likelihood] ?? LIKELIHOOD_TEASER.needs_info!;
-          // Fast platshållarmask som blurras — namnen lämnar aldrig servern
-          // före betalning, så det som blurras bär noll information.
-          const mask = ['Xxxxxxxxxxxxxxx — Xxxxxxxxxxx xxxx xxxxxxxxx', 'Xxxxxxxx — Xxxxxxxxxxxx xxx xxxxxx', 'Xxxxxxxxxxxx — Xxxxxxxx xxxxxxxxxxx'][i % 3]!;
-          return (
-            <div className="match-row" key={i} style={{ alignItems: 'center', gap: '0.6rem' }}>
-              <span>{t.dot}</span>
-              <span style={{ flex: 1 }}>
-                <span style={{ fontWeight: 600 }}>🔒 <span className="blurred-name" aria-hidden="true">{mask}</span></span>
-                <span className="meta-line" style={{ display: 'block' }}>{r.category}</span>
-              </span>
-              <span className="meta-line">{t.label}</span>
-            </div>
-          );
-        })}
-        <p className="meta-line" style={{ marginTop: '0.5rem' }}>
-          För att se namnen och gå vidare med ansökan låser du upp rapporten.
-        </p>
-        {teaser.excludedCount > 0 && (
-          <p className="meta-line">
-            Ytterligare {teaser.excludedCount} stöd har granskats och uteslutits — även varför ingår i analysen.
-          </p>
-        )}
-      </div>
-
-      {!payment && (
-        <>
-          <PurchaseConsent checked={consent} onChange={setConsent} idSuffix="-analys" />
-          <button className="upplas" disabled={busy || !consent} onClick={startUnlock} style={{ fontSize: '1.05rem' }}>
-            {busy ? 'Startar betalning…' : `Lås upp din bidragsanalys — ${formatSek(teaser.priceMinor)}`}
-          </button>
-          <p className="guidance" style={{ marginTop: '0.75rem' }}>
-            Engångsbetalning för den här analysen — ingen prenumeration. Du får hela rapporten: vilka stöd det gäller,
-            varför de matchar din situation, vilka kriterier som kontrolleras, vad du behöver och vart du vänder dig.
-            Kvittot sparas på ditt konto under Mina köp.
-          </p>
-        </>
-      )}
-
-      {payment && payment.instructions.method === 'mock' && (
-        <div className="alert warning" role="status" aria-live="polite">
-          <p style={{ fontWeight: 700 }}>{payment.instructions.message}</p>
-          <button disabled={busy} onClick={confirmMock}>
-            {busy ? 'Bekräftar…' : 'Bekräfta betalning (simulerad)'}
-          </button>
-        </div>
-      )}
-      {payment && payment.instructions.method === 'swish' && (
-        <div style={{ textAlign: 'center', padding: '0.8rem 0' }}>
-          <h3 style={{ margin: '0 0 0.4rem' }}>Betala med Swish</h3>
-          {payment.instructions.qrAvailable && (
-            <img
-              src={`/v1/payments/${payment.paymentId}/qr`}
-              alt="Swish QR-kod — skanna med Swish-appen"
-              width={220}
-              height={220}
-              style={{ display: 'block', margin: '0.5rem auto', borderRadius: 8 }}
-            />
-          )}
-          <p className="guidance">Skanna QR-koden med Swish-appen{payment.instructions.deepLink ? ', eller öppna Swish direkt på mobilen:' : '.'}</p>
-          {payment.instructions.deepLink && (
-            <p><a className="btn" href={payment.instructions.deepLink}>Öppna Swish</a></p>
-          )}
-          <p className="meta-line">Väntar på betalning… Sidan uppdateras automatiskt när banken har bekräftat.</p>
-        </div>
-      )}
-      {payment && payment.instructions.method !== 'mock' && payment.instructions.method !== 'swish' && payment.instructions.message && (
-        <div className="alert warning">{payment.instructions.message}</div>
-      )}
-
-      {error && <div className="alert error">{error}</div>}
-
-      <p className="meta-line" style={{ marginTop: '1rem' }}>
-        Detta är en vägledning och inte ett myndighetsbeslut. Slutligt beslut fattas alltid av respektive myndighet.
-      </p>
     </div>
   );
 }

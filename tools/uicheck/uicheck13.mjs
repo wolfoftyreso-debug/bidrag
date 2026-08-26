@@ -42,20 +42,12 @@ await page.waitForSelector('text=allvarlig sjukdom');
 await page.getByRole('button', { name: 'Nej', exact: true }).click();
 await page.waitForSelector('text=något mer som påverkar');
 await page.click('button:has-text("Hoppa över")');
-await page.waitForSelector('text=stöd som matchar din situation', { timeout: 60000 });
-console.log('1. Intaget genomfört, teasern visas ✓');
-
-// Lås upp analysen (39 kr, simulerad).
-await page.check('#angerratt-samtycke-analys');
-await page.click('button:has-text("Lås upp")');
-await page.waitForSelector('button:has-text("Bekräfta betalning")', { timeout: 30000 });
-await page.click('button:has-text("Bekräfta betalning")');
-await page.waitForSelector('text=Betalning genomförd', { timeout: 30000 });
-const receipt = ((await page.textContent('body')) ?? '').match(/BS-\d{4}-\d{6}/)?.[0];
-if (!receipt) fail('inget kvittonummer visas efter betalningen');
-await page.click('button:has-text("Visa min analys")');
+// Open Discovery: matchningarna visas GRATIS direkt — inga blurrade namn, ingen betalvägg.
+await page.waitForSelector('text=Det här ser du ut att kunna ha rätt till', { timeout: 60000 });
 await page.waitForSelector('a[href*="/stod/"]', { timeout: 45000 });
-console.log(`2. Analysen upplåst (39 kr, simulerad), kvitto ${receipt} — namngivna stöd syns ✓`);
+const rep = (await page.textContent('body')) ?? '';
+if (/Lås upp din bidragsanalys/i.test(rep)) fail('betalvägg framför resultatet (Open Discovery bruten)');
+console.log('1. Intaget genomfört — namngivna stöd visas GRATIS (Open Discovery) ✓');
 
 // Öppna ett stöd.
 const opp = page.locator('a[href*="/stod/"]').first();
@@ -91,8 +83,7 @@ await page.waitForSelector('text=Mina köp', { timeout: 30000 });
 await page.waitForTimeout(1200);
 const account = (await page.textContent('body')) ?? '';
 if (!/Förberedd ansökan/.test(account)) fail('kvittoraden "Förberedd ansökan" saknas i Mina köp');
-if (!/Bidragsanalys/.test(account)) fail('analysköpet saknas i Mina köp');
-console.log('6. Mina köp visar både "Bidragsanalys" och "Förberedd ansökan" ✓');
+console.log('6. Mina köp visar köpet "Förberedd ansökan" (19 kr) ✓');
 
 console.log('UICHECK13 KLAR — prismodellen fungerar hela vägen i webbgränssnittet');
 await browser.close();

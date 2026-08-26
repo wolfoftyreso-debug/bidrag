@@ -345,131 +345,6 @@ function likelihoodOf(m: ReturnType<typeof runEngine>[number]['m']): 'high' | 'p
   return 'possible';
 }
 
-function Teaser({ facts, track, onUnlocked }: { facts: Facts; track: 'personal' | 'project'; onUnlocked: () => void }) {
-  const results = useMemo(() => runEngine(facts), [facts]);
-  // F1: utanför spåret räknas bara stöd som faktiskt bedömts aktuella.
-  const inScope = track === 'project'
-    ? results.filter((r) => !PERSONAL.has(r.opp.instrumentType) || r.m.eligibilityStatus === 'eligible')
-    : results.filter((r) => PERSONAL.has(r.opp.instrumentType) || r.m.eligibilityStatus === 'eligible' || (facts['person.selfEmployed'] === true && businessRelevantSlugs(facts['project.sector']).has(r.opp.slug)));
-  const relevant = inScope.filter((r) => r.m.eligibilityStatus !== 'excluded');
-  const excludedCount = inScope.length - relevant.length;
-  const counts = { high: 0, possible: 0, needs_info: 0 };
-  // F-TEASER + red team RT03: raderna ska se ut som blurrade bidragsnamn, inte
-  // kategorietiketter — men masken får INTE härledas ur den riktiga titeln.
-  // En teckenbevarande mask (X/x/0) läcker ordantal, ordlängder och versaler,
-  // ett formfingeravtryck. Använd fasta platshållare (samma princip som
-  // produktens Matches.tsx) så att inte ens formen bär information.
-  const MASKS = ['Xxxxxxxxxxxxxxx — Xxxxxxxxxxx xxxx xxxxxxxxx', 'Xxxxxxxx — Xxxxxxxxxxxx xxx xxxxxx', 'Xxxxxxxxxxxx — Xxxxxxxx xxxxxxxxxxx'];
-  const rows = relevant.map((r, i) => {
-    const level = likelihoodOf(r.m);
-    counts[level]++;
-    return { level, category: TEASER_CATEGORY[r.opp.instrumentType] ?? 'Stöd', masked: MASKS[i % 3]! };
-  });
-  const [paying, setPaying] = useState(false);
-  const [confirmed, setConfirmed] = useState(false);
-  const [consent, setConsent] = useState(false);
-
-  // F-SCROLL igen (användarfynd 2): betalväggens vyer (teaser → Swish →
-  // kvitto) är interna tillståndsbyten som den globala step/view-återställningen
-  // aldrig ser — utan egen återställning landar man i botten av betalvyn.
-  useEffect(() => { window.scrollTo(0, 0); }, [paying, confirmed]);
-
-  // Betalning genomförd — kvittobekräftelsen kommer före rapporten. I
-  // produkten är kedjan: Swish bekräftar → transaktionen bokförs → kvitto
-  // med momsspecifikation utfärdas → analysen låses upp. Kvittot är en
-  // förstaklassfunktion i kontot (Mina köp) — ingen e-post inblandad.
-  if (confirmed) {
-    return (
-      <div className="card" style={{ maxWidth: '30rem', margin: '0 auto' }}>
-        <h1>Betalning genomförd ✓</h1>
-        <p style={{ fontSize: '1.05rem' }}>Din bidragsanalys är nu upplåst.</p>
-        <p className="guidance">
-          Kvitto <strong>BS-2026-000123</strong> sparas på ditt konto under <strong>Mina köp</strong> —
-          med momsspecifikation, kvittonummer och köp-ID.
-          <br />
-          <em>(simulerat i demot; i fullversionen ligger kvittot alltid kvar på kontot)</em>
-        </p>
-        <button className="btn primary" style={{ fontSize: '1.05rem' }} onClick={onUnlocked}>Visa min analys</button>
-      </div>
-    );
-  }
-
-  if (paying) {
-    return (
-      <div className="card" style={{ maxWidth: '30rem', margin: '0 auto' }}>
-        <div className="badge warning" style={{ marginBottom: '0.8rem' }}>SIMULERAD BETALNING — inga pengar dras i demot</div>
-        <h1>Betala med Swish</h1>
-        <p className="guidance">I fullversionen öppnas Swish här. Betalningen är den auktoritativa händelsen: först när banken bekräftat bokförs köpet, kvittot utfärdas och analysen låses upp.</p>
-        <div className="paybox">
-          <div className="payrow"><span>Mottagare</span><strong>Bidragskoll.se (Landvex AB)</strong></div>
-          <div className="payrow"><span>Vara</span><strong>Personlig bidragsanalys</strong></div>
-          <div className="payrow"><span>Belopp</span><strong>39,00 kr</strong></div>
-          <div className="payrow"><span>varav moms (25 %)</span><strong>7,80 kr</strong></div>
-        </div>
-        <label className="check-row" style={{ marginTop: '0.9rem' }}>
-          <input id="angerratt" type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-          <span style={{ fontSize: '0.88rem' }}>
-            Jag samtycker till att analysen levereras direkt och bekräftar att ångerrätten därmed
-            upphör <span className="meta" style={{ display: 'inline' }}>(distansavtalslagen — i fullversionen
-            vägrar servern köp utan detta samtycke, och tidpunkten anges på kvittot)</span>
-          </span>
-        </label>
-        <div className="row" style={{ marginTop: '0.8rem' }}>
-          <button className="btn primary grow" disabled={!consent} onClick={() => setConfirmed(true)}>Godkänn betalning (simulerad)</button>
-          <button className="btn" onClick={() => setPaying(false)}>Avbryt</button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="rapport-lock">
-      <span className="rapport-etikett">Personlig bidragsanalys · {results.length} stöd genomlysta</span>
-      <h1>Vi hittade {relevant.length} stöd som matchar din situation</h1>
-      <p className="guidance">
-        Dina svar har körts mot hela kunskapsbasen. Bidragens namn och hur du går vidare visas när rapporten är upplåst.
-      </p>
-      <hr className="rapport-guld" />
-      <p style={{ fontSize: '1.05rem', margin: '0.7rem 0' }}>
-        {[
-          counts.high > 0 ? <>🟢 <strong>{counts.high}</strong> med hög relevans</> : null,
-          counts.possible > 0 ? <>🟡 <strong>{counts.possible}</strong> möjliga</> : null,
-          counts.needs_info > 0 ? <>⚪ <strong>{counts.needs_info}</strong> kräver mer information</> : null,
-        ].filter(Boolean).map((el, i) => <span key={i}>{i > 0 && ' · '}{el}</span>)}
-      </p>
-      <div className="rapport-rader">
-        {rows.map((r, i) => (
-          <div key={i} className="match" style={{ alignItems: 'center', gap: '0.5rem' }}>
-            <span>{TEASER_LEVEL[r.level]!.dot}</span>
-            <span className="grow">
-              <span style={{ fontWeight: 600 }}>🔒 <span className="blurred" aria-hidden="true">{r.masked}</span></span>
-              <span className="meta" style={{ display: 'block' }}>{r.category}</span>
-            </span>
-            <span className="meta">{TEASER_LEVEL[r.level]!.label}</span>
-          </div>
-        ))}
-        <p className="meta" style={{ marginTop: '0.5rem' }}>
-          För att se namnen och gå vidare med ansökan låser du upp rapporten.
-        </p>
-        {excludedCount > 0 && (
-          <p className="meta" style={{ marginTop: '0.5rem' }}>
-            Ytterligare {excludedCount} stöd har granskats och uteslutits — även varför ingår i analysen.
-          </p>
-        )}
-      </div>
-      <button className="btn upplas" style={{ fontSize: '1.05rem' }} onClick={() => setPaying(true)}>
-        Lås upp din bidragsanalys — 39 kr
-      </button>
-      <p className="guidance" style={{ marginTop: '0.8rem' }}>
-        Engångsbetalning för den här analysen — ingen prenumeration. Du får hela rapporten: vilka stöd det gäller,
-        varför de matchar din situation, vilka kriterier som kontrolleras, vad du behöver och vart du vänder dig.
-        Kvittot sparas på ditt konto under Mina köp.
-      </p>
-      <p className="meta">Detta är en vägledning och inte ett myndighetsbeslut. Slutligt beslut fattas alltid av respektive myndighet.</p>
-    </div>
-  );
-}
-
 function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: { facts: Facts; track: 'personal' | 'project'; onFact: (k: string, v: boolean) => void; onRestart: () => void; chosen: Set<string>; onToggle: (slug: string) => void; onNext: () => void }) {
   const results = useMemo(() => runEngine(facts), [facts]);
   // F1: samma spårrelevans som teasern — utanför spåret bara det som bedömts aktuellt.
@@ -800,16 +675,16 @@ const RECEIPT_TEXT = [
   'Momsreg.nr:        SE559141704201',
   'Adress:            Antennvägen 2, 135 48 Tyresö',
   '──────────────────────────────────────────────────',
-  'Personlig bidragsanalys',
-  'Belopp exkl. moms: 31,20 kr',
-  'Moms (25,00 %):    7,80 kr',
-  'Summa:             39,00 kr',
+  'Förberedd ansökan (19 kr/ansökan)',
+  'Belopp exkl. moms: 15,20 kr',
+  'Moms (25,00 %):    3,80 kr',
+  'Summa:             19,00 kr',
   'Betalningsmetod:   Swish (simulerad i demot)',
   'Status:            Betald',
   'Återbetalning:     ingen',
   '──────────────────────────────────────────────────',
   'Detta kvitto gäller en digitalt levererad tjänst på Bidragskoll.se.',
-  'Analysen är en vägledning och inte ett myndighetsbeslut.',
+  'Att upptäcka och se stöd är gratis; kvitton uppstår av köpt arbetslager.',
 ].join('\n');
 
 const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTVWXYZ23456789';
@@ -966,7 +841,7 @@ function App() {
           {/* Backa gäller även från teasern/rapporten — svaren behålls, till
               skillnad från "Börja om" som nollställer allt. */}
           <button className="btn subtle" onClick={back}>← Ändra mina svar</button>
-          {unlocked && <button className="btn" onClick={() => setView('konto')}>Mitt konto — kvitto &amp; säkerhet</button>}
+          <button className="btn" onClick={() => setView('konto')}>Mitt konto — kvitto &amp; säkerhet</button>
         </div>
       )}
 
@@ -1172,10 +1047,9 @@ function App() {
         <Q title="Riktar sig projektet till barn eller unga?"><YesNo on={(v) => advance({ youth: v })} /></Q>
       )}
 
-      {view === 'flow' && step === 'done' && !unlocked && (
-        <Teaser facts={facts} track={a.track ?? 'project'} onUnlocked={() => setUnlocked(true)} />
-      )}
-      {view === 'flow' && step === 'done' && unlocked && (
+      {/* Open Discovery (produktdoktrinen v2): resultaten visas direkt och gratis
+          — ingen teaser, ingen betalvägg framför matchningarna. */}
+      {view === 'flow' && step === 'done' && (
         <Results
           facts={facts}
           track={a.track ?? 'project'}

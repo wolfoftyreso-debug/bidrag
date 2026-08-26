@@ -24,13 +24,8 @@ await page.waitForSelector('text=flytta utomlands');
 await page.click('.row >> button:has-text("Nej")');
 await page.waitForSelector('text=allvarlig sjukdom');
 await page.click('.row >> button:has-text("Nej")');
-await page.waitForSelector('text=stöd som matchar din situation');
-await page.click('text=Lås upp din bidragsanalys — 39 kr');
-await page.waitForSelector('text=SIMULERAD BETALNING');
-await page.check('#angerratt');
-await page.click('text=Godkänn betalning (simulerad)');
-await page.waitForSelector('text=Betalning genomförd ✓');
-await page.click('text=Visa min analys');
+// Open Discovery: rapporten visas direkt och gratis — ingen teaser, ingen betalvägg.
+await page.waitForSelector('text=Gå vidare med ansökan');
 await page.waitForSelector('text=Stöd som rör ditt företagande');
 console.log('2. Sektionen "Stöd som rör ditt företagande" finns i rapporten ✓');
 const body = await page.locator('body').innerText();

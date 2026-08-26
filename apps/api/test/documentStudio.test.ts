@@ -152,7 +152,7 @@ describe('dokumentstudion', () => {
     expect((list.json() as { documents: unknown[] }).documents).toHaveLength(3);
   });
 
-  it('a document purchase NEVER unlocks the analysis (kind separation)', async () => {
+  it('a document purchase grants document credits — matches stay free (Open Discovery, kind separation)', async () => {
     const other = await registerUser(app, 'Separationstestaren');
     const profileRes = await api(app, other, 'POST', '/v1/profiles', {
       kind: 'person', displayName: 'S', applicantType: 'individual', country: 'SE',
@@ -168,9 +168,9 @@ describe('dokumentstudion', () => {
     await api(app, other, 'POST', `/v1/payments/${paymentId}/mock-confirm`);
 
     const matches = await api(app, other, 'GET', `/v1/projects/${pid}/matches`);
-    expect((matches.json() as { locked?: boolean }).locked).toBe(true); // analysen är fortfarande låst
+    expect((matches.json() as { locked?: boolean }).locked).toBeUndefined(); // Open Discovery: matchningar är fria
     const credits = await api(app, other, 'GET', `/v1/projects/${pid}/document-credits`);
-    expect((credits.json() as { remaining: number }).remaining).toBe(99); // men krediterna finns
+    expect((credits.json() as { remaining: number }).remaining).toBe(99); // dokumentkrediterna finns (kind-separation)
   });
 
   it('tenant isolation: foreign documents do not exist', async () => {

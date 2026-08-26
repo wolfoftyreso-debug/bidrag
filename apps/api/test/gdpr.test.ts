@@ -7,7 +7,7 @@ import type { FastifyInstance } from 'fastify';
 import { eq } from 'drizzle-orm';
 import { db } from '../src/db/client.ts';
 import { receipts } from '../src/db/schema.ts';
-import { api, createProfileAndProject, registerUser, testServer, uploadPdf, type TestUser } from './helpers.ts';
+import { api, createProfileAndProject, payForApplication, registerUser, testServer, uploadPdf, type TestUser } from './helpers.ts';
 
 let app: FastifyInstance;
 let user: TestUser;
@@ -15,7 +15,10 @@ let user: TestUser;
 beforeAll(async () => {
   app = await testServer();
   user = await registerUser(app, 'Raderaren');
-  await createProfileAndProject(app, user);
+  const { project } = await createProfileAndProject(app, user);
+  // Ett bekräftat köp (19 kr/ansökan) ger ett bokföringskvitto som ska bevaras
+  // vid radering — Open Discovery: matchningar är gratis, kvitton uppstår av köp.
+  await payForApplication(app, user, project.id);
   await uploadPdf(app, user, 'cv', 'cv.pdf');
 });
 

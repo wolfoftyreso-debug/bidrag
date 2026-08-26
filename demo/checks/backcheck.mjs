@@ -44,18 +44,8 @@ await page.waitForSelector('text=flytta utomlands');
 await page.click('.row >> button:has-text("Nej")');
 await page.waitForSelector('text=allvarlig sjukdom');
 await page.click('.row >> button:has-text("Nej")');
-await page.waitForSelector('text=stöd som matchar din situation');
-await page.click('text=← Ändra mina svar');
-await page.waitForSelector('text=allvarlig sjukdom'); // sista frågan är numera funktionsnedsättningsfrågan
-console.log('3. Teasern → Ändra mina svar → tillbaka på sista frågan ✓');
-
-// 4. Fram igen, betala, och rapporten har också Ändra mina svar (utan att låsa om).
-await page.waitForSelector('text=allvarlig sjukdom');
-await page.click('.row >> button:has-text("Nej")');
-await page.click('text=Lås upp din bidragsanalys — 39 kr');
-await page.check('#angerratt');
-await page.click('text=Godkänn betalning (simulerad)');
-await page.click('text=Visa min analys');
+// Open Discovery: rapporten visas direkt och gratis — ingen teaser, ingen betalvägg.
+await page.waitForSelector('text=Gå vidare med ansökan');
 await page.waitForSelector('text=Det här ser du ut att kunna ha rätt till');
 await page.click('text=← Ändra mina svar');
 await page.waitForSelector('text=allvarlig sjukdom');

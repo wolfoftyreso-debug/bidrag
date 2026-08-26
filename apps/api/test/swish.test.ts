@@ -115,7 +115,7 @@ async function newLockedProject(): Promise<string> {
 }
 
 async function startSwishPayment(projectId: string): Promise<{ paymentId: string; ref: string; deepLink: string }> {
-  const res = await api(app, user, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { email: 'swish@test.example', immediateDeliveryConsent: true });
+  const res = await api(app, user, 'POST', `/v1/projects/${projectId}/application-purchase`, { email: 'swish@test.example', immediateDeliveryConsent: true });
   expect(res.statusCode).toBe(201);
   const body = res.json() as { paymentId: string; instructions: { method: string; deepLink?: string; qrAvailable?: boolean } };
   expect(body.instructions.method).toBe('swish');
@@ -130,7 +130,7 @@ describe('Swish Handel över riktig mTLS', () => {
     const { ref } = await startSwishPayment(projectId);
     const create = receivedCreates.find((c) => c.id === ref)!;
     expect(create, 'payment request nådde aldrig Swish-servern').toBeDefined();
-    expect(create.amount).toBe('39.00');
+    expect(create.amount).toBe('19.00');
     expect(create.currency).toBe('SEK');
     expect(create.payeeAlias).toBe('1231111111');
     expect(String(create.callbackUrl)).toContain('/v1/webhooks/payments/swish');
@@ -154,21 +154,19 @@ describe('Swish Handel över riktig mTLS', () => {
     const forged = await app.inject({
       method: 'POST',
       url: '/v1/webhooks/payments/swish',
-      payload: { id: ref, status: 'PAID', amount: 39.0, currency: 'SEK' },
+      payload: { id: ref, status: 'PAID', amount: 19.0, currency: 'SEK' },
     });
     expect(forged.statusCode).toBe(200);
 
     const status = await api(app, user, 'GET', `/v1/payments/${paymentId}/status`);
-    expect((status.json() as { state: string }).state).toBe('pending');
-    const matches = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
-    expect((matches.json() as { locked?: boolean }).locked).toBe(true);
+    expect((status.json() as { state: string }).state).toBe('pending'); // förfalskad callback bekräftar aldrig
   });
 
   it('verified PAID confirms, issues a swish receipt and unlocks', async () => {
     const projectId = await newLockedProject();
     const { paymentId, ref } = await startSwishPayment(projectId);
 
-    swishState.set(ref, { status: 'PAID', amount: 39.0, currency: 'SEK' });
+    swishState.set(ref, { status: 'PAID', amount: 19.0, currency: 'SEK' });
     const cb = await app.inject({ method: 'POST', url: '/v1/webhooks/payments/swish', payload: { id: ref, status: 'PAID' } });
     expect(cb.statusCode).toBe(200);
 
@@ -186,7 +184,7 @@ describe('Swish Handel över riktig mTLS', () => {
   it('a duplicate callback after confirmation is a harmless no-op', async () => {
     const projectId = await newLockedProject();
     const { paymentId, ref } = await startSwishPayment(projectId);
-    swishState.set(ref, { status: 'PAID', amount: 39.0, currency: 'SEK' });
+    swishState.set(ref, { status: 'PAID', amount: 19.0, currency: 'SEK' });
     await app.inject({ method: 'POST', url: '/v1/webhooks/payments/swish', payload: { id: ref } });
     await app.inject({ method: 'POST', url: '/v1/webhooks/payments/swish', payload: { id: ref } });
     const status = await api(app, user, 'GET', `/v1/payments/${paymentId}/status`);
@@ -199,15 +197,13 @@ describe('Swish Handel över riktig mTLS', () => {
     swishState.set(ref, { status: 'PAID', amount: 1.0, currency: 'SEK' });
     await app.inject({ method: 'POST', url: '/v1/webhooks/payments/swish', payload: { id: ref } });
     const status = await api(app, user, 'GET', `/v1/payments/${paymentId}/status`);
-    expect((status.json() as { state: string }).state).toBe('failed');
-    const matches = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
-    expect((matches.json() as { locked?: boolean }).locked).toBe(true);
+    expect((status.json() as { state: string }).state).toBe('failed'); // beloppsavvikelse → failed, aldrig bekräftad
   });
 
   it('a lost callback is recovered by status polling (verify-on-read)', async () => {
     const projectId = await newLockedProject();
     const { paymentId, ref } = await startSwishPayment(projectId);
-    swishState.set(ref, { status: 'PAID', amount: 39.0, currency: 'SEK' });
+    swishState.set(ref, { status: 'PAID', amount: 19.0, currency: 'SEK' });
     // Ingen callback alls — pollingen ska själv verifiera mot Swish.
     const status = await api(app, user, 'GET', `/v1/payments/${paymentId}/status`);
     expect((status.json() as { state: string }).state).toBe('confirmed');
@@ -216,7 +212,7 @@ describe('Swish Handel över riktig mTLS', () => {
   it('DECLINED marks the payment failed', async () => {
     const projectId = await newLockedProject();
     const { paymentId, ref } = await startSwishPayment(projectId);
-    swishState.set(ref, { status: 'DECLINED', amount: 39.0, currency: 'SEK' });
+    swishState.set(ref, { status: 'DECLINED', amount: 19.0, currency: 'SEK' });
     const status = await api(app, user, 'GET', `/v1/payments/${paymentId}/status`);
     expect((status.json() as { state: string }).state).toBe('failed');
   });

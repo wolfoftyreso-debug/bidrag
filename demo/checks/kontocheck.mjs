@@ -1,4 +1,4 @@
-/** Demo: snabbflöde → upplåsning → Mitt konto → kvitto + återställningskoder. */
+/** Demo (Open Discovery): Mitt konto är direkt nåbart — kvitto (exempel, 19 kr) + återställningskoder. */
 import { launchChromium, artifactsDir } from '../../tools/lib/browser.mjs';
 
 const SHOT = artifactsDir;
@@ -7,7 +7,7 @@ const page = await browser.newPage({ viewport: { width: 1100, height: 950 } });
 page.on('pageerror', (e) => { console.log('PAGEERROR:', e.message); process.exitCode = 1; });
 await page.goto(`file://${SHOT}/demo/demo.html`);
 
-// Samma personliga flöde som check.mjs (ensamstående förälder, arbetslös).
+// Kör intaget (ensamstående förälder, arbetslös) → rapporten visas direkt (Open Discovery).
 await page.click('text=svårt att få ekonomin');
 await page.click('button:has-text("Själv")');
 await page.click('.choice:has-text("Ja"):not(:has-text("växelvis"))');
@@ -26,14 +26,9 @@ await page.waitForSelector('text=flytta utomlands');
 await page.click('.row >> button:has-text("Nej")');
 await page.waitForSelector('text=allvarlig sjukdom');
 await page.click('.row >> button:has-text("Nej")');
-await page.waitForSelector('text=Lås upp din bidragsanalys');
-await page.click('text=Lås upp din bidragsanalys');
-await page.check('#angerratt');
-await page.click('text=Godkänn betalning (simulerad)');
-await page.waitForSelector('text=Betalning genomförd');
-await page.click('text=Visa min analys');
+await page.waitForSelector('text=Gå vidare med ansökan');
 
-// Mitt konto
+// Mitt konto (direkt nåbart från rapporten)
 await page.waitForSelector('text=Mitt konto — kvitto & säkerhet');
 await page.click('text=Mitt konto — kvitto & säkerhet');
 await page.waitForSelector('text=Mina köp');

@@ -6,7 +6,7 @@
  *
  * Uppdaterad efter F-HOPP-fixen: intaget har numera avslutande
  * upptäcktsfrågor (utvandring, funktionsnedsättning) före teasern, och
- * teaserns rubrik är "X stöd som matchar din situation".
+ * rapporten (Open Discovery) visar namngivna stöd direkt och gratis.
  */
 import { launchChromium, artifactsDir } from '../../tools/lib/browser.mjs';
 import { fileURLToPath } from 'node:url';
@@ -39,11 +39,8 @@ await page.click('.row >> button:has-text("Nej")');
 await page.waitForSelector('text=allvarlig sjukdom');
 await page.click('.row >> button:has-text("Nej")');
 
-await page.waitForSelector('text=stöd som matchar din situation');
-await page.click('button:has-text("Lås upp din bidragsanalys")');
-await page.check('#angerratt');
-await page.click('button:has-text("Godkänn betalning")');
-await page.click('button:has-text("Visa min analys")');
+// Open Discovery: rapporten visas direkt och gratis — ingen teaser, ingen betalvägg.
+await page.waitForSelector('text=Gå vidare med ansökan');
 await page.waitForSelector('.q-context');
 
 // Endast de ÖPPNA frågorna granskas. "Dina svar"-panelen (F-ÄNDRA) återanvänder
