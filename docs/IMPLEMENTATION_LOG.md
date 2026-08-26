@@ -73,3 +73,25 @@ Arbetsströmmar (§28): 1 Core product · 2 Discovery/matching ·
   Discovery i Matches/payments; (Q) per-bidrag-kvalificering; (R) bevakningslager;
   (S) SEO search surface. Verify 15/15.
 - **Rollback:** `git revert` av denna commit återställer doktrin v1.
+
+## 2026-08-26 — Open Discovery i kod (betalvägg framför resultat borttagen)
+
+- **Ström:** 1 (Core product), 5 (Payments/entitlements)
+- **Beslut:** Produktägaren (AskUserQuestion): "Matchningar gratis nu" + "Ja,
+  inför personnummer". Denna post = matchningar gratis (personnummer = egen fas).
+- **Vad:** API matches alltid fulla/gratis; analysis-unlock/unlock-status/
+  isProjectUnlocked pensionerade; funding-stack av-gatead. Webb + demo: teaser/
+  paywall borttagna. doctrine.mjs check C flippad (Open Discovery-vakt). Tester
+  omriktade till 19 kr-maskineriet (moms 19,00 = 15,20 + 3,80). uicheck12/13 +
+  alla 7 demokontroller omskrivna.
+- **Filer:** apps/api/src/routes/{projects,payments}.ts; apps/web/src/pages/
+  Matches.tsx; demo/main.tsx + demo/checks/*.mjs; tools/doctrine.mjs;
+  tools/uicheck/uicheck12,13.mjs; apps/api/test/{payments,swish,adversarial,
+  documentStudio,gdpr,helpers}; docs (PRODUCT_DOCTRINE §12, README, CLAUDE,
+  MANUAL, openapi, OPEN_RISKS).
+- **Databas:** ingen migrering (schema kind-enum behåller 'analysis_unlock' för
+  historiska rader; inga nya inserts använder den).
+- **Tester:** api 207/207 · verify 15/15 · verify:ui KLAR · demo:check 7/7.
+- **Status:** PASS. Commit 8b907d7, båda remotes.
+- **Rollback:** `git revert 8b907d7`.
+- **Nästa:** personnummer-identitet (R9/R11, DPIA/BankID) + bevakningslagret.

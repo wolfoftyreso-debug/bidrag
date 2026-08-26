@@ -23,7 +23,8 @@ Skala: BLOCKER (extern, hindrar produktion) · HIGH · MEDIUM · LOW.
 | Id | Beslut | Konflikt | Status |
 |---|---|---|---|
 | R9 | **Personnummer som identifieringsnyckel för privatperson** (Open Discovery-korrigeringen §5/steg 2) | Bryter grundregel "Personnummer efterfrågas aldrig" (CLAUDE.md #1); GDPR/DPIA-vikt; rör sannolikt BankID | **AVVAKTAR uttryckligt beslut** — ej byggt |
-| R10 | Open Discovery-pivoten river den byggda 39 kr-teaser/paywall-modellen (Matches.tsx, payments, entitlements) | Vänder en byggd+testad intäktsmodell (task #58) | Auktoriserad av produktägaren 2026-08-26; sekvenseras som egen fas |
+| ~~R10~~ | ~~Open Discovery river 39 kr-teaser/paywall~~ → **GENOMFÖRD 2026-08-26** (commit 8b907d7): matchningar gratis, analysupplåsning pensionerad, doctrine.mjs check C flippad; verify 15/15 + verify:ui + demo 7/7 gröna | — | klar |
+| R11 | Personnummer-identitet (R9) beslutad JA — ännu ej byggd; DPIA/BankID krävs | P1 | egen fas |
 
 ## Produktluckor (från FAS 0)
 

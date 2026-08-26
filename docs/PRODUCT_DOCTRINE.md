@@ -143,18 +143,22 @@ sannolikt BankID). **Ej adopterat i doktrinen tills produktägaren uttryckligen
 beslutar.** Se `docs/OPEN_RISKS.md` R9. Företag/förening: organisationsnummer är
 oproblematiskt (offentlig uppgift) och adopteras.
 
-## 12. Migreringsstatus (39 kr-modellen → Open Discovery)
+## 12. Migreringsstatus (39 kr-modellen → Open Discovery) — GENOMFÖRD
 
-Den byggda modellen (39 kr analysupplåsning + teaser som döljer namn/källa)
-ersätts fasvis. Tills dess gäller den byggda modellen i drift.
+**Klart 2026-08-26 (commit 8b907d7).** Den byggda 39 kr-analysupplåsningen +
+teasern är borttagna i kod:
 
-- `tools/doctrine.mjs` check C bevakar idag "värde före betalning" mot den
-  befintliga teasern. **När paywall-före-resultat tas bort revideras check C**
-  till att i stället fälla bygget om resultat/matchningsförklaring döljs bakom
-  betalning (Open Discovery-vakten). Doc + check + kod ändras i samma fas.
-- Prismodellen (39 kr analys / 19 kr ansökan) omdefinieras: grundläggande
-  matchning gratis; 19 kr/ansökan och bevakningspaket blir det betalda lagret.
-  Produkter/priser/entitlements ska vara konfigurerbara, aldrig hårdkodade.
+- API: `matches` (GET+POST) returnerar alltid fulla resultat gratis;
+  `analysis-unlock`/`unlock-status`/`isProjectUnlocked` pensionerade; funding-
+  stack inte längre 402-gatead. 19 kr/ansökan + kvitto/swish oförändrat.
+- Webb + demo: teaser/paywall borttagna; resultaten visas direkt.
+- `tools/doctrine.mjs` check C **flippad**: fäller nu bygget om paywall-före-
+  resultat återinförs (i api eller webb).
+- Bevis: verify 15/15 · verify:ui KLAR · demo:check 7/7 · api 207/207.
+
+Kvar (senare faser): bevakningslagret (spara möjligheter, e-post/SMS-
+aviseringar) som betalda paket; produkter/priser/entitlements ska bli
+konfigurerbara (idag `config.applicationPriceMinor`).
 
 ## 13. Förhållande till övriga doktriner
 
