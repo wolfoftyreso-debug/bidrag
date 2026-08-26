@@ -329,17 +329,6 @@ function MatchRow({ opp, m, facts, showScore, selected, onToggle }: { opp: Opp; 
 // Samma modell som produkten: matchningarna visas direkt och kostnadsfritt.
 // Det enda som kostar är att förbereda en ansökan (19 kr/ansökan).
 
-const TEASER_CATEGORY: Record<string, string> = {
-  social_benefit: 'Ekonomiskt stöd eller ersättning', educational_support: 'Studiestöd',
-  travel_grant: 'Resebidrag', project_grant: 'Projektbidrag', public_grant: 'Offentligt bidrag',
-  eu_grant: 'EU-finansiering', scholarship: 'Stipendium', stipend: 'Stipendium',
-};
-const TEASER_LEVEL: Record<string, { dot: string; label: string }> = {
-  high: { dot: '🟢', label: 'hög relevans' },
-  possible: { dot: '🟡', label: 'möjlig' },
-  needs_info: { dot: '⚪', label: 'kräver mer information' },
-};
-
 function likelihoodOf(m: ReturnType<typeof runEngine>[number]['m']): 'high' | 'possible' | 'needs_info' {
   if (m.eligibilityStatus !== 'eligible') return 'needs_info';
   // "Hög" kräver att även viktande kriterier talar för (F3-kalibreringen).
