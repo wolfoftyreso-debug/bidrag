@@ -22,9 +22,9 @@ Skala: BLOCKER (extern, hindrar produktion) · HIGH · MEDIUM · LOW.
 
 | Id | Beslut | Konflikt | Status |
 |---|---|---|---|
-| R9 | **Personnummer som identifieringsnyckel för privatperson** (Open Discovery-korrigeringen §5/steg 2) | Bryter grundregel "Personnummer efterfrågas aldrig" (CLAUDE.md #1); GDPR/DPIA-vikt; rör sannolikt BankID | **AVVAKTAR uttryckligt beslut** — ej byggt |
+| ~~R9~~ | ~~Personnummer som identifieringsnyckel för privatperson~~ → **AVGJORT 2026-08-26: förkastat.** Produktägaren: inget personnummer, ingen BankID — bara **födelseår** (+ ev. signatur). Grundregel #1 står oförändrad. Genomfört i kod (webb + demo + intag). | — | klar |
 | ~~R10~~ | ~~Open Discovery river 39 kr-teaser/paywall~~ → **GENOMFÖRD 2026-08-26** (commit 8b907d7): matchningar gratis, analysupplåsning pensionerad, doctrine.mjs check C flippad; verify 15/15 + verify:ui + demo 7/7 gröna | — | klar |
-| R11 | Personnummer-identitet (R9) beslutad JA — ännu ej byggd; DPIA/BankID krävs | P1 | egen fas |
+| ~~R11~~ | ~~Personnummer-identitet beslutad JA — DPIA/BankID krävs~~ → **UPPHÄVT: personnummer/BankID förkastades (R9).** Ingen DPIA-tung identitetskoppling byggs; födelseår är den enda personliga uppgiften. | — | klar |
 
 ## Produktluckor (från FAS 0)
 

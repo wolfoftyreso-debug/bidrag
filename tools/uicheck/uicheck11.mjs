@@ -18,7 +18,8 @@ await page.click('button:has-text("Mig själv")');
 await page.click('text=svårt att få ekonomin');
 await page.click('button:has-text("Själv")');
 await page.getByRole('button', { name: 'Nej', exact: true }).click(); // inga barn
-await page.click('button:has-text("29–65")');
+await page.fill('input[type="number"]', '1979');
+await page.click('button:has-text("Nästa")');
 await page.click('button:has-text("Driver eget företag")');
 await page.waitForSelector('text=Hur driver du verksamheten?');
 console.log('1. Driftsformsfrågan i riktiga intaget ✓');

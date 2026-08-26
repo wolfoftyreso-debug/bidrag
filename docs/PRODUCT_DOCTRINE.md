@@ -133,15 +133,24 @@ Två skilda lager (detaljer: `docs/SEO_SEARCH_SURFACE.md`):
 - samma uppgift efterfrågas flera gånger;
 - användaren måste läsa en guide för att förstå produkten.
 
-## 11. Öppet beslut — identifiering av privatperson (personnummer)
+## 11. Identifiering av privatperson — BESLUTAT: bara födelseår
 
-Korrigeringen föreslår personnummer som **säker identifieringsnyckel** för
-privatperson (uttryckligen INTE automatisk hämtning av inkomst/hushåll/hälsa).
-**Detta står i konflikt med en grundregel i repot** ("Personnummer efterfrågas
-aldrig någonstans", CLAUDE.md regel #1) och har GDPR-/DPIA-vikt (och rör
-sannolikt BankID). **Ej adopterat i doktrinen tills produktägaren uttryckligen
-beslutar.** Se `docs/OPEN_RISKS.md` R9. Företag/förening: organisationsnummer är
-oproblematiskt (offentlig uppgift) och adopteras.
+**Produktägarens beslut 2026-08-26:** *"Ingen bankid behövs. ingen ansökan sker
+från systemet idag. Så vi nöjer sig med födelseår så det enda som fylls i av den
+sökande är födelseår och signatur om det behövs."*
+
+Personnummer + BankID **förkastades**. Grundregeln "Personnummer efterfrågas
+aldrig någonstans" (CLAUDE.md regel #1) står **oförändrad**. Det enda personliga
+fält den sökande fyller i är **födelseår** (+ signatur på färdiga dokument om det
+behövs). Motivering: idag lämnas ingen ansökan direkt från systemet, så ingen
+identitetskoppling behövs — bara den ålder som avgör åldersgränser.
+
+Från födelseåret härleds **exakt ålder** (det år personen fyller X) mot varje
+åldersgräns som ett stöd faktiskt har — inga grova åldersband som proxy:
+`person.ageYears`, `ageUnder29`, `age40OrYounger`, `age60Plus`, `age62Plus`,
+`age66Plus`, `age67Plus`. Detta stänger samtidigt buggen M11 (åldersgränserna
+60/62/67 kontrollerades tidigare mot en 66-proxy). Företag/förening:
+organisationsnummer är oproblematiskt (offentlig uppgift) och adopteras.
 
 ## 12. Migreringsstatus (39 kr-modellen → Open Discovery) — GENOMFÖRD
 

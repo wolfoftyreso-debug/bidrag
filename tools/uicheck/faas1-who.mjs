@@ -33,7 +33,8 @@ await page.click('button:has-text("Själv")');
 await page.waitForSelector('text=Har du barn som bor hos dig?');
 await page.getByRole('button', { name: 'Nej', exact: true }).click();
 await page.waitForSelector('text=Hur gammal är du?');
-await page.click('button:has-text("29–65")');
+await page.fill('input[type="number"]', '1979');
+await page.click('button:has-text("Nästa")');
 
 // 3. Driftsform/sysselsättning är redan känd → hoppar direkt till sektorn
 //    (bevisar att förifyllningen skippar p-employment + p-biz-form).

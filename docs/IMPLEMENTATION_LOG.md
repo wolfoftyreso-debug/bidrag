@@ -95,3 +95,33 @@ Arbetsströmmar (§28): 1 Core product · 2 Discovery/matching ·
 - **Status:** PASS. Commit 8b907d7, båda remotes.
 - **Rollback:** `git revert 8b907d7`.
 - **Nästa:** personnummer-identitet (R9/R11, DPIA/BankID) + bevakningslagret.
+
+## 2026-08-26 — Identitetsbeslut: bara födelseår (personnummer/BankID förkastat) + M11 stängd
+
+- **Ström:** 1 (Core product), 4 (Grant data), 6 (Security/privacy)
+- **Beslut:** Produktägaren: *"Ingen bankid behövs. ingen ansökan sker från
+  systemet idag. Så vi nöjer sig med födelseår så det enda som fylls i av den
+  sökande är födelseår och signatur om det behövs."* → personnummer + BankID
+  (R9/R11) **förkastas**; grundregel #1 (inget personnummer) står oförändrad.
+- **Vad:** Enda personliga fältet i intaget = **födelseår**. Onboarding (webb) +
+  demo: p-age blev ett födelseårsfält (år i [nu−120, nu]) i stället för
+  åldersband; härleder exakt ålder → per-gräns-fakta `person.ageYears`,
+  `age60Plus`, `age62Plus`, `age67Plus` (utöver `ageUnder29`/`age40OrYounger`/
+  `age66Plus`/`ageBand`). **M11 stängd:** seedens kriterier pekar nu på rätt
+  åldersgräns var för sig — `csn-sm-h2`/`csn-us-h2`/`csn-ss-h3` → 60,
+  `csn-oss-h2` → 62, `pm-afs-m1` → 67; `af-ee-h3` behåller 66 (korrekt).
+- **Filer:** `apps/web/src/pages/Onboarding.tsx`, `demo/main.tsx` (YearInput),
+  `apps/api/src/seed/data.ts` (5 kriterier), `deploy/bootstrap.sql` +
+  `seo/kunskapsgraf.json` (regen). Tester/harnesser omställda till födelseår:
+  `apps/api/test/{scenarios,personalJourney}.test.ts`, `tools/simulate30.mjs`,
+  `tools/gendocs.mjs`, `tools/uicheck/{uicheck1,4,11,12,13,faas1-who}.mjs`,
+  `demo/checks/{check,bizcheck,backcheck,savecheck,kontocheck,vidarecheck,ctxcheck}.mjs`.
+- **Databas:** ingen migrering (fakta är fria punktsökvägar); seed bumpade 5
+  regelset till nya versioner; bootstrap.sql regenererad (rundtur verifierad).
+- **Tester:** verify 15/15 · verify:ui KLAR (uicheck12+13) · demo:check 7/7 ·
+  api-sviterna gröna (scenarios+personalJourney 28/28 riktade).
+- **Status:** PASS.
+- **Rollback:** `git revert` av denna commit; intaget återgår till åldersband +
+  age66Plus-proxyn (återöppnar M11).
+- **Nästa:** (B) ansökningskanal-revision — exakt vilka ingångar varje stöd har
+  som alternativ och hur de kan tas emot.

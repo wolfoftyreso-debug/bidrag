@@ -39,7 +39,14 @@ const projectId = await page.evaluate(async () => {
       'person.hasChildrenAtHome': true,
       'person.lowHouseholdIncome': true,
       'person.paysHousingCost': true,
+      'person.ageYears': 45,
       'person.ageBand': '29-65',
+      'person.ageUnder29': false,
+      'person.age40OrYounger': false,
+      'person.age60Plus': false,
+      'person.age62Plus': false,
+      'person.age66Plus': false,
+      'person.age67Plus': false,
     },
   });
   const { project } = await post('/v1/projects', {

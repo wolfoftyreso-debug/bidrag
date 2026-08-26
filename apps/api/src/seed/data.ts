@@ -1375,7 +1375,7 @@ export const opportunities: SeedOpportunity[] = [
       c('csn-sm-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Studiemedel söks av privatpersoner'),
       // Åldersgräns (F2, 30-simuleringen): studiemedel lämnas längst t.o.m. det
       // år du fyller 60 — pensionärer ska aldrig få studiefrågorna.
-      c('csn-sm-h2', 'hard', 'person.age66Plus', 'is_false', undefined, 'Studiemedel lämnas längst t.o.m. det år du fyller 60'),
+      c('csn-sm-h2', 'hard', 'person.age60Plus', 'is_false', undefined, 'Studiemedel lämnas längst t.o.m. det år du fyller 60'),
       c('csn-sm-m1', 'mandatory', 'person.isOrPlansStudying', 'is_true', undefined, 'Du ska studera eller planera att börja studera', 'Studerar du, eller planerar du att börja studera?'),
     ],
   }),
@@ -1487,7 +1487,7 @@ export const opportunities: SeedOpportunity[] = [
     criteria: [
       c('pm-afs-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Stödet söks av privatpersoner'),
       c('pm-afs-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Du ska bo i Sverige'),
-      c('pm-afs-m1', 'mandatory', 'person.age66Plus', 'is_true', undefined, 'Du ska ha uppnått riktåldern för pension (67 år från 2026)', 'Har du uppnått riktåldern för pension (67 år 2026)?'),
+      c('pm-afs-m1', 'mandatory', 'person.age67Plus', 'is_true', undefined, 'Du ska ha uppnått riktåldern för pension (67 år från 2026)', 'Har du uppnått riktåldern för pension (67 år 2026)?'),
       c('pm-afs-m2', 'mandatory', 'person.veryLowOrNoPension', 'is_true', undefined, 'Pension och inkomster ska inte räcka till en skälig levnadsnivå', 'Har du svårt att klara dig på din pension och dina övriga inkomster?'),
     ],
   }),
@@ -1543,7 +1543,7 @@ export const opportunities: SeedOpportunity[] = [
     criteria: [
       c('csn-oss-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Stödet söks av privatpersoner'),
       // Åldersgräns (F2): omställningsstudiestöd kan sökas längst t.o.m. ca 62 år.
-      c('csn-oss-h2', 'hard', 'person.age66Plus', 'is_false', undefined, 'Stödet kan sökas längst t.o.m. det år du fyller 62'),
+      c('csn-oss-h2', 'hard', 'person.age62Plus', 'is_false', undefined, 'Stödet kan sökas längst t.o.m. det år du fyller 62'),
       c('csn-oss-h3', 'hard', 'person.receivesPension', 'is_false', undefined, 'Stödet riktar sig till yrkesverksamma, inte pensionärer'),
       c('csn-oss-m1', 'mandatory', 'person.establishedInLabourMarket', 'is_true', undefined, 'Du ska ha arbetat i genomsnitt minst 16 h/vecka i minst 8 år', 'Har du arbetat minst 16 timmar i veckan i sammanlagt minst 8 år?'),
       c('csn-oss-m2', 'mandatory', 'person.isOrPlansStudying', 'is_true', undefined, 'Du ska planera studier som stärker din ställning på arbetsmarknaden', 'Planerar du studier som stärker din ställning på arbetsmarknaden?'),
@@ -1982,7 +1982,7 @@ export const opportunities: SeedOpportunity[] = [
     estimatedEffortDays: 2,
     criteria: [
       c('csn-us-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Studiemedel söks av privatpersoner'),
-      c('csn-us-h2', 'hard', 'person.age66Plus', 'is_false', undefined, 'Studiemedel lämnas längst t.o.m. ca 60 års ålder'),
+      c('csn-us-h2', 'hard', 'person.age60Plus', 'is_false', undefined, 'Studiemedel lämnas längst t.o.m. ca 60 års ålder'),
       c('csn-us-m0', 'mandatory', 'person.consideringMovingAbroad', 'is_true', undefined, 'Stödet är aktuellt vid flytt utomlands', 'Funderar du på att flytta utomlands (för jobb, studier eller återvandring)?'),
       c('csn-us-m1', 'mandatory', 'person.isOrPlansStudying', 'is_true', undefined, 'Du ska studera eller planera att börja studera', 'Studerar du, eller planerar du att börja studera?'),
       c('csn-us-m2', 'mandatory', 'person.plansStudyAbroad', 'is_true', undefined, 'Studierna ska bedrivas utomlands', 'Planerar du att studera utomlands?'),
@@ -2183,7 +2183,7 @@ export const opportunities: SeedOpportunity[] = [
     criteria: [
       c('csn-ss-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Stödet söks av privatpersoner'),
       c('csn-ss-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Du ska bo i Sverige'),
-      c('csn-ss-h3', 'hard', 'person.age66Plus', 'is_false', undefined, 'Stödet gäller till och med 60 års ålder'),
+      c('csn-ss-h3', 'hard', 'person.age60Plus', 'is_false', undefined, 'Stödet gäller till och med 60 års ålder'),
       c('csn-ss-m1', 'mandatory', 'person.registeredUnemployed', 'is_true', undefined, 'Du ska vara arbetslös och anmäld hos Arbetsförmedlingen', 'Är du inskriven som arbetssökande hos Arbetsförmedlingen?'),
       c('csn-ss-m2', 'mandatory', 'person.age25to60', 'is_true', undefined, 'Du ska vara mellan 25 och 60 år', 'Är du mellan 25 och 60 år?'),
       c('csn-ss-m3', 'mandatory', 'person.shortPriorEducation', 'is_true', undefined, 'Du ska ha kort tidigare utbildning och behöva studier på grundskole- eller gymnasienivå', 'Är din senast avslutade utbildning grundskola, eller ett gymnasium du inte slutförde?'),

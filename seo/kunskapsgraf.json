@@ -1,11 +1,11 @@
 {
  "_kontrakt": "Kunskapsgrafen v1 — genererad av tools/genkgraf.mjs ur seeden + seo/intents-100.json; redigera ALDRIG för hand. Grafen är lager 6 i docs/CONTENT_ENGINE.md: internlänkning, relaterade stöd och situationsnoder hämtar härifrån. 'relaterad'-kanter = delar ≥2 kriteriefält och minst en målgruppshubb (deterministisk heuristik v1 — redaktionell kurering kan skärpa den senare, i generatorn, inte i filen). Regenerera vid seed-/intentändring; verify kör --check.",
  "genererad_ur_seed": "2026-08-13T00:00:00Z",
- "antal_noder": 250,
- "antal_kanter": 1278,
+ "antal_noder": 253,
+ "antal_kanter": 1271,
  "noder_per_typ": {
   "intent": 42,
-  "kriterium": 97,
+  "kriterium": 100,
   "malgrupp": 4,
   "myndighet": 35,
   "stod": 72
@@ -500,9 +500,24 @@
    "label": "person.age40OrYounger"
   },
   {
+   "id": "kriterium:person.age60Plus",
+   "type": "kriterium",
+   "label": "person.age60Plus"
+  },
+  {
+   "id": "kriterium:person.age62Plus",
+   "type": "kriterium",
+   "label": "person.age62Plus"
+  },
+  {
    "id": "kriterium:person.age66Plus",
    "type": "kriterium",
    "label": "person.age66Plus"
+  },
+  {
+   "id": "kriterium:person.age67Plus",
+   "type": "kriterium",
+   "label": "person.age67Plus"
   },
   {
    "id": "kriterium:person.ageUnder29",
@@ -1819,22 +1834,7 @@
   {
    "from": "stod:af-etableringsersattning",
    "rel": "relaterad",
-   "to": "stod:csn-omstallningsstudiestod"
-  },
-  {
-   "from": "stod:af-etableringsersattning",
-   "rel": "relaterad",
-   "to": "stod:csn-studiemedel"
-  },
-  {
-   "from": "stod:af-etableringsersattning",
-   "rel": "relaterad",
    "to": "stod:csn-studiestartsstod"
-  },
-  {
-   "from": "stod:af-etableringsersattning",
-   "rel": "relaterad",
-   "to": "stod:csn-utlandsstudier"
   },
   {
    "from": "stod:af-etableringsersattning",
@@ -2799,7 +2799,7 @@
   {
    "from": "stod:csn-omstallningsstudiestod",
    "rel": "kraver",
-   "to": "kriterium:person.age66Plus"
+   "to": "kriterium:person.age62Plus"
   },
   {
    "from": "stod:csn-omstallningsstudiestod",
@@ -2824,17 +2824,7 @@
   {
    "from": "stod:csn-omstallningsstudiestod",
    "rel": "relaterad",
-   "to": "stod:csn-studiestartsstod"
-  },
-  {
-   "from": "stod:csn-omstallningsstudiestod",
-   "rel": "relaterad",
    "to": "stod:csn-utlandsstudier"
-  },
-  {
-   "from": "stod:csn-omstallningsstudiestod",
-   "rel": "relaterad",
-   "to": "stod:pm-aldreforsorjningsstod"
   },
   {
    "from": "stod:csn-omstallningsstudiestod",
@@ -2859,7 +2849,7 @@
   {
    "from": "stod:csn-studiemedel",
    "rel": "kraver",
-   "to": "kriterium:person.age66Plus"
+   "to": "kriterium:person.age60Plus"
   },
   {
    "from": "stod:csn-studiemedel",
@@ -2875,11 +2865,6 @@
    "from": "stod:csn-studiemedel",
    "rel": "relaterad",
    "to": "stod:csn-utlandsstudier"
-  },
-  {
-   "from": "stod:csn-studiemedel",
-   "rel": "relaterad",
-   "to": "stod:pm-aldreforsorjningsstod"
   },
   {
    "from": "stod:csn-studiemedel",
@@ -2909,7 +2894,7 @@
   {
    "from": "stod:csn-studiestartsstod",
    "rel": "kraver",
-   "to": "kriterium:person.age66Plus"
+   "to": "kriterium:person.age60Plus"
   },
   {
    "from": "stod:csn-studiestartsstod",
@@ -3039,7 +3024,7 @@
   {
    "from": "stod:csn-utlandsstudier",
    "rel": "kraver",
-   "to": "kriterium:person.age66Plus"
+   "to": "kriterium:person.age60Plus"
   },
   {
    "from": "stod:csn-utlandsstudier",
@@ -3060,11 +3045,6 @@
    "from": "stod:csn-utlandsstudier",
    "rel": "relaterad",
    "to": "stod:migrationsverket-atervandringsbidrag"
-  },
-  {
-   "from": "stod:csn-utlandsstudier",
-   "rel": "relaterad",
-   "to": "stod:pm-aldreforsorjningsstod"
   },
   {
    "from": "stod:csn-utlandsstudier",
@@ -7454,7 +7434,7 @@
   {
    "from": "stod:pm-aldreforsorjningsstod",
    "rel": "kraver",
-   "to": "kriterium:person.age66Plus"
+   "to": "kriterium:person.age67Plus"
   },
   {
    "from": "stod:pm-aldreforsorjningsstod",

@@ -39,11 +39,17 @@ function personalFacts(a: Answers): Facts {
   f['person.consideringMovingAbroad'] = a.movingAbroad ?? false;
   f['person.disabilityOrLongTermIllnessInFamily'] = a.disabilityInFamily ?? false;
   if (a.age) {
+    // Speglar födelseårshärledningen i Onboarding/demo: bandet mappas till en
+    // representativ ålder och därur härleds exakta tröskelfakta (M11-stängningen).
+    const repAge = a.age === 'under20' ? 18 : a.age === '20-28' ? 24 : a.age === '29-65' ? 45 : 68;
+    f['person.ageYears'] = repAge;
     f['person.ageBand'] = a.age;
-    f['person.ageUnder29'] = a.age === 'under20' || a.age === '20-28';
-    f['person.age66Plus'] = a.age === '66plus';
-    if (a.age === 'under20' || a.age === '20-28') f['person.age40OrYounger'] = true;
-    if (a.age === '66plus') f['person.age40OrYounger'] = false;
+    f['person.ageUnder29'] = repAge <= 28;
+    f['person.age40OrYounger'] = repAge <= 40;
+    f['person.age60Plus'] = repAge >= 60;
+    f['person.age62Plus'] = repAge >= 62;
+    f['person.age66Plus'] = repAge >= 66;
+    f['person.age67Plus'] = repAge >= 67;
   }
   if (a.childSchool) {
     f['person.childInCompulsorySchool'] = a.childSchool === 'grundskola' || a.childSchool === 'both';

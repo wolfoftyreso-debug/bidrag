@@ -14,7 +14,8 @@ await page.click('text=Ja, i grundskolan');
 await page.click('.row >> button:has-text("Ja")'); // svårt betala skolutflykt → öppnar Majblomman
 await page.click('.row >> button:has-text("Ja")'); // glasögon 8–19 → glasögonbidrag
 await page.click('.row >> button:has-text("Ja")'); // besvärlig skolväg → skolskjuts
-await page.click('button:has-text("29–65")');
+await page.fill('input[type=number]', '1979');
+await page.click('button:has-text("Nästa")');
 await page.click('button:has-text("Arbetslös")');
 await page.click('button:has-text("15 000–25 000 kr")');
 await page.click('.row >> button:has-text("Ja")'); // betalar boende

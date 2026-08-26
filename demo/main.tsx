@@ -111,13 +111,16 @@ function buildFacts(a: A): Facts {
     if (a.household) f['person.householdType'] = a.household;
     if (a.children) f['person.hasChildrenAtHome'] = a.children !== 'no';
     if (a.separated !== undefined) f['person.separatedParent'] = a.separated;
-    if (a.age) {
-      f['person.ageBand'] = a.age;
-      f['person.ageUnder29'] = a.age === 'under20' || a.age === '20-28';
-      f['person.age66Plus'] = a.age === '66plus';
-      // Härledbart ur åldersspannet — 29–65 spänner över gränsen och förblir okänt.
-      if (a.age === 'under20' || a.age === '20-28') f['person.age40OrYounger'] = true;
-      if (a.age === '66plus') f['person.age40OrYounger'] = false;
+    if (a.birthYear) {
+      const age = new Date().getFullYear() - (a.birthYear as number);
+      f['person.ageYears'] = age;
+      f['person.ageUnder29'] = age <= 28;
+      f['person.age40OrYounger'] = age <= 40;
+      f['person.age60Plus'] = age >= 60;
+      f['person.age62Plus'] = age >= 62;
+      f['person.age66Plus'] = age >= 66;
+      f['person.age67Plus'] = age >= 67;
+      f['person.ageBand'] = age < 20 ? 'under20' : age <= 28 ? '20-28' : age <= 65 ? '29-65' : '66plus';
     }
     if (a.childSchool) {
       f['person.childInCompulsorySchool'] = a.childSchool === 'grundskola' || a.childSchool === 'both';
@@ -904,11 +907,8 @@ function App() {
         </Q>
       )}
       {step === 'p-age' && (
-        <Q title="Hur gammal är du?" guidance="Åldern avgör vilka stöd som är aktuella — vi behöver inget personnummer.">
-          <Choice label="Under 20" onClick={() => advance({ age: 'under20' })} />
-          <Choice label="20–28" onClick={() => advance({ age: '20-28' })} />
-          <Choice label="29–65" onClick={() => advance({ age: '29-65' })} />
-          <Choice label="66 eller äldre" onClick={() => advance({ age: '66plus' })} />
+        <Q title="Vilket år är du född?" guidance="Året avgör exakt vilka åldersgränser som gäller — vi behöver inget personnummer, bara födelseåret.">
+          <YearInput onNext={(y) => advance({ birthYear: y })} />
         </Q>
       )}
       {step === 'p-employment' && (
@@ -1081,6 +1081,22 @@ function CostInput({ onNext }: { onNext: () => void }) {
       <input type="number" min={0} value={v} onChange={(e) => setV(e.target.value)} placeholder="t.ex. 8500" autoFocus />
       <div className="row" style={{ marginTop: '0.8rem' }}>
         <button className="btn primary" onClick={onNext}>Nästa</button>
+      </div>
+    </div>
+  );
+}
+
+/** Födelseår — enda personuppgiften den sökande fyller i (aldrig personnummer). */
+function YearInput({ onNext }: { onNext: (year: number) => void }) {
+  const [v, setV] = useState('');
+  const now = new Date().getFullYear();
+  const year = Number(v);
+  const valid = Number.isInteger(year) && year >= now - 120 && year <= now;
+  return (
+    <div>
+      <input type="number" inputMode="numeric" min={now - 120} max={now} value={v} onChange={(e) => setV(e.target.value)} placeholder="t.ex. 1979" autoFocus />
+      <div className="row" style={{ marginTop: '0.8rem' }}>
+        <button className="btn primary" disabled={!valid} onClick={() => onNext(year)}>Nästa</button>
       </div>
     </div>
   );

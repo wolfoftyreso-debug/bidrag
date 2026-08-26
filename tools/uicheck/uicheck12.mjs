@@ -27,7 +27,8 @@ await page.click('button:has-text("Nej, inte ännu")'); // skolform
 await page.getByRole('button', { name: 'Nej', exact: true }).click(); // skolutflykt
 await page.getByRole('button', { name: 'Nej', exact: true }).click(); // fritidsaktivitet
 await page.getByRole('button', { name: 'Nej', exact: true }).click(); // glasögon
-await page.click('button:has-text("29–65")');
+await page.fill('input[type="number"]', '1979');
+await page.click('button:has-text("Nästa")');
 await page.click('button:has-text("Arbetar")');
 await page.click('button:has-text("25 000–40 000")');
 await page.getByRole('button', { name: 'Ja', exact: true }).click(); // betalar boende

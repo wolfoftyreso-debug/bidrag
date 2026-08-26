@@ -18,7 +18,8 @@ await page.goto('file://' + html);
 await page.click('button:has-text("svårt att få ekonomin")');
 await page.click('button:has-text("Själv")');
 await page.click('.choice:has-text("Nej")');
-await page.click('button:has-text("29–65")');
+await page.fill('input[type=number]', '1979');
+await page.click('button:has-text("Nästa")');
 await page.click('button:has-text("Arbetslös")');
 await page.click('button:has-text("15 000–25 000 kr")');
 await page.click('.row >> button:has-text("Ja")'); // betalar boende

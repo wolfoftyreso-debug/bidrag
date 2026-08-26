@@ -28,7 +28,9 @@ interface Answers {
   childMissedLeisure?: boolean;
   childNeedsGlasses?: boolean;
   childTravelHard?: boolean;
-  ageBand?: 'under20' | '20-28' | '29-65' | '66plus';
+  /** Födelseår — enda personuppgiften den sökande fyller i (aldrig personnummer).
+   * Ger exakt ålder mot varje åldersgräns (stänger M11:s grova bandproxy). */
+  birthYear?: number;
   employment?: 'working' | 'unemployed' | 'sick' | 'studying' | 'retired' | 'self_employed';
   businessForm?: 'sole_trader' | 'limited_company' | 'other';
   bizSector?: 'agriculture' | 'culture' | 'environment' | 'innovation' | 'other';
@@ -177,12 +179,17 @@ function personalFacts(a: Answers): Record<string, unknown> {
   if (a.householdType) facts['person.householdType'] = a.householdType;
   if (a.children) facts['person.hasChildrenAtHome'] = a.children !== 'no';
   if (a.separatedParent !== undefined) facts['person.separatedParent'] = a.separatedParent;
-  if (a.ageBand) {
-    facts['person.ageBand'] = a.ageBand;
-    facts['person.ageUnder29'] = a.ageBand === 'under20' || a.ageBand === '20-28';
-    facts['person.age66Plus'] = a.ageBand === '66plus';
-    if (a.ageBand === 'under20' || a.ageBand === '20-28') facts['person.age40OrYounger'] = true;
-    if (a.ageBand === '66plus') facts['person.age40OrYounger'] = false;
+  if (a.birthYear) {
+    // Exakt ålder (det år personen fyller X) mot varje gräns — ingen grov proxy.
+    const age = new Date().getFullYear() - a.birthYear;
+    facts['person.ageYears'] = age;
+    facts['person.ageUnder29'] = age <= 28;
+    facts['person.age40OrYounger'] = age <= 40;
+    facts['person.age60Plus'] = age >= 60;
+    facts['person.age62Plus'] = age >= 62;
+    facts['person.age66Plus'] = age >= 66;
+    facts['person.age67Plus'] = age >= 67;
+    facts['person.ageBand'] = age < 20 ? 'under20' : age <= 28 ? '20-28' : age <= 65 ? '29-65' : '66plus';
   }
   // Barnspåret: upptäcktsfrågorna sätter fakta som öppnar stöd användaren
   // sällan känner till (Majblomman, glasögonbidrag, skolskjuts, elevresor).
@@ -619,15 +626,26 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
         </Q>
       );
 
-    case 'p-age':
+    case 'p-age': {
+      const nowYear = new Date().getFullYear();
+      const year = Number(text);
+      const valid = Number.isInteger(year) && year >= nowYear - 120 && year <= nowYear;
       return (
-        <Q title="Hur gammal är du?" guidance="Åldern avgör vilka stöd som är aktuella — vi behöver inget personnummer.">
-          <Choice label="Under 20" onClick={() => onAnswer({ ageBand: 'under20' })} />
-          <Choice label="20–28" onClick={() => onAnswer({ ageBand: '20-28' })} />
-          <Choice label="29–65" onClick={() => onAnswer({ ageBand: '29-65' })} />
-          <Choice label="66 eller äldre" onClick={() => onAnswer({ ageBand: '66plus' })} />
+        <Q title="Vilket år är du född?" guidance="Året avgör exakt vilka åldersgränser som gäller — vi behöver inget personnummer, bara födelseåret.">
+          <input
+            type="number"
+            inputMode="numeric"
+            min={nowYear - 120}
+            max={nowYear}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="t.ex. 1979"
+            autoFocus
+          />
+          <button style={{ marginTop: '0.8rem' }} disabled={!valid} onClick={() => onAnswer({ birthYear: year })}>Nästa</button>
         </Q>
       );
+    }
     case 'p-employment':
       return (
         <Q title="Vad gör du i dag?">
