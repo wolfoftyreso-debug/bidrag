@@ -9,8 +9,10 @@
  *
  * Wire:ad i scripts/verify.sh. Referensdatum = seedens CURATED_AT (aldrig klockan).
  */
+import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { computeFundingIndex } from './lib/foretagsindex.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const { opportunities, authorities, CURATED_AT } = await import(join(ROOT, 'apps/api/src/seed/data.ts'));
@@ -41,6 +43,22 @@ for (const o of opportunities) {
   seen.add(o.slug);
   if (!o.title) err(`${o.slug}: saknar titel`);
   if (!authKeys.has(o.authorityKey)) err(`${o.slug}: authorityKey "${o.authorityKey}" finns inte i authorities`);
+}
+
+// Företagsbidragsindex §80: all publik statistik ska vara REPRODUCERBAR. Räkna om
+// ur seeden och kontrollera att den publicerade sidan visar samma siffra.
+const fbi = computeFundingIndex(opportunities, authorities, CURATED_AT);
+const fbiHtml = join(ROOT, 'artifacts', 'seo-site', 'foretagsbidragsindex', 'index.html');
+if (existsSync(fbiHtml)) {
+  const html = readFileSync(fbiHtml, 'utf8');
+  const open = fbi.metrics.openCompanyGrants.value;
+  if (!html.includes(`Öppna företagsstöd</th><td>${open}<`)) {
+    err(`Företagsbidragsindex: publicerad "öppna företagsstöd" matchar inte omräkningen (${open}) — statistiken är inte reproducerbar`);
+  }
+  const cov = fbi.metrics.verifiedAvailableFunding.coveragePct;
+  if (!html.includes(`${cov} % täckning`)) {
+    err(`Företagsbidragsindex: publicerad finansieringstäckning matchar inte omräkningen (${cov} %)`);
+  }
 }
 
 if (errors) {

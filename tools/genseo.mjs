@@ -24,6 +24,7 @@ import { mkdirSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadIntents, resolveIntent, indexabilityVerdict } from './lib/intents.mjs';
+import { computeFundingIndex } from './lib/foretagsindex.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outFlag = process.argv.indexOf('--out');
@@ -423,7 +424,7 @@ Myndigheterna beskriver sina egna stöd var för sig; här får du överblicken,
 <div class="path"><strong>Vilka bidrag kan jag få?</strong>Det beror på vem du är. Kontrollera gratis — du behöver inte veta vad bidraget heter.<br><a class="knapp" href="/vilka-bidrag-kan-jag-fa/">Kontrollera din situation</a></div>
 <div class="path"><strong>Hitta bidrag gratis</strong>Upptäckten och resultaten är kostnadsfria och inte låsta. Ansök själv hos källan.<br><a class="knapp sekundar" href="/hitta-bidrag-gratis/">Så fungerar det</a></div>
 </div>
-<p class="lead" style="margin-top:.4rem">Se också <a href="/bidragsstatus/">bidragsstatus</a> — hur många stöd som är öppna, återkommande och har satt deadline — och <a href="/finansiarer/">finansiärerna</a> bakom bidragen, uppdaterat ur kunskapsbasen.</p>
+<p class="lead" style="margin-top:.4rem">Se också <a href="/bidragsstatus/">bidragsstatus</a>, <a href="/finansiarer/">finansiärerna</a> bakom bidragen, och <a href="/foretagsbidragsindex/">Företagsbidragsindex</a> — Sveriges företagsstöd i öppna, citerbara siffror.</p>
 ${hubEntries
   .map(
     ({ hub, entries }) => `<h2><a href="/bidrag/${hub.slug}/">${esc(hub.title)}</a></h2>
@@ -626,6 +627,92 @@ avgörs alltid hos den officiella källan, som varje bidragssida länkar till.</
   return { path, html: layout({ title: title.slice(0, 70), description, canonical, crumbs, jsonld, body }) };
 }
 
+// ── Företagsbidragsindex: verklig beräknad datavy + metodik ──────────────────
+// Ärlighet framför siffror: bara reproducerbara metrics ur seeden; resten
+// redovisas som "uppgift saknas" med skäl. Samma sanningslager driver sidan.
+const FBI = computeFundingIndex(opportunities, authorities, CURATED_AT);
+const FBI_REGISTRY = JSON.parse(readFileSync(join(ROOT, 'seo', 'foretagsbidragsindex-metrics.json'), 'utf8'));
+
+function foretagsindexPage() {
+  const path = '/foretagsbidragsindex/';
+  const canonical = `${BASE}${path}`;
+  const crumbs = [{ name: 'Bidrag', url: '/bidrag/' }, { name: 'Företagsbidragsindex', url: path }];
+  const title = 'Företagsbidragsindex Sverige – öppna företagsstöd i siffror | Bidragskoll';
+  const description = `Sveriges företagsstöd i siffror ur Bidragskolls kunskapsbas: ${FBI.metrics.openCompanyGrants.value} öppna företagsstöd, per finansieringsområde, finansiär och stödtyp. Öppna, reproducerbara data — inga påhittade siffror.`.slice(0, 168);
+  const vf = FBI.metrics.verifiedAvailableFunding;
+  const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title.slice(0, 70), crumbs) };
+  jsonld['@graph'].push({
+    '@type': 'Dataset', name: 'Företagsbidragsindex Sverige', inLanguage: 'sv',
+    description: 'Aggregerad, reproducerbar statistik över företagsstöd i Sverige ur Bidragskolls kunskapsbas: antal öppna stöd, per finansieringsområde, finansiär och stödtyp.',
+    creator: { '@id': `${BASE}/#org` }, isAccessibleForFree: true, dateModified: CHECKED,
+    url: canonical, license: 'https://creativecommons.org/licenses/by/4.0/',
+  });
+  const dimList = (arr, labelFn = (k) => k) => `<ul class="stodlista">${arr.slice(0, 12).map((d) => `<li><span>${esc(labelFn(d.key))}</span><span class="sum">${d.count} stöd</span></li>`).join('')}</ul>`;
+  const SECTOR_SV = { culture: 'Kultur', innovation: 'Innovation', technology: 'Teknik', energy: 'Energi', environment: 'Miljö/klimat', education: 'Utbildning', agriculture: 'Jordbruk', civil_society: 'Civilsamhälle', rural: 'Landsbygd', youth: 'Ungdom', sports: 'Idrott', research: 'Forskning' };
+  const INSTR_SV = { public_grant: 'Statligt bidrag', eu_grant: 'EU-stöd', project_grant: 'Projektbidrag', loan: 'Lån', travel_grant: 'Resebidrag', stipend: 'Stipendium' };
+  const body = `
+<p class="eyebrow">Öppna data · uppdaterad ur kunskapsbasen</p>
+<h1>Företagsbidragsindex Sverige</h1>
+<p class="lead">Sveriges företagsstöd i siffror — beräknat direkt ur Bidragskolls kunskapsbas och fritt att citera.
+Vi publicerar bara siffror som går att reproducera ur verifierade källor. Där uppgift saknas säger vi det, i
+stället för att gissa.</p>
+<div class="card"><table class="fakta">
+<tr><th scope="row">Öppna företagsstöd</th><td>${FBI.metrics.openCompanyGrants.value}</td></tr>
+<tr><th scope="row">Öppnar snart (känt datum/omgång)</th><td>${FBI.metrics.upcomingCompanyGrants.value}</td></tr>
+<tr><th scope="row">Med satt deadline</th><td>${FBI.metrics.grantsWithDeadlineDate.value} <span style="color:var(--soft)">(övriga är löpande/återkommande)</span></td></tr>
+<tr><th scope="row">Verifierad tillgänglig finansiering</th><td>Maxbelopp känt för ${vf.knownCount} av ${vf.totalCount} stöd (${vf.coveragePct} % täckning). Summa av kända maxbelopp: ${kr(vf.sumKnownMinor)}. <strong>Resten: uppgift saknas.</strong></td></tr>
+</table></div>
+<a class="bigcta" href="/">Kontrollera vilka stöd som passar ditt företag — gratis</a>
+
+<h2>Per finansieringsområde</h2>
+${dimList(FBI.dimensions.bySector, (k) => SECTOR_SV[k] ?? cap(k))}
+<h2>Per finansiär</h2>
+${dimList(FBI.dimensions.byProvider)}
+<h2>Per stödtyp</h2>
+${dimList(FBI.dimensions.byInstrument, (k) => INSTR_SV[k] ?? cap(k))}
+
+<h2>Vad vi ännu inte mäter — och varför</h2>
+<p>För att aldrig publicera påhittad statistik redovisar vi öppet vilka mått som ännu saknar reproducerbar data:</p>
+<ul>${FBI.unavailable.map((u) => `<li><strong>${esc(u.metric)}:</strong> ${esc(u.reason)}</li>`).join('')}</ul>
+
+<div class="honest">Företagsbidragsindex speglar Bidragskolls kunskapsbas (kurerad, ännu inte hela marknaden) och är
+inte en myndighetsstatistik. Varje siffra kan reproduceras ur samma data. Historik börjar samlas löpande.</div>
+<p class="kalla"><strong>Senast uppdaterad ur kunskapsbasen:</strong> ${CHECKED} · Metodikversion ${FBI.methodologyVersion} · <a href="/foretagsbidragsindex/metodik/">Metodik och definitioner</a> · Källa: Företagsbidragsindex, Bidragskoll.se</p>
+`;
+  return { path, html: layout({ title: title.slice(0, 70), description, canonical, crumbs, jsonld, body }) };
+}
+
+function foretagsindexMetodikPage() {
+  const path = '/foretagsbidragsindex/metodik/';
+  const canonical = `${BASE}${path}`;
+  const crumbs = [{ name: 'Bidrag', url: '/bidrag/' }, { name: 'Företagsbidragsindex', url: '/foretagsbidragsindex/' }, { name: 'Metodik', url: path }];
+  const title = 'Företagsbidragsindex – metodik och definitioner | Bidragskoll';
+  const description = 'Så beräknas Företagsbidragsindex: varje måtts definition, formel, datakälla och kända begränsningar. Mått utan reproducerbar data publiceras inte — de redovisas öppet.';
+  const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title.slice(0, 70), crumbs) };
+  const pub = FBI_REGISTRY.metrics.filter((m) => m.public);
+  const priv = FBI_REGISTRY.metrics.filter((m) => !m.public);
+  const body = `
+<p class="eyebrow">Metodik</p>
+<h1>Företagsbidragsindex — metodik och definitioner</h1>
+<p class="lead">Varje mått har en definition, en formel, en datakälla och kända begränsningar. Samma beräkning driver
+den publika sidan och (framtida) API — ingen kanal skapar sin egen version av fakta. Baslinje: ${esc(FBI_REGISTRY.baseline)}</p>
+<h2>Publicerade mått</h2>
+${pub.map((m) => `<div class="card"><h2 style="margin-top:0;font-size:1.1rem">${esc(m.name)}</h2>
+<p>${esc(m.description ?? '')}</p>
+<table class="fakta">
+${m.formula ? `<tr><th scope="row">Formel</th><td><code>${esc(m.formula)}</code></td></tr>` : ''}
+<tr><th scope="row">Enhet</th><td>${esc(m.unit)}</td></tr>
+<tr><th scope="row">Datakvalitet</th><td>${esc(m.quality)}</td></tr>
+<tr><th scope="row">Begränsningar</th><td>${esc(m.limitations ?? '—')}</td></tr>
+</table></div>`).join('')}
+<h2>Mått som ännu inte publiceras (kräver data)</h2>
+<p>Följande mått beräknas inte förrän det finns reproducerbar data — vi visar aldrig en gissad siffra:</p>
+<ul>${priv.map((m) => `<li><strong>${esc(m.name)}:</strong> ${esc(m.requiresData ?? '')}</li>`).join('')}</ul>
+<p class="kalla"><strong>Senast kontrollerad:</strong> ${CHECKED} · Tillbaka till <a href="/foretagsbidragsindex/">Företagsbidragsindex</a></p>
+`;
+  return { path, html: layout({ title, description, canonical, crumbs, jsonld, body }) };
+}
+
 // ── Finansiärssidor (SEO-063): entiteter i grafen, en sida per finansiär ─────
 const KIND_LABEL = {
   state_agency: 'Statlig myndighet', municipality: 'Kommun', region: 'Region',
@@ -716,7 +803,7 @@ for (const o of [...opportunities].sort((a, b) => a.slug.localeCompare(b.slug)))
 
 // Flaggskeppssidorna + bidragsstatus (root). Länkas från /bidrag/-index så de
 // nås i orphan-BFS:en, och länkar tillbaka in i katalogen.
-for (const p of [flagshipHittaGratis(), flagshipVilkaBidrag(), bidragsstatusPage()]) emit(p.path.replace(/^\/|\/$/g, ''), p.html);
+for (const p of [flagshipHittaGratis(), flagshipVilkaBidrag(), bidragsstatusPage(), foretagsindexPage(), foretagsindexMetodikPage()]) emit(p.path.replace(/^\/|\/$/g, ''), p.html);
 
 // Query Pages (vyer över grafen). Endast INDEX + NOINDEX_FOLLOW genereras.
 let idx = 0, noidx = 0, skipped = 0;

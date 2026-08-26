@@ -314,3 +314,27 @@ Arbetsströmmar (§28): 1 Core product · 2 Discovery/matching ·
   `tools/seo-cannibalization.mjs`, `apps/web/src/pages/Calendar.tsx`.
 - **Tester:** verify 19/19 · verify:ui KLAR · typecheck rent.
 - **Status:** PASS.
+
+## 2026-08-26 — Företagsbidragsindex Sverige: ärlig beräknad publik index + metodik
+
+- **Ström:** 7 (SEO/content), 4 (Grant data), 10 (Operations)
+- **Beslut:** Bygg Företagsbidragsindex som förstaklassig datamodul. Spänning:
+  prompten kräver verkliga siffror men beskriver live-ingestering med historik/
+  awards — datalagret är en statisk seed på 72 stöd utan tidsserie/awards. Ärlig
+  väg (§62/§1): bygg den reproducerbara delen fullt ut, redovisa öppet vad som saknas.
+- **Inventering:** 25 företagsstöd; maxbelopp känt för 1/25 (4 % täckning); ingen
+  historik/awards/snapshot-infra. "4,82 mdr"/"index 118,4" vore fabrikation.
+- **Vad (verkligt):** `tools/lib/foretagsindex.mjs` (domäntjänst §76, bara
+  reproducerbara metrics; resten unavailable m. skäl) · `seo/foretagsbidragsindex-
+  metrics.json` (Metric Registry §16) · publika sidor `/foretagsbidragsindex/`
+  (25 öppna, per dimension, ärlig 4 % täckning, "vad vi ännu inte mäter",
+  Dataset-markup, CTA) + `/metodik/` · reproducerbarhetsgrind (§80) i seo-dataqa ·
+  `docs/FORETAGSBIDRAGSINDEX.md` (arkitektur + DoD + prerekvisit per deferred del).
+- **Ärlighetsval:** inget composite-index (kräver baslinje), ingen "frusen"
+  finansiering (§13), inga mottagarprofiler (§14/§65).
+- **Filer:** tools/lib/foretagsindex.mjs, seo/foretagsbidragsindex-metrics.json,
+  docs/FORETAGSBIDRAGSINDEX.md (nya); tools/genseo.mjs, tools/seo-dataqa.mjs,
+  tools/seocheck.mjs, vercel.json.
+- **Tester:** verify 19/19. SEO-ytan 126 → 128 sidor.
+- **Status:** PASS (reproducerbar grund). Deferred: historik (live-DB+cron),
+  awards (officiell öppen data), API Core, ANTHROPIC_API_KEY — inget på gissad data.

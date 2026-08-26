@@ -42,10 +42,10 @@ walk(SITE, '/');
 // Statiska sidprefix (allt annat i href, t.ex. /villkor, /konto, /, är SPA-vyer
 // som inte genereras här och därför inte länkgranskas). Query Pages ligger under
 // målgruppsprefixen /foretag/ /privatperson/ /forening/ /enskild-firma/.
-const STATIC = ['/bidrag/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/', '/bidragsstatus/', '/finansiarer/', '/foretag/', '/privatperson/', '/forening/', '/enskild-firma/'];
+const STATIC = ['/bidrag/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/', '/bidragsstatus/', '/finansiarer/', '/foretagsbidragsindex/', '/foretag/', '/privatperson/', '/forening/', '/enskild-firma/'];
 // Toppnivåingångar för orphan-BFS (faktiska sidor, länkade från appens nav /
 // katalogindex). Query Pages + finansiärssidor nås därifrån via index-/hubblänkar.
-const BFS_SEEDS = ['/bidrag/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/', '/bidragsstatus/', '/finansiarer/'];
+const BFS_SEEDS = ['/bidrag/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/', '/bidragsstatus/', '/finansiarer/', '/foretagsbidragsindex/'];
 const noindexPages = new Set();
 
 const titles = new Map();

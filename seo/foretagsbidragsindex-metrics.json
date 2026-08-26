@@ -1,0 +1,68 @@
+{
+  "_doc": "Metric Registry för Företagsbidragsindex (§16/§43). Varje mått har mänsklig + maskinläsbar definition, formel, enhet, datakälla, kvalitet och kända begränsningar. Driver metodiksidan. Beräkningen finns i tools/lib/foretagsindex.mjs (samma sanningslager). ÄRLIGHET: mått utan reproducerbar data står som 'requiresData' med skäl — aldrig påhittad statistik.",
+  "methodologyVersion": "1.0",
+  "baseline": "Historik börjar samlas vid deploy (dagliga snapshots). Ingen retroaktiv 'live'-mätning påstås; rekonstruerad historik märks reconstructed.",
+  "metrics": [
+    {
+      "key": "openCompanyGrants",
+      "name": "Öppna företagsstöd",
+      "description": "Antal unika stöd i Bidragskolls kunskapsbas som riktar sig till företag eller ekonomiska föreningar och har verifierad officiell källa.",
+      "formula": "count(opportunities where applicantTypes ∩ {company, economic_association})",
+      "unit": "count", "quality": "verified", "public": true,
+      "limitations": "Speglar kunskapsbasens täckning (kurerad, ej fullständig marknad). Ingen closed-status i seeden ännu — alla seedade räknas som aktuella."
+    },
+    {
+      "key": "upcomingCompanyGrants",
+      "name": "Öppnar snart",
+      "description": "Företagsstöd med officiellt känt framtida öppningsdatum eller upcoming_round-status.",
+      "formula": "count(company where deadlineModel = upcoming_round OR opensAt > referenceDate)",
+      "unit": "count", "quality": "verified", "public": true,
+      "limitations": "Historiskt förväntade återkommande stöd utan bekräftat datum räknas INTE här (§6.2)."
+    },
+    {
+      "key": "grantsWithDeadlineDate",
+      "name": "Stöd med satt deadline",
+      "description": "Företagsstöd som har ett konkret closesAt-datum i kunskapsbasen (övriga är löpande/återkommande).",
+      "formula": "count(company where closesAt is set)",
+      "unit": "count", "quality": "verified", "public": true,
+      "limitations": "De flesta företagsstöd är löpande eller återkommande utan ett enskilt hårt datum."
+    },
+    {
+      "key": "verifiedAvailableFunding",
+      "name": "Verifierad tillgänglig finansiering",
+      "description": "Summan av kända maxbelopp för företagsstöd, tillsammans med hur stor andel av stöden beloppet är känt för.",
+      "formula": "sum(maxAmountMinor where known) + coverage = known / total",
+      "unit": "sek", "quality": "partial", "public": true,
+      "limitations": "Låg täckning: maxbelopp är känt för få stöd. Blandar ALDRIG programbudget, maxbelopp per sökande och utbetalt (§6.3). Resten redovisas som uppgift saknas."
+    },
+    {
+      "key": "bySector", "name": "Per finansieringsområde", "description": "Antal företagsstöd per sektor/behov.",
+      "formula": "count(company) group by sector", "unit": "count", "quality": "verified", "public": true,
+      "limitations": "Sektor är seedens taxonomi, inte SNI. SNI-mappning kräver kurering (§9)."
+    },
+    {
+      "key": "byProvider", "name": "Per finansiär", "description": "Antal företagsstöd per myndighet/finansiär.",
+      "formula": "count(company) group by authority", "unit": "count", "quality": "verified", "public": true, "limitations": "—"
+    },
+    {
+      "key": "byInstrument", "name": "Per stödtyp", "description": "Antal företagsstöd per stödform (bidrag, EU-stöd, lån m.m.).",
+      "formula": "count(company) group by instrumentType", "unit": "count", "quality": "verified", "public": true, "limitations": "—"
+    },
+    {
+      "key": "compositeIndexValue", "name": "Företagsbidragsindex (indexvärde)", "description": "Ett normaliserat indexvärde med baslinje 100.",
+      "unit": "index", "quality": "requiresData", "public": false,
+      "requiresData": "Ett meningsfullt indexvärde kräver en historisk startperiod (baslinje). Ingen poäng publiceras förrän historik samlats — ingen godtycklig AI-siffra (§7)."
+    },
+    {
+      "key": "monthOverMonthChange", "name": "Förändring månad över månad", "unit": "percent", "quality": "requiresData", "public": false,
+      "requiresData": "Kräver dagliga snapshots (funding_index_snapshots) som historiseras efter deploy med live-DB + cron (§8/§17)."
+    },
+    { "key": "newGrantsThisPeriod", "name": "Nya stöd i perioden", "unit": "count", "quality": "requiresData", "public": false, "requiresData": "Kräver change-events/versionshistorik (§6.4)." },
+    { "key": "closedGrantsThisPeriod", "name": "Stängda stöd i perioden", "unit": "count", "quality": "requiresData", "public": false, "requiresData": "Kräver livscykel-historik." },
+    { "key": "awards", "name": "Beviljanden", "unit": "count/sek", "quality": "requiresData", "public": false, "requiresData": "Kräver import av officiell öppen beslutsdata (finns ej i kunskapsbasen) (§12)." },
+    { "key": "disbursements", "name": "Utbetalningar", "unit": "sek", "quality": "requiresData", "public": false, "requiresData": "Kräver officiell utbetalningsdata; skilj beviljat/kontrakterat/utbetalt/återkrävt (§12)." },
+    { "key": "applicationStatistics", "name": "Ansökningsstatistik / beviljandegrad", "unit": "count/percent", "quality": "requiresData", "public": false, "requiresData": "Kräver officiell ansökningsstatistik." },
+    { "key": "unallocatedFunding", "name": "Ej allokerad finansiering", "unit": "sek", "quality": "requiresData", "public": false, "requiresData": "Beräknas ALDRIG utan jämförbara, verifierade programbudget- och beviljandeunderlag (§13)." },
+    { "key": "recipientProfiles", "name": "Mottagarprofil", "unit": "percent", "quality": "requiresData", "public": false, "requiresData": "Kräver tillräckligt sample (n≥10) och tillåten återanvändning; aggregat är standard (§14/§65)." }
+  ]
+}
