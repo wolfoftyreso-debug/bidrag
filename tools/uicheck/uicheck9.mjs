@@ -17,6 +17,8 @@ await page.waitForSelector('text=Vad behöver du hjälp med?');
 await page.click('text=Kom igång');
 
 // Svara på tre frågor, ladda om mitt i.
+await page.waitForSelector('text=Vem gäller det?');
+await page.click('button:has-text("Mig själv")');
 await page.click('text=svårt att få ekonomin');
 await page.waitForSelector('text=Bor du själv eller tillsammans med någon?');
 await page.click('button:has-text("Själv")');
@@ -39,9 +41,9 @@ console.log('2. Historiken överlevde omladdningen ✓');
 
 // Börja om rensar utkastet.
 await page.click('text=Börja om från början');
-await page.waitForSelector('text=Vad behöver du hjälp med?');
+await page.waitForSelector('text=Vem gäller det?');
 await page.reload();
-await page.waitForSelector('text=Vad behöver du hjälp med?');
+await page.waitForSelector('text=Vem gäller det?');
 const banner = await page.locator('text=du fortsätter där du var').count();
 if (banner > 0) { console.log('FEL: banner kvar efter Börja om'); process.exit(1); }
 console.log('3. Börja om rensar utkastet — ren start efter omladdning ✓');

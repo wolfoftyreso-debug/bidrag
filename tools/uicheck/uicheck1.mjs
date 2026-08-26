@@ -18,6 +18,8 @@ const browser = await launchChromium();
   await page.waitForSelector('text=Vad behöver du hjälp med?', { timeout: 10000 });
   await page.click('text=Kom igång');
 
+  await page.waitForSelector('text=Vem gäller det?');
+  await page.click('button:has-text("Mig själv")');
   await page.waitForSelector('text=Vad behöver du hjälp med?');
   await page.click('text=Jag har svårt att få ekonomin att gå ihop');
   await page.waitForSelector('text=Bor du själv');
@@ -79,6 +81,8 @@ const browser = await launchChromium();
   await page.waitForSelector('text=Vad behöver du hjälp med?', { timeout: 10000 });
   await page.click('text=Kom igång');
 
+  await page.waitForSelector('text=Vem gäller det?');
+  await page.click('button:has-text("Mig själv")');
   await page.click('text=Jag söker pengar till ett projekt');
   await page.waitForSelector('text=Vad vill du åstadkomma?');
   await page.fill('textarea', 'Jag vill ta min dansgrupp till Jamaica för att träna dancehall och ta hem kunskapen till Sverige.');

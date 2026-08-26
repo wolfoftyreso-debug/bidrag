@@ -48,3 +48,51 @@ Anthropic-nyckel. Alla dokumenterade med exakt var de sätts (CURRENT_STATE §13
 
 **Nästa fas:** FAS 1 — sökandekontext-ingång ("Vem söker du för?") + fritext-
 discovery, utan att bryta produktdoktrinens invariant (doctrine.mjs-vaktad).
+
+---
+
+## FAS 1 (del 1) — Hybrid sökandekontext-ingång + enskild firma-dubbelkontext
+
+**Status: PASS.**
+
+**Mål:** Ge §10.1:s sökandekontext-struktur utan att bryta situations-först-
+doktrinen (§2). Beslut via AskUserQuestion: hybrid.
+
+**Verifierat nuläge:** Intaget öppnade direkt med situations-tvåvalet; de fyra
+sökandekontexterna fanns i domänen men veks in i situationsgrenarna.
+
+**Genomförda förändringar:** Nytt steg 0 "Vem gäller det?" (Mig själv / Mitt
+företag / Min enskilda firma / En förening). Mig själv → situations-tvåvalet
+oförändrat. Företag/förening → track+applicantType satta, direkt till
+situationsfrågan. Enskild firma → personspår + förifyllt self_employed/
+sole_trader, p-age→p-biz-sector (dubbelkontext: person + verksamhet).
+
+**Filer:** `apps/web/src/pages/Onboarding.tsx`; UI-harness uicheck1/9/11/12/13
+(Mig själv-brygga); ny `tools/uicheck/faas1-who.mjs`.
+
+**Databas/API/miljö:** inga ändringar.
+
+**Tester:** typecheck rent; `tools/doctrine.mjs` PASS (situations-först hålls);
+`npm run verify` 15/15; `npm run verify:ui` (uicheck12+13) KLAR; `faas1-who`
+KLAR. Skärmbilder: artifacts/faas1-01, faas1-02.
+
+**Säkerhetskontroll:** endast intag/routing, inga nya endpoints/data. Inga
+hemligheter (verify-skanning grön).
+
+**SEO-kontroll:** ej berört (onboarding är noindex app-vy).
+
+**Acceptanskriterier (FAS 1-grind):** Samtliga fyra sökandekontexter fungerar
+✓; ingen behöver ange bidragsnamn ✓; redan känd info efterfrågas inte igen
+(enskild firma skippar sysselsättning/driftsform) ✓; mobilflödet testat (420px)
+✓; känd-bidrag-ingång som sekundär väg = EJ ÄNNU (P1, öppen); fritext-discovery
+= EJ ÄNNU (P1-b, kräver ANTHROPIC_API_KEY).
+
+**Kvarstående problem:** P1-b fritext-discovery; demons intagsparitet (LOW);
+uicheck1/9 har pre-existerande staleness bortom FAS 1 (ej i verify:ui).
+
+**Externa blockerare:** ANTHROPIC_API_KEY för fritext-discovery (nästa del).
+
+**Rollback:** `git revert` av FAS 1-committen.
+
+**Nästa fas:** FAS 1 (del 2) fritext-discovery + känd-bidrag-sekundärväg, eller
+FAS enligt användarens prioritering.

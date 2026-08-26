@@ -10,8 +10,12 @@ import { ApiError, post } from '../api';
 import { useSession } from '../App';
 
 type Track = 'personal' | 'project';
+/** FAS 1: lätt sökandekontext före situationsdialogen — ger struktur utan att
+ * kräva förkunskap (produktdoktrinen §2 hålls; doctrine.mjs vaktar). */
+type Audience = 'self' | 'company' | 'sole_trader' | 'association';
 
 interface Answers {
+  audience?: Audience;
   track?: Track;
   freeIntent: string;
   // personligt spår
@@ -60,6 +64,7 @@ interface Answers {
 const initial: Answers = { freeIntent: '', extraContext: '', activityTypes: [] };
 
 type StepId =
+  | 'who'
   | 'entry'
   | 'p-household' | 'p-children' | 'p-separated'
   | 'p-child-school' | 'p-child-costs' | 'p-child-leisure' | 'p-child-glasses' | 'p-child-travel'
@@ -78,6 +83,7 @@ type StepId =
  * all data (profil, projekt, fakta).
  */
 const STEP_IDS = new Set<string>([
+  'who',
   'entry',
   'p-household', 'p-children', 'p-separated',
   'p-child-school', 'p-child-costs', 'p-child-leisure', 'p-child-glasses', 'p-child-travel',
@@ -106,6 +112,14 @@ function loadIntakeDraft(key: string): IntakeDraft | null {
 /** Nästa steg beror på svaren — frågor som inte ändrar resultatet hoppas över. */
 function nextStep(current: StepId, a: Answers): StepId | 'done' {
   switch (current) {
+    case 'who':
+      // Sökandekontext → rätt situationsdialog. Enskild firma får dubbelkontext:
+      // personspåret (person-stöd) med förifyllt self_employed/sole_trader så att
+      // företagsstöden också genomlyses. Företag/förening går direkt till
+      // situationsfrågan "Vad vill du åstadkomma?" (ingen förkunskap krävs).
+      if (a.audience === 'company' || a.audience === 'association') return 'pr-intent';
+      if (a.audience === 'sole_trader') return 'p-household';
+      return 'entry';
     case 'entry': return a.track === 'personal' ? 'p-household' : 'pr-intent';
     case 'p-household': return 'p-children';
     case 'p-children': return a.children !== 'no' ? 'p-separated' : 'p-age';
@@ -117,7 +131,9 @@ function nextStep(current: StepId, a: Answers): StepId | 'done' {
     case 'p-child-leisure': return 'p-child-glasses';
     case 'p-child-glasses': return a.childSchool !== 'none' ? 'p-child-travel' : 'p-age';
     case 'p-child-travel': return 'p-age';
-    case 'p-age': return 'p-employment';
+    // Enskild firma: sysselsättning och driftsform är redan kända (förifyllda i
+    // 'who'), så hoppa direkt till verksamhetens sektor. Övriga: fråga vidare.
+    case 'p-age': return a.employment === 'self_employed' ? 'p-biz-sector' : 'p-employment';
     case 'p-employment':
       return a.employment === 'sick' ? 'p-capacity' : a.employment === 'self_employed' ? 'p-biz-form' : 'p-income';
     case 'p-biz-form': return 'p-biz-sector';
@@ -130,7 +146,9 @@ function nextStep(current: StepId, a: Answers): StepId | 'done' {
     case 'p-moving-abroad': return 'p-disability';
     case 'p-disability': return 'p-extra';
     case 'p-extra': return 'done';
-    case 'pr-intent': return 'pr-who';
+    // Om sökandekontexten redan är känd (företag/förening via 'who') hoppas
+    // "Vem söker?" över — annars ställs den (privatperson som valt projektspåret).
+    case 'pr-intent': return a.applicantType ? 'pr-municipality' : 'pr-who';
     case 'pr-who': return 'pr-municipality';
     case 'pr-municipality':
       return a.applicantType === 'individual' || a.applicantType === 'informal_group' ? 'pr-artist' : 'pr-sector';
@@ -243,7 +261,7 @@ export default function OnboardingPage() {
   const { session } = useSession();
   const draftKey = `bidrag.intag.v1.${session?.user.id ?? 'anon'}`;
   const [draft] = useState(() => loadIntakeDraft(draftKey));
-  const [step, setStep] = useState<StepId>(draft?.step ?? 'entry');
+  const [step, setStep] = useState<StepId>(draft?.step ?? 'who');
   const [history, setHistory] = useState<StepId[]>(draft?.history ?? []);
   const [a, setA] = useState<Answers>(draft?.a ?? initial);
   const [resumed, setResumed] = useState(Boolean(draft && draft.history.length > 0));
@@ -353,7 +371,7 @@ export default function OnboardingPage() {
     }
   };
 
-  const totalEstimate = a.track === 'personal' ? 10 : a.track === 'project' ? 10 : 8;
+  const totalEstimate = a.track === 'personal' ? 11 : a.track === 'project' ? 11 : 9;
   const progress = useMemo(() => Math.min(1, stepNumber / totalEstimate), [stepNumber, totalEstimate]);
 
   return (
@@ -369,7 +387,7 @@ export default function OnboardingPage() {
             className="subtle"
             onClick={() => {
               try { localStorage.removeItem(draftKey); } catch { /* ofarligt */ }
-              setStep('entry'); setHistory([]); setA(initial); setResumed(false);
+              setStep('who'); setHistory([]); setA(initial); setResumed(false);
             }}
           >
             Börja om från början
@@ -476,6 +494,40 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
   const [text, setText] = useState('');
 
   switch (step) {
+    // FAS 1 — lätt sökandekontext före situationsdialogen. Icke-tvingande, inget
+    // bidragsnamn krävs; nästa steg är alltid en situationsfråga (doktrinen §2).
+    case 'who':
+      return (
+        <QFramhavd
+          ill="glodlampa"
+          title="Vem gäller det?"
+          guidance="Ett snabbt val så vi ställer rätt frågor — sedan berättar du om situationen med egna ord. Du behöver inte veta vad något stöd heter."
+        >
+          <Choice
+            label="Mig själv"
+            sub="Stöd och ersättningar för dig och ditt hushåll."
+            onClick={() => onAnswer({ audience: 'self' })}
+          />
+          <Choice
+            label="Mitt företag"
+            sub="Bidrag och stöd till aktiebolag eller annan företagsform."
+            onClick={() => onAnswer({ audience: 'company', track: 'project', applicantType: 'company' })}
+          />
+          <Choice
+            label="Min enskilda firma"
+            sub="Både stöd till dig som person och till verksamheten — vi tar båda."
+            onClick={() =>
+              onAnswer({ audience: 'sole_trader', track: 'personal', employment: 'self_employed', businessForm: 'sole_trader' })
+            }
+          />
+          <Choice
+            label="En förening eller organisation"
+            sub="Verksamhets- och projektstöd för föreningar och civilsamhälle."
+            onClick={() => onAnswer({ audience: 'association', track: 'project', applicantType: 'association' })}
+          />
+        </QFramhavd>
+      );
+
     case 'entry':
       return (
         <QFramhavd

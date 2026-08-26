@@ -13,6 +13,8 @@ await page.fill('#password', 'foretags-losenord-123');
 await page.click('button[type=submit]');
 await page.waitForSelector('text=Vad behöver du hjälp med?');
 await page.click('text=Kom igång');
+await page.waitForSelector('text=Vem gäller det?');
+await page.click('button:has-text("Mig själv")');
 await page.click('text=svårt att få ekonomin');
 await page.click('button:has-text("Själv")');
 await page.getByRole('button', { name: 'Nej', exact: true }).click(); // inga barn

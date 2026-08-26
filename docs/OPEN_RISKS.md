@@ -23,8 +23,11 @@ Skala: BLOCKER (extern, hindrar produktion) · HIGH · MEDIUM · LOW.
 | Id | Risk | Prio | Fas |
 |---|---|---|---|
 | R1 | Fritext-discovery (narrativ → faktaextraktion m. bekräftelse) ej primär | P1 | FAS 1/3 |
-| R2 | Explicit sökandekontext-ingång ("Vem söker du för?") saknas som steg 0 | P1 | FAS 1 |
-| R3 | Enskild firma-dubbelkontext modellerad men viks in i projektgren i UI | P2 | FAS 1/6 |
+| ~~R2~~ | ~~Explicit sökandekontext-ingång saknas som steg 0~~ → **LÖST FAS 1**: hybrid "Vem gäller det?" (Onboarding.tsx) | — | klar |
+| ~~R3~~ | ~~Enskild firma-dubbelkontext viks in i projektgren~~ → **LÖST FAS 1**: enskild firma → personspår + förifyllt self_employed/sole_trader | — | klar |
+| R6 | Fritext-discovery (narrativ → faktaextraktion) ännu ej primär (P1-b) | P1 | FAS 1 del 2 |
+| R7 | Demons intagsparitet: 'who'-steget ej i demo/main.tsx | LOW | följdarbete |
+| R8 | uicheck1/9 pre-existerande staleness (steg tillagda efter skrivning) — ej i verify:ui-grinden | LOW | städning |
 | R4 | `/situationer/`-SEO-lagret ej byggt (ontologi klar) | P3 | FAS 8/9 |
 | R5 | Namngivna docs saknas (DATA_MODEL, MATCHING_ENGINE, PAYMENTS_AND_ENTITLEMENTS) | LOW | löpande |
 
