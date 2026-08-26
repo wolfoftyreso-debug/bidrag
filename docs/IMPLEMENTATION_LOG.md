@@ -230,3 +230,37 @@ Arbetsströmmar (§28): 1 Core product · 2 Discovery/matching ·
   historik + proveniensgraf, SERP Intelligence + Content Gap Engine + SEO Control
   Center + opportunity queue (kräver GSC/SERP), "Why this/Why not" + "Similar
   grants" (appfunktioner), org-nr → första bidragsbild (licensierad datakälla).
+
+## 2026-08-26 — SEO-5: SEO-kontrollplanet (MCP + cron + Postgres) — grunden
+
+- **Ström:** 7 (SEO/content), 10 (Operations)
+- **Beslut:** Produktägaren: bygg ett riktigt SEO-kontrollplan i utvecklings-
+  miljön via MCP (Semrush/Ahrefs/DataForSEO/Firecrawl/Chrome DevTools/Playwright
+  + GSC/GA/Ads), cron→Postgres, egen read-only seo-mcp; bygg INTE minisajt-nät —
+  koncentrera auktoriteten. **Merparten är operativt/externt** (kräver köp av
+  prenumerationer + koppling av Google-konton) → jag byggde den durabla in-repo-
+  grunden och den lokala delen; resten är körbok.
+- **Vad (in-repo, testat):**
+  - **Blueprint** `docs/SEO_CONTROL_PLANE.md`: arkitekturprincipen (MCP =
+    verktygsgränssnitt, cron/kö = motorn), leverantörsstacken (roller/endpoints/
+    kostnader), säkerhetsposture (read-only, godkännandegrind, inga nycklar i
+    repot), hela `bidragskollen-seo-mcp`-verktygskontraktet (LOKALT vs EXTERNT),
+    cron-cadence, Postgres SEO-schema (migreras när pipelinen landar — inga
+    spekulativa tomma tabeller), off-domain-strategin (YouTube-sökindex,
+    partnerwidgets, publikt bidragsindex, öppet tekniskt lager, SAGA) med
+    korsref till `docs/ZERO_COMPROMISE_GATE.md` (anti-PBN/doorway), mätetalen,
+    90-dagarsupplägget, samt "byggt nu vs kräver din åtgärd".
+  - **Lokal seo-mcp-kapabilitet:** `tools/seo-cannibalization.mjs`
+    (content_find_cannibalization) — 89 indexerbara sidor, 0 risker.
+  - **Entitetssignaler (§7):** Organization-markup fick verkliga, publikt synliga
+    uppgifter — org.nr 559141-7042 + adress (från köpvillkoren) i `seo/entity.json`,
+    genseo och `apps/web/index.html`. Inga påhittade `sameAs`.
+  - **`.mcp.json.example`** (nyckellös mall) + `.mcp.json`/`.cursor/mcp.json`
+    gitignorerade.
+- **Databas/API/webbapp/demo:** inga funktionsändringar (index.html: structured
+  data). Postgres-schemat dokumenterat, ej migrerat.
+- **Tester:** verify 18/18. verify:ui/demo:check ej berörda (ingen app-/demokod).
+- **Status:** PASS (grunden).
+- **Kräver din åtgärd:** köp Semrush/Ahrefs/DataForSEO/Firecrawl; koppla GSC/GA/
+  Ads; bygg de externa seo-mcp-verktygen + cron/kö + Postgres-migreringen;
+  YouTube; partnerprogram; datarapporter. Jag assisterar när connectors/nycklar finns.

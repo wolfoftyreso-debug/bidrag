@@ -220,6 +220,9 @@ function baseGraph(canonical, title, crumbs) {
     {
       '@type': 'Organization', '@id': `${BASE}/#org`, name: ENTITY.name, legalName: ENTITY.legalName, url: `${BASE}/`,
       description: ENTITY.description.sv,
+      // Endast verkliga, publikt synliga uppgifter (samma som köpvillkoren).
+      identifier: { '@type': 'PropertyValue', propertyID: 'orgnr', value: ENTITY.orgNumber },
+      address: { '@type': 'PostalAddress', streetAddress: ENTITY.address.streetAddress, postalCode: ENTITY.address.postalCode, addressLocality: ENTITY.address.addressLocality, addressCountry: ENTITY.address.addressCountry },
     },
     { '@type': 'WebSite', '@id': `${BASE}/#website`, url: `${BASE}/`, name: ENTITY.name, inLanguage: 'sv', description: ENTITY.description.sv, publisher: { '@id': `${BASE}/#org` } },
     // WebApplication med semantiskt SANN prismodell: upptäckt = 0 kr, förberedd

@@ -18,5 +18,8 @@ test-uploads/
 *.tsbuildinfo
 doc-*.pdf
 artifacts/
+# Riktig MCP-konfiguration (kan innehålla OAuth-tillstånd/nycklar) — bara mallen committas.
+.mcp.json
+.cursor/mcp.json
 # Härledd ur seed-datan av demo/build.mjs — genereras, versionshanteras inte
 demo/demo-opportunities.json

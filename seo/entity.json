@@ -2,6 +2,8 @@
   "_doc": "KANONISK ENTITETSBESKRIVNING — enda källan (FAS SEO-2). Samma definition ska användas överallt: index.html-metadata, Organization/WebSite/WebApplication structured data, About/FAQ/metodik, social metadata, press, redaktionella mallar, sidmallar. Ändra HÄR — konsumenterna (tools/genseo.mjs, apps/web/index.html, tools/semanticguard.mjs) läser härifrån. Undvik tio olika beskrivningar av vad produkten är.",
   "name": "Bidragskoll.se",
   "legalName": "Landvex AB",
+  "orgNumber": "559141-7042",
+  "address": { "streetAddress": "Antennvägen 2", "postalCode": "135 48", "addressLocality": "Tyresö", "addressCountry": "SE" },
   "url": "https://bidragskoll.se/",
   "isAuthority": false,
   "makesDecisions": false,

@@ -1,0 +1,22 @@
+{
+  "_comment": "SEO-kontrollplanets MCP-mall (SEO-5). Kopiera till .mcp.json (gitignorerad) och autentisera via klientens OAuth-flöde. LÄGG ALDRIG NYCKLAR HÄR. DataForSEO och Google-anslutningarna läggs i lokal secret storage / central API Core, aldrig i den här filen. Använd separata READ-ONLY-nycklar och ge inget SEO-verktyg publicerings-/raderingsrätt utan ett uttryckligt godkännandesteg. Endpoints/kostnader: docs/SEO_CONTROL_PLANE.md.",
+  "mcpServers": {
+    "semrush": {
+      "url": "https://mcp.semrush.com/v2/mcp"
+    },
+    "ahrefs": {
+      "url": "https://api.ahrefs.com/mcp/mcp"
+    },
+    "firecrawl": {
+      "url": "https://mcp.firecrawl.dev/v2/mcp-oauth"
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    }
+  }
+}
