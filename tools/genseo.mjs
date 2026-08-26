@@ -423,7 +423,7 @@ Myndigheterna beskriver sina egna stöd var för sig; här får du överblicken,
 <div class="path"><strong>Vilka bidrag kan jag få?</strong>Det beror på vem du är. Kontrollera gratis — du behöver inte veta vad bidraget heter.<br><a class="knapp" href="/vilka-bidrag-kan-jag-fa/">Kontrollera din situation</a></div>
 <div class="path"><strong>Hitta bidrag gratis</strong>Upptäckten och resultaten är kostnadsfria och inte låsta. Ansök själv hos källan.<br><a class="knapp sekundar" href="/hitta-bidrag-gratis/">Så fungerar det</a></div>
 </div>
-<p class="lead" style="margin-top:.4rem">Se också <a href="/bidragsstatus/">bidragsstatus</a> — hur många stöd som är öppna, återkommande och har satt deadline, uppdaterat ur kunskapsbasen.</p>
+<p class="lead" style="margin-top:.4rem">Se också <a href="/bidragsstatus/">bidragsstatus</a> — hur många stöd som är öppna, återkommande och har satt deadline — och <a href="/finansiarer/">finansiärerna</a> bakom bidragen, uppdaterat ur kunskapsbasen.</p>
 ${hubEntries
   .map(
     ({ hub, entries }) => `<h2><a href="/bidrag/${hub.slug}/">${esc(hub.title)}</a></h2>
@@ -626,6 +626,57 @@ avgörs alltid hos den officiella källan, som varje bidragssida länkar till.</
   return { path, html: layout({ title: title.slice(0, 70), description, canonical, crumbs, jsonld, body }) };
 }
 
+// ── Finansiärssidor (SEO-063): entiteter i grafen, en sida per finansiär ─────
+const KIND_LABEL = {
+  state_agency: 'Statlig myndighet', municipality: 'Kommun', region: 'Region',
+  foundation: 'Stiftelse', eu_body: 'EU-organ', ngo: 'Organisation', other: 'Finansiär',
+};
+function funderPage(auth, grants) {
+  const path = `/finansiarer/${auth.key}/`;
+  const canonical = `${BASE}${path}`;
+  const crumbs = [{ name: 'Bidrag', url: '/bidrag/' }, { name: 'Finansiärer', url: '/finansiarer/' }, { name: auth.name, url: path }];
+  const noindex = grants.length < 2; // tunn near-dubblett av den enda bidragssidan
+  const title = `${auth.name} – stöd och bidrag | Bidragskoll`.slice(0, 70);
+  const description = `${auth.name} finansierar ${grants.length} ${grants.length === 1 ? 'stöd' : 'stöd'} i Bidragskolls kunskapsbas. Se villkor, deadlines och officiell källa — och kontrollera gratis vad som kan passa dig.`.slice(0, 168);
+  const sorted = [...grants].sort((a, b) => shortTitle(a).localeCompare(shortTitle(b), 'sv'));
+  const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title, crumbs) };
+  const wp = jsonld['@graph'].find((n) => n['@type'] === 'WebPage');
+  wp.about = { '@type': 'GovernmentOrganization', name: auth.name, url: auth.website ?? undefined };
+  const body = `
+<p class="eyebrow">${esc(KIND_LABEL[auth.kind] ?? 'Finansiär')}</p>
+<h1>${esc(auth.name)}</h1>
+<p class="lead">${esc(auth.name)} finansierar ${grants.length} ${grants.length === 1 ? 'stöd' : 'stöd'} i Bidragskolls kunskapsbas.
+Varje stöd visas med villkor, deadline och officiell källa. Osäker på vad som gäller dig?
+<a href="/">Kontrollera din situation gratis</a>.</p>
+<h2>Stöd från ${esc(auth.name)}</h2>
+<ul class="stodlista">${sorted.map((o) => `<li><a href="/bidrag/${o.slug}/">${esc(anchorTitle(o))}</a><span class="sum">${esc(o.summary)} <em>· ${esc(deadlineText(o))}</em></span></li>`).join('')}</ul>
+<div class="honest">Bidragskoll är en oberoende tjänst — inte ${esc(auth.name)} eller någon annan myndighet. Bedömningar är
+vägledande; beslut fattas alltid av finansiären. Innehållet är AI-sammanställt från officiella källor.</div>
+<p class="kalla"><strong>Senast kontrollerad:</strong> ${CHECKED}${auth.website ? ` · <strong>Officiell webbplats:</strong> <a href="${esc(auth.website)}" rel="noopener">${esc(auth.website)}</a>` : ''} · Se alla <a href="/finansiarer/">finansiärer</a>.</p>
+`;
+  let html = layout({ title, description, canonical, crumbs, jsonld, body });
+  if (noindex) html = html.replace('</title>', '</title>\n<meta name="robots" content="noindex,follow">');
+  return { path, html, noindex };
+}
+function funderIndexPage(funders) {
+  const path = '/finansiarer/';
+  const canonical = `${BASE}${path}`;
+  const crumbs = [{ name: 'Bidrag', url: '/bidrag/' }, { name: 'Finansiärer', url: path }];
+  const title = 'Finansiärer – myndigheter och finansiärer bakom bidragen | Bidragskoll';
+  const description = `${funders.length} myndigheter, kommuner, regioner och stiftelser som finansierar bidrag och stöd — med aktuella utlysningar, deadlines och officiella källor.`.slice(0, 168);
+  const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title.slice(0, 70), crumbs) };
+  const sorted = [...funders].sort((a, b) => a.auth.name.localeCompare(b.auth.name, 'sv'));
+  const body = `
+<h1>Finansiärer bakom bidragen</h1>
+<p class="lead">${funders.length} myndigheter, kommuner, regioner och stiftelser finansierar de stöd som finns i
+Bidragskolls kunskapsbas. Här ser du vem som står bakom vad. Du behöver inte känna till finansiären för att hitta
+rätt stöd — <a href="/vilka-bidrag-kan-jag-fa/">kontrollera din situation</a> så gör vi jobbet.</p>
+<ul class="stodlista">${sorted.map(({ auth, grants }) => `<li><a href="/finansiarer/${auth.key}/">${esc(auth.name)}</a><span class="sum">${grants.length} ${grants.length === 1 ? 'stöd' : 'stöd'}${auth.kind && KIND_LABEL[auth.kind] ? ` · ${esc(KIND_LABEL[auth.kind])}` : ''}</span></li>`).join('')}</ul>
+<p class="kalla"><strong>Senast kontrollerad:</strong> ${CHECKED}</p>
+`;
+  return { path, html: layout({ title: title.slice(0, 70), description, canonical, crumbs, jsonld, body }) };
+}
+
 // ── Bygg ─────────────────────────────────────────────────────────────────────
 if (outFlag === -1) rmSync(OUT, { recursive: true, force: true });
 mkdirSync(join(OUT, 'bidrag'), { recursive: true });
@@ -676,6 +727,19 @@ for (const r of INTENTS) {
   if (p.noindex) noidx++; else idx++;
 }
 
+// Finansiärssidor (SEO-063): grafentitet per finansiär. INDEX vid ≥2 stöd,
+// annars NOINDEX_FOLLOW (tunn near-dubblett av den enda bidragssidan).
+const funders = authorities
+  .map((auth) => ({ auth, grants: opportunities.filter((o) => o.authorityKey === auth.key) }))
+  .filter(({ grants }) => grants.length >= 1);
+emit('finansiarer', funderIndexPage(funders).html);
+let fIdx = 0, fNo = 0;
+for (const { auth, grants } of funders) {
+  const p = funderPage(auth, grants);
+  emit(p.path.replace(/^\/|\/$/g, ''), p.html, { noindex: p.noindex });
+  if (p.noindex) fNo++; else fIdx++;
+}
+
 // Sitemap + robots. NOINDEX_FOLLOW-sidor genereras men står UTANFÖR sitemapen.
 const sitemapUrls = pages.filter((p) => !noindexPaths.has(p));
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -710,4 +774,4 @@ const notFound = layout({
 }).replace('</title>', '</title>\n<meta name="robots" content="noindex">');
 writeFileSync(join(OUT, '404.html'), notFound);
 
-console.log(`Genererade ${pages.length} publika sidor (${idx} INDEX + ${noidx} NOINDEX query pages, ${skipped} DO_NOT_GENERATE) + 404.html + sitemap.xml + robots.txt → ${OUT}`);
+console.log(`Genererade ${pages.length} publika sidor (query: ${idx} INDEX/${noidx} NOINDEX/${skipped} DO_NOT_GENERATE · finansiärer: ${fIdx} INDEX/${fNo} NOINDEX) + 404.html + sitemap.xml + robots.txt → ${OUT}`);

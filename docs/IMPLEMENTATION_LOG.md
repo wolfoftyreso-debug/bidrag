@@ -264,3 +264,26 @@ Arbetsströmmar (§28): 1 Core product · 2 Discovery/matching ·
 - **Kräver din åtgärd:** köp Semrush/Ahrefs/DataForSEO/Firecrawl; koppla GSC/GA/
   Ads; bygg de externa seo-mcp-verktygen + cron/kö + Postgres-migreringen;
   YouTube; partnerprogram; datarapporter. Jag assisterar när connectors/nycklar finns.
+
+## 2026-08-26 — Master ticket-backlog: ticket-liggare + batch 1 (SEO-001/063/120/121)
+
+- **Ström:** 7 (SEO/content), 10 (Operations), 4 (Grant data)
+- **Beslut:** Produktägaren levererade en 126-ticket-backlog (EPIC A–L). Mycket är
+  redan byggt (SEO-2/3/4/5). Jag skapade ticket-liggaren som avbildar varje ticket
+  mot faktisk kod + evidens, och exekverade nästa oblockerade data-drivna tickets.
+- **Vad:**
+  - **SEO-001** `docs/SEO_PROGRAM.md` — full statusmatris (DONE/PARTIAL/
+    BLOCKED_EXTERNAL/TODO) per ticket med evidens + nästa oblockerade kö +
+    "kräver din åtgärd"-lista. ~45 DONE, ~25 PARTIAL, ~30 BLOCKED_EXTERNAL, ~26 TODO.
+  - **SEO-063** finansiärssidor: `/finansiarer/` + 35 finansiärssidor (grafentitet
+    per finansiär), indexability-gatade — 15 INDEX (≥2 stöd) / 20 NOINDEX_FOLLOW
+    (1 stöd). SEO-ytan 90 → 126 sidor. GovernmentOrganization i JSON-LD.
+  - **SEO-120 + SEO-121** `tools/seo-dataqa.mjs` — DoD-invarianter över seeden:
+    varje stöd har källa + ansökningslänk (121), inget engångsstöd stale-open (120),
+    inga dubblettslugs, giltig finansiär. Wire:ad i verify. Nuläge: 72/72 rena.
+- **Filer:** `docs/SEO_PROGRAM.md`, `tools/seo-dataqa.mjs` (nya); `tools/genseo.mjs`
+  (funderPage/funderIndexPage), `tools/seocheck.mjs`, `vercel.json`, `scripts/verify.sh`.
+- **Databas/API/webbapp/demo:** inga ändringar.
+- **Tester:** verify 18→19 steg, allt grönt. SEO-ytan 90 → 126 sidor.
+- **Status:** PASS (batch 1). Nästa oblockerade: SEO-087/090 (kalender/deadlines),
+  SEO-059/061/062 (flaggskepp), SEO-064 (situationssidor), SEO-030 (sitemap-index).
