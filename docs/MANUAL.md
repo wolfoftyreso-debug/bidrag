@@ -9,10 +9,11 @@
 ## 1. Vad systemet är
 
 Bidragskoll.se utreder vilka stöd en person kan ha rätt till utifrån
-livssituationen och förbereder hela ansökan. Gratis upptäckt → 39 kr
-analysupplåsning → 19 kr per ansökan som förbereds i systemet (alla dokument
-för den ansökan ingår). Att ansöka själv direkt hos myndigheten är alltid
-gratis och sägs uttryckligen. Två orubbliga principer: **en fråga per skärm**
+livssituationen och förbereder hela ansökan. **Open Discovery:** upptäckten
+och resultaten är gratis och inte låsta — det enda som kostar är att förbereda
+en ansökan i systemet (19 kr per ansökan; alla dokument för den ansökan ingår).
+Att ansöka själv direkt hos myndigheten är alltid gratis och sägs uttryckligen.
+Två orubbliga principer: **en fråga per skärm**
 och **bedömning, aldrig beslut**. Systemet påstår aldrig att något är
 inlämnat utan verifierbart kvitto, och hittar aldrig på data.
 
@@ -26,12 +27,14 @@ inlämnat utan verifierbart kvitto, och hittar aldrig på data.
    sjukdom i familjen är frivillig på riktigt: "Vill inte svara" respekteras,
    faktumet lämnas osatt och frågan återkommer aldrig (art. 9-samtycke
    tidsstämplas när den besvaras).
-3. **Teasern** — analysen räknas mot alla stöd men visar bara antal och
-   sannolikhetsfördelning före betalning. Inga stödnamn läcker.
-4. **Analysupplåsningen (39 kr)** — köpet kräver ikryssat samtycke till
-   omedelbar leverans (ångerrätten upphör — distansavtalslagen); utan kryss
-   vägrar servern (400). Betala med Swish (QR på desktop, app-länk i mobil).
-   Kvittot med löpnummer och 25 % moms hamnar under Mina köp direkt.
+3. **Analysen (gratis, Open Discovery)** — räknas mot alla stöd och visas
+   direkt: varje stöd med namn, sannolikhet och förklaring. Ingen betalvägg,
+   inga låsta matchningar — resultaten är fria att se.
+4. **Förberedd ansökan (19 kr/ansökan)** — det enda köpet: köpet kräver
+   ikryssat samtycke till omedelbar leverans (ångerrätten upphör —
+   distansavtalslagen); utan kryss vägrar servern (400). Betala med Swish (QR
+   på desktop, app-länk i mobil). Kvittot med löpnummer och 25 % moms hamnar
+   under Mina köp direkt.
 5. **Analysen** — varje stöd visas med sannolikhet, förklaring per kriterium,
    källa med färskhet och kureringsstämpel ("AI-sammanställd från officiell
    källa — ej granskad av människa" tills en kurator höjt den). Obesvarade
@@ -102,11 +105,11 @@ katalogen är därmed också webbens funktionskarta.
 | `GET /v1/projects/:id` | Hämta projektet med status och fakta. |
 | `GET /v1/projects/:id/document-credits` | Kvarvarande dokumentkrediter (härledda ur bekräftade betalningar — aldrig ur klienten). |
 | `GET /v1/projects/:id/generated-documents` | Lista projektets genererade dokument. |
-| `GET /v1/projects/:id/matches` | Hämta analysen. Före betalning: låst teaser (antal + sannolikhetsfördelning, inga namn). Efter: fullständig med förklaringar per kriterium. |
-| `GET /v1/projects/:id/receipt` | Analysupplåsningens kvitto för projektet. |
+| `GET /v1/projects/:id/matches` | Hämta analysen — alltid fullständig och gratis (Open Discovery): varje stöd med förklaring per kriterium, källa och färskhet. Ingen betalvägg framför resultaten. |
+| `GET /v1/projects/:id/receipt` | Kvitto för projektets köp (förberedd ansökan). |
 | `PATCH /v1/projects/:id` | Uppdatera projektets fakta/intention; svar på öppna följdfrågor sparas hit. |
 | `POST /v1/projects` | Skapa projekt: profil + intention (fritext) + fakta. Detta är intagets slutresultat. |
-| `POST /v1/projects/:id/application-purchase` | Köp en ansökningsförberedelse (19 kr — alla dokument för den ansökan ingår). Samma samtyckeskrav och 503-ärlighet. |
+| `POST /v1/projects/:id/application-purchase` | Köp en ansökningsförberedelse (19 kr — alla dokument för den ansökan ingår). Kräver `immediateDeliveryConsent: true` (ångerrätten) — annars 400. Utan betalprovider: ärlig 503. |
 | `POST /v1/projects/:id/document-pack` | Köp dokumentpaket i dokumentstudion (samtyckeskrav + 503-ärlighet som övriga köp). |
 | `POST /v1/projects/:id/funding-stack` | Bygg finansieringsplan av valda stöd; kontrollerar kombinerbarhet och dubbelfinansiering. |
 | `POST /v1/projects/:id/generated-documents` | Generera ett dokument ur en mall: svar valideras, förifylls ur projektet och renderas deterministiskt. |

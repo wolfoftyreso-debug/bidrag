@@ -325,9 +325,9 @@ function MatchRow({ opp, m, facts, showScore, selected, onToggle }: { opp: Opp; 
   );
 }
 
-// ── Betalvägg: teaser → simulerad betalning → full analys ──────────────────
-// Samma modell som produkten (§68): engångsupplåsning av analysen, 39 kr.
-// Värdet visas före betalning — antal och nivåer — men aldrig namn eller källor.
+// ── Open Discovery: upptäckt och resultat är gratis och inte låsta ──────────
+// Samma modell som produkten: matchningarna visas direkt och kostnadsfritt.
+// Det enda som kostar är att förbereda en ansökan (19 kr/ansökan).
 
 const TEASER_CATEGORY: Record<string, string> = {
   social_benefit: 'Ekonomiskt stöd eller ersättning', educational_support: 'Studiestöd',

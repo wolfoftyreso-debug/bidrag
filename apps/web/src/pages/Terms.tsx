@@ -16,12 +16,13 @@ export default function TermsPage() {
       <div className="card">
         <h2>Vad du köper</h2>
         <p>
-          <strong>Bidragsanalys (39 kr):</strong> en engångsupplåsning av din personliga analys — vilka stöd som
-          matchar din situation, varför, och vad du behöver göra. Ingen prenumeration, inga dolda kostnader.
+          <strong>Att upptäcka vilka stöd du kan ha rätt till är gratis</strong> — du ser matchningarna, varför de
+          matchar, grundvillkoren och länken till den officiella ansökan utan att betala. Resultaten är inte låsta.
         </p>
         <p>
-          <strong>Förberedd ansökan (19 kr per ansökan):</strong> systemet förbereder en ansökan med alla dokument
-          som behövs för den. Att ansöka själv direkt hos myndigheten är alltid gratis.
+          <strong>Förberedd ansökan (19 kr per ansökan):</strong> det du kan köpa är att systemet förbereder en
+          ansökan åt dig, med alla dokument som behövs för den. Ingen prenumeration, inga dolda kostnader. Att
+          ansöka själv direkt hos myndigheten är alltid gratis.
         </p>
         <p className="meta-line">
           Analysen är en vägledning och inte ett myndighetsbeslut. Slutligt beslut fattas alltid av den myndighet
@@ -44,8 +45,8 @@ export default function TermsPage() {
       <div className="card">
         <h2>Återbetalning och reklamation</h2>
         <p>
-          Om tjänsten inte levererats (till exempel en betalning som bekräftats utan att analysen låsts upp)
-          återbetalas hela beloppet. Reklamationer hanteras enligt konsumentköplagen — kontakta oss så utreder
+          Om tjänsten inte levererats (till exempel en betalning som bekräftats utan att den förberedda ansökan
+          skapats) återbetalas hela beloppet. Reklamationer hanteras enligt konsumentköplagen — kontakta oss så utreder
           vi; ditt kvitto under <Link to="/konto">Konto &amp; data → Mina köp</Link> är underlaget, och
           återbetalningsstatus anges på kvittot.
         </p>

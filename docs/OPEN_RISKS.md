@@ -36,6 +36,8 @@ Skala: BLOCKER (extern, hindrar produktion) · HIGH · MEDIUM · LOW.
 | R6 | Fritext-discovery (narrativ → faktaextraktion) ännu ej primär (P1-b) | P1 | FAS 1 del 2 |
 | R7 | Demons intagsparitet: 'who'-steget ej i demo/main.tsx | LOW | följdarbete |
 | R8 | uicheck1/9 pre-existerande staleness (steg tillagda efter skrivning) — ej i verify:ui-grinden | LOW | städning |
+| R12 | Gammalt testställning refererar den borttagna 39 kr-modellen (uicheck1/4/6/7/11 klickar "Lås upp … 39 kr"; simulate30/deploy-smoke/swish-readiness anropar borttagna flöden; design/designsystem.html visar gammal kvittobild). Ej live-ytor (utanför semanticguard), ej i verify/verify:ui-grindarna — men skräp att städa. | LOW | städning |
+| R13 | Situations-SEO-familjen + citerbara datavyer (`/aktuella-bidrag/`, `/bidragskalender/`, `/nya-bidrag/`) + per-stöd GovernmentService-ontologi — planerat i `docs/SEO_SEMANTIC_AUTHORITY.md` §7 | P2 | FAS SEO-2 Release B/C |
 | R4 | `/situationer/`-SEO-lagret ej byggt (ontologi klar) | P3 | FAS 8/9 |
 | R5 | Namngivna docs saknas (DATA_MODEL, MATCHING_ENGINE, PAYMENTS_AND_ENTITLEMENTS) | LOW | löpande |
 

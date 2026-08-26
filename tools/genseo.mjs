@@ -20,7 +20,7 @@
  *
  * Deterministisk: sorterad utdata, datum ur seedens CURATED_AT (aldrig now).
  */
-import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdirSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -32,6 +32,12 @@ const BASE = 'https://bidragskoll.se';
 const { opportunities, authorities, CURATED_AT } = await import(join(ROOT, 'apps/api/src/seed/data.ts'));
 const authorityByKey = new Map(authorities.map((a) => [a.key, a]));
 const CHECKED = CURATED_AT.slice(0, 10);
+
+// Kanonisk entitetsbeskrivning (FAS SEO-2) — enda källan för hur produkten
+// beskrivs för Google/AI. Samma text i Organization/WebSite/WebApplication,
+// startsidan och flaggskeppssidorna. semanticguard.mjs vaktar att den inte
+// divergerar.
+const ENTITY = JSON.parse(readFileSync(join(ROOT, 'seo', 'entity.json'), 'utf8'));
 
 // ── Etiketter (speglar produktens språk) ─────────────────────────────────────
 const INSTRUMENT = {
@@ -143,6 +149,13 @@ a{color:var(--blue)}@media(min-width:640px){.paths{grid-template-columns:1fr 1fr
 @media(max-width:380px){.cta{white-space:normal;text-align:center}}
 .kalla a{overflow-wrap:anywhere}
 .stodlista a,.relaterade a{overflow-wrap:anywhere}
+.snabbsvar{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.4rem 1.3rem 1rem;margin:1rem 0}
+.snabbsvar h2{font-size:1.1rem;margin:.9rem 0 .3rem}
+.snabbsvar dt{font-weight:600;margin:.7rem 0 .1rem}.snabbsvar dd{margin:0 0 .2rem;color:var(--soft);max-width:64ch}
+.steps{counter-reset:s;list-style:none;padding:0}.steps li{position:relative;padding:.2rem 0 .2rem 2.1rem;margin:.5rem 0;max-width:60ch}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:.15rem;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--blue);color:#fff;font-weight:700;font-size:.85rem;display:grid;place-items:center}
+.steps strong{display:block}
+.bigcta{display:inline-block;background:var(--blue);color:#fff;text-decoration:none;font-weight:700;padding:.7rem 1.4rem;border-radius:12px;font-size:1.02rem;box-shadow:0 2px 8px rgba(0,86,163,.3);margin:.6rem 0}
 `;
 
 function layout({ title, description, canonical, crumbs, jsonld, body }) {
@@ -204,10 +217,23 @@ aktuella villkor hos källan. · <a href="/villkor">Köpvillkor</a></p>
 function baseGraph(canonical, title, crumbs) {
   return [
     {
-      '@type': 'Organization', '@id': `${BASE}/#org`, name: 'Bidragskoll.se', url: `${BASE}/`,
-      description: 'Oberoende svensk tjänst som hjälper dig hitta bidrag, stöd och ersättningar du kan ha rätt till — och förbereder ansökan.',
+      '@type': 'Organization', '@id': `${BASE}/#org`, name: ENTITY.name, legalName: ENTITY.legalName, url: `${BASE}/`,
+      description: ENTITY.description.sv,
     },
-    { '@type': 'WebSite', '@id': `${BASE}/#website`, url: `${BASE}/`, name: 'Bidragskoll.se', inLanguage: 'sv', publisher: { '@id': `${BASE}/#org` } },
+    { '@type': 'WebSite', '@id': `${BASE}/#website`, url: `${BASE}/`, name: ENTITY.name, inLanguage: 'sv', description: ENTITY.description.sv, publisher: { '@id': `${BASE}/#org` } },
+    // WebApplication med semantiskt SANN prismodell: upptäckt = 0 kr, förberedd
+    // ansökan = separat pris. Aldrig "0 kr" på en funktion som senare kostar.
+    {
+      '@type': 'WebApplication', '@id': `${BASE}/#app`, name: ENTITY.name, url: `${BASE}/`,
+      applicationCategory: 'BusinessApplication', operatingSystem: 'Web', inLanguage: 'sv',
+      description: ENTITY.description.sv,
+      audience: { '@type': 'Audience', audienceType: ENTITY.audiences.sv.join(', ') },
+      offers: [
+        { '@type': 'Offer', name: ENTITY.pricing.discovery.label.sv, price: '0', priceCurrency: ENTITY.pricing.discovery.currency, description: 'Upptäck relevanta bidrag och stöd och se länken till den officiella ansökan — utan att betala.' },
+        { '@type': 'Offer', name: ENTITY.pricing.applicationPreparation.label.sv, price: String(ENTITY.pricing.applicationPreparation.priceMinor / 100), priceCurrency: ENTITY.pricing.applicationPreparation.currency, description: 'Valfritt: låt systemet förbereda en ansökan med alla dokument som behövs för den.' },
+      ],
+      publisher: { '@id': `${BASE}/#org` },
+    },
     {
       '@type': 'BreadcrumbList',
       itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: `${BASE}${c.url}` })),
@@ -256,8 +282,32 @@ function entityPage(o) {
       ? `Upp till ${o.maxFundingSharePercent} % av godkänd kostnad — beloppet varierar, se källan`
       : 'Varierar — se den officiella källan';
 
+  // Answer Object (FAS SEO-2): kompakt, extraherbart snabbsvar som en sökmotor
+  // eller AI-modell kan lyfta rakt av. Samma Q&A visas synligt OCH som FAQPage
+  // (Google kräver att FAQ-svaren finns i den synliga texten). De två gratis-
+  // frågorna gör affärsmodellen maskinläsbar på varje bidragssida.
+  const kravText = krav.slice(0, 3).map((c) => c.description);
+  const faq = [
+    {
+      q: `Kostar det att se om jag kan ha rätt till ${shortTitle(o).toLowerCase()}?`,
+      a: `Nej. Att upptäcka stödet och se villkoren i Bidragskoll är gratis, och resultaten är inte låsta bakom en betalvägg. Du betalar bara om du väljer att låta systemet förbereda en ansökan (19 kr per ansökan).`,
+    },
+    {
+      q: 'Kan jag ansöka själv?',
+      a: `Ja. Den slutliga ansökan görs alltid hos ${auth?.name ?? 'den ansvariga aktören'}, och att ansöka själv är alltid gratis. Bidragskoll länkar till den officiella källan.`,
+    },
+    ...(kravText.length
+      ? [{ q: `Vem kan få ${shortTitle(o).toLowerCase()}?`, a: `Det avgörs av ${auth?.name ?? 'den ansvariga aktören'}. De viktigaste villkoren enligt källan: ${kravText.join('; ')}.` }]
+      : []),
+  ];
+
   const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, pageTitle(o), crumbs) };
-  jsonld['@graph'][3].about = { '@type': 'Thing', name: short, sameAs: o.sourceUrl };
+  const webPageNode = jsonld['@graph'].find((n) => n['@type'] === 'WebPage');
+  webPageNode.about = { '@type': 'Thing', name: short, sameAs: o.sourceUrl };
+  jsonld['@graph'].push({
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  });
 
   const body = `
 <p class="eyebrow">${esc(auth?.name ?? '')} · ${esc(INSTRUMENT[o.instrumentType] ?? 'Stöd')}</p>
@@ -272,6 +322,11 @@ function entityPage(o) {
 <tr><th scope="row">Så ansöker du</th><td>${esc(o.applicationMethod ?? 'Se den officiella källan')}</td></tr>
 <tr><th scope="row">Arbetsinsats</th><td>Cirka ${o.estimatedEffortDays} ${o.estimatedEffortDays === 1 ? 'arbetsdag' : 'arbetsdagar'} att förbereda</td></tr>
 </table>
+</div>
+
+<div class="snabbsvar">
+<h2>Snabbsvar</h2>
+<dl>${faq.map((f) => `<dt>${esc(f.q)}</dt><dd>${esc(f.a)}</dd>`).join('')}</dl>
 </div>
 
 ${o.description && o.description !== o.summary ? `<h2>Vad är ${esc(shortTitle(o).toLowerCase())}?</h2>\n<p>${esc(o.description)}</p>` : ''}
@@ -292,9 +347,10 @@ ${evidens.length ? `<h2>Underlag som brukar behövas</h2>
 <div class="path"><strong>Ansök själv — gratis</strong>
 Den slutliga ansökan görs alltid i den officiella tjänsten, och det kostar ingenting.
 ${o.applicationUrl ? `<a class="knapp sekundar" href="${esc(o.applicationUrl)}" rel="noopener">Till ${esc(auth?.name ?? 'källan')}</a>` : ''}</div>
-<div class="path"><strong>Låt Bidragskoll utreda din situation</strong>
-Svara på några frågor så ser du vilka stöd som kan passa dig — upptäckten är gratis,
-den fullständiga analysen kostar 39 kr och en färdigförberedd ansökan 19 kr.
+<div class="path"><strong>Låt Bidragskoll utreda din situation — gratis</strong>
+Svara på några frågor så ser du vilka stöd som kan passa dig, varför, och hur du ansöker.
+Upptäckten och resultaten är gratis och inte låsta. Vill du att systemet förbereder en
+komplett ansökan åt dig kostar det 19 kr per ansökan.
 <a class="knapp" href="/">Starta utredningen</a></div>
 </div>
 
@@ -357,6 +413,10 @@ function indexPage(hubEntries) {
 myndigheter och finansiärer — med villkor, belopp, deadlines och länk till den officiella källan för varje stöd.
 Myndigheterna beskriver sina egna stöd var för sig; här får du överblicken, och
 <a href="/">utredningen</a> som visar vilka stöd som kan passa just din situation.</p>
+<div class="paths">
+<div class="path"><strong>Vilka bidrag kan jag få?</strong>Det beror på vem du är. Kontrollera gratis — du behöver inte veta vad bidraget heter.<br><a class="knapp" href="/vilka-bidrag-kan-jag-fa/">Kontrollera din situation</a></div>
+<div class="path"><strong>Hitta bidrag gratis</strong>Upptäckten och resultaten är kostnadsfria och inte låsta. Ansök själv hos källan.<br><a class="knapp sekundar" href="/hitta-bidrag-gratis/">Så fungerar det</a></div>
+</div>
 ${hubEntries
   .map(
     ({ hub, entries }) => `<h2><a href="/bidrag/${hub.slug}/">${esc(hub.title)}</a></h2>
@@ -371,6 +431,107 @@ senast kontrollerades. Att ansöka själv direkt hos myndigheten är alltid grat
 <p class="kalla"><strong>Senast kontrollerad:</strong> ${CHECKED}</p>
 `;
   return layout({ title, description, canonical, crumbs, jsonld, body });
+}
+
+// ── Flaggskeppssidor (FAS SEO-2): svar → åtgärd → stödinformation ────────────
+// Rota, inte /bidrag/-nästlade: detta är huvudintentionerna ("hitta bidrag
+// gratis", "vilka bidrag kan jag få") och förtjänar korta auktoritets-URL:er.
+const AUDIENCE_PICKER = [
+  { label: 'Jag är privatperson', desc: 'Bostadsbidrag, försörjningsstöd, studiestöd, ersättningar och mer.', hub: 'privatpersoner' },
+  { label: 'Jag driver företag', desc: 'Stöd för att anställa, investera, digitalisera, exportera och växa.', hub: 'foretag' },
+  { label: 'Jag har enskild firma', desc: 'Dubbel kontroll — både ditt företagande och din privata situation.', hub: 'foretag' },
+  { label: 'Jag representerar en förening', desc: 'Verksamhetsbidrag, projektstöd och stöd till civilsamhället.', hub: 'foreningar' },
+];
+
+function faqJsonld(pairs) {
+  return { '@type': 'FAQPage', mainEntity: pairs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+}
+function audiencePickerHtml() {
+  return `<div class="paths">${AUDIENCE_PICKER.map((a) => `<div class="path"><strong>${esc(a.label)}</strong>${esc(a.desc)}
+<a class="knapp" href="/">Kontrollera gratis</a> <a class="knapp sekundar" href="/bidrag/${a.hub}/">Bläddra stöden</a></div>`).join('')}</div>`;
+}
+
+function flagshipHittaGratis() {
+  const path = '/hitta-bidrag-gratis/';
+  const canonical = `${BASE}${path}`;
+  const crumbs = [{ name: 'Bidrag', url: '/bidrag/' }, { name: 'Hitta bidrag gratis', url: path }];
+  const title = 'Hitta bidrag gratis – se vad du kan få | Bidragskoll';
+  const description = 'Det kostar inget att se vilka bidrag och stöd som kan vara relevanta för dig. Resultaten är inte låsta, och du kan alltid ansöka själv hos den officiella källan.';
+  const faq = [
+    { q: 'Kostar det något att hitta bidrag i Bidragskoll?', a: 'Nej. Att beskriva din situation och se vilka stöd som kan vara relevanta är gratis, och resultaten är inte låsta bakom en betalvägg.' },
+    { q: 'Vad kostar då pengar?', a: 'Bara valfria verktyg: att låta systemet förbereda en komplett ansökan kostar 19 kr per ansökan. Bevakning och administration är valfria tillägg. Att ansöka själv hos myndigheten är alltid gratis.' },
+    { q: 'Måste jag veta vilket bidrag jag söker?', a: 'Nej. Du berättar om din situation — Bidragskoll hittar de stöd som kan passa, även sådana du inte kände till.' },
+    { q: 'Är Bidragskoll en myndighet?', a: 'Nej. Bidragskoll är en oberoende tjänst och fattar inga beslut. Beslut fattas alltid av den ansvariga myndigheten eller finansiären.' },
+  ];
+  const jsonld = { '@context': 'https://schema.org', '@graph': [...baseGraph(canonical, title, crumbs), faqJsonld(faq)] };
+  const body = `
+<p class="eyebrow">Gratis kontroll</p>
+<h1>Hitta bidrag gratis</h1>
+<p class="lead">Det kostar inget att kontrollera vilka bidrag och stöd som kan vara relevanta för dig i Bidragskoll.
+Du ser möjligheterna och kan gå vidare till den officiella ansökan själv. Du betalar bara om du väljer att
+använda verktygen för bevakning, administration eller hjälp att förbereda ansökan.</p>
+<a class="bigcta" href="/">Kontrollera mina bidrag</a>
+
+<h2>Så funkar det</h2>
+<ol class="steps">
+<li><strong>Berätta vem du är.</strong> Person eller verksamhet — en fråga i taget, inget formulär.</li>
+<li><strong>Se möjliga stöd.</strong> Vi jämför dina uppgifter med aktuella villkor och visar vad som kan passa, och varför.</li>
+<li><strong>Välj själv.</strong> Ansök kostnadsfritt själv hos källan, eller använd våra verktyg om du vill ha hjälp.</li>
+</ol>
+
+<div class="snabbsvar"><h2>Vanliga frågor</h2>
+<dl>${faq.map((f) => `<dt>${esc(f.q)}</dt><dd>${esc(f.a)}</dd>`).join('')}</dl></div>
+
+<h2>Vem gäller det?</h2>
+${audiencePickerHtml()}
+
+<div class="honest">Bidragskoll är en oberoende tjänst — inte en myndighet. Bedömningar är vägledande; beslut
+fattas alltid av ansvarig myndighet eller finansiär. Innehållet är AI-sammanställt från officiella källor och
+ännu inte granskat av människa.</div>
+<p class="kalla"><strong>Senast kontrollerad:</strong> ${CHECKED} · Se hela katalogen på <a href="/bidrag/">alla bidrag och stöd</a>.</p>
+`;
+  return { path, html: layout({ title, description, canonical, crumbs, jsonld, body }) };
+}
+
+function flagshipVilkaBidrag() {
+  const path = '/vilka-bidrag-kan-jag-fa/';
+  const canonical = `${BASE}${path}`;
+  const crumbs = [{ name: 'Bidrag', url: '/bidrag/' }, { name: 'Vilka bidrag kan jag få?', url: path }];
+  const title = 'Vilka bidrag kan jag få? Kontrollera gratis | Bidragskoll';
+  const description = 'Vilka bidrag du kan få beror på vem du är och din situation. Kontrollera det gratis — du behöver inte veta vad bidraget heter. Resultaten är inte låsta.';
+  const faq = [
+    { q: 'Hur vet jag vilka bidrag jag kan få?', a: 'Du behöver inte veta det på förhand. Berätta om din situation, så jämför Bidragskoll den med aktuella villkor och visar vilka stöd som kan vara relevanta.' },
+    { q: 'Kostar det att kontrollera?', a: 'Nej. Upptäckten och resultaten är gratis och inte låsta. Du kan gå vidare och ansöka själv hos den officiella källan utan att betala.' },
+    { q: 'Gäller det även företag och föreningar?', a: 'Ja. Bidragskoll är för privatpersoner, företag, enskilda näringsidkare och föreningar.' },
+    { q: 'Fattar Bidragskoll beslut om bidrag?', a: 'Nej. Bidragskoll är inte en myndighet. Bedömningen är vägledande; beslutet fattas alltid av den ansvariga myndigheten eller finansiären.' },
+  ];
+  const jsonld = { '@context': 'https://schema.org', '@graph': [...baseGraph(canonical, title, crumbs), faqJsonld(faq)] };
+  const body = `
+<p class="eyebrow">Kontrollera din situation</p>
+<h1>Vilka bidrag kan jag få?</h1>
+<p class="lead">Det beror på vem du är och din situation — och du behöver inte känna till bidragets namn.
+Kontrollera det gratis här nedan. Upptäckten och resultaten är kostnadsfria och inte låsta bakom en betalvägg,
+och du kan alltid ansöka själv hos den officiella källan.</p>
+
+<h2>Välj din utgångspunkt</h2>
+${audiencePickerHtml()}
+
+<h2>Så funkar det</h2>
+<ol class="steps">
+<li><strong>Berätta om din situation.</strong> En fråga i taget — inget formulär, inget personnummer.</li>
+<li><strong>Se vilka stöd som kan passa.</strong> Med villkor, belopp och officiell källa för varje stöd.</li>
+<li><strong>Ansök själv — eller ta hjälp.</strong> Länken till den officiella ansökan är alltid gratis.</li>
+</ol>
+
+<div class="snabbsvar"><h2>Vanliga frågor</h2>
+<dl>${faq.map((f) => `<dt>${esc(f.q)}</dt><dd>${esc(f.a)}</dd>`).join('')}</dl></div>
+
+<div class="honest">Bidragskoll är en oberoende orienteringstjänst — inte en myndighet. Innehållet är
+AI-sammanställt från officiella källor och ännu inte granskat av människa; kontrollera alltid aktuella
+villkor hos källan.</div>
+<p class="kalla"><strong>Senast kontrollerad:</strong> ${CHECKED} · Se även <a href="/hitta-bidrag-gratis/">hitta bidrag gratis</a> och <a href="/bidrag/">hela katalogen</a>.</p>
+`;
+  return { path, html: layout({ title, description, canonical, crumbs, jsonld, body }) };
 }
 
 // ── Bygg ─────────────────────────────────────────────────────────────────────
@@ -393,6 +554,10 @@ const hubEntries = HUBS.map((hub) => ({
 emit('bidrag', indexPage(hubEntries));
 for (const { hub, entries } of hubEntries) emit(join('bidrag', hub.slug), hubPage(hub, entries));
 for (const o of [...opportunities].sort((a, b) => a.slug.localeCompare(b.slug))) emit(join('bidrag', o.slug), entityPage(o));
+
+// Flaggskeppssidorna (root). Länkas från /bidrag/-index (indexPage) så de nås
+// i orphan-BFS:en, och länkar tillbaka in i katalogen.
+for (const p of [flagshipHittaGratis(), flagshipVilkaBidrag()]) emit(p.path.replace(/^\/|\/$/g, ''), p.html);
 
 // Sitemap + robots. OBS: skriver bara sina egna filer — rör aldrig appens.
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

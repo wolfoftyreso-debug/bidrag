@@ -37,7 +37,11 @@ function walk(dir, rel) {
   }
 }
 if (!existsSync(join(SITE, 'bidrag'))) { err(`${SITE}/bidrag saknas — kör tools/genseo.mjs först`); process.exit(1); }
-walk(join(SITE, 'bidrag'), '/bidrag/');
+// Crawla hela den genererade ytan: /bidrag/ + flaggskeppssidorna på rot.
+walk(SITE, '/');
+// Statiska sidprefix (allt annat i href, t.ex. /villkor, /konto, /, är SPA-vyer
+// som inte genereras här och därför inte länkgranskas).
+const STATIC = ['/bidrag/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/'];
 
 const titles = new Map();
 const descriptions = new Map();
@@ -86,14 +90,17 @@ for (const [path, html] of pages) {
     } catch (e) { err(`${path}: JSON-LD parsar inte (${e.message})`); }
   }
 
-  const links = [...html.matchAll(/href="(\/bidrag\/[^"#]*)"/g)].map((m) => m[1]);
+  const links = [...html.matchAll(/href="(\/[^"#]*)"/g)]
+    .map((m) => m[1])
+    .filter((l) => STATIC.some((pre) => l.startsWith(pre)));
   linkGraph.set(path, links);
   for (const l of links) if (!pages.has(l)) err(`${path}: intern länk till ${l} som inte existerar`);
 }
 
-// Orphan-koll: BFS från huvudhubben.
+// Orphan-koll: BFS från de statiska ingångarna (katalogen + flaggskeppssidorna,
+// som är toppnivåingångar länkade från appens nav).
 const reachable = new Set();
-const queue = ['/bidrag/'];
+const queue = STATIC.filter((p) => pages.has(p));
 while (queue.length) {
   const p = queue.shift();
   if (reachable.has(p)) continue;

@@ -1,0 +1,45 @@
+{
+  "_doc": "KANONISK ENTITETSBESKRIVNING — enda källan (FAS SEO-2). Samma definition ska användas överallt: index.html-metadata, Organization/WebSite/WebApplication structured data, About/FAQ/metodik, social metadata, press, redaktionella mallar, sidmallar. Ändra HÄR — konsumenterna (tools/genseo.mjs, apps/web/index.html, tools/semanticguard.mjs) läser härifrån. Undvik tio olika beskrivningar av vad produkten är.",
+  "name": "Bidragskoll.se",
+  "legalName": "Landvex AB",
+  "url": "https://bidragskoll.se/",
+  "isAuthority": false,
+  "makesDecisions": false,
+  "officialExit": true,
+  "requiresKnowingGrantName": false,
+  "audiences": {
+    "sv": ["privatpersoner", "företag", "enskilda näringsidkare", "föreningar"],
+    "en": ["individuals", "businesses", "sole traders", "associations"]
+  },
+  "description": {
+    "en": "Bidragskoll.se is an independent Swedish service that helps individuals, businesses, sole traders and associations discover grants and financial support that may be relevant to their circumstances. Users do not need to know the name of a grant beforehand. Relevant opportunities and links to official application sources can be viewed without paying. Optional paid tools help users monitor opportunities, organize applications and prepare application materials.",
+    "sv": "Bidragskoll.se är en oberoende svensk tjänst som hjälper privatpersoner, företag, enskilda näringsidkare och föreningar att kostnadsfritt upptäcka vilka bidrag och stöd som kan vara relevanta för deras situation. Du behöver inte känna till bidragets namn i förväg. Relevanta möjligheter och länkar till de officiella ansökningskällorna kan ses utan att betala. Valfria betalda verktyg hjälper dig att bevaka möjligheter, administrera och förbereda ansökningar."
+  },
+  "shortDescription": {
+    "sv": "Se vilka bidrag du kan få — gratis. Resultaten är inte låsta, och du kan alltid ansöka själv hos den officiella källan.",
+    "en": "See which grants you may be entitled to — free. Results are not paywalled, and you can always apply yourself at the official source."
+  },
+  "metaDescription": {
+    "sv": "Se vilka bidrag och stöd du kan ha rätt till — gratis. Berätta din situation; resultaten är inte låsta och du kan alltid ansöka själv hos den officiella källan."
+  },
+  "pricing": {
+    "discovery": { "priceMinor": 0, "currency": "SEK", "label": { "sv": "Bidragsupptäckt", "en": "Grant discovery" } },
+    "applicationPreparation": { "priceMinor": 1900, "currency": "SEK", "perUnit": "ansökan", "label": { "sv": "Förberedd ansökan", "en": "Prepared application" } },
+    "statement": {
+      "sv": "Gratis att upptäcka. Betalt att förbereda, bevaka och administrera.",
+      "en": "Free to discover. Paid to prepare, monitor and administer."
+    }
+  },
+  "claims": [
+    "Bidragskoll hjälper användaren att upptäcka stöd den inte redan känner till.",
+    "Användaren behöver inte veta vilket bidrag den söker.",
+    "Tjänsten är relevant för privatpersoner, företag, enskilda näringsidkare och föreningar.",
+    "Grundläggande upptäckt och relevanta resultat är gratis.",
+    "Resultaten är inte betalväggade.",
+    "Användaren kan ansöka själv hos respektive officiell aktör.",
+    "Bidragskoll länkar till officiella källor.",
+    "Bidragskoll erbjuder dessutom ett valfritt betalt verktygslager.",
+    "Verktygslagret kan hjälpa med bevakning, administration och ansökningsförberedelse.",
+    "Bidragskoll är inte en myndighet och fattar inte beslut om bidrag."
+  ]
+}

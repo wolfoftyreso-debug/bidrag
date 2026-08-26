@@ -50,12 +50,10 @@ const OPS = {
   'GET /v1/projects/:id': 'Hämta projektet med status och fakta.',
   'PATCH /v1/projects/:id': 'Uppdatera projektets fakta/intention; svar på öppna följdfrågor sparas hit.',
   'POST /v1/projects/:id/matches': 'Räkna om matchningarna mot alla 72 stöd (idempotent, deterministisk).',
-  'GET /v1/projects/:id/matches': 'Hämta analysen. Före betalning: låst teaser (antal + sannolikhetsfördelning, inga namn). Efter: fullständig med förklaringar per kriterium.',
+  'GET /v1/projects/:id/matches': 'Hämta analysen — alltid fullständig och gratis (Open Discovery): varje stöd med förklaring per kriterium, källa och färskhet. Ingen betalvägg framför resultaten.',
   'POST /v1/projects/:id/funding-stack': 'Bygg finansieringsplan av valda stöd; kontrollerar kombinerbarhet och dubbelfinansiering.',
-  'POST /v1/projects/:id/analysis-unlock': 'Köp analysupplåsningen (39 kr). Kräver `immediateDeliveryConsent: true` (ångerrätten) — annars 400. Utan betalprovider: ärlig 503.',
-  'POST /v1/projects/:id/application-purchase': 'Köp en ansökningsförberedelse (19 kr — alla dokument för den ansökan ingår). Samma samtyckeskrav och 503-ärlighet.',
-  'GET /v1/projects/:id/unlock-status': 'Är analysen upplåst? Inkluderar priserna (analysPriceMinor/applicationPriceMinor) för UI:t.',
-  'GET /v1/projects/:id/receipt': 'Analysupplåsningens kvitto för projektet.',
+  'POST /v1/projects/:id/application-purchase': 'Köp en ansökningsförberedelse (19 kr — alla dokument för den ansökan ingår). Kräver `immediateDeliveryConsent: true` (ångerrätten) — annars 400. Utan betalprovider: ärlig 503.',
+  'GET /v1/projects/:id/receipt': 'Kvitto för projektets köp (förberedd ansökan).',
   'GET /v1/projects/:id/document-credits': 'Kvarvarande dokumentkrediter (härledda ur bekräftade betalningar — aldrig ur klienten).',
   'POST /v1/projects/:id/document-pack': 'Köp dokumentpaket i dokumentstudion (samtyckeskrav + 503-ärlighet som övriga köp).',
   'POST /v1/projects/:id/generated-documents': 'Generera ett dokument ur en mall: svar valideras, förifylls ur projektet och renderas deterministiskt.',
@@ -257,10 +255,11 @@ p();
 p('## 1. Vad systemet är');
 p();
 p('Bidragskoll.se utreder vilka stöd en person kan ha rätt till utifrån');
-p('livssituationen och förbereder hela ansökan. Gratis upptäckt → 39 kr');
-p('analysupplåsning → 19 kr per ansökan som förbereds i systemet (alla dokument');
-p('för den ansökan ingår). Att ansöka själv direkt hos myndigheten är alltid');
-p('gratis och sägs uttryckligen. Två orubbliga principer: **en fråga per skärm**');
+p('livssituationen och förbereder hela ansökan. **Open Discovery:** upptäckten');
+p('och resultaten är gratis och inte låsta — det enda som kostar är att förbereda');
+p('en ansökan i systemet (19 kr per ansökan; alla dokument för den ansökan ingår).');
+p('Att ansöka själv direkt hos myndigheten är alltid gratis och sägs uttryckligen.');
+p('Två orubbliga principer: **en fråga per skärm**');
 p('och **bedömning, aldrig beslut**. Systemet påstår aldrig att något är');
 p('inlämnat utan verifierbart kvitto, och hittar aldrig på data.');
 p();
@@ -274,12 +273,14 @@ p('   backa till och ändra. Känsliga frågan om funktionsnedsättning/långvar
 p('   sjukdom i familjen är frivillig på riktigt: "Vill inte svara" respekteras,');
 p('   faktumet lämnas osatt och frågan återkommer aldrig (art. 9-samtycke');
 p('   tidsstämplas när den besvaras).');
-p('3. **Teasern** — analysen räknas mot alla stöd men visar bara antal och');
-p('   sannolikhetsfördelning före betalning. Inga stödnamn läcker.');
-p('4. **Analysupplåsningen (39 kr)** — köpet kräver ikryssat samtycke till');
-p('   omedelbar leverans (ångerrätten upphör — distansavtalslagen); utan kryss');
-p('   vägrar servern (400). Betala med Swish (QR på desktop, app-länk i mobil).');
-p('   Kvittot med löpnummer och 25 % moms hamnar under Mina köp direkt.');
+p('3. **Analysen (gratis, Open Discovery)** — räknas mot alla stöd och visas');
+p('   direkt: varje stöd med namn, sannolikhet och förklaring. Ingen betalvägg,');
+p('   inga låsta matchningar — resultaten är fria att se.');
+p('4. **Förberedd ansökan (19 kr/ansökan)** — det enda köpet: köpet kräver');
+p('   ikryssat samtycke till omedelbar leverans (ångerrätten upphör —');
+p('   distansavtalslagen); utan kryss vägrar servern (400). Betala med Swish (QR');
+p('   på desktop, app-länk i mobil). Kvittot med löpnummer och 25 % moms hamnar');
+p('   under Mina köp direkt.');
 p('5. **Analysen** — varje stöd visas med sannolikhet, förklaring per kriterium,');
 p('   källa med färskhet och kureringsstämpel ("AI-sammanställd från officiell');
 p('   källa — ej granskad av människa" tills en kurator höjt den). Obesvarade');

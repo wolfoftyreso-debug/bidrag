@@ -40,11 +40,10 @@ export const config = {
   clamavAddress: env.CLAMAV_ADDRESS ?? null,
   /** Global per-IP rate limit per minute (auth endpoints have stricter own limits). */
   rateLimitMax: Number(env.RATE_LIMIT_MAX ?? 300),
-  /** Engångspris för att låsa upp bidragsanalysen, i ören (inkl. moms). */
-  analysisPriceMinor: Number(env.ANALYSIS_PRICE_MINOR ?? 3900),
   /**
-   * Prismodellen: 39 kr låser upp analysen; att förbereda en ansökan i
-   * systemet kostar 19 kr per ansökan — alla dokument för den ansökan ingår.
+   * Open Discovery-prismodellen: att upptäcka stöd och se resultaten är gratis
+   * (ingen analysupplåsning finns kvar). Det enda som kostar är att förbereda en
+   * ansökan i systemet — 19 kr per ansökan, alla dokument för den ansökan ingår.
    * Aldrig styckdebitering per dokument, aldrig prenumeration.
    */
   applicationPriceMinor: Number(env.APPLICATION_PRICE_MINOR ?? 1900),

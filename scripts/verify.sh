@@ -61,6 +61,7 @@ step "Lint" npm run lint
 step "Core-tester (enhetstester, ingen databas)" npm test -w packages/core
 step "Relevansrevisionen (personor mot alla stöd, F-RELEVANS)" node tools/audit-relevans.mjs
 step "Produktdoktrinen (situations-först, ingen entry-gate, värde före betalning)" node tools/doctrine.mjs
+step "Semantic guard (Open Discovery + kanonisk entitet, FAS SEO-2)" node tools/semanticguard.mjs
 if [ "$db_up" = 1 ]; then
   psql "$ADMIN_URL" -Atc "select 1 from pg_database where datname='bidrag_test'" | grep -q 1 \
     || psql "$ADMIN_URL" -c 'CREATE DATABASE bidrag_test' >/dev/null
@@ -152,6 +153,7 @@ seo_check() {
   node --experimental-strip-types tools/gate0.mjs --allow-content-red
 }
 step "Publika SEO-ytan genereras och klarar QA-crawlen" seo_check
+step "Maskinförståelse: de 10 kärnpåståendena finns i publik text (FAS SEO-2)" node tools/semantictest.mjs
 
 # ── 6. Hemlighetsskanning (versionshanterade filer) ──────────────────────────
 secrets_scan() {

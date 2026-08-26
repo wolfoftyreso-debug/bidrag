@@ -151,3 +151,44 @@ Arbetsströmmar (§28): 1 Core product · 2 Discovery/matching ·
 - **Status:** PASS.
 - **Nästa (kurering):** fyll de 18 generiska metodtexterna med exakt ingång
   (kuratorsflödet) — höjer samtidigt kanaltäckningen i dokumentet automatiskt.
+
+## 2026-08-26 — FAS SEO-2: Semantic Authority & Machine Understanding (Release A)
+
+- **Ström:** 7 (SEO/content), 1 (Core product)
+- **Beslut:** Produktägaren: gör Open Discovery-modellen maskinläsbar så att
+  Google/AI/LLM:er kan dra rätt slutsatser utan gissningar. Enkel frontend, rik
+  maskinläsbar struktur.
+- **Vad:**
+  - **Kanonisk entitetsbeskrivning** `seo/entity.json` (SV+EN, 10 påståenden,
+    prismodell) som enda källa. Konsumeras av genseo, startsidan, guard, test.
+  - **Structured data**: genseo Organization/WebSite + ny WebApplication med
+    semantiskt sann prismodell (2 Offer: upptäckt 0 kr, förberedd ansökan 19 kr);
+    startsidan (`apps/web/index.html`) fick samma JSON-LD + gratis-modellens
+    title/description/OG.
+  - **Answer Objects**: Snabbsvar-block + FAQPage på alla 72 bidragssidor
+    ("Kostar det? Nej" / "Kan jag ansöka själv? Ja" / villkor).
+  - **Flaggskeppssidor** (root, statiska): `/hitta-bidrag-gratis/` +
+    `/vilka-bidrag-kan-jag-fa/` — svar → åtgärd → stödinfo, målgruppsval, FAQ.
+    genseo 77→79 sidor; seocheck crawlar nu hela ytan; vercel.json undantar dem.
+  - **Motsägelserevision**: rättade live-ytor som sa emot Open Discovery —
+    genseo (39 kr på 72 sidor), Terms.tsx, config.ts (död `analysisPriceMinor`
+    borttagen), genmanual/MANUAL (teaser/upplåsning), demo-kommentar.
+  - **Kontrollgrindar (permanent regression)**: `tools/semanticguard.mjs`
+    (motsägelseskanning + entitetskonsistens, i verify) och
+    `tools/semantictest.mjs` (maskinförståelse: 10 kärnpåståenden offline i
+    verify; `--llm`-läge för modellverifiering med ANTHROPIC_API_KEY).
+  - **Docs**: `docs/SEO_SEMANTIC_AUTHORITY.md` (hela lagret + de 10 frågorna +
+    deferred Release B/C).
+- **Filer:** `seo/entity.json` (ny), `tools/{semanticguard,semantictest}.mjs`
+  (nya), `docs/SEO_SEMANTIC_AUTHORITY.md` (ny), `tools/genseo.mjs`,
+  `tools/seocheck.mjs`, `tools/genmanual.mjs`+`docs/MANUAL.md`, `vercel.json`,
+  `apps/web/index.html`, `apps/web/src/pages/Terms.tsx`, `apps/api/src/config.ts`,
+  `demo/main.tsx`, `scripts/verify.sh`.
+- **Databas/API:** inga endpoints ändrade (config: död prisfält borttaget).
+- **Tester:** verify 17/17 (två nya steg: semantic guard + maskinförståelse) ·
+  verify:ui KLAR · demo:check 7/7. `semantictest --llm` kräver nyckel (ej i denna
+  miljö) — offline-läget grönt.
+- **Status:** PASS (Release A).
+- **Deferred (Release B/C):** situations-SEO-familjen (`/privatperson/*`,
+  `/foretag/*`), citerbara datavyer (`/aktuella-bidrag/`, `/bidragskalender/`,
+  `/nya-bidrag/`), per-stöd GovernmentService-ontologi, `semantictest --llm` i CI.

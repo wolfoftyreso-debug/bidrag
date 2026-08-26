@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bidragskoll.se — Hitta och sök finansiering</title>
-    <meta name="description" content="Berätta din situation — se vilka stöd du ser ut att kunna ha rätt till. Med källa och senast kontrollerad-datum. Slutligt beslut fattas alltid av myndigheten." />
+    <title>Bidragskoll.se — Se vilka bidrag du kan få, gratis</title>
+    <meta name="description" content="Se vilka bidrag och stöd du kan ha rätt till — gratis. Berätta din situation; resultaten är inte låsta och du kan alltid ansöka själv hos den officiella källan." />
     <link rel="canonical" href="https://bidragskoll.se/" />
     <meta name="theme-color" content="#0056A3" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
@@ -12,19 +12,62 @@
     <link rel="apple-touch-icon" href="/icon-180.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta property="og:site_name" content="Bidragskoll.se" />
-    <meta property="og:title" content="Bidragskoll.se — Hitta och sök finansiering" />
-    <meta property="og:description" content="Berätta din situation — se vilka stöd du ser ut att kunna ha rätt till." />
+    <meta property="og:title" content="Bidragskoll.se — Se vilka bidrag du kan få, gratis" />
+    <meta property="og:description" content="Gratis att upptäcka vilka bidrag och stöd du kan ha rätt till. Resultaten är inte låsta — du kan alltid ansöka själv hos källan." />
     <meta property="og:url" content="https://bidragskoll.se/" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="sv_SE" />
     <meta property="og:image" content="https://bidragskoll.se/og/bidragskoll-og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Bidragskoll.se — Berätta din situation. Se vilka stöd du ser ut att kunna ha rätt till." />
+    <meta property="og:image:alt" content="Bidragskoll.se — Se vilka bidrag du kan få. Gratis upptäckt, inte låsta resultat." />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Bidragskoll.se — Hitta och sök finansiering" />
-    <meta name="twitter:description" content="Berätta din situation — se vilka stöd du ser ut att kunna ha rätt till." />
+    <meta name="twitter:title" content="Bidragskoll.se — Se vilka bidrag du kan få, gratis" />
+    <meta name="twitter:description" content="Gratis att upptäcka vilka bidrag och stöd du kan ha rätt till. Resultaten är inte låsta — du kan alltid ansöka själv hos källan." />
     <meta name="twitter:image" content="https://bidragskoll.se/og/bidragskoll-og.png" />
+    <!--
+      Kanonisk entitetsbeskrivning (FAS SEO-2). Källa: seo/entity.json — håll i synk
+      (tools/semanticguard.mjs vaktar att description.sv finns ordagrant här).
+      Semantiskt sann prismodell: upptäckt = 0 kr, förberedd ansökan = separat pris.
+    -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://bidragskoll.se/#org",
+          "name": "Bidragskoll.se",
+          "legalName": "Landvex AB",
+          "url": "https://bidragskoll.se/",
+          "description": "Bidragskoll.se är en oberoende svensk tjänst som hjälper privatpersoner, företag, enskilda näringsidkare och föreningar att kostnadsfritt upptäcka vilka bidrag och stöd som kan vara relevanta för deras situation. Du behöver inte känna till bidragets namn i förväg. Relevanta möjligheter och länkar till de officiella ansökningskällorna kan ses utan att betala. Valfria betalda verktyg hjälper dig att bevaka möjligheter, administrera och förbereda ansökningar."
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://bidragskoll.se/#website",
+          "url": "https://bidragskoll.se/",
+          "name": "Bidragskoll.se",
+          "inLanguage": "sv",
+          "publisher": { "@id": "https://bidragskoll.se/#org" }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://bidragskoll.se/#app",
+          "name": "Bidragskoll.se",
+          "url": "https://bidragskoll.se/",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "inLanguage": "sv",
+          "audience": { "@type": "Audience", "audienceType": "privatpersoner, företag, enskilda näringsidkare, föreningar" },
+          "offers": [
+            { "@type": "Offer", "name": "Bidragsupptäckt", "price": "0", "priceCurrency": "SEK", "description": "Upptäck relevanta bidrag och stöd och se länken till den officiella ansökan — utan att betala." },
+            { "@type": "Offer", "name": "Förberedd ansökan", "price": "19", "priceCurrency": "SEK", "description": "Valfritt: låt systemet förbereda en ansökan med alla dokument som behövs för den." }
+          ],
+          "publisher": { "@id": "https://bidragskoll.se/#org" }
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
