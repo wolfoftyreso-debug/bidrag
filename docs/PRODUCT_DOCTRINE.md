@@ -44,7 +44,9 @@ eller stödform — för att få värde.** Testbart; vaktas av `tools/doctrine.m
    att en specifik möjlighet valts, per bidrag — inte som ett stort generellt
    formulär före första resultatet.
 3. **Official Exit** — varje relevant bidrag ska kostnadsfritt kunna länka
-   användaren till den officiella ansökningskanalen.
+   användaren till den officiella ansökningskanalen. Facit över exakt vilka
+   ingångar varje stöd har som alternativ och hur ansökan tas emot:
+   `docs/APPLICATION_CHANNELS.md` (byggprodukt ur seeden, `tools/appchannels.mjs`).
 4. **Paid Execution Layer** — betalning utlöses av **användning av
    arbetsverktyg** (bevakning, förberedelse, administration), aldrig av att
    offentlig information eller grundläggande matchningsresultat visas.

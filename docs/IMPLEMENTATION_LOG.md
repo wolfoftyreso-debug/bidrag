@@ -125,3 +125,29 @@ Arbetsströmmar (§28): 1 Core product · 2 Discovery/matching ·
   age66Plus-proxyn (återöppnar M11).
 - **Nästa:** (B) ansökningskanal-revision — exakt vilka ingångar varje stöd har
   som alternativ och hur de kan tas emot.
+
+## 2026-08-26 — Ansökningskanal-revision (Task B): ingångar per stöd + mottagning
+
+- **Ström:** 4 (Grant data/editorial), 3 (Application preparation)
+- **Beslut:** Produktägaren: *"Vi kontrollerar exakt vilka ingångar alla
+  ansökningar har som alternativ, hur de kan mottas."* Eftersom ingen ansökan
+  lämnas direkt från systemet idag måste varje stöd ha känd, korrekt ingång.
+- **Vad:** Ny deterministisk generator `tools/appchannels.mjs` läser
+  sanningsmodellen och skriver `docs/APPLICATION_CHANNELS.md`: per stöd — vilka
+  ingångar (kanaltaggar: Mina sidor, e-tjänst, blankett, besök, mellanhand,
+  kontakt) som alternativ, hur ansökan mottas (autentisering: e-leg 24, ingen
+  inloggning 34, myndighetskonto 9, EU Login 5) och den kurerade metodtexten +
+  officiell URL. Kanaltaggarna EXTRAHERAS ur den kurerade texten — inga påhittade
+  kanaler. `--check`-läge (drift-vakt).
+- **Fynd:** Alla 72 stöd har officiell `applicationUrl` och angiven mottagning.
+  **18/72 bär ännu den generiska standardtexten** ("Ansökan görs i finansiärens
+  officiella ansökningstjänst.") — URL finns men exakt ingång i klartext saknas;
+  listade som prioriterad kureringskö i dokumentet.
+- **Filer:** `tools/appchannels.mjs` (ny), `docs/APPLICATION_CHANNELS.md` (ny,
+  byggprodukt), `docs/PRODUCT_DOCTRINE.md` §3-pekare.
+- **Databas/API:** inga ändringar (ren revision ur befintliga seedfält).
+- **Tester:** `appchannels.mjs --check` grönt; verify 15/15 (oförändrad — nytt
+  verktyg är inte npm-skript, ingen MANUAL-reaktivitet berörd).
+- **Status:** PASS.
+- **Nästa (kurering):** fyll de 18 generiska metodtexterna med exakt ingång
+  (kuratorsflödet) — höjer samtidigt kanaltäckningen i dokumentet automatiskt.
