@@ -20,7 +20,7 @@
     "db:migrate": "npm run db:migrate -w apps/api",
     "db:seed": "npm run db:seed -w apps/api",
     "demo:build": "node demo/build.mjs",
-    "demo:check": "node demo/checks/check.mjs && node demo/checks/bizcheck.mjs && node demo/checks/backcheck.mjs && node demo/checks/savecheck.mjs && node demo/checks/alderscheck.mjs && node demo/checks/kontocheck.mjs && node demo/checks/vidarecheck.mjs && node demo/checks/ctxcheck.mjs",
+    "demo:check": "node demo/checks/check.mjs && node demo/checks/bizcheck.mjs && node demo/checks/backcheck.mjs && node demo/checks/savecheck.mjs && node demo/checks/alderscheck.mjs && node demo/checks/lankcheck.mjs && node demo/checks/kontocheck.mjs && node demo/checks/vidarecheck.mjs && node demo/checks/ctxcheck.mjs",
     "verify:sim30": "node tools/simulate30.mjs",
     "verify:ui": "node tools/uicheck/uicheck12.mjs && node tools/uicheck/uicheck13.mjs",
     "verify:schemas": "node tools/schemacheck.mjs",

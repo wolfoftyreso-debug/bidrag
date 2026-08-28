@@ -61,7 +61,7 @@ h2 { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; letter
 .btn.small { padding: 0.34rem 0.9rem; font-size: 0.9rem; }
 .btn.subtle { border: none; background: transparent; color: var(--muted); font-weight: 500; box-shadow: none; }
 .btn.subtle:hover { background: var(--bg-deep); border: none; }
-.row { display: flex; gap: 0.6rem; }
+.row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
 .grow { flex: 1; }
 input[type=number] { font: inherit; width: 100%; padding: 0.58rem 0.75rem; border: 1px solid var(--border-strong);
   border-radius: 10px; background: var(--surface); color: var(--text);
@@ -185,3 +185,20 @@ button:focus-visible, .choice:focus-visible, .btn:focus-visible, input:focus-vis
 button.upplas, .btn.upplas { background: #fffdf9; color: #0a3f78; border: none;
   font-weight: 700; box-shadow: 0 3px 12px rgba(0,0,0,0.30); }
 button.upplas:hover, .btn.upplas:hover { background: #e8f2fd; color: #0a3f78; }
+
+/* Myndigheternas källadresser är långa och saknar brytpunkter. Utan detta
+   spränger de kortet på 320px (fanns i planvyn sedan den byggdes — .srcline
+   hade regeln, .explain inte). Knappar undantas: deras etiketter är korta. */
+a:not(.btn) { overflow-wrap: anywhere; }
+
+/* F-LÄNK: sandlådan blockerar externa länkar tyst — då visas adressen här i
+   stället för att knappen bara ser trasig ut. Se UtLank i demo/main.tsx.
+   Byggd av span-element eftersom länken också står mitt i löpande text;
+   flex-basis 100% gör att rutan lägger sig på egen rad under knappraden. */
+.utlank-block { display: block; flex: 1 0 100%; width: 100%; max-width: 100%; min-width: 0;
+  margin-top: 0.55rem; padding: 0.6rem 0.7rem; border-radius: 10px;
+  background: var(--warning-soft); border-inline-start: 3px solid var(--warning); }
+.utlank-text { display: block; margin-bottom: 0.45rem; font-size: 0.9rem; color: var(--warning); }
+.utlank-rad { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; min-width: 0; }
+.utlank-block input { font: inherit; font-size: 0.86rem; flex: 1 1 12rem; min-width: 0; padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); color: var(--text); }

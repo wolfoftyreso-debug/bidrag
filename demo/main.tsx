@@ -238,6 +238,58 @@ function Q({ title, guidance, children }: { title: string; guidance?: string; ch
   );
 }
 
+/**
+ * F-LÄNK (användarfynd 2026-08-28: "kommer inte vidare när jag klickar"):
+ * demon visas ofta i en sandlådad iframe (artefaktvyn) där webbläsaren tyst
+ * vägrar öppna externa länkar — "Blocked opening '…' because the request was
+ * made in a sandboxed frame whose 'allow-popups' permission is not set".
+ * Överlämningen till myndigheten är produktens viktigaste steg och får aldrig
+ * bli en död knapp (§42, inga återvändsgränder). Vi försöker öppna länken; går
+ * det inte säger vi varför och visar adressen kopierbar i stället.
+ *
+ * Detta är ENDA stället i demon som renderar en utgående länk — nya länkar ska
+ * gå genom UtLank, annars kan den döda knappen återuppstå.
+ */
+function UtLank({ href, className, children }: { href: string; className?: string; children: React.ReactNode }) {
+  const [blocked, setBlocked] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const faltet = useRef<HTMLInputElement | null>(null);
+
+  const oppna = (e: React.MouseEvent) => {
+    e.preventDefault();
+    let fonster: Window | null = null;
+    try { fonster = window.open(href, '_blank', 'noopener,noreferrer'); } catch { fonster = null; }
+    if (!fonster) setBlocked(true);
+  };
+
+  const kopiera = async () => {
+    try { await navigator.clipboard.writeText(href); setCopied(true); return; } catch { /* sandlådan kan neka */ }
+    const el = faltet.current;
+    if (!el) return;
+    el.select();
+    // execCommand är utfasat men enda vägen när Clipboard API är blockerat.
+    // Misslyckas även det står adressen markerad och kan kopieras för hand.
+    try { if (document.execCommand('copy')) setCopied(true); } catch { /* markeringen räcker */ }
+  };
+
+  return (
+    <>
+      <a className={className} href={href} target="_blank" rel="noreferrer" onClick={oppna}>{children}</a>
+      {blocked && (
+        // span, inte div: UtLank används också mitt i löpande text, och en div
+        // inuti ett <p> stänger stycket i förtid. Blockformen kommer ur CSS.
+        <span className="utlank-block" role="status">
+          <span className="utlank-text">Den här vyn får inte öppna externa länkar — demon visas i en sandlåda. Adressen står här:</span>
+          <span className="utlank-rad">
+            <input ref={faltet} readOnly value={href} onFocus={(e) => e.currentTarget.select()} />
+            <button className="btn small" onClick={kopiera}>{copied ? 'Kopierad ✓' : 'Kopiera'}</button>
+          </span>
+        </span>
+      )}
+    </>
+  );
+}
+
 /* Illustrationer (designsystemet Signal, design/illustrationer/): geometriska
    figurer, max 3 färger ur paletten, kontur i --primary-deep, varm markrad.
    Inlinas här eftersom demon är en enda fil. aria-hidden — rubriken bär betydelsen. */
@@ -319,7 +371,7 @@ function MatchRow({ opp, m, facts, showScore, selected, onToggle }: { opp: Opp; 
               </div>
             ))}
             <div className="srcline">
-              Källa: <a href={opp.sourceUrl} target="_blank" rel="noreferrer">{opp.sourceUrl}</a> · AI-sammanställd — ej människogranskad,
+              Källa: <UtLank href={opp.sourceUrl}>{opp.sourceUrl}</UtLank> · AI-sammanställd — ej människogranskad,
               2026-08-13 — kontrollera alltid aktuella villkor hos källan. {opp.applicationMethod}
             </div>
           </div>
@@ -434,7 +486,7 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
         {details.map((d) => (
           <li key={d.title}>
             <strong>{d.title}</strong> {d.kind === 'weighted' ? 'väger in svaret i bedömningen (det är inget krav):' : 'har villkoret:'}{' '}
-            <em>{d.requirement}</em> <a href={d.sourceUrl} target="_blank" rel="noreferrer">(officiell källa)</a>
+            <em>{d.requirement}</em> <UtLank href={d.sourceUrl}>(officiell källa)</UtLank>
           </li>
         ))}
       </ul>
@@ -619,10 +671,10 @@ function PlanView({ slugs, facts, onBack, onToggle }: { slugs: string[]; facts: 
             )}
             <p style={{ margin: '0.3rem 0' }}>
               <strong>{r.m.missingFacts.length > 0 ? '3' : '2'}. Kontrollera aktuella villkor hos källan:</strong>{' '}
-              <a href={r.opp.sourceUrl} target="_blank" rel="noreferrer">{r.opp.sourceUrl}</a> (AI-sammanställd 2026-08-13 — ej människogranskad)
+              <UtLank href={r.opp.sourceUrl}>{r.opp.sourceUrl}</UtLank> (AI-sammanställd 2026-08-13 — ej människogranskad)
             </p>
             <div className="row" style={{ marginTop: '0.5rem' }}>
-              <a className="btn primary" href={r.opp.applicationUrl} target="_blank" rel="noreferrer">Till ansökan hos {r.opp.authority} →</a>
+              <UtLank className="btn primary" href={r.opp.applicationUrl}>Till ansökan hos {r.opp.authority} →</UtLank>
               <button className="btn small" onClick={() => onToggle(r.opp.slug)}>Ta bort ur planen</button>
             </div>
           </div>
@@ -650,7 +702,7 @@ function ExcludedRow({ opp, m }: { opp: Opp; m: ReturnType<typeof runEngine>[num
     <>
       <button className="linkish dim" onClick={() => setOpen(!open)}>{opp.title}</button>
       <div className="meta">{reason}</div>
-      {open && <div className="meta" style={{ marginTop: '0.3rem' }}>{opp.summary} · <a href={opp.sourceUrl} target="_blank" rel="noreferrer">källa</a></div>}
+      {open && <div className="meta" style={{ marginTop: '0.3rem' }}>{opp.summary} · <UtLank href={opp.sourceUrl}>källa</UtLank></div>}
     </>
   );
 }

@@ -52,6 +52,7 @@ kvalitetsfel av samma sort som stora.
 
 | Datum | Id | Åtgärd |
 |---|---|---|
+| 2026-08-28 | F-LÄNK | Demons utgående länkar var döda i artefaktvyn: sandlådan blockerar tyst öppning av externa adresser utan `allow-popups`, så "Till ansökan hos …" — själva överlämningen till myndigheten — gjorde ingenting. Alla utgående länkar går nu genom komponenten UtLank som säger varför klicket stoppades och visar adressen kopierbar. Samtidigt: långa källadresser saknade radbrytning i planvyn och sprängde kortet på 320px. Regressionsvakt: demo/checks/lankcheck.mjs (kör demon i samma sandlåda) |
 | 2026-08-28 | F-ÅLDER | Demons sparade följdfrågesvar vann tyst över fakta härledda ur födelseåret: med 1987 angivet redovisades "Är du 40 år eller yngre?" som Nej och Startstöd till unga jordbrukare stängdes ute. Intagets härledda faktum vinner nu alltid, inaktuella svar städas ur lagringen, lagringsnyckeln höjd till v2 så gamla motsägelsefulla utkast aldrig läses in. Regressionsvakt: demo/checks/alderscheck.mjs |
 | 2026-08-28 | — | SVG-vakten (tools/svgcheck.mjs) i verify + CI: märke och illustrationer måste vara välformad XML och favicon härledd ur logo-mark.svg |
 | 2026-08-22 | C1 | Favicon-/brand asset-sviten: eget märke, svg/ico/apple-touch/192/512/manifest/theme-color i webbapp + alla publika sidor |
