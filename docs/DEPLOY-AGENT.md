@@ -37,11 +37,12 @@ en connector saknas eller saknar en förmåga.
    `psql "$DIRECT_DATABASE_URL" -f deploy/bootstrap.sql`, eller Neon-connectorn).
    Filen är komplett och verifierad genom rundtur mot tom databas: hela schemat
    (14 migreringar, RLS-policyer, drizzles migrationstabell) + hela kunskapsbasen
-   som INSERT-satser, inga psql-metakommandon. ~397 KB. Kör mot den DIREKTA
+   som INSERT-satser (inkl. fas B:s översättningsminne), inga psql-metakommandon. ~1,0 MB. Kör mot den DIREKTA
    anslutningen, aldrig via poolern.
 4. **Verifiera räkningarna** — allt annat är ett fel:
    `funding_opportunities=85, funding_authorities=36,
-   application_schemas=71, sources=37, drizzle.__drizzle_migrations=13`.
+   application_schemas=71, sources=37, kb_translations=2230,
+   drizzle.__drizzle_migrations=14`.
 5. **Objektlagring**: ingen bucket. `STORAGE_DRIVER=postgres` lägger
    dokument/uppladdningar i tabellen `storage_objects` i Neon — privat, åtkomst
    bara genom API:ts tenantkontroll. Migreringen skapade tabellen; inget mer görs.

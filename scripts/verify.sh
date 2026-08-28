@@ -77,14 +77,25 @@ if [ "$db_up" = 1 ]; then
   BOOT_DB="verify_boot_$$"
   MIG_DB="verify_mig_$$"
   MIG_COUNT="$(ls apps/api/drizzle/*.sql | wc -l | tr -d ' ')"
+  # Fas B: förväntat antal rader i kb_translations = antal källtexter × språk,
+  # härlett ur seeden (aldrig hårdkodat). Utan denna räkning kan bootstrap.sql
+  # resa schemat UTAN översättningarna och alla icke-svenska vyer faller tyst
+  # tillbaka till svenska i produktion.
+  KB_ROWS="$(node --experimental-strip-types -e '
+    const { opportunities } = await import("./apps/api/src/seed/data.ts");
+    const { KB_LOCALES } = await import("./apps/api/src/seed/i18n/index.ts");
+    const s = new Set();
+    for (const o of opportunities) { s.add(o.summary); for (const c of o.criteria ?? []) if (c.intakeQuestion) s.add(c.intakeQuestion); }
+    process.stdout.write(String(s.size * KB_LOCALES.length));
+  ')"
 
   bootstrap_roundtrip() {
     psql "$ADMIN_URL" -c "DROP DATABASE IF EXISTS $BOOT_DB" >/dev/null &&
     psql "$ADMIN_URL" -c "CREATE DATABASE $BOOT_DB" >/dev/null &&
     psql "${BASE_URL}/${BOOT_DB}" -v ON_ERROR_STOP=1 -q -f deploy/bootstrap.sql &&
     got="$(psql "${BASE_URL}/${BOOT_DB}" -Atc \
-      "select (select count(*) from public.funding_opportunities)||'/'||(select count(*) from public.funding_authorities)||'/'||(select count(*) from public.application_schemas)||'/'||(select count(*) from public.sources)||'/'||(select count(*) from drizzle.__drizzle_migrations)")" &&
-    want="85/36/71/37/${MIG_COUNT}" &&
+      "select (select count(*) from public.funding_opportunities)||'/'||(select count(*) from public.funding_authorities)||'/'||(select count(*) from public.application_schemas)||'/'||(select count(*) from public.sources)||'/'||(select count(*) from public.kb_translations)||'/'||(select count(*) from drizzle.__drizzle_migrations)")" &&
+    want="85/36/71/37/${KB_ROWS}/${MIG_COUNT}" &&
     { [ "$got" = "$want" ] || { echo "räkningar: fick $got, väntade $want"; false; }; } &&
     DATABASE_URL="${BASE_URL}/${BOOT_DB}" npm run db:migrate &&
     after="$(psql "${BASE_URL}/${BOOT_DB}" -Atc 'select count(*) from drizzle.__drizzle_migrations')" &&
@@ -98,8 +109,8 @@ if [ "$db_up" = 1 ]; then
     psql "$ADMIN_URL" -c "CREATE DATABASE $MIG_DB" >/dev/null &&
     DATABASE_URL="${BASE_URL}/${MIG_DB}" npm run db:migrate &&
     DATABASE_URL="${BASE_URL}/${MIG_DB}" npm run db:seed &&
-    got="$(psql "${BASE_URL}/${MIG_DB}" -Atc 'select count(*) from public.funding_opportunities')" &&
-    { [ "$got" = "85" ] || { echo "seed gav $got stöd, väntade 85"; false; }; }
+    got="$(psql "${BASE_URL}/${MIG_DB}" -Atc "select (select count(*) from public.funding_opportunities)||'/'||(select count(*) from public.kb_translations)")" &&
+    { [ "$got" = "85/${KB_ROWS}" ] || { echo "seed gav $got (stöd/översättningar), väntade 85/${KB_ROWS}"; false; }; }
   }
   step "Migreringar + seed från tom databas" migrations_from_scratch
   psql "$ADMIN_URL" -c "DROP DATABASE IF EXISTS $MIG_DB" >/dev/null 2>&1

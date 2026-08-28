@@ -46,9 +46,9 @@ echo "3/4 Rundtur mot tom databas ($CHK_DB)…"
 psql "$ADMIN_URL" -c "CREATE DATABASE $CHK_DB" >/dev/null
 psql "${BASE_URL}/${CHK_DB}" -v ON_ERROR_STOP=1 -q -f "$TMP"
 got="$(psql "${BASE_URL}/${CHK_DB}" -Atc \
-  "select (select count(*) from public.funding_opportunities)||'/'||(select count(*) from public.funding_authorities)||'/'||(select count(*) from public.application_schemas)||'/'||(select count(*) from public.sources)||'/'||(select count(*) from drizzle.__drizzle_migrations)")"
+  "select (select count(*) from public.funding_opportunities)||'/'||(select count(*) from public.funding_authorities)||'/'||(select count(*) from public.application_schemas)||'/'||(select count(*) from public.sources)||'/'||(select count(*) from public.kb_translations)||'/'||(select count(*) from drizzle.__drizzle_migrations)")"
 src="$(psql "${BASE_URL}/${SRC_DB}" -Atc \
-  "select (select count(*) from public.funding_opportunities)||'/'||(select count(*) from public.funding_authorities)||'/'||(select count(*) from public.application_schemas)||'/'||(select count(*) from public.sources)||'/'||(select count(*) from drizzle.__drizzle_migrations)")"
+  "select (select count(*) from public.funding_opportunities)||'/'||(select count(*) from public.funding_authorities)||'/'||(select count(*) from public.application_schemas)||'/'||(select count(*) from public.sources)||'/'||(select count(*) from public.kb_translations)||'/'||(select count(*) from drizzle.__drizzle_migrations)")"
 [ "$got" = "$src" ] || { echo "FEL: rundturen gav $got, källan har $src" >&2; exit 1; }
 DATABASE_URL="${BASE_URL}/${CHK_DB}" npm run db:migrate >/dev/null
 after="$(psql "${BASE_URL}/${CHK_DB}" -Atc 'select count(*) from drizzle.__drizzle_migrations')"
