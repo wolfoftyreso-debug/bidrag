@@ -40,6 +40,15 @@ export async function api<T = unknown>(
   if (body !== undefined && !(body instanceof FormData)) headers['Content-Type'] = 'application/json';
   const tenant = getActiveTenant();
   if (tenant) headers['X-Tenant-Id'] = tenant;
+  // I18N fas B: användarens språkval (samma nyckel som i18n-runtimen) styr
+  // vilket språk kunskapsbasens texter levereras på; API:t faller ärligt
+  // tillbaka till svenska för allt som saknar översättning.
+  try {
+    const locale = localStorage.getItem('bidrag.sprak.v1');
+    if (locale && locale !== 'sv') headers['Accept-Language'] = locale;
+  } catch {
+    /* localStorage kan saknas (t.ex. vissa inbäddningar) — svenska gäller då */
+  }
   const init: RequestInit = {
     method,
     credentials: 'include',

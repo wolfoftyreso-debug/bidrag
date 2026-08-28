@@ -6,6 +6,7 @@ import { applicantProfiles, fundingOpportunities, fundingStacks, matches, projec
 import { audit } from '../audit.ts';
 import { WRITER_ROLES } from '../plugins/auth.ts';
 import { listMatchesForProject, recomputeMatchesForProject, type MatchRow } from '../services/matching.ts';
+import { kbTranslator, resolveKbLocale, translateMatchRows } from '../services/kbI18n.ts';
 
 /**
  * Open Discovery (produktdoktrinen v2, 2026-08-26): matchningar visas ALLTID
@@ -191,7 +192,10 @@ export async function projectRoutes(app: FastifyInstance) {
           after: { count },
         });
         const { rows, facts } = await trackRelevantMatches(request.auth!.tenantId, id);
-        return { computed: count, matches: rows, facts };
+        // I18N fas B: intakefrågorna på användarens språk (Accept-Language);
+        // villkorstexter och officiella namn förblir svenska med ärlig notis.
+        const tr = await kbTranslator(resolveKbLocale(request.headers['accept-language']));
+        return { computed: count, matches: translateMatchRows(rows, tr), facts };
       } catch (err) {
         const status = (err as { statusCode?: number }).statusCode ?? 500;
         if (status === 404) return reply.code(404).send({ error: 'not_found' });
@@ -214,8 +218,9 @@ export async function projectRoutes(app: FastifyInstance) {
       const { rows, facts } = await trackRelevantMatches(request.auth!.tenantId, id);
       // Open Discovery: fulla matchningar gratis. facts följer med så att "Dina
       // svar" kan visa och ändra besvarade frågor — en fråga försvinner aldrig
-      // för att den fått svar.
-      return { matches: rows, facts };
+      // för att den fått svar. I18N fas B: frågorna på användarens språk.
+      const tr = await kbTranslator(resolveKbLocale(request.headers['accept-language']));
+      return { matches: translateMatchRows(rows, tr), facts };
     },
   );
 

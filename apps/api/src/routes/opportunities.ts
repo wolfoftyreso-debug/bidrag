@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { and, eq, ilike, or, sql } from 'drizzle-orm';
 import { db } from '../db/client.ts';
 import { applicationSchemas, fundingAuthorities, fundingOpportunities, ruleVersions } from '../db/schema.ts';
+import { kbTranslator, resolveKbLocale, translateCriteria } from '../services/kbI18n.ts';
 
 /**
  * Public funding knowledge — readable by any authenticated user; shared across
@@ -95,7 +96,10 @@ export async function opportunityRoutes(app: FastifyInstance) {
         .limit(q.limit)
         .offset(q.offset);
 
-      return { opportunities: rows };
+      // I18N fas B: sammanfattningen på användarens språk; titeln (officiellt
+      // namn) översätts aldrig. Okänd/ändrad källtext ⇒ ärlig svensk fallback.
+      const tr = await kbTranslator(resolveKbLocale(request.headers['accept-language']));
+      return { opportunities: rows.map((r) => ({ ...r, summary: tr(r.summary) })) };
     },
   );
 
@@ -134,14 +138,18 @@ export async function opportunityRoutes(app: FastifyInstance) {
         .orderBy(sql`${applicationSchemas.version} DESC`)
         .limit(1);
 
+      // I18N fas B: summary + kriteriernas intakefrågor på användarens språk.
+      // Beskrivningar, villkorstexter och officiella namn förblir svenska
+      // (bindande omfattning i docs/I18N_PROGRAM.md; ärlig notis i webben).
+      const tr = await kbTranslator(resolveKbLocale(request.headers['accept-language']));
       return {
-        opportunity: opp,
+        opportunity: { ...opp, summary: tr(opp.summary) },
         authority,
         ruleVersion: rv
           ? {
               id: rv.id,
               version: rv.version,
-              criteria: rv.criteria,
+              criteria: translateCriteria(rv.criteria, tr),
               budgetRules: rv.budgetRules,
               evidenceRequirements: rv.evidenceRequirements,
               effectiveFrom: rv.effectiveFrom,

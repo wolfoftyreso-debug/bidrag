@@ -69,10 +69,18 @@ Interna koden `prs` renderas som `lang="fa-AF"` i dokumentroten (BCP 47).
 - **Fas A2**: resterande sid-UI (Matches, Opportunity, Applications,
   Documents, Account, Search, Calendar, Inbox, betalvyer) + STATE_LABELS.
   Kuratorsverktygen (Admin, RuleEditor) förblir svenska — intern yta.
-- **Fas B**: kunskapsbasens innehåll — översättningslager i databasen för
-  stödsammanfattningar och intakefrågor (kriteriernas `intakeQuestion`),
-  levererat via API:t per `Accept-Language`/profilval. Tills dess visar
-  icke-svenska vyer innehållet på svenska med notis (ärlig fallback).
+- **Fas B — LEVERERAD 2026-08-28**: kunskapsbasens innehåll — översättnings-
+  minne i databasen (tabell `kb_translations`, migrering 0014) för stöd-
+  sammanfattningar och intakefrågor (223 källtexter × 10 språk, seedade ur
+  `apps/api/src/seed/i18n/`). Levereras via API:t per `Accept-Language`
+  (webben skickar användarens språkval ur språkväljaren). Nyckeln är den
+  EXAKTA svenska källtexten: ändras källan (t.ex. kuratorsredigering) missar
+  uppslaget och svenskan visas — ärlig, självreglerande fallback. Vakten i
+  `tools/i18ncheck.mjs` (verify) kräver full täckning av källmängden i alla
+  10 språk och fäller bygget vid föräldralösa nycklar. Titlar (officiella
+  namn), villkorsbeskrivningar, dokument och juridik förblir svenska;
+  sökningen (`q=`) matchar fortfarande svensk text. Integrationstest:
+  `apps/api/test/kbI18n.test.ts`.
 - **Fas C**: publika SEO-ytan — kvalitetsgrindad översättning med hreflang
   (`fa-AF` för dari), börjar med hubbarna och de största entity-sidorna.
   ALDRIG maskinöversatta massidor utan granskning (GATE 0-/spam-risk).

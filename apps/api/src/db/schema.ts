@@ -746,6 +746,24 @@ export const auditEvents = pgTable(
 // går alltid genom API:ts tenantkontroll, aldrig direkt), inget tredjepartsberoende
 // och ingen serverless-diskflyktighet. Nyckeln är samma sökvägsmodell som de andra
 // drivrutinerna (tenantId/uuid.ext), så en flytt mellan drivrutiner är ren datakopiering.
+// I18N fas B: översättningsminne för kunskapsbasens användarvända texter
+// (stödsammanfattningar + kriteriernas intakefrågor). Nyckeln är själva
+// KÄLLTEXTEN på svenska — ändras källan (t.ex. via kuratorsflödet) missar
+// uppslaget och API:t faller ärligt tillbaka till svenska tills
+// översättningen uppdaterats. Officiella stöd-/myndighetsnamn översätts
+// aldrig och finns därför inte här (docs/I18N_PROGRAM.md).
+export const kbTranslations = pgTable(
+  'kb_translations',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    locale: text('locale').notNull(),
+    sourceText: text('source_text').notNull(),
+    translatedText: text('translated_text').notNull(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [uniqueIndex('kb_translations_locale_source_idx').on(t.locale, t.sourceText)],
+);
+
 export const storageObjects = pgTable(
   'storage_objects',
   {

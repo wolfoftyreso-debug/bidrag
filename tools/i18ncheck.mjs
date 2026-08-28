@@ -60,8 +60,35 @@ for (const code of LOCALES) {
   }
 }
 
+// ── Fas B: kunskapsbasens översättningsminne (apps/api/src/seed/i18n/) ──────
+// Källmängden = alla summaries + alla unika intakefrågor i seeden. Varje
+// KB-språkfil måste täcka EXAKT den mängden: en ny/ändrad källtext utan
+// översättning fäller bygget (annars visas tyst svenska på det språket),
+// och en föräldralös nyckel avslöjar en källtext som ändrats i seeden.
+const { opportunities } = await import(join(ROOT, 'apps/api/src/seed/data.ts'));
+const { KB_LOCALES, KB_TRANSLATIONS } = await import(join(ROOT, 'apps/api/src/seed/i18n/index.ts'));
+const kbSources = new Set();
+for (const o of opportunities) kbSources.add(o.summary);
+for (const o of opportunities) for (const c of o.criteria ?? []) if (c.intakeQuestion) kbSources.add(c.intakeQuestion);
+
+for (const code of KB_LOCALES) {
+  const dict = KB_TRANSLATIONS[code];
+  for (const src of kbSources) {
+    const v = dict[src];
+    if (typeof v !== 'string' || !v.trim()) fail(`kb/${code}: saknar översättning för källtexten '${src.slice(0, 60)}…'`);
+  }
+  for (const k of Object.keys(dict)) {
+    if (!kbSources.has(k)) fail(`kb/${code}: föräldralös nyckel (källtexten finns inte längre i seeden): '${k.slice(0, 60)}…'`);
+  }
+  if (RTL.has(code)) {
+    const vals = Object.values(dict);
+    const withScript = vals.filter((v) => hasRtlScript(String(v))).length;
+    if (withScript / vals.length < 0.9) fail(`kb/${code}: bara ${withScript}/${vals.length} strängar innehåller RTL-skrift — fel fil?`);
+  }
+}
+
 if (errors) {
   console.error(`i18ncheck: ${errors} fel i språkfilerna.`);
   process.exit(1);
 }
-console.log(`I18N-koll: ${LOCALES.length} språk, ${svKeys.length} nycklar per språk — komplett och konsistent.`);
+console.log(`I18N-koll: ${LOCALES.length} språk, ${svKeys.length} nycklar per språk + kunskapsbas ${kbSources.size} källtexter × ${KB_LOCALES.length} språk — komplett och konsistent.`);

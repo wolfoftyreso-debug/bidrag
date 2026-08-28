@@ -11,11 +11,13 @@ import {
   fundingAuthorities,
   fundingOpportunities,
   fundingProgrammes,
+  kbTranslations,
   matches,
   ruleVersions,
   sources,
 } from '../db/schema.ts';
 import { CURATED_AT, applicationSchemaDefs, authorities, opportunities, seedSources } from './data.ts';
+import { KB_LOCALES, KB_TRANSLATIONS } from './i18n/index.ts';
 
 /** Nyckelordnings-oberoende serialisering (jsonb-roundtrip-säker). */
 function canonical(v: unknown): string {
@@ -219,6 +221,19 @@ export async function runSeed(): Promise<{ opportunities: number; rulesUpdated: 
       await db.insert(applicationSchemas).values({ opportunityId: opp.id, version: 1, def: s.def });
     } else if (canonical(existing.def) !== canonical(s.def)) {
       await db.insert(applicationSchemas).values({ opportunityId: opp.id, version: existing.version + 1, def: s.def });
+    }
+  }
+
+  // I18N fas B: synka översättningsminnet (kb_translations) mot seedens
+  // språkfiler. Full ersättning per språk — deterministiskt och idempotent;
+  // föråldrade rader (ändrad källtext) försvinner i samma svep.
+  for (const locale of KB_LOCALES) {
+    const entries = Object.entries(KB_TRANSLATIONS[locale]);
+    await db.delete(kbTranslations).where(eq(kbTranslations.locale, locale));
+    for (let i = 0; i < entries.length; i += 200) {
+      await db.insert(kbTranslations).values(
+        entries.slice(i, i + 200).map(([sourceText, translatedText]) => ({ locale, sourceText, translatedText })),
+      );
     }
   }
 

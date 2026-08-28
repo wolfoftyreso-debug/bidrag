@@ -36,7 +36,7 @@ en connector saknas eller saknar en förmåga.
 3. **Ladda databasen**: kör `deploy/bootstrap.sql` mot Neon (Neon SQL Editor,
    `psql "$DIRECT_DATABASE_URL" -f deploy/bootstrap.sql`, eller Neon-connectorn).
    Filen är komplett och verifierad genom rundtur mot tom databas: hela schemat
-   (13 migreringar, RLS-policyer, drizzles migrationstabell) + hela kunskapsbasen
+   (14 migreringar, RLS-policyer, drizzles migrationstabell) + hela kunskapsbasen
    som INSERT-satser, inga psql-metakommandon. ~397 KB. Kör mot den DIREKTA
    anslutningen, aldrig via poolern.
 4. **Verifiera räkningarna** — allt annat är ett fel:
