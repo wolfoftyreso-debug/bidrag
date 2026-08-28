@@ -738,12 +738,17 @@ function AccountView({ onBack }: { onBack: () => void }) {
  * upplåsning) skrivs till webbläsarens lagring vid varje förändring — en
  * omladdning fortsätter exakt där man var. "Börja om" rensar utkastet.
  */
-const DEMO_STATE_KEY = 'bidragse-demo-v1';
+// v2 (F-ÅLDER): nyckeln höjdes när intaget började härleda åldersfakta ur
+// födelseåret. Ett sparat läge från en tidigare version kunde bära ett eget
+// svar på "Är du 40 år eller yngre?" — en fråga som numera besvaras av
+// födelseåret — och det svaret vann tyst över det härledda. Höjd nyckel =
+// gamla, motsägelsefulla utkast läses aldrig in igen.
+const DEMO_STATE_KEY = 'bidragse-demo-v2';
 const DEMO_STEPS = new Set<string>([
   'entry',
   'p-household', 'p-children', 'p-separated',
   'p-child-school', 'p-child-costs', 'p-child-leisure', 'p-child-glasses', 'p-child-travel',
-  'p-age', 'p-employment', 'p-capacity',
+  'p-age', 'p-employment', 'p-biz-form', 'p-biz-sector', 'p-capacity',
   'p-income', 'p-savings', 'p-housing', 'p-housing-cost', 'p-moving-abroad', 'p-disability', 'done',
   'pr-who', 'pr-artist', 'pr-sector',
   'pr-org-democratic', 'pr-org-sports', 'pr-org-youthshare', 'pr-org-spread',
@@ -812,7 +817,27 @@ function App() {
     setStep('entry'); setHistory([]); setA({}); setExtraFacts({}); setUnlocked(false); setPlan([]); setView('flow');
   };
 
-  const facts = useMemo(() => ({ ...buildFacts(a), ...extraFacts }), [a, extraFacts]);
+  // F-ÅLDER (användarfynd 2026-08-28: "jag angav 1987 så jag kan inte vara 40?"):
+  // intagets svar VINNER över ett sparat följdfrågesvar på samma faktum.
+  // Följdfrågor ställs bara om fakta intaget INTE kan avgöra, så för de
+  // nycklarna finns ingen konflikt — men ändrar man ett intagssvar (eller bär
+  // med sig ett gammalt utkast) får det härledda faktumet aldrig överskuggas
+  // av ett inaktuellt svar. Födelseåret 1987 ska alltid ge "40 år eller
+  // yngre: Ja", oavsett vad som en gång sparades.
+  const derived = useMemo(() => buildFacts(a), [a]);
+  const facts = useMemo(() => ({ ...extraFacts, ...derived }), [derived, extraFacts]);
+
+  // Håll lagringen ärlig: ett följdfrågesvar som intaget numera kan avgöra
+  // städas bort, så "Dina svar" inte visar en död dubblett.
+  useEffect(() => {
+    const stale = Object.keys(extraFacts).filter((k) => derived[k] !== undefined);
+    if (stale.length === 0) return;
+    setExtraFacts((prev) => {
+      const next = { ...prev };
+      for (const k of stale) delete next[k];
+      return next;
+    });
+  }, [derived, extraFacts]);
 
   return (
     <div className="page">

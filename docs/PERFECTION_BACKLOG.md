@@ -52,6 +52,8 @@ kvalitetsfel av samma sort som stora.
 
 | Datum | Id | Åtgärd |
 |---|---|---|
+| 2026-08-28 | F-ÅLDER | Demons sparade följdfrågesvar vann tyst över fakta härledda ur födelseåret: med 1987 angivet redovisades "Är du 40 år eller yngre?" som Nej och Startstöd till unga jordbrukare stängdes ute. Intagets härledda faktum vinner nu alltid, inaktuella svar städas ur lagringen, lagringsnyckeln höjd till v2 så gamla motsägelsefulla utkast aldrig läses in. Regressionsvakt: demo/checks/alderscheck.mjs |
+| 2026-08-28 | — | SVG-vakten (tools/svgcheck.mjs) i verify + CI: märke och illustrationer måste vara välformad XML och favicon härledd ur logo-mark.svg |
 | 2026-08-22 | C1 | Favicon-/brand asset-sviten: eget märke, svg/ico/apple-touch/192/512/manifest/theme-color i webbapp + alla publika sidor |
 | 2026-08-22 | C2 | Social metadata komplett: varumärkes-OG 1200×630, twitter:card, og:locale, webbappens hela OG-block; seocheck-gate failar utan |
 | 2026-08-22 | C3 | Äkta 404: genseo emitterar hjälpsam noindex-404.html (§40-språk), vercel-rewrite exkluderar statiska ytan, SPA fick riktig 404-vy i stället för tyst redirect |
