@@ -93,6 +93,9 @@ for (const [path, html] of pages) {
       for (const need of ['Organization', 'BreadcrumbList', 'WebPage']) {
         if (!types.includes(need)) err(`${path}: JSON-LD saknar ${need}`);
       }
+      // Missbildade URL:er (dubblerad bas) — regressionsvakt efter
+      // klusterhubbarnas absoluta crumb-URL:er (SERP War Room 2026-08-28).
+      if (ld.includes('bidragskoll.sehttp')) err(`${path}: JSON-LD innehåller dubblerad bas-URL (…se + https://…)`);
     } catch (e) { err(`${path}: JSON-LD parsar inte (${e.message})`); }
   }
 

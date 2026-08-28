@@ -930,9 +930,11 @@ function klusterPage(k) {
   const auth = authorities.find((a) => a.key === primary?.authorityKey);
   const authName = auth?.name ?? 'den ansvariga aktören';
   const canonical = `${BASE}/${k.path}/`;
+  // Relativa crumb-URL:er — baseGraph/layout prefixar BASE själva (absoluta
+  // här gav dubblerad bas i BreadcrumbList-markupen).
   const crumbs = [
-    { name: 'Bidrag', url: `${BASE}/bidrag/` },
-    { name: k.h1, url: canonical },
+    { name: 'Bidrag', url: '/bidrag/' },
+    { name: k.h1, url: `/${k.path}/` },
   ];
 
   // FAQ: gratis-frågan + kurerade extra + huvudtermens PAA (en per svarskategori).
