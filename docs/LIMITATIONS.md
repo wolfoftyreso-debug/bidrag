@@ -289,3 +289,15 @@ connecting to a pinned resolved IP with an explicit Host header. The realistic
 exposure is low: registering a source URL requires the `data_curator` role,
 which is not self-service (RT03-S1), so only a compromised legitimate source
 could trigger it. Tracked as backlog M14.
+
+## 14. Translations are AI-made and unreviewed (I18N fas A)
+
+The web app's discovery loop is available in 11 languages
+(docs/I18N_PROGRAM.md). Every non-Swedish string was translated by AI and has
+NOT been reviewed by a native speaker. The UI says so honestly on every
+non-Swedish view (same doctrine as the `ai_curated` label). Somali (so) and
+Tigrinya (ti) are the weakest and are flagged for priority human review before
+the label can be lifted for those languages. Benefit descriptions, follow-up
+questions, legal texts, documents and the public SEO surface remain Swedish
+(phases B–C in the program). Official benefit/authority names are never
+translated by design.

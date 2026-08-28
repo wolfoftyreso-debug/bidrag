@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { get, getActiveTenant, post, setActiveTenant } from './api';
+import { LanguagePicker, TranslationNotice, useT } from './i18n';
 import TermsPage from './pages/Terms';
 import LoginPage from './pages/Login';
 import ResetPasswordPage from './pages/ResetPassword';
@@ -43,6 +44,7 @@ const SessionContext = createContext<{ session: Session | null; reload: () => Pr
 export const useSession = () => useContext(SessionContext);
 
 export default function App() {
+  const t = useT();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -59,7 +61,7 @@ export default function App() {
     reload().finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="auth-page"><p>Laddar…</p></div>;
+  if (loading) return <div className="auth-page"><p>{t('app.loading')}</p></div>;
 
   return (
     <SessionContext.Provider value={{ session, reload }}>
@@ -80,6 +82,7 @@ export default function App() {
 }
 
 function Shell() {
+  const t = useT();
   const { session, reload } = useSession();
   const navigate = useNavigate();
   const isCurator = session?.activeTenant.role === 'administrator' || session?.activeTenant.role === 'data_curator';
@@ -103,31 +106,33 @@ function Shell() {
         <div className="brand"><img className="brand-mark" src="/logo-mark.svg" alt="" aria-hidden="true" />Bidragskoll</div>
         {(session?.tenants.length ?? 0) > 1 && (
           <select
-            aria-label="Aktiv organisation"
+            aria-label={t('nav.activeOrg')}
             value={getActiveTenant() ?? session?.activeTenant.id}
             onChange={(e) => void switchTenant(e.target.value)}
             style={{ marginBottom: '0.6rem', fontSize: '0.85rem' }}
           >
-            {session?.tenants.map((t) => (
-              <option key={t.tenantId} value={t.tenantId}>{t.kind === 'personal' ? 'Personligt' : t.name}</option>
+            {session?.tenants.map((tn) => (
+              <option key={tn.tenantId} value={tn.tenantId}>{tn.kind === 'personal' ? t('nav.personal') : tn.name}</option>
             ))}
           </select>
         )}
-        <NavLink to="/" end>Översikt</NavLink>
-        <NavLink to="/projekt">Projekt &amp; matchningar</NavLink>
-        <NavLink to="/ansokningar">Mina ansökningar</NavLink>
-        <NavLink to="/kalender">Kalender</NavLink>
-        <NavLink to="/sok">Sök stöd</NavLink>
-        <NavLink to="/dokument">Dokument</NavLink>
-        <NavLink to="/inkorg">Inkorg</NavLink>
-        {isCurator && <NavLink to="/admin">Administration</NavLink>}
+        <NavLink to="/" end>{t('nav.overview')}</NavLink>
+        <NavLink to="/projekt">{t('nav.projects')}</NavLink>
+        <NavLink to="/ansokningar">{t('nav.applications')}</NavLink>
+        <NavLink to="/kalender">{t('nav.calendar')}</NavLink>
+        <NavLink to="/sok">{t('nav.search')}</NavLink>
+        <NavLink to="/dokument">{t('nav.documents')}</NavLink>
+        <NavLink to="/inkorg">{t('nav.inbox')}</NavLink>
+        {isCurator && <NavLink to="/admin">{t('nav.admin')}</NavLink>}
         <div className="spacer" />
-        <NavLink to="/konto" className="meta-line">Konto &amp; data</NavLink>
+        <LanguagePicker compact />
+        <NavLink to="/konto" className="meta-line">{t('nav.account')}</NavLink>
         <div className="meta-line" style={{ padding: '0 0.6rem' }}>{session?.user.email}</div>
-        <button className="subtle" onClick={logout} style={{ textAlign: 'left' }}>Logga ut</button>
+        <button className="subtle" onClick={logout} style={{ textAlign: 'start' }}>{t('nav.logout')}</button>
       </nav>
       <main className="main">
         <ScrollToTop />
+        <TranslationNotice alsoSwedishContent />
         <Routes>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/kom-igang" element={<OnboardingPage />} />
@@ -158,14 +163,15 @@ function Shell() {
 /** §40 i perfektionsdoktrinen: även fel ska kännas genomarbetade — lugnt
  * språk, vägar vidare, aldrig en tyst omdirigering. */
 function NotFoundPage() {
+  const t = useT();
   return (
     <div className="card" style={{ maxWidth: '34rem', margin: '3rem auto' }}>
-      <p className="meta-line" style={{ textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Fel 404</p>
-      <h1>Vi hittar inte sidan — men vi kan fortfarande hjälpa dig</h1>
-      <p className="guidance">Sidan kan ha flyttats, eller så blev adressen fel. Allt du sparat finns kvar.</p>
+      <p className="meta-line" style={{ textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>{t('notFound.tag')}</p>
+      <h1>{t('notFound.title')}</h1>
+      <p className="guidance">{t('notFound.body')}</p>
       <p style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', marginTop: '1rem' }}>
-        <Link className="btn" to="/">Till din översikt</Link>
-        <a className="btn secondary" href="/bidrag/">Se alla stöd</a>
+        <Link className="btn" to="/">{t('notFound.toOverview')}</Link>
+        <a className="btn secondary" href="/bidrag/">{t('notFound.seeAll')}</a>
       </p>
     </div>
   );

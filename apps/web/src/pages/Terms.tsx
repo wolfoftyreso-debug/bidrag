@@ -6,11 +6,20 @@
  * (dokumenterat i LIMITATIONS §12).
  */
 import { Link } from 'react-router-dom';
+import { useI18n, useT } from '../i18n';
 
 export default function TermsPage() {
+  // Juridisk text: den svenska lydelsen är den bindande versionen
+  // (I18N_PROGRAM §gränser) — vid annat valt språk visas en notis, inte en
+  // AI-översättning av villkoren.
+  const { locale } = useI18n();
+  const t = useT();
   return (
     <div style={{ maxWidth: 680 }}>
       <h1>Köpvillkor</h1>
+      {locale !== 'sv' && (
+        <div className="alert info" role="note" style={{ fontSize: '0.85rem' }}>{t('terms.swedishOnly')}</div>
+      )}
       <p className="guidance">Gäller köp på Bidragskoll.se. Säljare: Landvex AB, org.nr 559141-7042, Antennvägen 2, 135 48 Tyresö.</p>
 
       <div className="card">

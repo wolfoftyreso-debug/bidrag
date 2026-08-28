@@ -8,6 +8,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ApiError, post } from '../api';
 import { useSession } from '../App';
+import { useT } from '../i18n';
+
+/** Översättarfunktionens typ — skickas ned till stegen från sidkomponenten. */
+type T = ReturnType<typeof useT>;
 
 type Track = 'personal' | 'project';
 /** FAS 1: lätt sökandekontext före situationsdialogen — ger struktur utan att
@@ -265,6 +269,7 @@ function personalFacts(a: Answers): Record<string, unknown> {
 }
 
 export default function OnboardingPage() {
+  const t = useT();
   const navigate = useNavigate();
   const { session } = useSession();
   const draftKey = `bidrag.intag.v1.${session?.user.id ?? 'anon'}`;
@@ -294,7 +299,7 @@ export default function OnboardingPage() {
       const isPersonal = answers.track === 'personal';
       const { profile } = await post<{ profile: { id: string } }>('/v1/profiles', {
         kind: isPersonal || answers.applicantType === 'individual' ? 'person' : 'organisation',
-        displayName: isPersonal ? 'Min situation' : answers.applicantType === 'individual' ? 'Min profil' : 'Vår organisation',
+        displayName: isPersonal ? t('ob.data.mySituation') : answers.applicantType === 'individual' ? t('ob.data.myProfile') : t('ob.data.ourOrg'),
         applicantType: isPersonal ? 'individual' : (answers.applicantType ?? 'individual'),
         country: 'SE',
         municipality: answers.municipality || null,
@@ -306,7 +311,7 @@ export default function OnboardingPage() {
       });
 
       const intent = isPersonal
-        ? [answers.freeIntent, answers.extraContext].filter(Boolean).join(' ') || 'Jag behöver hjälp med min ekonomi.'
+        ? [answers.freeIntent, answers.extraContext].filter(Boolean).join(' ') || t('ob.data.defaultIntent')
         : answers.freeIntent;
       const words = intent.trim().split(/\s+/);
       let title = '';
@@ -343,7 +348,7 @@ export default function OnboardingPage() {
 
       const { project } = await post<{ project: { id: string } }>('/v1/projects', {
         profileId: profile.id,
-        title: isPersonal ? 'Min ekonomiska situation' : title.trim() || 'Mitt projekt',
+        title: isPersonal ? t('ob.data.myEconomy') : title.trim() || t('ob.data.myProject'),
         intent,
         totalBudgetMinor: !isPersonal && answers.budget ? Math.round(Number(answers.budget) * 100) : null,
         facts: projectFacts,
@@ -354,7 +359,7 @@ export default function OnboardingPage() {
       try { localStorage.removeItem(draftKey); } catch { /* ofarligt */ }
       navigate(`/projekt/${project.id}`);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Något gick fel.');
+      setError(err instanceof ApiError ? err.message : t('ob.error.generic'));
       setBusy(false);
     }
   };
@@ -384,13 +389,13 @@ export default function OnboardingPage() {
 
   return (
     <div style={{ maxWidth: 560 }}>
-      <div className="progress-steps" role="progressbar" aria-label="Så långt har du kommit i frågorna" aria-valuemin={0} aria-valuemax={STEP_IDS.size} aria-valuenow={[...STEP_IDS].indexOf(step) + 1}>
+      <div className="progress-steps" role="progressbar" aria-label={t('ob.progressLabel')} aria-valuemin={0} aria-valuemax={STEP_IDS.size} aria-valuenow={[...STEP_IDS].indexOf(step) + 1}>
         <span className="done" style={{ flex: progress }} />
         <span style={{ flex: 1 - progress }} />
       </div>
       {resumed && (
         <div className="alert success" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-          <span>Dina svar sparas löpande — du fortsätter där du var.</span>
+          <span>{t('ob.resumed')}</span>
           <button
             className="subtle"
             onClick={() => {
@@ -398,18 +403,18 @@ export default function OnboardingPage() {
               setStep('who'); setHistory([]); setA(initial); setResumed(false);
             }}
           >
-            Börja om från början
+            {t('ob.restart')}
           </button>
         </div>
       )}
       {history.length > 0 && (
-        <button className="subtle" onClick={back} style={{ marginBottom: '0.5rem' }}>← Tillbaka</button>
+        <button className="subtle" onClick={back} style={{ marginBottom: '0.5rem' }}>{t('ob.back')}</button>
       )}
       {error && <div className="alert error">{error}</div>}
       {busy ? (
-        <div className="card"><h2>Tar reda på vad du kan ha rätt till…</h2><p className="guidance">Vi går igenom kända stöd och ersättningar utifrån dina svar.</p></div>
+        <div className="card"><h2>{t('ob.workingTitle')}</h2><p className="guidance">{t('ob.workingBody')}</p></div>
       ) : (
-        <Step key={step} step={step} a={a} onAnswer={advance} />
+        <Step key={step} step={step} a={a} onAnswer={advance} t={t} />
       )}
     </div>
   );
@@ -459,27 +464,27 @@ function QFramhavd({ title, guidance, ill, children }: { title: string; guidance
   );
 }
 
-function YesNo({ onAnswer }: { onAnswer: (v: boolean) => void }) {
+function YesNo({ onAnswer, t }: { onAnswer: (v: boolean) => void; t: T }) {
   return (
     <div style={{ display: 'flex', gap: '0.6rem' }}>
-      <button onClick={() => onAnswer(true)} style={{ flex: 1, padding: '0.8rem' }}>Ja</button>
-      <button className="secondary" onClick={() => onAnswer(false)} style={{ flex: 1, padding: '0.8rem' }}>Nej</button>
+      <button onClick={() => onAnswer(true)} style={{ flex: 1, padding: '0.8rem' }}>{t('ob.yes')}</button>
+      <button className="secondary" onClick={() => onAnswer(false)} style={{ flex: 1, padding: '0.8rem' }}>{t('ob.no')}</button>
     </div>
   );
 }
 
-function ActivityStep({ initial, onNext }: { initial: string[]; onNext: (selected: string[]) => void }) {
+function ActivityStep({ initial, onNext, t }: { initial: string[]; onNext: (selected: string[]) => void; t: T }) {
   const [selected, setSelected] = useState<string[]>(initial);
   const options = [
-    { value: 'exchange', label: 'Utbyte eller resa' },
-    { value: 'training', label: 'Utbildning eller fortbildning' },
-    { value: 'performance', label: 'Föreställning eller konsert' },
-    { value: 'production', label: 'Produktion eller skapande' },
-    { value: 'investment', label: 'Investering eller utrustning' },
-    { value: 'development', label: 'Utvecklingsprojekt' },
+    { value: 'exchange', label: t('ob.activities.exchange') },
+    { value: 'training', label: t('ob.activities.training') },
+    { value: 'performance', label: t('ob.activities.performance') },
+    { value: 'production', label: t('ob.activities.production') },
+    { value: 'investment', label: t('ob.activities.investment') },
+    { value: 'development', label: t('ob.activities.development') },
   ];
   return (
-    <Q title="Vad ska ni göra?" guidance="Välj allt som stämmer.">
+    <Q title={t('ob.activities.title')} guidance={t('ob.activities.guidance')}>
       {options.map((o) => (
         <div className="checkbox-row" key={o.value}>
           <input
@@ -493,12 +498,12 @@ function ActivityStep({ initial, onNext }: { initial: string[]; onNext: (selecte
           <label htmlFor={`act-${o.value}`}>{o.label}</label>
         </div>
       ))}
-      <button style={{ marginTop: '0.8rem' }} onClick={() => onNext(selected)}>Nästa</button>
+      <button style={{ marginTop: '0.8rem' }} onClick={() => onNext(selected)}>{t('ob.next')}</button>
     </Q>
   );
 }
 
-function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patch: Partial<Answers>) => void }) {
+function Step({ step, a, onAnswer, t }: { step: StepId; a: Answers; onAnswer: (patch: Partial<Answers>) => void; t: T }) {
   const [text, setText] = useState('');
 
   switch (step) {
@@ -506,31 +511,27 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
     // bidragsnamn krävs; nästa steg är alltid en situationsfråga (doktrinen §2).
     case 'who':
       return (
-        <QFramhavd
-          ill="glodlampa"
-          title="Vem gäller det?"
-          guidance="Ett snabbt val så vi ställer rätt frågor — sedan berättar du om situationen med egna ord. Du behöver inte veta vad något stöd heter."
-        >
+        <QFramhavd ill="glodlampa" title={t('ob.who.title')} guidance={t('ob.who.guidance')}>
           <Choice
-            label="Mig själv"
-            sub="Stöd och ersättningar för dig och ditt hushåll."
+            label={t('ob.who.self')}
+            sub={t('ob.who.selfSub')}
             onClick={() => onAnswer({ audience: 'self' })}
           />
           <Choice
-            label="Mitt företag"
-            sub="Bidrag och stöd till aktiebolag eller annan företagsform."
+            label={t('ob.who.company')}
+            sub={t('ob.who.companySub')}
             onClick={() => onAnswer({ audience: 'company', track: 'project', applicantType: 'company' })}
           />
           <Choice
-            label="Min enskilda firma"
-            sub="Både stöd till dig som person och till verksamheten — vi tar båda."
+            label={t('ob.who.sole')}
+            sub={t('ob.who.soleSub')}
             onClick={() =>
               onAnswer({ audience: 'sole_trader', track: 'personal', employment: 'self_employed', businessForm: 'sole_trader' })
             }
           />
           <Choice
-            label="En förening eller organisation"
-            sub="Verksamhets- och projektstöd för föreningar och civilsamhälle."
+            label={t('ob.who.assoc')}
+            sub={t('ob.who.assocSub')}
             onClick={() => onAnswer({ audience: 'association', track: 'project', applicantType: 'association' })}
           />
         </QFramhavd>
@@ -538,19 +539,15 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
 
     case 'entry':
       return (
-        <QFramhavd
-          ill="glodlampa"
-          title="Vad behöver du hjälp med?"
-          guidance="Berätta lite om din situation så hittar vi stöd som kan vara relevanta för dig — många stöd är sådana man inte vet att de finns. Du behöver inte veta vad något heter."
-        >
+        <QFramhavd ill="glodlampa" title={t('ob.entry.title')} guidance={t('ob.entry.guidance')}>
           <Choice
-            label="Jag har svårt att få ekonomin att gå ihop"
-            sub="Vi tar reda på vilka stöd och ersättningar du kan ha rätt till."
-            onClick={() => onAnswer({ track: 'personal', freeIntent: 'Jag har svårt att få ekonomin att gå ihop.' })}
+            label={t('ob.entry.eco')}
+            sub={t('ob.entry.ecoSub')}
+            onClick={() => onAnswer({ track: 'personal', freeIntent: t('ob.entry.ecoIntent') })}
           />
           <Choice
-            label="Jag söker pengar till ett projekt eller en verksamhet"
-            sub="Bidrag, stipendier och finansiering — för dig, din förening eller ditt företag."
+            label={t('ob.entry.project')}
+            sub={t('ob.entry.projectSub')}
             onClick={() => onAnswer({ track: 'project' })}
           />
         </QFramhavd>
@@ -559,71 +556,59 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
     // ── Personligt spår ──────────────────────────────────────────────────────
     case 'p-household':
       return (
-        <QFramhavd ill="hus" title="Bor du själv eller tillsammans med någon?">
-          <Choice label="Själv" onClick={() => onAnswer({ householdType: 'alone' })} />
-          <Choice label="Med partner" onClick={() => onAnswer({ householdType: 'partner' })} />
-          <Choice label="Med andra vuxna" onClick={() => onAnswer({ householdType: 'other' })} />
+        <QFramhavd ill="hus" title={t('ob.household.title')}>
+          <Choice label={t('ob.household.alone')} onClick={() => onAnswer({ householdType: 'alone' })} />
+          <Choice label={t('ob.household.partner')} onClick={() => onAnswer({ householdType: 'partner' })} />
+          <Choice label={t('ob.household.others')} onClick={() => onAnswer({ householdType: 'other' })} />
         </QFramhavd>
       );
     case 'p-children':
       return (
-        <QFramhavd ill="familj" title="Har du barn som bor hos dig?">
-          <Choice label="Ja" onClick={() => onAnswer({ children: 'yes' })} />
-          <Choice label="Ja, växelvis" onClick={() => onAnswer({ children: 'shared' })} />
-          <Choice label="Nej" onClick={() => onAnswer({ children: 'no' })} />
+        <QFramhavd ill="familj" title={t('ob.children.title')}>
+          <Choice label={t('ob.children.yes')} onClick={() => onAnswer({ children: 'yes' })} />
+          <Choice label={t('ob.children.shared')} onClick={() => onAnswer({ children: 'shared' })} />
+          <Choice label={t('ob.children.no')} onClick={() => onAnswer({ children: 'no' })} />
         </QFramhavd>
       );
     case 'p-separated':
       return (
-        <Q title="Bor du och barnets andra förälder på skilda håll?">
-          <YesNo onAnswer={(v) => onAnswer({ separatedParent: v })} />
+        <Q title={t('ob.separated.title')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ separatedParent: v })} />
         </Q>
       );
 
     // ── Barnspåret: frågor som upptäcker stöd man inte söker efter ──────────
     case 'p-child-school':
       return (
-        <Q title="Går något av barnen i skolan?">
-          <Choice label="Ja, i grundskolan" onClick={() => onAnswer({ childSchool: 'grundskola' })} />
-          <Choice label="Ja, på gymnasiet" onClick={() => onAnswer({ childSchool: 'gymnasiet' })} />
-          <Choice label="Ja, både grundskola och gymnasium" onClick={() => onAnswer({ childSchool: 'both' })} />
-          <Choice label="Nej, inte ännu" onClick={() => onAnswer({ childSchool: 'none' })} />
+        <Q title={t('ob.childSchool.title')}>
+          <Choice label={t('ob.childSchool.compulsory')} onClick={() => onAnswer({ childSchool: 'grundskola' })} />
+          <Choice label={t('ob.childSchool.upper')} onClick={() => onAnswer({ childSchool: 'gymnasiet' })} />
+          <Choice label={t('ob.childSchool.both')} onClick={() => onAnswer({ childSchool: 'both' })} />
+          <Choice label={t('ob.childSchool.none')} onClick={() => onAnswer({ childSchool: 'none' })} />
         </Q>
       );
     case 'p-child-costs':
       return (
-        <Q
-          title="Har du någon gång haft svårt att betala för en skolutflykt, klassresa eller aktivitet som skolan förväntar sig att ditt barn ska delta i?"
-          guidance="Det finns stöd just för sådant — de flesta känner inte till dem."
-        >
-          <YesNo onAnswer={(v) => onAnswer({ childCostsStrain: v })} />
+        <Q title={t('ob.childCosts.title')} guidance={t('ob.childCosts.guidance')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ childCostsStrain: v })} />
         </Q>
       );
     case 'p-child-leisure':
       return (
-        <Q
-          title="Har ditt barn behövt avstå från en fritidsaktivitet för att den kostar för mycket?"
-          guidance="Även utrustning och avgifter räknas."
-        >
-          <YesNo onAnswer={(v) => onAnswer({ childMissedLeisure: v })} />
+        <Q title={t('ob.childLeisure.title')} guidance={t('ob.childLeisure.guidance')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ childMissedLeisure: v })} />
         </Q>
       );
     case 'p-child-glasses':
       return (
-        <Q
-          title="Behöver något av dina barn i åldern 8–19 år glasögon eller linser?"
-          guidance="Alla regioner ger bidrag för barns glasögon — långt ifrån alla föräldrar vet om det."
-        >
-          <YesNo onAnswer={(v) => onAnswer({ childNeedsGlasses: v })} />
+        <Q title={t('ob.childGlasses.title')} guidance={t('ob.childGlasses.guidance')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ childNeedsGlasses: v })} />
         </Q>
       );
     case 'p-child-travel':
       return (
-        <Q
-          title="Har något av barnen lång, trafikfarlig eller på annat sätt besvärlig väg till skolan?"
-          guidance="Skolskjuts och resestöd är rättigheter under vissa villkor — kommunen gör bedömningen."
-        >
-          <YesNo onAnswer={(v) => onAnswer({ childTravelHard: v })} />
+        <Q title={t('ob.childTravel.title')} guidance={t('ob.childTravel.guidance')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ childTravelHard: v })} />
         </Q>
       );
 
@@ -632,7 +617,7 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
       const year = Number(text);
       const valid = Number.isInteger(year) && year >= nowYear - 120 && year <= nowYear;
       return (
-        <Q title="Vilket år är du född?" guidance="Året avgör exakt vilka åldersgränser som gäller — vi behöver inget personnummer, bara födelseåret.">
+        <Q title={t('ob.age.title')} guidance={t('ob.age.guidance')}>
           <input
             type="number"
             inputMode="numeric"
@@ -640,135 +625,110 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
             max={nowYear}
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="t.ex. 1979"
+            placeholder={t('ob.age.placeholder')}
             autoFocus
           />
-          <button style={{ marginTop: '0.8rem' }} disabled={!valid} onClick={() => onAnswer({ birthYear: year })}>Nästa</button>
+          <button style={{ marginTop: '0.8rem' }} disabled={!valid} onClick={() => onAnswer({ birthYear: year })}>{t('ob.next')}</button>
         </Q>
       );
     }
     case 'p-employment':
       return (
-        <Q title="Vad gör du i dag?">
-          <Choice label="Arbetar" onClick={() => onAnswer({ employment: 'working' })} />
-          <Choice label="Arbetslös" onClick={() => onAnswer({ employment: 'unemployed' })} />
-          <Choice label="Sjukskriven eller nedsatt arbetsförmåga" onClick={() => onAnswer({ employment: 'sick' })} />
-          <Choice label="Studerar" onClick={() => onAnswer({ employment: 'studying' })} />
-          <Choice label="Driver eget företag" sub="Stöd till dig som person ingår alltid. Enskild firma: företagsstöden ingår också här. Aktiebolag: bolagets stöd genomlyses separat — vi visar vilka de är." onClick={() => onAnswer({ employment: 'self_employed' })} />
-          <Choice label="Pensionär" onClick={() => onAnswer({ employment: 'retired' })} />
+        <Q title={t('ob.employment.title')}>
+          <Choice label={t('ob.employment.working')} onClick={() => onAnswer({ employment: 'working' })} />
+          <Choice label={t('ob.employment.unemployed')} onClick={() => onAnswer({ employment: 'unemployed' })} />
+          <Choice label={t('ob.employment.sick')} onClick={() => onAnswer({ employment: 'sick' })} />
+          <Choice label={t('ob.employment.studying')} onClick={() => onAnswer({ employment: 'studying' })} />
+          <Choice label={t('ob.employment.self')} sub={t('ob.employment.selfSub')} onClick={() => onAnswer({ employment: 'self_employed' })} />
+          <Choice label={t('ob.employment.retired')} onClick={() => onAnswer({ employment: 'retired' })} />
         </Q>
       );
     case 'p-biz-form':
       return (
-        <Q
-          title="Hur driver du verksamheten?"
-          guidance="Driftsformen avgör vilka företagsstöd som är aktuella och vem som söker dem — enskild firma söker du som person, ett aktiebolags stöd söks av bolaget."
-        >
-          <Choice label="Enskild firma" onClick={() => onAnswer({ businessForm: 'sole_trader' })} />
-          <Choice label="Aktiebolag" onClick={() => onAnswer({ businessForm: 'limited_company' })} />
-          <Choice label="Annat eller osäker" onClick={() => onAnswer({ businessForm: 'other' })} />
+        <Q title={t('ob.bizForm.title')} guidance={t('ob.bizForm.guidance')}>
+          <Choice label={t('ob.bizForm.sole')} onClick={() => onAnswer({ businessForm: 'sole_trader' })} />
+          <Choice label={t('ob.bizForm.ab')} onClick={() => onAnswer({ businessForm: 'limited_company' })} />
+          <Choice label={t('ob.bizForm.other')} onClick={() => onAnswer({ businessForm: 'other' })} />
         </Q>
       );
     case 'p-biz-sector':
       return (
-        <Q
-          title="Vad sysslar verksamheten med?"
-          guidance="Frågan avgör vilka branschstöd som är aktuella — jordbruksstöden gäller till exempel bara jordbruksföretag, och kultur- och energistöden har egna villkor."
-        >
-          <Choice label="Jordbruk, trädgård eller rennäring" onClick={() => onAnswer({ bizSector: 'agriculture' })} />
-          <Choice label="Kultur eller kreativ näring" sub="Musik, film, litteratur, scen, konst" onClick={() => onAnswer({ bizSector: 'culture' })} />
-          <Choice label="Energi eller miljö" sub="Energieffektivisering, laddinfrastruktur, klimatåtgärder" onClick={() => onAnswer({ bizSector: 'environment' })} />
-          <Choice label="Innovation eller teknik" onClick={() => onAnswer({ bizSector: 'innovation' })} />
-          <Choice label="Något annat" onClick={() => onAnswer({ bizSector: 'other' })} />
+        <Q title={t('ob.bizSector.title')} guidance={t('ob.bizSector.guidance')}>
+          <Choice label={t('ob.bizSector.agri')} onClick={() => onAnswer({ bizSector: 'agriculture' })} />
+          <Choice label={t('ob.bizSector.culture')} sub={t('ob.bizSector.cultureSub')} onClick={() => onAnswer({ bizSector: 'culture' })} />
+          <Choice label={t('ob.bizSector.energy')} sub={t('ob.bizSector.energySub')} onClick={() => onAnswer({ bizSector: 'environment' })} />
+          <Choice label={t('ob.bizSector.innovation')} onClick={() => onAnswer({ bizSector: 'innovation' })} />
+          <Choice label={t('ob.bizSector.other')} onClick={() => onAnswer({ bizSector: 'other' })} />
         </Q>
       );
     case 'p-capacity':
       return (
-        <Q
-          title="Bedömer du att din arbetsförmåga är nedsatt under minst ett år?"
-          guidance="Det avgör om ersättningar vid längre sjukdom kan vara aktuella. Din egen bedömning räcker här — myndigheten gör alltid den medicinska prövningen."
-        >
-          <p className="guidance" role="note" style={{ marginBottom: '0.6rem' }}>
-            Detta är en hälsouppgift — en känslig personuppgift enligt GDPR (artikel 9).
-            Svarar du Ja eller Nej samtycker du uttryckligen till att svaret behandlas för att
-            hitta stöd åt dig. Du kan när som helst radera alla dina uppgifter under
-            Konto &amp; data. Väljer du att inte svara ställs frågan aldrig igen.
-          </p>
-          <YesNo onAnswer={(v) => onAnswer({ reducedCapacity: v })} />
+        <Q title={t('ob.capacity.title')} guidance={t('ob.capacity.guidance')}>
+          <p className="guidance" role="note" style={{ marginBottom: '0.6rem' }}>{t('ob.art9Note')}</p>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ reducedCapacity: v })} />
           <button className="subtle" style={{ marginTop: '0.6rem' }} onClick={() => onAnswer({ capacityDeclined: true })}>
-            Vill inte svara
+            {t('ob.declineAnswer')}
           </button>
         </Q>
       );
     case 'p-income':
       return (
-        <Q title="Ungefär vad har hushållet i inkomst per månad, före skatt?" guidance="Räkna ihop alla inkomster i hushållet. Ungefärligt räcker.">
-          <Choice label="Under 15 000 kr" onClick={() => onAnswer({ incomeBand: 'under15' })} />
-          <Choice label="15 000–25 000 kr" onClick={() => onAnswer({ incomeBand: '15-25' })} />
-          <Choice label="25 000–40 000 kr" onClick={() => onAnswer({ incomeBand: '25-40' })} />
-          <Choice label="Över 40 000 kr" onClick={() => onAnswer({ incomeBand: 'over40' })} />
+        <Q title={t('ob.income.title')} guidance={t('ob.income.guidance')}>
+          <Choice label={t('ob.income.under15')} onClick={() => onAnswer({ incomeBand: 'under15' })} />
+          <Choice label={t('ob.income.b1525')} onClick={() => onAnswer({ incomeBand: '15-25' })} />
+          <Choice label={t('ob.income.b2540')} onClick={() => onAnswer({ incomeBand: '25-40' })} />
+          <Choice label={t('ob.income.over40')} onClick={() => onAnswer({ incomeBand: 'over40' })} />
         </Q>
       );
     case 'p-savings':
       return (
-        <Q title="Saknar du sparpengar eller tillgångar som kan täcka utgifterna?">
-          <YesNo onAnswer={(v) => onAnswer({ limitedSavings: v })} />
+        <Q title={t('ob.savings.title')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ limitedSavings: v })} />
         </Q>
       );
     case 'p-housing':
       return (
-        <Q title="Betalar du hyra eller andra boendekostnader?">
-          <YesNo onAnswer={(v) => onAnswer({ paysHousing: v })} />
+        <Q title={t('ob.housing.title')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ paysHousing: v })} />
         </Q>
       );
     case 'p-housing-cost':
       return (
-        <Q title="Ungefär hur mycket betalar du för boendet per månad?">
+        <Q title={t('ob.housingCost.title')}>
           <input
             type="number"
             min={0}
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="t.ex. 8500"
+            placeholder={t('ob.housingCost.placeholder')}
             autoFocus
           />
-          <button style={{ marginTop: '0.8rem' }} onClick={() => onAnswer({ housingCost: text })}>Nästa</button>
+          <button style={{ marginTop: '0.8rem' }} onClick={() => onAnswer({ housingCost: text })}>{t('ob.next')}</button>
         </Q>
       );
     case 'p-moving-abroad':
       return (
-        <Q
-          title="Funderar du på att flytta utomlands?"
-          guidance="För jobb, studier eller återvandring — det finns stöd även för den vägen. Svaret öppnar bara följdfrågor om det är ja."
-        >
-          <YesNo onAnswer={(v) => onAnswer({ movingAbroad: v })} />
+        <Q title={t('ob.movingAbroad.title')} guidance={t('ob.movingAbroad.guidance')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ movingAbroad: v })} />
         </Q>
       );
     case 'p-disability':
       return (
-        <Q
-          title="Har du eller någon nära anhörig en funktionsnedsättning eller en långvarig eller allvarlig sjukdom?"
-          guidance="Frågan öppnar stöd som många missar — omvårdnadsbidrag, merkostnadsersättning, bilstöd och närståendepenning. Ett nej betyder att inga sådana följdfrågor ställs."
-        >
-          <p className="guidance" role="note" style={{ marginBottom: '0.6rem' }}>
-            Detta är en hälsouppgift — en känslig personuppgift enligt GDPR (artikel 9).
-            Svarar du Ja eller Nej samtycker du uttryckligen till att svaret behandlas för att
-            hitta stöd åt dig. Du kan när som helst radera alla dina uppgifter under
-            Konto &amp; data. Väljer du att inte svara ställs frågan aldrig igen.
-          </p>
-          <YesNo onAnswer={(v) => onAnswer({ disabilityInFamily: v })} />
+        <Q title={t('ob.disability.title')} guidance={t('ob.disability.guidance')}>
+          <p className="guidance" role="note" style={{ marginBottom: '0.6rem' }}>{t('ob.art9Note')}</p>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ disabilityInFamily: v })} />
           <button className="subtle" style={{ marginTop: '0.6rem' }} onClick={() => onAnswer({ disabilityDeclined: true })}>
-            Vill inte svara
+            {t('ob.declineAnswer')}
           </button>
         </Q>
       );
     case 'p-extra':
       return (
-        <Q title="Är det något mer som påverkar din ekonomi?" guidance="Frivilligt — t.ex. skulder, höga boendekostnader eller något annat du vill nämna. Skriv inte in känsliga hälsouppgifter här; sådant frågar vi om separat med samtycke.">
-          <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Skriv fritt, eller hoppa över." />
+        <Q title={t('ob.extra.title')} guidance={t('ob.extra.guidance')}>
+          <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder={t('ob.extra.placeholder')} />
           <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.8rem' }}>
-            <button onClick={() => onAnswer({ extraContext: text })}>Visa vad jag kan ha rätt till</button>
-            <button className="subtle" onClick={() => onAnswer({ extraContext: '' })}>Hoppa över</button>
+            <button onClick={() => onAnswer({ extraContext: text })}>{t('ob.extra.show')}</button>
+            <button className="subtle" onClick={() => onAnswer({ extraContext: '' })}>{t('ob.skip')}</button>
           </div>
         </Q>
       );
@@ -776,108 +736,108 @@ function Step({ step, a, onAnswer }: { step: StepId; a: Answers; onAnswer: (patc
     // ── Projektspår ──────────────────────────────────────────────────────────
     case 'pr-intent':
       return (
-        <Q title="Vad vill du åstadkomma?" guidance="Beskriv med egna ord — du behöver inte kunna namnet på något bidrag.">
+        <Q title={t('ob.prIntent.title')} guidance={t('ob.prIntent.guidance')}>
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="T.ex: Jag vill ta min dansgrupp till Jamaica för att träna dancehall och ta hem kunskapen till Sverige."
+            placeholder={t('ob.prIntent.placeholder')}
             autoFocus
           />
           <button style={{ marginTop: '0.8rem' }} disabled={text.trim().length < 10} onClick={() => onAnswer({ freeIntent: text })}>
-            Nästa
+            {t('ob.next')}
           </button>
         </Q>
       );
     case 'pr-who':
       return (
-        <Q title="Vem söker?">
-          <Choice label="Jag som privatperson eller enskild utövare" onClick={() => onAnswer({ applicantType: 'individual' })} />
-          <Choice label="En ideell förening" onClick={() => onAnswer({ applicantType: 'association' })} />
-          <Choice label="Ett företag" onClick={() => onAnswer({ applicantType: 'company' })} />
-          <Choice label="En informell grupp" sub="T.ex. en dansgrupp eller ett kompisgäng utan organisationsnummer." onClick={() => onAnswer({ applicantType: 'informal_group' })} />
-          <Choice label="En offentlig aktör" onClick={() => onAnswer({ applicantType: 'public_body' })} />
+        <Q title={t('ob.prWho.title')}>
+          <Choice label={t('ob.prWho.individual')} onClick={() => onAnswer({ applicantType: 'individual' })} />
+          <Choice label={t('ob.prWho.assoc')} onClick={() => onAnswer({ applicantType: 'association' })} />
+          <Choice label={t('ob.prWho.company')} onClick={() => onAnswer({ applicantType: 'company' })} />
+          <Choice label={t('ob.prWho.informal')} sub={t('ob.prWho.informalSub')} onClick={() => onAnswer({ applicantType: 'informal_group' })} />
+          <Choice label={t('ob.prWho.public')} onClick={() => onAnswer({ applicantType: 'public_body' })} />
         </Q>
       );
     case 'pr-municipality':
       return (
-        <Q title="Vilken kommun utgår ni från?" guidance="Frivilligt — vissa stöd är lokala.">
-          <input value={text} onChange={(e) => setText(e.target.value)} placeholder="t.ex. Stockholm" autoFocus />
+        <Q title={t('ob.prMunicipality.title')} guidance={t('ob.prMunicipality.guidance')}>
+          <input value={text} onChange={(e) => setText(e.target.value)} placeholder={t('ob.prMunicipality.placeholder')} autoFocus />
           <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.8rem' }}>
-            <button onClick={() => onAnswer({ municipality: text })}>Nästa</button>
-            <button className="subtle" onClick={() => onAnswer({ municipality: '' })}>Hoppa över</button>
+            <button onClick={() => onAnswer({ municipality: text })}>{t('ob.next')}</button>
+            <button className="subtle" onClick={() => onAnswer({ municipality: '' })}>{t('ob.skip')}</button>
           </div>
         </Q>
       );
     case 'pr-artist':
       return (
-        <Q title="Är du yrkesverksam inom kulturområdet?" guidance="Det avgör om kulturstöd för yrkesverksamma är aktuella.">
-          <YesNo onAnswer={(v) => onAnswer({ professionalArtist: v })} />
+        <Q title={t('ob.prArtist.title')} guidance={t('ob.prArtist.guidance')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ professionalArtist: v })} />
         </Q>
       );
     case 'pr-sector':
       return (
-        <Q title="Vilket område ligger projektet närmast?">
-          <Choice label="Kultur — dans, musik, konst, scen, film" onClick={() => onAnswer({ sector: 'culture' })} />
-          <Choice label="Barn och unga" onClick={() => onAnswer({ sector: 'youth' })} />
-          <Choice label="Idrott" onClick={() => onAnswer({ sector: 'sports' })} />
-          <Choice label="Innovation och teknik" onClick={() => onAnswer({ sector: 'innovation' })} />
-          <Choice label="Energi, miljö och klimat" onClick={() => onAnswer({ sector: 'environment' })} />
-          <Choice label="Utbildning" onClick={() => onAnswer({ sector: 'education' })} />
-          <Choice label="Jordbruk och landsbygd" onClick={() => onAnswer({ sector: 'agriculture' })} />
-          <Choice label="Föreningsliv och civilsamhälle" onClick={() => onAnswer({ sector: 'civil_society' })} />
+        <Q title={t('ob.prSector.title')}>
+          <Choice label={t('ob.prSector.culture')} onClick={() => onAnswer({ sector: 'culture' })} />
+          <Choice label={t('ob.prSector.youth')} onClick={() => onAnswer({ sector: 'youth' })} />
+          <Choice label={t('ob.prSector.sports')} onClick={() => onAnswer({ sector: 'sports' })} />
+          <Choice label={t('ob.prSector.innovation')} onClick={() => onAnswer({ sector: 'innovation' })} />
+          <Choice label={t('ob.prSector.environment')} onClick={() => onAnswer({ sector: 'environment' })} />
+          <Choice label={t('ob.prSector.education')} onClick={() => onAnswer({ sector: 'education' })} />
+          <Choice label={t('ob.prSector.agriculture')} onClick={() => onAnswer({ sector: 'agriculture' })} />
+          <Choice label={t('ob.prSector.civil')} onClick={() => onAnswer({ sector: 'civil_society' })} />
         </Q>
       );
     case 'pr-org-democratic':
       return (
-        <Q title="Har föreningen stadgar, styrelse och årsmöte?" guidance="Demokratisk uppbyggnad är ett grundkrav i de flesta statliga föreningsstöd.">
-          <YesNo onAnswer={(v) => onAnswer({ orgDemocratic: v })} />
+        <Q title={t('ob.orgDemocratic.title')} guidance={t('ob.orgDemocratic.guidance')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ orgDemocratic: v })} />
         </Q>
       );
     case 'pr-org-sports':
       return (
-        <Q title="Är föreningen ansluten till ett specialidrottsförbund inom Riksidrottsförbundet?" guidance="Det avgör bl.a. LOK-stödet för barn- och ungdomsidrott.">
-          <YesNo onAnswer={(v) => onAnswer({ orgSportsFederation: v })} />
+        <Q title={t('ob.orgSports.title')} guidance={t('ob.orgSports.guidance')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ orgSportsFederation: v })} />
         </Q>
       );
     case 'pr-org-youthshare':
       return (
-        <Q title="Är minst 60 procent av medlemmarna mellan 6 och 25 år?" guidance="Ett av MUCF:s krav för ungdomsorganisationer.">
-          <YesNo onAnswer={(v) => onAnswer({ orgYouthShare: v })} />
+        <Q title={t('ob.orgYouth.title')} guidance={t('ob.orgYouth.guidance')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ orgYouthShare: v })} />
         </Q>
       );
     case 'pr-org-spread':
       return (
-        <Q title="Har organisationen medlemsföreningar i flera län?">
-          <YesNo onAnswer={(v) => onAnswer({ orgNationalSpread: v })} />
+        <Q title={t('ob.orgSpread.title')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ orgNationalSpread: v })} />
         </Q>
       );
     case 'pr-activities':
-      return <ActivityStep initial={a.activityTypes} onNext={(activityTypes) => onAnswer({ activityTypes })} />;
+      return <ActivityStep t={t} initial={a.activityTypes} onNext={(activityTypes) => onAnswer({ activityTypes })} />;
     case 'pr-international':
       return (
-        <Q title="Har projektet en internationell del?" guidance="T.ex. en resa, ett utbyte eller en partner i ett annat land.">
-          <YesNo onAnswer={(v) => onAnswer({ international: v })} />
+        <Q title={t('ob.prInternational.title')} guidance={t('ob.prInternational.guidance')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ international: v })} />
         </Q>
       );
     case 'pr-knowledge':
       return (
-        <Q title="Kommer erfarenheterna att användas i er verksamhet i Sverige?">
-          <YesNo onAnswer={(v) => onAnswer({ bringsKnowledgeBack: v })} />
+        <Q title={t('ob.prKnowledge.title')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ bringsKnowledgeBack: v })} />
         </Q>
       );
     case 'pr-youth':
       return (
-        <Q title="Riktar sig projektet till barn eller unga?">
-          <YesNo onAnswer={(v) => onAnswer({ targetsYouth: v })} />
+        <Q title={t('ob.prYouth.title')}>
+          <YesNo t={t} onAnswer={(v) => onAnswer({ targetsYouth: v })} />
         </Q>
       );
     case 'pr-budget':
       return (
-        <Q title="Ungefär vad kostar projektet totalt?" guidance="Frivilligt — hjälper oss föreslå en finansieringsplan.">
-          <input type="number" min={0} value={text} onChange={(e) => setText(e.target.value)} placeholder="t.ex. 100000" autoFocus />
+        <Q title={t('ob.prBudget.title')} guidance={t('ob.prBudget.guidance')}>
+          <input type="number" min={0} value={text} onChange={(e) => setText(e.target.value)} placeholder={t('ob.prBudget.placeholder')} autoFocus />
           <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.8rem' }}>
-            <button onClick={() => onAnswer({ budget: text })}>Visa vad jag kan söka</button>
-            <button className="subtle" onClick={() => onAnswer({ budget: '' })}>Hoppa över</button>
+            <button onClick={() => onAnswer({ budget: text })}>{t('ob.prBudget.show')}</button>
+            <button className="subtle" onClick={() => onAnswer({ budget: '' })}>{t('ob.skip')}</button>
           </div>
         </Q>
       );

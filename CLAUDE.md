@@ -280,8 +280,13 @@ miljön och handboken fördjupas då skärm för skärm.
 4. Inga modellnamn/modell-ID:n som författar-attribution i commits, kod
    eller pushade artefakter. (Produktens konfigurerade generationsmodell i
    `.env.example`/`docs/ACTIVATION.md` är produktkonfiguration — undantagen.)
-5. Svenska i all användarvänd text. Dokumentation: behåll varje fils
-   befintliga språk (flera docs är på engelska — det är medvetet).
+5. Svenska är källspråket för all användarvänd text; webben är flerspråkig
+   enligt `docs/I18N_PROGRAM.md` (11 språk, informationsverige-paletten).
+   Ny UI-sträng i översatta ytor = nyckel i `apps/web/src/i18n/locales/sv.ts`
+   + alla 10 översättningar (tools/i18ncheck.mjs i verify fäller annars).
+   Officiella stöd-/myndighetsnamn översätts aldrig; ansökningar och juridik
+   förblir svenska. Dokumentation: behåll varje fils befintliga språk
+   (flera docs är på engelska — det är medvetet).
 6. Kör `npm run verify` grönt innan du pushar; pusha till båda remotes.
    Verify är striktare än CI (CI kör inte deploy-konfig-/hemlighetsstegen
    eller webbläsarkontrollerna) — lita på verify lokalt, CI som andra vakt.

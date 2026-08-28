@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { STATE_LABELS, formatDate, get } from '../api';
+import { useT } from '../i18n';
 
 interface CaseRow {
   id: string;
@@ -23,6 +24,7 @@ interface ProjectRow {
 }
 
 export default function DashboardPage() {
+  const t = useT();
   const [cases, setCases] = useState<CaseRow[]>([]);
   const [notifications, setNotifications] = useState<NotificationRow[]>([]);
   const [projects, setProjects] = useState<ProjectRow[]>([]);
@@ -42,7 +44,7 @@ export default function DashboardPage() {
       .finally(() => setLoaded(true));
   }, []);
 
-  if (!loaded) return <p>Laddar…</p>;
+  if (!loaded) return <p>{t('app.loading')}</p>;
 
   const active = cases.filter((c) => !['CLOSED', 'REJECTED', 'WITHDRAWN'].includes(c.state));
   const upcoming = active
@@ -55,15 +57,12 @@ export default function DashboardPage() {
   if (projects.length === 0) {
     return (
       <div style={{ maxWidth: 640 }}>
-        <h1>Välkommen till Bidragskoll.se</h1>
+        <h1>{t('dash.welcome')}</h1>
         <div className="card">
-          <h2>Vad behöver du hjälp med?</h2>
-          <p>
-            Berätta om din situation — eller vad du vill göra — så tar vi reda på vilka stöd, ersättningar och bidrag du
-            kan ha rätt till. Du behöver inte veta vad något heter. En fråga i taget.
-          </p>
+          <h2>{t('dash.whatHelp')}</h2>
+          <p>{t('dash.introBody')}</p>
           <p style={{ marginTop: '1rem' }}>
-            <Link className="btn" to="/kom-igang">Kom igång</Link>
+            <Link className="btn" to="/kom-igang">{t('dash.getStarted')}</Link>
           </p>
         </div>
       </div>
@@ -72,11 +71,11 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1>Översikt</h1>
+      <h1>{t('dash.title')}</h1>
 
       {notifications.length > 0 && (
         <div className="card">
-          <h2>Nytt sedan sist</h2>
+          <h2>{t('dash.newSince')}</h2>
           {notifications.slice(0, 5).map((n) => (
             <div key={n.id} style={{ padding: '0.35rem 0' }}>
               <strong>{n.title}</strong>
@@ -88,8 +87,8 @@ export default function DashboardPage() {
 
       <div className="grid cols-3">
         <div className="card">
-          <h3>Att göra nu</h3>
-          {needsAction.length === 0 && <p className="meta-line">Inga ansökningar väntar på dig.</p>}
+          <h3>{t('dash.todo')}</h3>
+          {needsAction.length === 0 && <p className="meta-line">{t('dash.noneWaiting')}</p>}
           {needsAction.slice(0, 5).map((c) => (
             <p key={c.id}>
               <Link to={`/ansokningar/${c.id}`}>{c.opportunityTitle}</Link>
@@ -99,36 +98,36 @@ export default function DashboardPage() {
           ))}
         </div>
         <div className="card">
-          <h3>Kommande deadlines</h3>
-          {upcoming.length === 0 && <p className="meta-line">Inga bevakade deadlines.</p>}
+          <h3>{t('dash.upcoming')}</h3>
+          {upcoming.length === 0 && <p className="meta-line">{t('dash.noDeadlines')}</p>}
           {upcoming.slice(0, 5).map((c) => (
             <p key={c.id}>
               <Link to={`/ansokningar/${c.id}`}>{c.opportunityTitle}</Link>
               <br />
-              <span className="meta-line">Stänger {formatDate(c.deadlineAt)}</span>
+              <span className="meta-line">{t('dash.closes', { datum: formatDate(c.deadlineAt) })}</span>
             </p>
           ))}
         </div>
         <div className="card">
-          <h3>Mina projekt</h3>
+          <h3>{t('dash.myProjects')}</h3>
           {projects.map((p) => (
             <p key={p.id}>
               <Link to={`/projekt/${p.id}`}>{p.title}</Link>
             </p>
           ))}
           <p style={{ marginTop: '0.75rem' }}>
-            <Link to="/kom-igang">+ Nytt projekt</Link>
+            <Link to="/kom-igang">{t('dash.newProject')}</Link>
           </p>
         </div>
       </div>
 
       <div className="card">
-        <h2>Mina ansökningar</h2>
-        {cases.length === 0 && <p className="meta-line">Inga ansökningar ännu — börja från en matchning under Projekt.</p>}
+        <h2>{t('dash.myApplications')}</h2>
+        {cases.length === 0 && <p className="meta-line">{t('dash.noApplications')}</p>}
         {cases.length > 0 && (
           <table className="data">
             <thead>
-              <tr><th>Stöd</th><th>Projekt</th><th>Status</th><th>Deadline</th></tr>
+              <tr><th>{t('dash.thSupport')}</th><th>{t('dash.thProject')}</th><th>{t('dash.thStatus')}</th><th>{t('dash.thDeadline')}</th></tr>
             </thead>
             <tbody>
               {cases.map((c) => (

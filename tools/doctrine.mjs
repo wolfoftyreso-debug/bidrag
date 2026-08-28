@@ -76,12 +76,25 @@ const findings = [];
 const note = (surface, rule, msg) => findings.push({ surface, rule, msg });
 
 // A ---------------------------------------------------------------------------
+// Webben är flerspråkig (I18N fas A): texterna bor i källspråksfilen sv.ts och
+// intaget refererar dem via nycklar. Invarianten kontrolleras därför i två led
+// för webben: (1) källspråket bär förankringstexterna ordagrant, (2) intaget
+// refererar faktiskt situationsnycklarna — annars kan sv.ts bära texten medan
+// intaget slutat visa den. Demon är fortsatt enspråkig och kontrolleras direkt.
+const WEB_INTAKE = 'apps/web/src/pages/Onboarding.tsx';
+const SV_LOCALE = 'apps/web/src/i18n/locales/sv.ts';
+const SITUATION_KEYS = ['ob.entry.eco', 'ob.entry.project'];
 for (const f of INTAKE) {
-  const src = read(f);
+  const src = f === WEB_INTAKE ? read(f) + read(SV_LOCALE) : read(f);
   for (const anchor of SITUATION_ANCHORS) {
     if (!src.includes(anchor)) {
       note(f, 'A · situations-först', `saknar förankringen "${anchor}" — intaget öppnar inte längre med situationsförgreningen`);
     }
+  }
+}
+for (const key of SITUATION_KEYS) {
+  if (!read(WEB_INTAKE).includes(`'${key}'`)) {
+    note(WEB_INTAKE, 'A · situations-först', `refererar inte situationsnyckeln '${key}' — förankringen finns i sv.ts men visas inte i intaget`);
   }
 }
 

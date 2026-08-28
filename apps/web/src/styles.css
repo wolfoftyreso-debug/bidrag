@@ -61,7 +61,7 @@ p { margin: 0.4rem 0; }
 
 .app-shell { display: flex; min-height: 100vh; }
 .sidebar {
-  width: 236px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border);
+  width: 236px; flex-shrink: 0; background: var(--surface); border-inline-end: 1px solid var(--border);
   padding: 1.35rem 0.9rem; display: flex; flex-direction: column; gap: 0.2rem; position: sticky; top: 0; height: 100vh;
 }
 .sidebar .brand {
@@ -72,10 +72,10 @@ p { margin: 0.4rem 0; }
 .brand-mark { width: 1.55rem; height: 1.55rem; flex-shrink: 0; display: block; }
 .sidebar a {
   padding: 0.52rem 0.65rem; border-radius: var(--radius-sm); color: var(--text); font-weight: 500;
-  border-left: 3px solid transparent; transition: background 120ms ease, color 120ms ease;
+  border-inline-start: 3px solid transparent; transition: background 120ms ease, color 120ms ease;
 }
 .sidebar a:hover { background: var(--bg-deep); text-decoration: none; }
-.sidebar a.active { background: var(--primary-soft); color: var(--primary-dark); font-weight: 650; border-left-color: var(--primary); }
+.sidebar a.active { background: var(--primary-soft); color: var(--primary-dark); font-weight: 650; border-inline-start-color: var(--primary); }
 .sidebar .spacer { flex: 1; }
 .main { flex: 1; padding: 2.1rem 2.4rem 3rem; max-width: 1060px; }
 
@@ -112,7 +112,7 @@ button.subtle:hover { background: var(--bg-deep); box-shadow: none; transform: n
 
 /* Svarsval (en fråga per skärm) */
 .choice {
-  display: block; width: 100%; text-align: left; margin-bottom: 0.6rem; padding: 0.95rem 1.1rem;
+  display: block; width: 100%; text-align: start; margin-bottom: 0.6rem; padding: 0.95rem 1.1rem;
   background: var(--surface); border: 1.5px solid var(--border-strong); border-radius: var(--radius-choice);
   cursor: pointer; font: inherit; color: var(--text); font-weight: 600;
   box-shadow: 0 1px 3px rgba(40, 36, 28, 0.08), 0 3px 10px rgba(0, 86, 163, 0.07);
@@ -139,12 +139,12 @@ button.subtle:hover { background: var(--bg-deep); box-shadow: none; transform: n
 }
 .fraga-framhavd .scen img, .fraga-framhavd .scen svg { width: 96px; height: 96px; display: block; }
 .fraga-framhavd h1 { font-size: 1.8rem; margin-bottom: 0.35rem; }
-.fraga-framhavd .val { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; text-align: left; margin-top: 1rem; }
+.fraga-framhavd .val { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; text-align: start; margin-top: 1rem; }
 /* CTA-pop: valen är skärmens handling — vit yta med djup mot den tonade
    panelen och en riktningspil som svarar på hovring. */
-.fraga-framhavd .choice { position: relative; padding-right: 2.4rem;
+.fraga-framhavd .choice { position: relative; padding-inline-end: 2.4rem;
   box-shadow: 0 2px 6px rgba(0, 86, 163, 0.12), 0 8px 22px rgba(0, 86, 163, 0.10); }
-.fraga-framhavd .choice::after { content: '›' / ''; position: absolute; right: 1.05rem; top: 50%;
+.fraga-framhavd .choice::after { content: '›' / ''; position: absolute; inset-inline-end: 1.05rem; top: 50%;
   transform: translateY(-52%); font-size: 1.3rem; font-weight: 700; color: var(--primary);
   opacity: 0.55; transition: opacity 120ms ease, transform 120ms ease; }
 .fraga-framhavd .choice:hover::after { opacity: 1; transform: translateY(-52%) translateX(3px); }
@@ -193,7 +193,7 @@ textarea { min-height: 110px; resize: vertical; }
 
 table.data { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
 table.data th {
-  text-align: left; color: var(--text-muted); font-weight: 650; font-size: 0.8rem; text-transform: uppercase;
+  text-align: start; color: var(--text-muted); font-weight: 650; font-size: 0.8rem; text-transform: uppercase;
   letter-spacing: 0.045em; padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--border-strong);
 }
 table.data td { padding: 0.55rem 0.6rem; border-bottom: 1px solid var(--border); }
@@ -226,7 +226,7 @@ table.data tr:hover td { background: var(--bg); }
 @media (max-width: 800px) {
   .app-shell { flex-direction: column; }
   .sidebar { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; }
-  .sidebar a { border-left: none; }
+  .sidebar a { border-inline-start: none; }
   .main { padding: 1.25rem 1rem; }
   .kv { grid-template-columns: 1fr; }
 }
@@ -241,3 +241,8 @@ table.data tr:hover td { background: var(--bg); }
 button.upplas, .btn.upplas { background: #fffdf9; color: #003a6d; border: none;
   font-weight: 700; box-shadow: 0 3px 12px rgba(0,0,0,0.30); }
 button.upplas:hover, .btn.upplas:hover { background: #e8f0f8; color: #003a6d; }
+
+/* RTL (arabiska, dari, persiska): layouten speglas av logiska egenskaper
+   ovan; riktningspilen på framhävda val måste dock byta tecken själv. */
+[dir='rtl'] .fraga-framhavd .choice::after { content: '‹' / ''; }
+[dir='rtl'] .fraga-framhavd .choice:hover::after { transform: translateY(-52%) translateX(-3px); }
