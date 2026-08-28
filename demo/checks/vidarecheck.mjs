@@ -94,9 +94,14 @@ await page.waitForSelector('text=Vald — ingår i din plan');
 await page.click('button:has-text("Nästa — gå vidare med 1 valt stöd")');
 await page.waitForSelector('text=Din plan — 1 ansökan');
 await page.waitForSelector('text=Så ansöker du:');
-const applyLink = await page.locator('a:has-text("Till ansökan hos")').count();
+// Planen måste bära BÅDA vägarna vidare: förberedelsen (produktens
+// arbetslager) och självbetjäningen hos myndigheten som alltid är gratis.
+// Länken söks på funktion, inte etikett — en omdöpning ska inte fälla bygget.
+const applyLink = await page.locator('.explain .row a[href^="https://"]').count();
 if (applyLink === 0) { console.log('FEL: ansökningslänk saknas i planen'); process.exit(1); }
-console.log('5. Vill ansöka → Nästa → plan med konkret ansökningsväg och källänk ✓');
+const prepButton = await page.locator('button:has-text("Förbered ansökan")').count();
+if (prepButton === 0) { console.log('FEL: planen erbjuder ingen dokumentförberedelse (F-FÖRBERED)'); process.exit(1); }
+console.log('5. Vill ansöka → Nästa → plan med förberedelse, ansökningsväg och källänk ✓');
 
 // 7. Ta bort ur planen + tillbaka till analysen.
 await page.click('button:has-text("Ta bort ur planen")');
