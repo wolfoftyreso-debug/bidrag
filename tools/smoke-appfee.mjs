@@ -41,9 +41,7 @@ const proj = await call('POST', '/v1/projects', {
 });
 const prid = proj.json.project.id;
 
-const unlock = await call('POST', `/v1/projects/${prid}/analysis-unlock`, { immediateDeliveryConsent: true });
-const uconf = await call('POST', `/v1/payments/${unlock.json.paymentId}/mock-confirm`);
-console.log('analysis-unlock', unlock.status, '→ confirm', uconf.status, JSON.stringify(uconf.json).slice(0, 120));
+// Open Discovery: matchningar är gratis, ingen analys-upplåsning finns.
 await call('POST', `/v1/projects/${prid}/matches`, {});
 const m = await call('GET', `/v1/projects/${prid}/matches`);
 if (!m.json?.matches) { console.error('FAIL matches', m.status, JSON.stringify(m.json).slice(0, 200)); process.exit(1); }
@@ -53,8 +51,10 @@ const results = [];
 const step1 = await call('POST', '/v1/applications', { projectId: prid, opportunityId: opp.opportunityId });
 results.push(['utan kredit → 402', step1.status, JSON.stringify(step1.json)]);
 
-const status = await call('GET', `/v1/projects/${prid}/unlock-status`);
-results.push(['unlock-status applicationPriceMinor', status.json.applicationPriceMinor]);
+// Priset exponeras i 402-kroppen (priceMinor) — det är den levande kontrakts-
+// ytan webbappen läser. (Den gamla /unlock-status-endpointen togs bort i
+// Open Discovery-övergången; ingen yta använder den längre.)
+results.push(['402 priceMinor', step1.json?.priceMinor]);
 
 const pur = await call('POST', `/v1/projects/${prid}/application-purchase`, { immediateDeliveryConsent: true });
 results.push(['köp 19 kr → 201', pur.status, pur.json.amountMinor]);
@@ -71,7 +71,7 @@ const purchases = await call('GET', '/v1/purchases');
 for (const p of purchases.json.purchases) results.push(['köp', p.kind, p.amountMinor, p.receiptNumber]);
 
 for (const r of results) console.log(...r);
-const ok = step1.status === 402 && pur.status === 201 && pur.json.amountMinor === 1900
-  && step3.status === 201 && step4.status === 402 && status.json.applicationPriceMinor === 1900;
+const ok = step1.status === 402 && step1.json?.priceMinor === 1900 && pur.status === 201 && pur.json.amountMinor === 1900
+  && step3.status === 201 && step4.status === 402;
 console.log(ok ? 'SMOKE OK' : 'SMOKE FAIL');
 process.exit(ok ? 0 : 1);
