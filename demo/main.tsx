@@ -6,13 +6,17 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { DOCUMENT_TEMPLATES, PERSONAL_INSTRUMENTS, businessRelevantSlugs, computeMatch,
-  prefillAnswers, renderDocument, validateDocumentAnswers, visibleQuestions,
+  prefillAnswers, prefillFromCanonical, renderDocument, validateAnswers, validateDocumentAnswers,
+  visibleFields, visibleQuestions,
+  type AnswerValue, type Answers, type ApplicationFieldDef, type ApplicationSchemaDef,
   type DocAnswers, type DocQuestion, type DocumentTemplate } from '@bidrag/core';
 import OPPORTUNITIES from './demo-opportunities.json';
 
 type Facts = Record<string, unknown>;
 
 interface Opp {
+  applicationSchema?: ApplicationSchemaDef | null;
+  evidenceRequirements?: { id: string; kind: string; description: string; mandatory: boolean }[];
   slug: string;
   title: string;
   authority: string;
@@ -176,6 +180,7 @@ function buildFacts(a: A): Facts {
     }
     if (a.savings !== undefined) f['person.limitedSavings'] = a.savings;
     if (a.paysHousing !== undefined) f['person.paysHousingCost'] = a.paysHousing;
+    if (typeof a.housingCost === 'number') f['person.housingCostMonthly'] = a.housingCost;
   } else {
     f['applicant.type'] = a.who ?? 'individual';
     if (a.artist !== undefined) f['person.professionalArtist'] = a.artist;
@@ -653,6 +658,94 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
  * att ansöka själv hos myndigheten. Dokumentet visas som text med kopieraknapp
  * — sandlådan tillåter inga nedladdningar (samma skäl som UtLank).
  */
+/**
+ * F-SPECIFIK (användarfynd 2026-08-28: "Allt ska vara specifikt!!").
+ * Förberedelsen körde fyra generiska mallar. Kunskapsbasen har 72 kurerade
+ * ansökningsscheman — myndighetens EGNA fält, rubriker, gränser och
+ * vägledning ("siffran står i hyresavtalet", "en för låg uppskattning kan ge
+ * återkrav") — plus kurerade underlagslistor per stöd. Nu används de.
+ *
+ * Ingenting hittas på: saknar ett stöd kurerat schema faller vi tillbaka på
+ * de generiska mallarna och SÄGER att de är generiska. Saknas underlagslista
+ * påstår vi inte att inga underlag behövs — vi säger att listan inte är
+ * kurerad ännu och hänvisar till källan.
+ */
+const CANONICAL_FRAN_FAKTA = (facts: Facts): Record<string, AnswerValue> => {
+  const c: Record<string, AnswerValue> = {};
+  const put = (k: string, v: unknown) => {
+    if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') c[k] = v;
+  };
+  put('person.housingCostMonthly', facts['person.housingCostMonthly']);
+  put('person.childrenAtHomeCount', facts['person.childrenAtHomeCount']);
+  put('person.ageYears', facts['person.ageYears']);
+  put('applicant.municipality', facts['person.municipality']);
+  return c;
+};
+
+function SchemaFalt({ f, value, onChange }: { f: ApplicationFieldDef; value: AnswerValue | undefined; onChange: (v: AnswerValue | undefined) => void }) {
+  const id = `sf-${f.key}`;
+  const numeriskt = f.type === 'number' || f.type === 'currency' || f.type === 'percentage';
+  const langtext = f.type === 'long_text' || f.type === 'rich_text';
+  return (
+    <div className="docfalt">
+      <label htmlFor={id}>{f.label}{f.required ? ' *' : ''}</label>
+      {langtext && (
+        <textarea id={id} rows={4} maxLength={f.maxLength} value={(value as string) ?? ''} onChange={(e) => onChange(e.target.value)} />
+      )}
+      {(f.type === 'text' || f.type === 'date' || f.type === 'date_range' || f.type === 'email' || f.type === 'phone' || f.type === 'url') && (
+        <input id={id} type={f.type === 'date' ? 'date' : f.type === 'email' ? 'email' : 'text'} maxLength={f.maxLength}
+          value={(value as string) ?? ''} onChange={(e) => onChange(e.target.value)} />
+      )}
+      {numeriskt && (
+        <input id={id} type="number" min={f.min} max={f.max} value={(value as number | undefined) ?? ''}
+          onChange={(e) => onChange(e.target.value === '' ? undefined : Number(e.target.value))} />
+      )}
+      {(f.type === 'boolean' || f.type === 'declaration') && (
+        <div className="row">
+          <button type="button" className={value === true ? 'btn primary' : 'btn small'} onClick={() => onChange(true)}>Ja</button>
+          <button type="button" className={value === false ? 'btn primary' : 'btn small'} onClick={() => onChange(false)}>Nej</button>
+        </div>
+      )}
+      {(f.type === 'select' || f.type === 'multi_select') && (
+        <select id={id} value={(value as string) ?? ''} onChange={(e) => onChange(e.target.value)}>
+          <option value="" disabled>Välj…</option>
+          {f.options?.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+      )}
+      {f.guidance && <p className="meta">{f.guidance}</p>}
+      {f.maxLength && langtext && (
+        <p className="meta">{String((value as string) ?? '').length} / {f.maxLength} tecken</p>
+      )}
+    </div>
+  );
+}
+
+/** Dokumentet byggs ur schemats egna sektioner — myndighetens ordning, inte vår. */
+function renderaSchemaDokument(schema: ApplicationSchemaDef, answers: Answers, opp: Opp): string {
+  const rader: string[] = [
+    schema.title.toUpperCase(),
+    `Avser: ${opp.title}`,
+    `Till: ${opp.authority}`,
+    `Datum: ${new Date().toISOString().slice(0, 10)}`,
+    '',
+  ];
+  const synliga = visibleFields(schema, answers);
+  for (const sek of schema.sections) {
+    const falt = synliga.filter((f) => f.section === sek.key && answers[f.key] !== undefined && answers[f.key] !== '');
+    if (falt.length === 0) continue;
+    rader.push(sek.title.toUpperCase());
+    for (const f of falt) {
+      const v = answers[f.key];
+      const text = typeof v === 'boolean' ? (v ? 'Ja' : 'Nej')
+        : f.type === 'select' ? (f.options?.find((o) => o.value === v)?.label ?? String(v))
+        : String(v);
+      rader.push(f.type === 'long_text' || f.type === 'rich_text' ? `${f.label}:\n${text}` : `${f.label}: ${text}`);
+    }
+    rader.push('');
+  }
+  return rader.join('\n').trimEnd();
+}
+
 function docLabel(q: DocQuestion, v: unknown): string {
   if (typeof v === 'boolean') return v ? 'Ja' : 'Nej';
   if (q.type === 'select') return q.options?.find((o) => o.value === v)?.label ?? String(v);
@@ -691,52 +784,43 @@ function DocFalt({ q, value, onChange }: { q: DocQuestion; value: unknown; onCha
 }
 
 function ForberedVy({ opp, facts, onBack }: { opp: Opp; facts: Facts; onBack: () => void }) {
-  // Förifyllnaden kommer ur utredningens svar — samma funktion som produkten
-  // kör serverside. Demon har inget konto, så namn/kommun är alltid tomma.
-  // Bara relevanta mallar (F-RELEVANS): projektbeskrivningen hör till projekt-
-  // och företagsstöd, de personliga bilagorna till personliga stöd. Att visa
-  // fel mall är samma sorts fel som att föreslå fel stöd.
+  const schema = opp.applicationSchema ?? null;
+
+  // ── Stödets EGET schema (F-SPECIFIK) ──────────────────────────────────────
+  const canonical = useMemo(() => CANONICAL_FRAN_FAKTA(facts), [facts]);
+  const forifyllt = useMemo(
+    () => (schema ? prefillFromCanonical(schema, {}, canonical) : { answers: {} as Answers, prefilledKeys: [] as string[] }),
+    [schema, canonical],
+  );
+  const [svar, setSvar] = useState<Answers>(() => forifyllt.answers);
+  const [kopierad, setKopierad] = useState(false);
+
+  // ── Reserv: generiska mallar när stödet saknar kurerat schema ─────────────
   const personligt = PERSONAL_INSTRUMENTS.has(opp.instrumentType);
   const mallar = useMemo(
     () => DOCUMENT_TEMPLATES.filter((t) => (t.key === 'projektbeskrivning' ? !personligt : personligt)),
     [personligt],
   );
-  const prefill = useMemo(
+  const mallPrefill = useMemo(
     () => Object.fromEntries(mallar.map((t) => [t.key, prefillAnswers(t.key, { facts })])),
     [mallar, facts],
   );
-  const [svar, setSvar] = useState<Record<string, DocAnswers>>(() => ({ ...prefill }));
-  const [oppen, setOppen] = useState<string>(mallar[0]!.key);
-  const [kopierad, setKopierad] = useState<string | null>(null);
-
-  const status = (t: DocumentTemplate) => validateDocumentAnswers(t, svar[t.key] ?? {});
-  const mall = mallar.find((t) => t.key === oppen) ?? mallar[0]!;
-  const mallSvar = svar[oppen] ?? {};
-  const fragor = visibleQuestions(mall, mallSvar);
-  const dom = status(mall);
-  const forifyllda = fragor.filter((q) => (prefill[mall.key] ?? {})[q.key] !== undefined);
-
-  let dokument: string | null = null;
-  if (dom.ok) {
-    dokument = renderDocument(mall, mallSvar, {
-      recipient: opp.authority,
-      opportunityTitle: opp.title,
-      date: new Date().toISOString().slice(0, 10),
-      applicantName: (mallSvar.fullName as string) || undefined,
-    }).text;
-  }
+  const [mallSvarAlla, setMallSvarAlla] = useState<Record<string, DocAnswers>>(() => ({ ...mallPrefill }));
+  const [oppenMall, setOppenMall] = useState<string>(mallar[0]!.key);
 
   const kopiera = async (text: string) => {
-    try { await navigator.clipboard.writeText(text); setKopierad(mall.key); } catch { setKopierad('fel'); }
+    try { await navigator.clipboard.writeText(text); setKopierad(true); } catch { setKopierad(false); }
   };
 
-  return (
-    <div>
+  const underlag = opp.evidenceRequirements ?? [];
+
+  const huvud = (
+    <>
       <button className="btn subtle" onClick={onBack} style={{ marginBottom: '0.6rem' }}>← Tillbaka till planen</button>
       <div className="card accent">
         <h1>Förbered ansökan — {opp.title}</h1>
         <p className="guidance">
-          Systemet fyller i det du redan svarat, frågar bara om det som saknas och skriver dokumenten åt dig.
+          Systemet fyller i det du redan svarat, frågar bara om det som saknas och skriver dokumentet åt dig.
           Du ser hela texten innan något lämnas in — och kan ändra varje svar.
         </p>
         <p className="meta">
@@ -747,67 +831,152 @@ function ForberedVy({ opp, facts, onBack }: { opp: Opp; facts: Facts; onBack: ()
       </div>
 
       <div className="card">
-        <h2>Dokument som förbereds</h2>
-        <ul className="doclista">
-          {mallar.map((t) => {
-            const d = status(t);
-            return (
-              <li key={t.key}>
-                <button className={t.key === oppen ? 'btn primary' : 'btn small'} onClick={() => { setOppen(t.key); setKopierad(null); }}>
-                  {t.title}
-                </button>
-                <span className={d.ok ? 'badge success' : 'badge warning'}>
-                  {d.ok ? 'klart' : `${d.missing.length} svar kvar`}
-                </span>
+        <h2>Så ansöker du hos {opp.authority}</h2>
+        <p>{opp.applicationMethod}</p>
+        <h3>Underlag att ha framme</h3>
+        {underlag.length > 0 ? (
+          <ul className="underlag">
+            {underlag.map((e) => (
+              <li key={e.id}>
+                {e.description}{' '}
+                <span className={e.mandatory ? 'badge warning' : 'badge info'}>{e.mandatory ? 'obligatoriskt' : 'om det finns'}</span>
               </li>
-            );
-          })}
-        </ul>
-      </div>
-
-      <div className="card">
-        <h2>{mall.title}</h2>
-        <p className="guidance">{mall.description}</p>
-        {forifyllda.length > 0 && (
-          <div className="inforuta">
-            <strong>Redan ifyllt från din utredning:</strong>
-            <ul>
-              {forifyllda.map((q) => (
-                <li key={q.key}>{q.label}: <strong>{docLabel(q, mallSvar[q.key])}</strong></li>
-              ))}
-            </ul>
-            Du behöver aldrig svara på samma fråga två gånger — men allt går att ändra här.
-          </div>
-        )}
-        {fragor.map((q) => (
-          <DocFalt
-            key={q.key}
-            q={q}
-            value={mallSvar[q.key]}
-            onChange={(v) => setSvar((prev) => ({ ...prev, [mall.key]: { ...(prev[mall.key] ?? {}), [q.key]: v } }))}
-          />
-        ))}
-      </div>
-
-      <div className="card">
-        <h2>Så här blir dokumentet</h2>
-        {dokument === null ? (
-          <p className="meta warn">
-            Fyll i {dom.missing.map((m) => m.label).join(', ')} — då skrivs dokumentet färdigt här.
-            Vi skriver aldrig något du inte svarat.
+            ))}
+          </ul>
+        ) : (
+          <p className="meta">
+            Ingen underlagslista är kurerad för det här stödet ännu, och vi gissar inte. Kontrollera
+            vad som ska bifogas hos källan: <UtLank href={opp.sourceUrl}>{opp.sourceUrl}</UtLank>
           </p>
+        )}
+      </div>
+    </>
+  );
+
+  if (!schema) {
+    // Ärlig reserv: generiska mallar, tydligt märkta som generiska.
+    const mall = mallar.find((t) => t.key === oppenMall) ?? mallar[0]!;
+    const mallSvar = mallSvarAlla[mall.key] ?? {};
+    const fragor = visibleQuestions(mall, mallSvar);
+    const dom = validateDocumentAnswers(mall, mallSvar);
+    const redan = fragor.filter((q) => (mallPrefill[mall.key] ?? {})[q.key] !== undefined);
+    const dokument = dom.ok
+      ? renderDocument(mall, mallSvar, {
+          recipient: opp.authority,
+          opportunityTitle: opp.title,
+          date: new Date().toISOString().slice(0, 10),
+          applicantName: (mallSvar.fullName as string) || undefined,
+        }).text
+      : null;
+    return (
+      <div>
+        {huvud}
+        <div className="card">
+          <h2>Dokument som förbereds</h2>
+          <p className="meta warn">
+            Det här stödet har ännu inget kurerat ansökningsformulär i kunskapsbasen, så vi använder generella
+            mallar. De täcker det de flesta handläggare frågar efter — men följ {opp.authority}s egna anvisningar.
+          </p>
+          <ul className="doclista">
+            {mallar.map((t) => {
+              const d = validateDocumentAnswers(t, mallSvarAlla[t.key] ?? {});
+              return (
+                <li key={t.key}>
+                  <button className={t.key === mall.key ? 'btn primary' : 'btn small'} onClick={() => { setOppenMall(t.key); setKopierad(false); }}>{t.title}</button>
+                  <span className={d.ok ? 'badge success' : 'badge warning'}>{d.ok ? 'klart' : `${d.missing.length} svar kvar`}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <div className="card">
+          <h2>{mall.title}</h2>
+          <p className="guidance">{mall.description}</p>
+          {redan.length > 0 && (
+            <div className="inforuta">
+              <strong>Redan ifyllt från din utredning:</strong>
+              <ul>{redan.map((q) => <li key={q.key}>{q.label}: <strong>{docLabel(q, mallSvar[q.key])}</strong></li>)}</ul>
+              Du behöver aldrig svara på samma fråga två gånger — men allt går att ändra här.
+            </div>
+          )}
+          {fragor.map((q) => (
+            <DocFalt key={q.key} q={q} value={mallSvar[q.key]}
+              onChange={(v) => setMallSvarAlla((prev) => ({ ...prev, [mall.key]: { ...(prev[mall.key] ?? {}), [q.key]: v } }))} />
+          ))}
+        </div>
+        <div className="card">
+          <h2>Så här blir dokumentet</h2>
+          {dokument === null ? (
+            <p className="meta warn">
+              Fyll i {dom.missing.map((m) => m.label).join(', ')} — då skrivs dokumentet färdigt här.
+              Vi skriver aldrig något du inte svarat.
+            </p>
+          ) : (
+            <>
+              <pre className="dokument">{dokument}</pre>
+              <div className="row">
+                <button className="btn primary" onClick={() => kopiera(dokument)}>{kopierad ? 'Kopierad ✓' : 'Kopiera dokumentet'}</button>
+                <UtLank className="btn small" href={opp.applicationUrl}>Ansök själv hos {opp.authority}</UtLank>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Schemavägen: myndighetens egna fält, i myndighetens ordning ───────────
+  const synliga = visibleFields(schema, svar);
+  const problem = validateAnswers(schema, svar);
+  const klart = problem.length === 0;
+  const dokument = klart ? renderaSchemaDokument(schema, svar, opp) : null;
+
+  return (
+    <div>
+      {huvud}
+      <div className="card">
+        <h2>{schema.title}</h2>
+        <p className="meta">
+          Fälten är {opp.authority}s egna, kurerade ur den officiella ansökan — inte en generell mall.
+          {forifyllt.prefilledKeys.length > 0 && ` ${forifyllt.prefilledKeys.length} av dem är redan ifyllda ur din utredning.`}
+        </p>
+        {schema.sections.map((sek) => {
+          const falt = synliga.filter((f) => f.section === sek.key);
+          if (falt.length === 0) return null;
+          return (
+            <div key={sek.key} className="schemasektion">
+              <h3>{sek.title}</h3>
+              {sek.description && <p className="guidance">{sek.description}</p>}
+              {falt.map((f) => (
+                <div key={f.key}>
+                  {forifyllt.prefilledKeys.includes(f.key) && (
+                    <p className="meta forifyllt">Ifyllt från din utredning — ändra om det inte stämmer.</p>
+                  )}
+                  <SchemaFalt f={f} value={svar[f.key]}
+                    onChange={(v) => { setSvar((prev) => ({ ...prev, [f.key]: v })); setKopierad(false); }} />
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+      <div className="card">
+        <h2>Så här blir ansökan</h2>
+        {dokument === null ? (
+          <div>
+            <p className="meta warn">Det här saknas innan ansökan är komplett:</p>
+            <ul className="underlag">
+              {problem.slice(0, 8).map((i) => <li key={i.fieldKey}>{i.message}</li>)}
+            </ul>
+            <p className="meta">Vi skriver aldrig något du inte svarat.</p>
+          </div>
         ) : (
           <>
             <pre className="dokument">{dokument}</pre>
             <div className="row">
-              <button className="btn primary" onClick={() => kopiera(dokument!)}>
-                {kopierad === mall.key ? 'Kopierad ✓' : 'Kopiera dokumentet'}
-              </button>
-              <UtLank className="btn small" href={opp.applicationUrl}>Till ansökan hos {opp.authority} →</UtLank>
+              <button className="btn primary" onClick={() => kopiera(dokument)}>{kopierad ? 'Kopierad ✓' : 'Kopiera ansökan'}</button>
+              <UtLank className="btn small" href={opp.applicationUrl}>Ansök själv hos {opp.authority}</UtLank>
             </div>
-            {kopierad === 'fel' && (
-              <p className="meta warn">Webbläsaren tillät inte kopiering — markera texten ovan och kopiera för hand.</p>
-            )}
           </>
         )}
       </div>
@@ -1228,7 +1397,7 @@ function App() {
       )}
       {step === 'p-housing-cost' && (
         <Q title="Ungefär hur mycket betalar du för boendet per månad?" guidance="Ungefärligt räcker — beloppet påverkar bostadsstödens storlek.">
-          <CostInput onNext={() => advance({})} />
+          <CostInput onNext={(kr) => advance(kr === undefined ? {} : { housingCost: kr })} />
         </Q>
       )}
 
@@ -1330,13 +1499,17 @@ function App() {
   );
 }
 
-function CostInput({ onNext }: { onNext: () => void }) {
+function CostInput({ onNext }: { onNext: (kr: number | undefined) => void }) {
   const [v, setV] = useState('');
+  // F-SPECIFIK: beloppet togs emot och kastades bort. Nu bärs det vidare som
+  // person.housingCostMonthly och förifyller myndighetens boendekostnadsfält.
+  const kr = v === '' ? undefined : Number(v);
+  const giltigt = kr === undefined || (Number.isFinite(kr) && kr >= 0 && kr < 1000000);
   return (
     <div>
       <input type="number" min={0} value={v} onChange={(e) => setV(e.target.value)} placeholder="t.ex. 8500" autoFocus />
       <div className="row" style={{ marginTop: '0.8rem' }}>
-        <button className="btn primary" onClick={onNext}>Nästa</button>
+        <button className="btn primary" disabled={!giltigt} onClick={() => onNext(giltigt ? kr : undefined)}>Nästa</button>
       </div>
     </div>
   );

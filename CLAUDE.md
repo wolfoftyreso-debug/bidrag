@@ -246,8 +246,12 @@ miljön och handboken fördjupas då skärm för skärm.
    (F-FÖRBERED). Planvyn har nu "Förbered ansökan": cores dokumentmotor körd i
    webbläsaren med mallar filtrerade per stödtyp, förifyllnad ur utredningen,
    validering och dokumentet som text + kopiera-knapp. Vakt:
-   `demo/checks/forberedcheck.mjs`. Kvar: fler mallar per stödtyp och
-   bilagelistan per myndighet.
+   `demo/checks/forberedcheck.mjs`. **F-SPECIFIK 2026-08-28**: förberedelsen
+   drivs av stödets EGET kurerade ansökningsschema (71/85 stöd, 473 fält) med
+   myndighetens sektioner, gränser och vägledning, plus ansökningssätt och
+   kurerad underlagslista (37/85). Stöd utan schema faller tillbaka på de
+   generiska mallarna och säger att de är generella. Kvar: kurera schema för
+   de 14 återstående stöden och underlagslistor för de 48 som saknar.
 3. **De 25 bidragsklustren färdiga sökfråga→myndighetsöverlämning +
    belastningstest** — produktbeviset (`docs/LAUNCH_DEMAND_INTELLIGENCE.md`
    §8) och det som stänger GATE 0:s CONTENT-RED (`docs/GATE0_REPORT.md` —

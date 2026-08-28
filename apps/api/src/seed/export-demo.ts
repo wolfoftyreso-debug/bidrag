@@ -1,8 +1,11 @@
 /** Exports the curated knowledge base as JSON for the in-browser demo. */
 import { writeFile } from 'node:fs/promises';
-import { authorities, opportunities } from './data.ts';
+import { applicationSchemaDefs, authorities, opportunities } from './data.ts';
 
 const authorityName = new Map(authorities.map((a) => [a.key, a.name]));
+// Stödets EGET ansökningsschema följer med (F-SPECIFIK): demons förberedelse
+// ska visa myndighetens riktiga fält och vägledning, inte en generisk mall.
+const schemaBySlug = new Map(applicationSchemaDefs.map((s) => [s.opportunitySlug, s.def]));
 
 const out = opportunities.map((o) => ({
   slug: o.slug,
@@ -20,6 +23,7 @@ const out = opportunities.map((o) => ({
   estimatedEffortDays: o.estimatedEffortDays,
   criteria: o.criteria,
   evidenceRequirements: o.evidenceRequirements,
+  applicationSchema: schemaBySlug.get(o.slug) ?? null,
 }));
 
 await writeFile(process.argv[2] ?? '/tmp/demo-opportunities.json', JSON.stringify(out));

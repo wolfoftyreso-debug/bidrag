@@ -4,12 +4,19 @@
  * förberedelse, alltså halva produkten. Nu kör demon cores riktiga
  * dokumentmotor i webbläsaren.
  *
+ * F-SPECIFIK (2026-08-28): förberedelsen ska använda STÖDETS EGET kurerade
+ * ansökningsschema — myndighetens fält, sektioner och vägledning — inte en
+ * generell mall. 71 av 85 stöd har ett; övriga faller tillbaka på mallarna
+ * och ska säga att de är generella.
+ *
  * Checken går hela vägen: utredning → plan → förbered, och kräver att
- *   1. förberedelsen nås och bara visar mallar som hör till stödets typ,
- *   2. utredningens svar är förifyllda (ingen fråga ställs två gånger),
- *   3. dokumentet vägrar skrivas innan obligatoriska svar finns,
- *   4. det färdiga dokumentet innehåller användarens egna svar,
- *   5. ärlighetstexten om pris och att inget skickas står kvar.
+ *   1. förberedelsen nås och visar stödets eget formulär med dess sektioner,
+ *   2. utredningens svar är förifyllda (ingen fråga ställs två gånger) —
+ *      inklusive boendekostnaden, som tidigare frågades och kastades bort,
+ *   3. ansökan vägrar skrivas innan obligatoriska svar finns,
+ *   4. den färdiga ansökan bär myndighetens egna fältnamn och användarens svar,
+ *   5. ansökningssätt och underlagslista visas per stöd,
+ *   6. ärlighetstexten om pris och att inget skickas står kvar.
  */
 import { launchChromium, artifactsDir } from '../../tools/lib/browser.mjs';
 
@@ -49,43 +56,54 @@ await page.locator('button:has-text("Förbered ansökan")').first().click();
 await page.waitForSelector('text=Förbered ansökan —', { timeout: 15000 });
 console.log('1. Planen leder till förberedelsen ✓');
 
-// Personligt stöd → projektbeskrivningen hör inte hit (F-RELEVANS).
-const doclista = await page.locator('.doclista').innerText();
-if (doclista.includes('Projektbeskrivning')) {
-  throw new Error('projektmallen erbjuds för ett personligt stöd');
+// Stödets EGET formulär, inte en generell mall.
+const sida = await page.innerText('body');
+if (!sida.includes('Ansökan — Bostadsbidrag till barnfamiljer')) {
+  throw new Error('stödets eget ansökningsformulär visas inte — föll tillbaka på generell mall?');
 }
-if (!doclista.includes('Ansökan om ekonomiskt stöd')) throw new Error('ansökningsmallen saknas');
-console.log('2. Bara mallar som hör till stödets typ visas ✓');
+if (!/Fälten är Försäkringskassans egna/.test(sida)) {
+  throw new Error('det sägs inte att fälten är myndighetens egna');
+}
+for (const sektion of ['Om dig', 'Bostaden', 'Inkomster', 'Intyg']) {
+  if (!sida.includes(sektion)) throw new Error(`schemasektionen "${sektion}" saknas`);
+}
+console.log('1b. Stödets eget formulär med myndighetens sektioner ✓');
 
-const forifyllt = await page.locator('.inforuta').first().innerText();
-if (!/Redan ifyllt från din utredning/.test(forifyllt)) {
-  throw new Error('förifyllnaden ur utredningen visas inte');
-}
-if (!/hushållet\?: 1/.test(forifyllt)) {
-  throw new Error(`hushållssvaret följde inte med: ${forifyllt.replace(/\n/g, ' | ')}`);
-}
-console.log('3. Utredningens svar är förifyllda — ingen fråga ställs två gånger ✓');
+// Ansökningssätt + underlag per stöd.
+if (!sida.includes('Så ansöker du hos Försäkringskassan')) throw new Error('ansökningssättet visas inte');
+if (!sida.includes('Underlag att ha framme')) throw new Error('underlagsrubriken saknas');
+console.log('2. Ansökningssätt och underlag redovisas per stöd ✓');
 
-const innan = await page.innerText('body');
-if (!innan.includes('Vi skriver aldrig något du inte svarat')) {
-  throw new Error('dokumentet skrivs utan att obligatoriska svar finns');
+// Boendekostnaden frågades i utredningen — den ska nu stå i myndighetens fält.
+const boende = await page.locator('#sf-boendekostnad').inputValue();
+if (boende !== '8500') throw new Error(`boendekostnaden följde inte med till ansökan: "${boende}"`);
+if (await page.locator('.meta.forifyllt').count() === 0) {
+  throw new Error('förifyllda fält märks inte ut');
 }
-console.log('4. Dokumentet vägrar skrivas innan svaren finns ✓');
+console.log('3. Utredningens svar är förifyllda i myndighetens fält ✓');
 
-await page.fill('#doc-fullName', 'Anna Andersson');
-await page.fill('#doc-address', 'Storgatan 12');
-await page.fill('#doc-postalCity', '135 40 Tyresö');
-await page.fill('#doc-municipality', 'Tyresö');
-const ta = page.locator('.docfalt textarea');
-for (let k = 0; k < await ta.count(); k++) {
-  await ta.nth(k).fill(k === 0 ? 'Hjälp med boendekostnaden.' : 'Inkomsten räcker inte till hyran.');
+if (!sida.includes('Vi skriver aldrig något du inte svarat')) {
+  throw new Error('ansökan skrivs utan att obligatoriska svar finns');
 }
+console.log('4. Ansökan vägrar skrivas innan svaren finns ✓');
+
+await page.fill('#sf-sokande_namn', 'Anna Andersson');
+await page.fill('#sf-barn_hemma', '2');
+await page.fill('#sf-boyta', '68');
+await page.fill('#sf-inkomst_ar', '240000');
+await page.locator('.docfalt:has-text("intygar") button:has-text("Ja")').first().click();
 await page.waitForSelector('.dokument', { timeout: 10000 });
 const doc = await page.locator('.dokument').innerText();
-for (const krav of ['ANSÖKAN OM EKONOMISKT STÖD', 'Anna Andersson', 'Storgatan 12', 'Försäkringskassan', 'Hjälp med boendekostnaden.']) {
-  if (!doc.includes(krav)) throw new Error(`dokumentet saknar "${krav}"`);
+for (const krav of [
+  'ANSÖKAN — BOSTADSBIDRAG TILL BARNFAMILJER',
+  'Anna Andersson',
+  'Boendekostnad per månad (kr): 8500',
+  'Bostadens yta (kvm): 68',
+  'Till: Försäkringskassan',
+]) {
+  if (!doc.includes(krav)) throw new Error(`ansökan saknar "${krav}"`);
 }
-console.log('5. Det färdiga dokumentet bär användarens egna svar ✓');
+console.log('5. Den färdiga ansökan bär myndighetens fältnamn och användarens svar ✓');
 
 const body = await page.innerText('body');
 for (const fras of ['19 kr per ansökan', 'ingenting skickas någonstans', 'är alltid gratis']) {
