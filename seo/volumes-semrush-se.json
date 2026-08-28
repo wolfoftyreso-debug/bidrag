@@ -1,66 +1,1870 @@
 {
   "_kontrakt": "Källmärkt volymsnapshot från Semrush (regional databas 'se'). Detta är den VERKLIGA källa som seo/keywords.json:s ärlighetskontrakt pekar ut ('null tills verklig källa finns … Semrush …'). tools/seokeywords.mjs joinar volume/cpc/difficulty härifrån på normaliserad nyckel och stämplar volume_source/difficulty_source = 'semrush:se:<hämtad>'. Curerad intent i keywords.json rörs INTE — Semrush intent_code lagras här enbart som referens. Uppdatera genom att köra om Semrush-rapporterna phrase_these/phrase_questions och ersätta 'hamtad' + raderna; hitta aldrig på en volym för hand. intent_code: 0=kommersiell, 1=informationell, 2=navigerande, 3=transaktionell, null=ej klassad.",
   "source": "Semrush",
-  "reports": ["phrase_these", "phrase_questions"],
+  "reports": [
+    "phrase_these",
+    "phrase_questions"
+  ],
   "database": "se",
   "hamtad": "2026-08-28",
   "volumes": [
-    { "keyword": "bostadsbidrag", "normalized_keyword": "bostadsbidrag", "volume": 22200, "cpc": 0.66, "competition": 0.02, "difficulty": 44, "intent_code": 1 },
-    { "keyword": "försörjningsstöd", "normalized_keyword": "försörjningsstöd", "volume": 18100, "cpc": 2.47, "competition": 0.33, "difficulty": 31, "intent_code": 1 },
-    { "keyword": "ekonomiskt bistånd", "normalized_keyword": "ekonomiskt bistånd", "volume": 27100, "cpc": 0.80, "competition": 0.01, "difficulty": 34, "intent_code": 1 },
-    { "keyword": "bostadstillägg", "normalized_keyword": "bostadstillägg", "volume": 8100, "cpc": 0.64, "competition": 0.01, "difficulty": 31, "intent_code": 1 },
-    { "keyword": "underhållsstöd", "normalized_keyword": "underhållsstöd", "volume": 3600, "cpc": 1.18, "competition": 0.33, "difficulty": 26, "intent_code": 1 },
-    { "keyword": "bidrag", "normalized_keyword": "bidrag", "volume": 12100, "cpc": 1.24, "competition": 0.33, "difficulty": 35, "intent_code": 1 },
-    { "keyword": "söka bidrag", "normalized_keyword": "söka bidrag", "volume": 210, "cpc": 0.77, "competition": 0.05, "difficulty": 36, "intent_code": 1 },
-    { "keyword": "vad har jag rätt till för bidrag", "normalized_keyword": "vad har jag rätt till för bidrag", "volume": 0, "cpc": 0.0, "competition": 0.0, "difficulty": 0, "intent_code": null },
-    { "keyword": "bidrag privatperson", "normalized_keyword": "bidrag privatperson", "volume": 40, "cpc": 0.0, "competition": 0.02, "difficulty": 35, "intent_code": 1 },
-    { "keyword": "glasögonbidrag barn", "normalized_keyword": "glasögonbidrag barn", "volume": 1900, "cpc": 0.69, "competition": 1.0, "difficulty": 24, "intent_code": 1 },
-    { "keyword": "etableringsersättning", "normalized_keyword": "etableringsersättning", "volume": 1000, "cpc": 0.0, "competition": 0.33, "difficulty": 23, "intent_code": 1 },
-    { "keyword": "aktivitetsstöd", "normalized_keyword": "aktivitetsstöd", "volume": 12100, "cpc": 0.99, "competition": 0.33, "difficulty": 23, "intent_code": 1 },
-    { "keyword": "csn bidrag", "normalized_keyword": "csn bidrag", "volume": 4400, "cpc": 0.0, "competition": 0.33, "difficulty": 45, "intent_code": 2 },
-    { "keyword": "studiebidrag", "normalized_keyword": "studiebidrag", "volume": 5400, "cpc": 0.0, "competition": 0.33, "difficulty": 37, "intent_code": 1 },
-    { "keyword": "stipendier", "normalized_keyword": "stipendier", "volume": 720, "cpc": 0.48, "competition": 0.12, "difficulty": 34, "intent_code": 1 },
-    { "keyword": "projektbidrag", "normalized_keyword": "projektbidrag", "volume": 10, "cpc": 0.0, "competition": 0.33, "difficulty": 0, "intent_code": null },
-    { "keyword": "arvsfonden", "normalized_keyword": "arvsfonden", "volume": 1300, "cpc": 0.0, "competition": 0.33, "difficulty": 28, "intent_code": 2 },
-    { "keyword": "bidrag ensamstående", "normalized_keyword": "bidrag ensamstående", "volume": 140, "cpc": 0.0, "competition": 0.0, "difficulty": 20, "intent_code": 1 },
-    { "keyword": "bidrag företag", "normalized_keyword": "bidrag företag", "volume": 90, "cpc": 1.54, "competition": 0.30, "difficulty": 28, "intent_code": 1 },
-    { "keyword": "energibidrag", "normalized_keyword": "energibidrag", "volume": 210, "cpc": 0.82, "competition": 0.18, "difficulty": 24, "intent_code": 1 },
-    { "keyword": "bidrag pensionär", "normalized_keyword": "bidrag pensionär", "volume": 70, "cpc": 0.0, "competition": 0.01, "difficulty": 21, "intent_code": 1 },
-    { "keyword": "bidrag arbetslös", "normalized_keyword": "bidrag arbetslös", "volume": 320, "cpc": 1.11, "competition": 0.10, "difficulty": 34, "intent_code": 1 },
-    { "keyword": "bidrag student", "normalized_keyword": "bidrag student", "volume": 50, "cpc": 1.12, "competition": 0.09, "difficulty": 42, "intent_code": 1 },
-    { "keyword": "tandvårdsbidrag", "normalized_keyword": "tandvårdsbidrag", "volume": 9900, "cpc": 0.55, "competition": 0.14, "difficulty": 30, "intent_code": 1 },
-    { "keyword": "habiliteringsersättning", "normalized_keyword": "habiliteringsersättning", "volume": 390, "cpc": 0.0, "competition": 0.33, "difficulty": 31, "intent_code": 1 }
+    {
+      "keyword": "a-kassa",
+      "normalized_keyword": "a kassa",
+      "volume": 60500,
+      "cpc": 1.24,
+      "competition": 0.53,
+      "difficulty": 59,
+      "intent_code": 0
+    },
+    {
+      "keyword": "affärsutvecklingscheckar",
+      "normalized_keyword": "affärsutvecklingscheckar",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.05,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "aktivitetsstöd",
+      "normalized_keyword": "aktivitetsstöd",
+      "volume": 12100,
+      "cpc": 0.99,
+      "competition": 0.33,
+      "difficulty": 23,
+      "intent_code": 1
+    },
+    {
+      "keyword": "aktivitetsstöd förening",
+      "normalized_keyword": "aktivitetsstöd förening",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "akut ekonomisk hjälp",
+      "normalized_keyword": "akut ekonomisk hjälp",
+      "volume": 50,
+      "cpc": 2.13,
+      "competition": 0.32,
+      "difficulty": 23,
+      "intent_code": 1
+    },
+    {
+      "keyword": "allmänna arvsfonden projektstöd",
+      "normalized_keyword": "allmänna arvsfonden projektstöd",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 14,
+      "intent_code": 2
+    },
+    {
+      "keyword": "anställningsstöd",
+      "normalized_keyword": "anställningsstöd",
+      "volume": 480,
+      "cpc": 1.08,
+      "competition": 0.02,
+      "difficulty": 23,
+      "intent_code": 2
+    },
+    {
+      "keyword": "arbetsstipendium",
+      "normalized_keyword": "arbetsstipendium",
+      "volume": 40,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 24,
+      "intent_code": 1
+    },
+    {
+      "keyword": "arvsfonden",
+      "normalized_keyword": "arvsfonden",
+      "volume": 1300,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 28,
+      "intent_code": 2
+    },
+    {
+      "keyword": "arvsfonden projektstöd",
+      "normalized_keyword": "arvsfonden projektstöd",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 15,
+      "intent_code": 2
+    },
+    {
+      "keyword": "assistansersättning",
+      "normalized_keyword": "assistansersättning",
+      "volume": 390,
+      "cpc": 0.99,
+      "competition": 0.12,
+      "difficulty": 30,
+      "intent_code": 1
+    },
+    {
+      "keyword": "barnbidrag",
+      "normalized_keyword": "barnbidrag",
+      "volume": 18100,
+      "cpc": 0.93,
+      "competition": 0.33,
+      "difficulty": 32,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag",
+      "normalized_keyword": "bidrag",
+      "volume": 12100,
+      "cpc": 1.24,
+      "competition": 0.33,
+      "difficulty": 35,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag arbetslös",
+      "normalized_keyword": "bidrag arbetslös",
+      "volume": 320,
+      "cpc": 1.11,
+      "competition": 0.1,
+      "difficulty": 34,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag barnfamilj",
+      "normalized_keyword": "bidrag barnfamilj",
+      "volume": 40,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 20,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag bokutgivning",
+      "normalized_keyword": "bidrag bokutgivning",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.26,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bidrag energieffektivisering",
+      "normalized_keyword": "bidrag energieffektivisering",
+      "volume": 320,
+      "cpc": 0.66,
+      "competition": 0.12,
+      "difficulty": 27,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag ensamstående",
+      "normalized_keyword": "bidrag ensamstående",
+      "volume": 140,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 20,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag ensamstående mamma",
+      "normalized_keyword": "bidrag ensamstående mamma",
+      "volume": 110,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 18,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag familj",
+      "normalized_keyword": "bidrag familj",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bidrag film",
+      "normalized_keyword": "bidrag film",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 20,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag flytt",
+      "normalized_keyword": "bidrag flytt",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bidrag funktionsnedsättning",
+      "normalized_keyword": "bidrag funktionsnedsättning",
+      "volume": 210,
+      "cpc": 1.64,
+      "competition": 0.12,
+      "difficulty": 28,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag för att anställa",
+      "normalized_keyword": "bidrag för att anställa",
+      "volume": 20,
+      "cpc": 0.29,
+      "competition": 0.35,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bidrag förening",
+      "normalized_keyword": "bidrag förening",
+      "volume": 110,
+      "cpc": 0.94,
+      "competition": 0.18,
+      "difficulty": 18,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag företag",
+      "normalized_keyword": "bidrag företag",
+      "volume": 90,
+      "cpc": 1.54,
+      "competition": 0.3,
+      "difficulty": 28,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag glasögon barn",
+      "normalized_keyword": "bidrag glasögon barn",
+      "volume": 1000,
+      "cpc": 0.89,
+      "competition": 0.16,
+      "difficulty": 22,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag idrottsförening",
+      "normalized_keyword": "bidrag idrottsförening",
+      "volume": 70,
+      "cpc": 0,
+      "competition": 0.03,
+      "difficulty": 13,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag kulturförening",
+      "normalized_keyword": "bidrag kulturförening",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bidrag landsbygd",
+      "normalized_keyword": "bidrag landsbygd",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bidrag låg inkomst",
+      "normalized_keyword": "bidrag låg inkomst",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bidrag musikprojekt",
+      "normalized_keyword": "bidrag musikprojekt",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bidrag och stöd",
+      "normalized_keyword": "bidrag och stöd",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bidrag pensionär",
+      "normalized_keyword": "bidrag pensionär",
+      "volume": 70,
+      "cpc": 0,
+      "competition": 0.01,
+      "difficulty": 21,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag privatperson",
+      "normalized_keyword": "bidrag privatperson",
+      "volume": 40,
+      "cpc": 0,
+      "competition": 0.02,
+      "difficulty": 35,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag renovering",
+      "normalized_keyword": "bidrag renovering",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.06,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bidrag sjukskriven",
+      "normalized_keyword": "bidrag sjukskriven",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.04,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bidrag solceller",
+      "normalized_keyword": "bidrag solceller",
+      "volume": 260,
+      "cpc": 1.73,
+      "competition": 0.68,
+      "difficulty": 31,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag solceller företag",
+      "normalized_keyword": "bidrag solceller företag",
+      "volume": 30,
+      "cpc": 1.87,
+      "competition": 0.54,
+      "difficulty": 23,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag starta företag",
+      "normalized_keyword": "bidrag starta företag",
+      "volume": 20,
+      "cpc": 0.54,
+      "competition": 0.57,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bidrag student",
+      "normalized_keyword": "bidrag student",
+      "volume": 50,
+      "cpc": 1.12,
+      "competition": 0.09,
+      "difficulty": 42,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag ungdom",
+      "normalized_keyword": "bidrag ungdom",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.01,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bidrag värmepump",
+      "normalized_keyword": "bidrag värmepump",
+      "volume": 210,
+      "cpc": 1.31,
+      "competition": 0.43,
+      "difficulty": 24,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidragskollen",
+      "normalized_keyword": "bidragskollen",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bilstöd",
+      "normalized_keyword": "bilstöd",
+      "volume": 390,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 20,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bostadsanpassningsbidrag",
+      "normalized_keyword": "bostadsanpassningsbidrag",
+      "volume": 390,
+      "cpc": 0.66,
+      "competition": 0.03,
+      "difficulty": 31,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bostadsbidrag",
+      "normalized_keyword": "bostadsbidrag",
+      "volume": 22200,
+      "cpc": 0.66,
+      "competition": 0.02,
+      "difficulty": 44,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bostadsbidrag eller bostadstillägg",
+      "normalized_keyword": "bostadsbidrag eller bostadstillägg",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.04,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "bostadsbidrag till barnfamiljer",
+      "normalized_keyword": "bostadsbidrag till barnfamiljer",
+      "volume": 30,
+      "cpc": 0.68,
+      "competition": 0.01,
+      "difficulty": 24,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bostadstillägg",
+      "normalized_keyword": "bostadstillägg",
+      "volume": 8100,
+      "cpc": 0.64,
+      "competition": 0.01,
+      "difficulty": 31,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bostadstillägg för pensionärer",
+      "normalized_keyword": "bostadstillägg för pensionärer",
+      "volume": 720,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 28,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bygdemedel",
+      "normalized_keyword": "bygdemedel",
+      "volume": 110,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 13,
+      "intent_code": 1
+    },
+    {
+      "keyword": "creative force",
+      "normalized_keyword": "creative force",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "csn bidrag",
+      "normalized_keyword": "csn bidrag",
+      "volume": 4400,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 45,
+      "intent_code": 2
+    },
+    {
+      "keyword": "csn fribelopp",
+      "normalized_keyword": "csn fribelopp",
+      "volume": 2900,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 43,
+      "intent_code": 1
+    },
+    {
+      "keyword": "csn hur mycket",
+      "normalized_keyword": "csn hur mycket",
+      "volume": 390,
+      "cpc": 0,
+      "competition": 0.01,
+      "difficulty": 36,
+      "intent_code": 1
+    },
+    {
+      "keyword": "ekonomisk hjälp",
+      "normalized_keyword": "ekonomisk hjälp",
+      "volume": 210,
+      "cpc": 3.17,
+      "competition": 0.43,
+      "difficulty": 28,
+      "intent_code": 1
+    },
+    {
+      "keyword": "ekonomiskt bistånd",
+      "normalized_keyword": "ekonomiskt bistånd",
+      "volume": 27100,
+      "cpc": 0.8,
+      "competition": 0.01,
+      "difficulty": 34,
+      "intent_code": 1
+    },
+    {
+      "keyword": "ekonomiskt stöd",
+      "normalized_keyword": "ekonomiskt stöd",
+      "volume": 260,
+      "cpc": 1.69,
+      "competition": 0.05,
+      "difficulty": 30,
+      "intent_code": 1
+    },
+    {
+      "keyword": "elevresor gymnasiet",
+      "normalized_keyword": "elevresor gymnasiet",
+      "volume": 40,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 20,
+      "intent_code": 1
+    },
+    {
+      "keyword": "elstöd",
+      "normalized_keyword": "elstöd",
+      "volume": 5400,
+      "cpc": 0.21,
+      "competition": 0.03,
+      "difficulty": 27,
+      "intent_code": 1
+    },
+    {
+      "keyword": "energibidrag",
+      "normalized_keyword": "energibidrag",
+      "volume": 210,
+      "cpc": 0.82,
+      "competition": 0.18,
+      "difficulty": 24,
+      "intent_code": 1
+    },
+    {
+      "keyword": "energikartläggning stöd",
+      "normalized_keyword": "energikartläggning stöd",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "erasmus bidrag",
+      "normalized_keyword": "erasmus bidrag",
+      "volume": 50,
+      "cpc": 0.85,
+      "competition": 0.05,
+      "difficulty": 15,
+      "intent_code": 1
+    },
+    {
+      "keyword": "ersättning arbetslös",
+      "normalized_keyword": "ersättning arbetslös",
+      "volume": 720,
+      "cpc": 0.88,
+      "competition": 0.15,
+      "difficulty": 32,
+      "intent_code": 1
+    },
+    {
+      "keyword": "ersättning vid sjukdom",
+      "normalized_keyword": "ersättning vid sjukdom",
+      "volume": 110,
+      "cpc": 0.58,
+      "competition": 0.11,
+      "difficulty": 22,
+      "intent_code": 1
+    },
+    {
+      "keyword": "etableringsersättning",
+      "normalized_keyword": "etableringsersättning",
+      "volume": 1000,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 23,
+      "intent_code": 1
+    },
+    {
+      "keyword": "eu bidrag",
+      "normalized_keyword": "eu bidrag",
+      "volume": 260,
+      "cpc": 1.07,
+      "competition": 0.09,
+      "difficulty": 15,
+      "intent_code": 1
+    },
+    {
+      "keyword": "eu bidrag företag",
+      "normalized_keyword": "eu bidrag företag",
+      "volume": 10,
+      "cpc": 1.24,
+      "competition": 0.54,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "eu stöd jordbruk",
+      "normalized_keyword": "eu stöd jordbruk",
+      "volume": 110,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 22,
+      "intent_code": 1
+    },
+    {
+      "keyword": "existensminimum",
+      "normalized_keyword": "existensminimum",
+      "volume": 2400,
+      "cpc": 0.45,
+      "competition": 0.03,
+      "difficulty": 18,
+      "intent_code": 1
+    },
+    {
+      "keyword": "finansiering startup",
+      "normalized_keyword": "finansiering startup",
+      "volume": 20,
+      "cpc": 2.76,
+      "competition": 0.65,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "flerbarnstillägg",
+      "normalized_keyword": "flerbarnstillägg",
+      "volume": 3600,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 28,
+      "intent_code": 1
+    },
+    {
+      "keyword": "flytta utomlands bidrag",
+      "normalized_keyword": "flytta utomlands bidrag",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "fonder att söka pengar ur",
+      "normalized_keyword": "fonder att söka pengar ur",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "formas utlysning",
+      "normalized_keyword": "formas utlysning",
+      "volume": 480,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 23,
+      "intent_code": 2
+    },
+    {
+      "keyword": "forskningsbidrag",
+      "normalized_keyword": "forskningsbidrag",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 23,
+      "intent_code": 1
+    },
+    {
+      "keyword": "föreningsbidrag",
+      "normalized_keyword": "föreningsbidrag",
+      "volume": 210,
+      "cpc": 0,
+      "competition": 0.03,
+      "difficulty": 18,
+      "intent_code": 1
+    },
+    {
+      "keyword": "företagsstöd",
+      "normalized_keyword": "företagsstöd",
+      "volume": 50,
+      "cpc": 1.98,
+      "competition": 0.46,
+      "difficulty": 35,
+      "intent_code": 1
+    },
+    {
+      "keyword": "försörjningsstöd",
+      "normalized_keyword": "försörjningsstöd",
+      "volume": 18100,
+      "cpc": 2.47,
+      "competition": 0.33,
+      "difficulty": 31,
+      "intent_code": 1
+    },
+    {
+      "keyword": "föräldrapenning",
+      "normalized_keyword": "föräldrapenning",
+      "volume": 12100,
+      "cpc": 0.79,
+      "competition": 0.03,
+      "difficulty": 36,
+      "intent_code": 1
+    },
+    {
+      "keyword": "garantipension",
+      "normalized_keyword": "garantipension",
+      "volume": 6600,
+      "cpc": 0.31,
+      "competition": 0.04,
+      "difficulty": 26,
+      "intent_code": 1
+    },
+    {
+      "keyword": "glasögonbidrag barn",
+      "normalized_keyword": "glasögonbidrag barn",
+      "volume": 1900,
+      "cpc": 0.69,
+      "competition": 1,
+      "difficulty": 24,
+      "intent_code": 1
+    },
+    {
+      "keyword": "gårdsstöd",
+      "normalized_keyword": "gårdsstöd",
+      "volume": 170,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 13,
+      "intent_code": 1
+    },
+    {
+      "keyword": "habiliteringsersättning",
+      "normalized_keyword": "habiliteringsersättning",
+      "volume": 390,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 31,
+      "intent_code": 1
+    },
+    {
+      "keyword": "har jag rätt till bidrag",
+      "normalized_keyword": "har jag rätt till bidrag",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "hemutrustningslån",
+      "normalized_keyword": "hemutrustningslån",
+      "volume": 140,
+      "cpc": 0,
+      "competition": 0.04,
+      "difficulty": 17,
+      "intent_code": 1
+    },
+    {
+      "keyword": "hjälp med ekonomin",
+      "normalized_keyword": "hjälp med ekonomin",
+      "volume": 140,
+      "cpc": 4.65,
+      "competition": 0.7,
+      "difficulty": 28,
+      "intent_code": 1
+    },
+    {
+      "keyword": "hjälp med hyran",
+      "normalized_keyword": "hjälp med hyran",
+      "volume": 20,
+      "cpc": 1.2,
+      "competition": 0.11,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "horisont europa",
+      "normalized_keyword": "horisont europa",
+      "volume": 50,
+      "cpc": 0,
+      "competition": 0.03,
+      "difficulty": 18,
+      "intent_code": 1
+    },
+    {
+      "keyword": "högkostnadsskydd",
+      "normalized_keyword": "högkostnadsskydd",
+      "volume": 14800,
+      "cpc": 0.13,
+      "competition": 0.01,
+      "difficulty": 28,
+      "intent_code": 1
+    },
+    {
+      "keyword": "inackorderingstillägg",
+      "normalized_keyword": "inackorderingstillägg",
+      "volume": 1600,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 19,
+      "intent_code": 1
+    },
+    {
+      "keyword": "industriklivet",
+      "normalized_keyword": "industriklivet",
+      "volume": 390,
+      "cpc": 0,
+      "competition": 0.01,
+      "difficulty": 34,
+      "intent_code": 2
+    },
+    {
+      "keyword": "innovationsbidrag",
+      "normalized_keyword": "innovationsbidrag",
+      "volume": 20,
+      "cpc": 0.63,
+      "competition": 0.22,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "innovativa startups",
+      "normalized_keyword": "innovativa startups",
+      "volume": 40,
+      "cpc": 0,
+      "competition": 0.08,
+      "difficulty": 8,
+      "intent_code": 1
+    },
+    {
+      "keyword": "introduktionsjobb",
+      "normalized_keyword": "introduktionsjobb",
+      "volume": 720,
+      "cpc": 0.95,
+      "competition": 0.01,
+      "difficulty": 13,
+      "intent_code": 1
+    },
+    {
+      "keyword": "investeringsstöd företag",
+      "normalized_keyword": "investeringsstöd företag",
+      "volume": 30,
+      "cpc": 1.6,
+      "competition": 0.41,
+      "difficulty": 21,
+      "intent_code": 1
+    },
+    {
+      "keyword": "investeringsstöd jordbruk",
+      "normalized_keyword": "investeringsstöd jordbruk",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "jordbruksstöd",
+      "normalized_keyword": "jordbruksstöd",
+      "volume": 70,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 17,
+      "intent_code": 1
+    },
+    {
+      "keyword": "kan inte betala hyran",
+      "normalized_keyword": "kan inte betala hyran",
+      "volume": 20,
+      "cpc": 1.05,
+      "competition": 0.19,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "klimatklivet",
+      "normalized_keyword": "klimatklivet",
+      "volume": 1600,
+      "cpc": 1.74,
+      "competition": 0.05,
+      "difficulty": 28,
+      "intent_code": 2
+    },
+    {
+      "keyword": "kombinera bidrag",
+      "normalized_keyword": "kombinera bidrag",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "konstnärsnämnden kulturbryggan",
+      "normalized_keyword": "konstnärsnämnden kulturbryggan",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "konstnärsstipendium",
+      "normalized_keyword": "konstnärsstipendium",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.01,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "kreativa europa",
+      "normalized_keyword": "kreativa europa",
+      "volume": 90,
+      "cpc": 0,
+      "competition": 0.02,
+      "difficulty": 28,
+      "intent_code": 2
+    },
+    {
+      "keyword": "kulturbidrag",
+      "normalized_keyword": "kulturbidrag",
+      "volume": 110,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 22,
+      "intent_code": 1
+    },
+    {
+      "keyword": "kulturbryggan",
+      "normalized_keyword": "kulturbryggan",
+      "volume": 480,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 32,
+      "intent_code": 2
+    },
+    {
+      "keyword": "kulturrådet bidrag",
+      "normalized_keyword": "kulturrådet bidrag",
+      "volume": 480,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 38,
+      "intent_code": 2
+    },
+    {
+      "keyword": "kulturrådet skapande skola",
+      "normalized_keyword": "kulturrådet skapande skola",
+      "volume": 170,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 16,
+      "intent_code": 2
+    },
+    {
+      "keyword": "kulturstöd",
+      "normalized_keyword": "kulturstöd",
+      "volume": 110,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 24,
+      "intent_code": 1
+    },
+    {
+      "keyword": "körkortslån",
+      "normalized_keyword": "körkortslån",
+      "volume": 480,
+      "cpc": 2.54,
+      "competition": 0.57,
+      "difficulty": 18,
+      "intent_code": 1
+    },
+    {
+      "keyword": "laddstation bidrag",
+      "normalized_keyword": "laddstation bidrag",
+      "volume": 20,
+      "cpc": 0.8,
+      "competition": 0.36,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "leader projektstöd",
+      "normalized_keyword": "leader projektstöd",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "lok-stöd",
+      "normalized_keyword": "lok stöd",
+      "volume": 1300,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 20,
+      "intent_code": 2
+    },
+    {
+      "keyword": "lönebidrag",
+      "normalized_keyword": "lönebidrag",
+      "volume": 2400,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 23,
+      "intent_code": 1
+    },
+    {
+      "keyword": "merkostnadsersättning",
+      "normalized_keyword": "merkostnadsersättning",
+      "volume": 3600,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 25,
+      "intent_code": 1
+    },
+    {
+      "keyword": "naturvårdsverket klimatklivet",
+      "normalized_keyword": "naturvårdsverket klimatklivet",
+      "volume": 40,
+      "cpc": 0,
+      "competition": 0.01,
+      "difficulty": 27,
+      "intent_code": 2
+    },
+    {
+      "keyword": "nordisk kulturfond projektstöd",
+      "normalized_keyword": "nordisk kulturfond projektstöd",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "nystartsjobb",
+      "normalized_keyword": "nystartsjobb",
+      "volume": 4400,
+      "cpc": 2.91,
+      "competition": 0.02,
+      "difficulty": 34,
+      "intent_code": 2
+    },
+    {
+      "keyword": "nystartsjobb eller lönebidrag",
+      "normalized_keyword": "nystartsjobb eller lönebidrag",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "närståendepenning",
+      "normalized_keyword": "närståendepenning",
+      "volume": 5400,
+      "cpc": 2.89,
+      "competition": 0.01,
+      "difficulty": 20,
+      "intent_code": 1
+    },
+    {
+      "keyword": "omställningsstudiestöd",
+      "normalized_keyword": "omställningsstudiestöd",
+      "volume": 5400,
+      "cpc": 0.47,
+      "competition": 0.06,
+      "difficulty": 25,
+      "intent_code": 1
+    },
+    {
+      "keyword": "omvårdnadsbidrag",
+      "normalized_keyword": "omvårdnadsbidrag",
+      "volume": 6600,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 26,
+      "intent_code": 1
+    },
+    {
+      "keyword": "pengar till studier",
+      "normalized_keyword": "pengar till studier",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "pengarna räcker inte",
+      "normalized_keyword": "pengarna räcker inte",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0.08,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "projektbidrag",
+      "normalized_keyword": "projektbidrag",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "projektstöd",
+      "normalized_keyword": "projektstöd",
+      "volume": 140,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 26,
+      "intent_code": 1
+    },
+    {
+      "keyword": "regionalt investeringsstöd",
+      "normalized_keyword": "regionalt investeringsstöd",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.02,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "retroaktivt bidrag",
+      "normalized_keyword": "retroaktivt bidrag",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "riksnorm",
+      "normalized_keyword": "riksnorm",
+      "volume": 210,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 23,
+      "intent_code": 1
+    },
+    {
+      "keyword": "riktade statsbidrag",
+      "normalized_keyword": "riktade statsbidrag",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "rot avdrag",
+      "normalized_keyword": "rot avdrag",
+      "volume": 8100,
+      "cpc": 0.24,
+      "competition": 0.09,
+      "difficulty": 38,
+      "intent_code": 1
+    },
+    {
+      "keyword": "räkna ut bostadsbidrag",
+      "normalized_keyword": "räkna ut bostadsbidrag",
+      "volume": 1300,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 43,
+      "intent_code": 2
+    },
+    {
+      "keyword": "sjukersättning",
+      "normalized_keyword": "sjukersättning",
+      "volume": 6600,
+      "cpc": 0.82,
+      "competition": 0.02,
+      "difficulty": 28,
+      "intent_code": 1
+    },
+    {
+      "keyword": "sjukpenning",
+      "normalized_keyword": "sjukpenning",
+      "volume": 12100,
+      "cpc": 0.39,
+      "competition": 0.04,
+      "difficulty": 27,
+      "intent_code": 1
+    },
+    {
+      "keyword": "skapande skola",
+      "normalized_keyword": "skapande skola",
+      "volume": 720,
+      "cpc": 1.75,
+      "competition": 0.04,
+      "difficulty": 18,
+      "intent_code": 1
+    },
+    {
+      "keyword": "skatt på bidrag",
+      "normalized_keyword": "skatt på bidrag",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "skolskjuts regler",
+      "normalized_keyword": "skolskjuts regler",
+      "volume": 90,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 16,
+      "intent_code": 1
+    },
+    {
+      "keyword": "socialbidrag",
+      "normalized_keyword": "socialbidrag",
+      "volume": 2900,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 33,
+      "intent_code": 1
+    },
+    {
+      "keyword": "starta eget bidrag",
+      "normalized_keyword": "starta eget bidrag",
+      "volume": 4400,
+      "cpc": 0.44,
+      "competition": 0.53,
+      "difficulty": 28,
+      "intent_code": 1
+    },
+    {
+      "keyword": "startstöd till unga jordbrukare",
+      "normalized_keyword": "startstöd till unga jordbrukare",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "startstöd unga jordbrukare",
+      "normalized_keyword": "startstöd unga jordbrukare",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "statligt stöd",
+      "normalized_keyword": "statligt stöd",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "statsbidrag",
+      "normalized_keyword": "statsbidrag",
+      "volume": 720,
+      "cpc": 0.56,
+      "competition": 0.01,
+      "difficulty": 33,
+      "intent_code": 1
+    },
+    {
+      "keyword": "statsbidrag skola",
+      "normalized_keyword": "statsbidrag skola",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "stipendier",
+      "normalized_keyword": "stipendier",
+      "volume": 720,
+      "cpc": 0.48,
+      "competition": 0.12,
+      "difficulty": 34,
+      "intent_code": 1
+    },
+    {
+      "keyword": "studera som vuxen ekonomi",
+      "normalized_keyword": "studera som vuxen ekonomi",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0.29,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "studera utomlands csn",
+      "normalized_keyword": "studera utomlands csn",
+      "volume": 260,
+      "cpc": 0.95,
+      "competition": 0.31,
+      "difficulty": 33,
+      "intent_code": 1
+    },
+    {
+      "keyword": "studiebidrag",
+      "normalized_keyword": "studiebidrag",
+      "volume": 5400,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 37,
+      "intent_code": 1
+    },
+    {
+      "keyword": "studielån",
+      "normalized_keyword": "studielån",
+      "volume": 1300,
+      "cpc": 1.58,
+      "competition": 0.05,
+      "difficulty": 34,
+      "intent_code": 1
+    },
+    {
+      "keyword": "studiemedel för utlandsstudier",
+      "normalized_keyword": "studiemedel för utlandsstudier",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0.43,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "studiestartsstöd",
+      "normalized_keyword": "studiestartsstöd",
+      "volume": 1600,
+      "cpc": 0,
+      "competition": 0.01,
+      "difficulty": 19,
+      "intent_code": 1
+    },
+    {
+      "keyword": "söka bidrag",
+      "normalized_keyword": "söka bidrag",
+      "volume": 210,
+      "cpc": 0.77,
+      "competition": 0.05,
+      "difficulty": 36,
+      "intent_code": 1
+    },
+    {
+      "keyword": "söka stipendium",
+      "normalized_keyword": "söka stipendium",
+      "volume": 260,
+      "cpc": 0.39,
+      "competition": 0.15,
+      "difficulty": 35,
+      "intent_code": 1
+    },
+    {
+      "keyword": "tandvårdsbidrag",
+      "normalized_keyword": "tandvårdsbidrag",
+      "volume": 9900,
+      "cpc": 0.55,
+      "competition": 0.14,
+      "difficulty": 30,
+      "intent_code": 1
+    },
+    {
+      "keyword": "underhållsbidrag",
+      "normalized_keyword": "underhållsbidrag",
+      "volume": 5400,
+      "cpc": 1.16,
+      "competition": 0.01,
+      "difficulty": 19,
+      "intent_code": 1
+    },
+    {
+      "keyword": "underhållsstöd",
+      "normalized_keyword": "underhållsstöd",
+      "volume": 3600,
+      "cpc": 1.18,
+      "competition": 0.33,
+      "difficulty": 26,
+      "intent_code": 1
+    },
+    {
+      "keyword": "underhållsstöd eller underhållsbidrag",
+      "normalized_keyword": "underhållsstöd eller underhållsbidrag",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "vab ersättning",
+      "normalized_keyword": "vab ersättning",
+      "volume": 1000,
+      "cpc": 0,
+      "competition": 0.01,
+      "difficulty": 16,
+      "intent_code": 1
+    },
+    {
+      "keyword": "vad har jag rätt till för bidrag",
+      "normalized_keyword": "vad har jag rätt till för bidrag",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "vetenskapsrådet bidrag",
+      "normalized_keyword": "vetenskapsrådet bidrag",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "vinnova bidrag",
+      "normalized_keyword": "vinnova bidrag",
+      "volume": 20,
+      "cpc": 0.59,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "vinnova innovativa startups",
+      "normalized_keyword": "vinnova innovativa startups",
+      "volume": 170,
+      "cpc": 0,
+      "competition": 0.02,
+      "difficulty": 23,
+      "intent_code": 2
+    },
+    {
+      "keyword": "återvandringsbidrag",
+      "normalized_keyword": "återvandringsbidrag",
+      "volume": 3600,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 30,
+      "intent_code": 1
+    },
+    {
+      "keyword": "äldreförsörjningsstöd",
+      "normalized_keyword": "äldreförsörjningsstöd",
+      "volume": 1600,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 30,
+      "intent_code": 1
+    },
+    {
+      "keyword": "överklaga bidragsbeslut",
+      "normalized_keyword": "överklaga bidragsbeslut",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    }
   ],
   "questions": {
     "_beskrivning": "Verkliga frågeformuleringar (People-Also-Ask-typ) från Semrush phrase_questions, database=se, sorterade på volym. Underlag för svarsobjekten/FAQPage på entity-sidorna — använd de faktiska formuleringarna, hitta aldrig på en fråga eller dess volym.",
     "bostadsbidrag": [
-      { "question": "vem kan få bostadsbidrag", "volume": 480, "difficulty": 42, "intent_code": 1 },
-      { "question": "hur mycket kan man få i bostadsbidrag", "volume": 390, "difficulty": 41, "intent_code": 1 },
-      { "question": "när kan man få bostadsbidrag", "volume": 320, "difficulty": 40, "intent_code": 1 },
-      { "question": "vem har rätt till bostadsbidrag", "volume": 320, "difficulty": 39, "intent_code": 1 },
-      { "question": "när får man bostadsbidrag", "volume": 260, "difficulty": 44, "intent_code": 1 },
-      { "question": "vad krävs för att få bostadsbidrag", "volume": 260, "difficulty": 45, "intent_code": 1 },
-      { "question": "hur mycket får man i bostadsbidrag", "volume": 210, "difficulty": 39, "intent_code": 1 },
-      { "question": "när har man rätt till bostadsbidrag", "volume": 210, "difficulty": 42, "intent_code": 1 },
-      { "question": "vad är bostadsbidrag", "volume": 210, "difficulty": 25, "intent_code": 1 },
-      { "question": "vem får bostadsbidrag", "volume": 210, "difficulty": 39, "intent_code": 1 },
-      { "question": "hur söker man bostadsbidrag", "volume": 140, "difficulty": 43, "intent_code": 1 },
-      { "question": "hur mycket bostadsbidrag kan man få", "volume": 140, "difficulty": 41, "intent_code": 1 },
-      { "question": "när kan man söka bostadsbidrag", "volume": 140, "difficulty": 40, "intent_code": 1 },
-      { "question": "var söker man bostadsbidrag", "volume": 110, "difficulty": 43, "intent_code": 1 },
-      { "question": "vem kan söka bostadsbidrag", "volume": 110, "difficulty": 39, "intent_code": 1 }
+      {
+        "question": "vem kan få bostadsbidrag",
+        "volume": 480,
+        "difficulty": 42,
+        "intent_code": 1
+      },
+      {
+        "question": "hur mycket kan man få i bostadsbidrag",
+        "volume": 390,
+        "difficulty": 41,
+        "intent_code": 1
+      },
+      {
+        "question": "när kan man få bostadsbidrag",
+        "volume": 320,
+        "difficulty": 40,
+        "intent_code": 1
+      },
+      {
+        "question": "vem har rätt till bostadsbidrag",
+        "volume": 320,
+        "difficulty": 39,
+        "intent_code": 1
+      },
+      {
+        "question": "när får man bostadsbidrag",
+        "volume": 260,
+        "difficulty": 44,
+        "intent_code": 1
+      },
+      {
+        "question": "vad krävs för att få bostadsbidrag",
+        "volume": 260,
+        "difficulty": 45,
+        "intent_code": 1
+      },
+      {
+        "question": "hur mycket får man i bostadsbidrag",
+        "volume": 210,
+        "difficulty": 39,
+        "intent_code": 1
+      },
+      {
+        "question": "när har man rätt till bostadsbidrag",
+        "volume": 210,
+        "difficulty": 42,
+        "intent_code": 1
+      },
+      {
+        "question": "vad är bostadsbidrag",
+        "volume": 210,
+        "difficulty": 25,
+        "intent_code": 1
+      },
+      {
+        "question": "vem får bostadsbidrag",
+        "volume": 210,
+        "difficulty": 39,
+        "intent_code": 1
+      },
+      {
+        "question": "hur söker man bostadsbidrag",
+        "volume": 140,
+        "difficulty": 43,
+        "intent_code": 1
+      },
+      {
+        "question": "hur mycket bostadsbidrag kan man få",
+        "volume": 140,
+        "difficulty": 41,
+        "intent_code": 1
+      },
+      {
+        "question": "när kan man söka bostadsbidrag",
+        "volume": 140,
+        "difficulty": 40,
+        "intent_code": 1
+      },
+      {
+        "question": "var söker man bostadsbidrag",
+        "volume": 110,
+        "difficulty": 43,
+        "intent_code": 1
+      },
+      {
+        "question": "vem kan söka bostadsbidrag",
+        "volume": 110,
+        "difficulty": 39,
+        "intent_code": 1
+      }
     ],
     "försörjningsstöd": [
-      { "question": "vad är försörjningsstöd", "volume": 390, "difficulty": 33, "intent_code": 1 },
-      { "question": "hur mycket får man i försörjningsstöd", "volume": 140, "difficulty": 29, "intent_code": 1 },
-      { "question": "hur mycket försörjningsstöd får man", "volume": 70, "difficulty": 29, "intent_code": 1 },
-      { "question": "hur mycket kan man få i försörjningsstöd", "volume": 40, "difficulty": 28, "intent_code": 1 },
-      { "question": "vad betyder försörjningsstöd", "volume": 30, "difficulty": 0, "intent_code": null },
-      { "question": "hur söker man försörjningsstöd", "volume": 20, "difficulty": 0, "intent_code": null },
-      { "question": "när betalas försörjningsstöd ut", "volume": 20, "difficulty": 0, "intent_code": null },
-      { "question": "vad ingår i försörjningsstöd", "volume": 20, "difficulty": 0, "intent_code": null },
-      { "question": "vad krävs för att få försörjningsstöd", "volume": 20, "difficulty": 0, "intent_code": null },
-      { "question": "vem kan få försörjningsstöd", "volume": 20, "difficulty": 0, "intent_code": null }
+      {
+        "question": "vad är försörjningsstöd",
+        "volume": 390,
+        "difficulty": 33,
+        "intent_code": 1
+      },
+      {
+        "question": "hur mycket får man i försörjningsstöd",
+        "volume": 140,
+        "difficulty": 29,
+        "intent_code": 1
+      },
+      {
+        "question": "hur mycket försörjningsstöd får man",
+        "volume": 70,
+        "difficulty": 29,
+        "intent_code": 1
+      },
+      {
+        "question": "hur mycket kan man få i försörjningsstöd",
+        "volume": 40,
+        "difficulty": 28,
+        "intent_code": 1
+      },
+      {
+        "question": "vad betyder försörjningsstöd",
+        "volume": 30,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "hur söker man försörjningsstöd",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "när betalas försörjningsstöd ut",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "vad ingår i försörjningsstöd",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "vad krävs för att få försörjningsstöd",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "vem kan få försörjningsstöd",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      }
+    ],
+    "ekonomiskt bistånd": [
+      {
+        "question": "vad är ekonomiskt bistånd",
+        "volume": 110,
+        "difficulty": 31,
+        "intent_code": 1
+      },
+      {
+        "question": "när får man ekonomiskt bistånd",
+        "volume": 40,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "hur mycket ekonomiskt bistånd får man",
+        "volume": 30,
+        "difficulty": 21,
+        "intent_code": 1
+      },
+      {
+        "question": "hur mycket kan man få i ekonomiskt bistånd",
+        "volume": 30,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "när kommer ekonomiskt bistånd",
+        "volume": 30,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "vem har rätt till ekonomiskt bistånd",
+        "volume": 30,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "hur lång tid tar det att få ekonomiskt bistånd",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "när betalas ekonomiskt bistånd ut",
+        "volume": 10,
+        "difficulty": 0,
+        "intent_code": null
+      }
+    ],
+    "bostadstillägg": [
+      {
+        "question": "vad är bostadstillägg",
+        "volume": 140,
+        "difficulty": 27,
+        "intent_code": 1
+      },
+      {
+        "question": "vem kan få bostadstillägg",
+        "volume": 140,
+        "difficulty": 25,
+        "intent_code": 1
+      },
+      {
+        "question": "hur mycket kan man få i bostadstillägg",
+        "volume": 90,
+        "difficulty": 26,
+        "intent_code": 1
+      },
+      {
+        "question": "hur högt bostadstillägg kan man få",
+        "volume": 30,
+        "difficulty": 26,
+        "intent_code": 1
+      },
+      {
+        "question": "hur lång tid tar det att få bostadstillägg",
+        "volume": 30,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "hur mycket kapital får man ha för att få bostadstillägg",
+        "volume": 30,
+        "difficulty": 23,
+        "intent_code": 1
+      },
+      {
+        "question": "hur räknas bostadstillägg ut",
+        "volume": 30,
+        "difficulty": 30,
+        "intent_code": 1
+      },
+      {
+        "question": "när får man bostadstillägg",
+        "volume": 30,
+        "difficulty": 0,
+        "intent_code": null
+      }
+    ],
+    "underhållsstöd": [
+      {
+        "question": "vad är underhållsstöd",
+        "volume": 480,
+        "difficulty": 16,
+        "intent_code": 1
+      },
+      {
+        "question": "hur länge får man underhållsstöd",
+        "volume": 260,
+        "difficulty": 23,
+        "intent_code": 1
+      },
+      {
+        "question": "hur länge betalar man underhållsstöd",
+        "volume": 30,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "vad täcker underhållsstöd",
+        "volume": 30,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "vem betalar underhållsstöd vid växelvis boende",
+        "volume": 30,
+        "difficulty": 0,
+        "intent_code": null
+      }
+    ],
+    "aktivitetsstöd": [
+      {
+        "question": "hur mycket får man i aktivitetsstöd",
+        "volume": 320,
+        "difficulty": 18,
+        "intent_code": 1
+      },
+      {
+        "question": "vad är aktivitetsstöd",
+        "volume": 320,
+        "difficulty": 23,
+        "intent_code": 1
+      },
+      {
+        "question": "hur länge kan man få aktivitetsstöd",
+        "volume": 260,
+        "difficulty": 17,
+        "intent_code": 1
+      },
+      {
+        "question": "hur mycket är aktivitetsstöd",
+        "volume": 210,
+        "difficulty": 23,
+        "intent_code": 1
+      },
+      {
+        "question": "hur mycket får man i aktivitetsstöd per månad",
+        "volume": 140,
+        "difficulty": 20,
+        "intent_code": 1
+      },
+      {
+        "question": "hur länge får man aktivitetsstöd",
+        "volume": 90,
+        "difficulty": 16,
+        "intent_code": 1
+      },
+      {
+        "question": "när får man aktivitetsstöd",
+        "volume": 90,
+        "difficulty": 21,
+        "intent_code": 1
+      },
+      {
+        "question": "när betalas aktivitetsstöd ut",
+        "volume": 50,
+        "difficulty": 17,
+        "intent_code": 1
+      },
+      {
+        "question": "hur ansöker man om aktivitetsstöd",
+        "volume": 40,
+        "difficulty": 12,
+        "intent_code": 1
+      }
     ]
+  },
+  "serp": {
+    "bostadsbidrag": {
+      "hamtad": "2026-08-28",
+      "toppdomaner": [
+        "forsakringskassan.se (3 URL:er, inkl. räkna-pa-bostadsbidrag — kalkylatorn rankar)",
+        "norden.org",
+        "pensionsmyndigheten.se",
+        "hyresgastforeningen.se",
+        "dorotea.se (kommun)",
+        "lendo.se (kommersiell guide — icke-myndighet rankar topp-10)",
+        "riksdagen.se"
+      ],
+      "notering": "Lendos guide topp-10 = beviset att oberoende aktörer kan ranka; ANGRIP-RUNT-strategin är realistisk. FK:s kalkylator topp-3 + räkna ut bostadsbidrag (1300/mån, KD43) = free-tool-SEO-belägg."
+    },
+    "vilka bidrag kan jag få": {
+      "hamtad": "2026-08-28",
+      "resultat": "NOTHING FOUND — ingen SERP-data; tredje oberoende belägget för §29 (mall-frasen är inget självständigt sökresultat)."
+    }
   }
 }
