@@ -89,7 +89,7 @@ export const config = {
    * Objektlagring: 'disk' (default — lokal utveckling/test/container) eller
    * 'supabase' (krav på Vercel: funktioner saknar beständigt filsystem).
    */
-  storageDriver: (env.STORAGE_DRIVER ?? 'disk') as 'disk' | 'supabase',
+  storageDriver: (env.STORAGE_DRIVER ?? 'disk') as 'disk' | 'supabase' | 'postgres',
   supabaseUrl: env.SUPABASE_URL ?? null,
   supabaseServiceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY ?? null,
   supabaseStorageBucket: env.SUPABASE_STORAGE_BUCKET ?? 'documents',

@@ -92,6 +92,18 @@ export async function internalRoutes(app: FastifyInstance) {
             ? { status: 'mock', detail: 'Mockbetalningar aktiva (endast utanför produktion). Aktivering: STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET, eller SWISH_MERCHANT_ALIAS + SWISH_CERT_BASE64 + SWISH_KEY_BASE64.' }
             : { status: 'not_configured', detail: 'Ingen betalväg. Aktivering kräver Stripe (STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET) eller Swish Handel-avtal + certifikat (se docs/ACTIVATION.md).' };
 
+      // Objektlagring: 'postgres' (in-house Neon) och 'supabase' är beständiga;
+      // 'disk' är flyktig på serverless och duger bara utanför produktion.
+      checks.storage = config.storageDriver === 'postgres'
+        ? { status: 'ready', detail: 'Objektlagring i Postgres/Neon — privat, i databasen, överlever serverless.' }
+        : config.storageDriver === 'supabase'
+          ? (config.supabaseUrl && config.supabaseServiceRoleKey
+              ? { status: 'ready', detail: 'Supabase Storage konfigurerat (privat bucket).' }
+              : { status: 'not_configured', detail: 'STORAGE_DRIVER=supabase kräver SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY.' })
+          : (process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV !== 'preview'
+              ? { status: 'not_configured', detail: 'STORAGE_DRIVER=disk är flyktig på serverless och överlever inte nästa anrop. Sätt STORAGE_DRIVER=postgres (Neon) för beständig privat lagring.' }
+              : { status: 'ready', detail: 'Disklagring (lokal utveckling/test/container med volym).' });
+
       if (!emailConfigured()) {
         checks.email_resend = { status: 'not_configured', detail: 'Ingen e-postkanal. Aktivering kräver RESEND_API_KEY + EMAIL_FROM med verifierad domän. Kvitton i kontot och återställningskoder fungerar ändå; länk-återställning är avstängd (fail-closed).' };
       } else if (probe && config.resendApiKey) {

@@ -12,6 +12,7 @@
 
 import {
   boolean,
+  customType,
   index,
   integer,
   jsonb,
@@ -26,6 +27,13 @@ import {
 const id = () => uuid('id').primaryKey().defaultRandom();
 const createdAt = () => timestamp('created_at', { withTimezone: true }).notNull().defaultNow();
 const updatedAt = () => timestamp('updated_at', { withTimezone: true }).notNull().defaultNow();
+
+/** Rå bytes (bytea) — pg returnerar Buffer. Används av postgres-lagringsdrivern. */
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({
+  dataType() {
+    return 'bytea';
+  },
+});
 
 // ── Identity & tenancy ────────────────────────────────────────────────────────
 
@@ -730,4 +738,22 @@ export const auditEvents = pgTable(
     createdAt: createdAt(),
   },
   (t) => [index('audit_tenant_idx').on(t.tenantId, t.createdAt), index('audit_entity_idx').on(t.entityType, t.entityId)],
+);
+
+// ── Objektlagring i databasen (STORAGE_DRIVER=postgres) ──────────────────────
+// Håller uppladdade och genererade filer INNE i Neon/Postgres i stället för en
+// extern objektlagring. Fördel: fullständigt privat (ingen publik URL — åtkomst
+// går alltid genom API:ts tenantkontroll, aldrig direkt), inget tredjepartsberoende
+// och ingen serverless-diskflyktighet. Nyckeln är samma sökvägsmodell som de andra
+// drivrutinerna (tenantId/uuid.ext), så en flytt mellan drivrutiner är ren datakopiering.
+export const storageObjects = pgTable(
+  'storage_objects',
+  {
+    path: text('path').primaryKey(),
+    tenantId: uuid('tenant_id'),
+    contentType: text('content_type').notNull().default('application/octet-stream'),
+    content: bytea('content').notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [index('storage_objects_tenant_idx').on(t.tenantId)],
 );

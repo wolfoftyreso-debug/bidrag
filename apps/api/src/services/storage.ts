@@ -14,10 +14,13 @@
  */
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { eq, like } from 'drizzle-orm';
 import { config } from '../config.ts';
+import { db } from '../db/client.ts';
+import { storageObjects } from '../db/schema.ts';
 
 export interface StorageDriver {
-  readonly id: 'disk' | 'supabase';
+  readonly id: 'disk' | 'supabase' | 'postgres';
   put(relPath: string, content: Buffer): Promise<void>;
   get(relPath: string): Promise<Buffer>;
   remove(relPath: string): Promise<void>;
@@ -99,7 +102,49 @@ const supabaseDriver: StorageDriver = {
   },
 };
 
+/**
+ * Postgres/Neon-lagring: filerna bor INNE i databasen (bytea). Fullständigt
+ * privat — ingen publik URL existerar; åtkomst går alltid genom API:ts
+ * tenantkontroll. Rätt för Vercel + Neon "in-house": ingen extern objektlagring,
+ * ingen serverless-diskflyktighet, inget tredjepartsberoende. Sökvägens första
+ * segment (tenantId/…) lagras för index och GDPR-radering.
+ */
+const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function tenantOf(relPath: string): string | null {
+  const seg = relPath.split('/')[0] ?? '';
+  return uuidRe.test(seg) ? seg : null;
+}
+
+const postgresDriver: StorageDriver = {
+  id: 'postgres',
+  async put(relPath, content) {
+    await db
+      .insert(storageObjects)
+      .values({ path: relPath, tenantId: tenantOf(relPath), content, contentType: 'application/octet-stream' })
+      .onConflictDoUpdate({ target: storageObjects.path, set: { content, createdAt: new Date() } });
+  },
+  async get(relPath) {
+    const [row] = await db
+      .select({ content: storageObjects.content })
+      .from(storageObjects)
+      .where(eq(storageObjects.path, relPath))
+      .limit(1);
+    if (!row) throw new Error(`storage get failed: not found ${relPath}`);
+    return row.content;
+  },
+  async remove(relPath) {
+    await db.delete(storageObjects).where(eq(storageObjects.path, relPath));
+  },
+  async removePrefix(prefix) {
+    // Radera hela tenantens objekt (path = tenantId/uuid.ext). Prefixet är ett
+    // uuid — inga LIKE-jokrar att escapa. Träffar exakt den tenantens filer.
+    if (!prefix) return;
+    await db.delete(storageObjects).where(like(storageObjects.path, `${prefix}%`));
+  },
+};
+
 export function getStorage(): StorageDriver {
+  if (config.storageDriver === 'postgres') return postgresDriver;
   if (config.storageDriver === 'supabase') {
     if (!config.supabaseUrl || !config.supabaseServiceRoleKey) {
       // Ärligt fel vid uppstart av anropet — aldrig tyst fallback till en

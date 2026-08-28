@@ -302,12 +302,12 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 
 `.env.example` är sanningskällan — tabellen nedan genereras ur den.
 
-### Databas (Supabase PostgreSQL)
+### Databas (Neon / Vercel Postgres)
 
 | Variabel | Beskrivning |
 |---|---|
-| `DATABASE_URL` | Runtime: poolad anslutning (Supavisor, port 6543, transaction mode). |
-| `DIRECT_DATABASE_URL` | Migreringar/seed: direktanslutning (port 5432) — kör aldrig migreringar via poolern. |
+| `DATABASE_URL` | Runtime: poolad anslutning (Neon pooler, host ...-pooler.neon.tech, sslmode=require). |
+| `DIRECT_DATABASE_URL` | Migreringar/seed: direktanslutning (icke-poolad host) — kör aldrig migreringar via poolern. |
 | `PG_POOL_MAX` | Serverless: håll poolen liten per funktionsinstans. |
 
 ### Auth & kryptering
@@ -331,9 +331,9 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 
 | Variabel | Beskrivning |
 |---|---|
-| `STORAGE_DRIVER` | 'disk' lokalt/i container; 'supabase' på Vercel (privat bucket, service-nyckel enbart server-side). |
+| `STORAGE_DRIVER` | 'disk' lokalt/i container (kräver persistent volym); 'postgres' på Vercel+Neon (filerna bor i databasen — fullständigt privat, ingen publik URL, överlever serverless); 'supabase' finns kvar som alternativ (privat bucket, |
 | `UPLOAD_DIR` | — |
-| `SUPABASE_URL` | — |
+| `SUPABASE_URL` | Endast om STORAGE_DRIVER=supabase: |
 | `SUPABASE_SERVICE_ROLE_KEY` | — |
 | `SUPABASE_STORAGE_BUCKET` | — |
 

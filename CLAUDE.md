@@ -28,10 +28,10 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
   dokumentmallar + rendering, deterministisk ansökningsgranskning
   (`docs/APPLICATION-INTELLIGENCE.md`). 90 enhetstester.
 - **`apps/api`** — Fastify 5 + Drizzle + PostgreSQL 16, modulär monolit:
-  auth/tenancy, kunskapsgraf (72 stöd, 35 finansiärer, 80 ansökningsscheman,
-  39 källor), matchning, ansökningar, dokumentvalv, betalningar (Swish Handel-
-  adapter + mock), kvitton med moms, GDPR-självservice, kurators-API,
-  bakgrundsjobb. 207 integrationstester.
+  auth/tenancy, kunskapsgraf (72 stöd, 35 finansiärer, 71 ansökningsscheman,
+  36 källor), matchning, ansökningar, dokumentvalv, betalningar (Stripe Checkout
+  + Swish Handel-adaptrar + mock), kvitton med moms, GDPR-självservice, kurators-API,
+  bakgrundsjobb. 213 integrationstester.
 - **`apps/web`** — svensk React-SPA (Vite): onboarding en-fråga-per-skärm,
   analys/teaser, köpflöden med ångerrättssamtycke, ansökningsarbetsyta,
   dokumentstudio, Mina köp/kvitton, admin.
@@ -94,11 +94,11 @@ demo/           ← bundlar core + kunskapsbas-export till EN html-fil
   kuratorsflödet får höja till `human_curated`/`human_verified`.
 - **`deploy/bootstrap.sql`** = komplett dump (schema + RLS + kunskapsbas +
   migrationsspårning) för att resa en tom PostgreSQL utan Node — används av
-  deploy-körboken för att ladda Supabase via connector. Efter bootstrap är
+  deploy-körboken för att ladda en tom Neon/Postgres. Efter bootstrap är
   `npm run db:migrate` en no-op. **Regenerera den när migreringar eller seed
   ändras**: `bash scripts/make-bootstrap.sh` (verifierar rundtur själv).
-- RLS: deny-all-policyer (migrering 0005) — Supabases PostgREST kommer inte
-  åt något; all åtkomst går genom API:t.
+- RLS: deny-all-policyer (migrering 0005) som djupförsvar — all åtkomst går
+  genom API:t; ingen direktexponerad databas-yta.
 
 ## Kommandon
 
@@ -164,10 +164,11 @@ CI kör inte webbläsarkontrollerna (verify:ui, demo:check).
 Minimum för lokal drift: `DATABASE_URL` (hemligheterna har dev-defaults;
 i produktion kastar config vid start om `DATABASE_URL`, `AUTH_SECRET` eller
 `FIELD_ENCRYPTION_KEY` saknas). Produktion kräver därtill: `AUTH_SECRET`,
-`FIELD_ENCRYPTION_KEY`, `CRON_SECRET`, `STORAGE_DRIVER=supabase` +
-Supabase-trion, `PUBLIC_BASE_URL`, `CORS_ORIGIN`. Integrationer som aktiveras
-med nycklar när användaren tecknat avtalen: Resend (e-post), Swish Handel
-(betalningar), `ANTHROPIC_API_KEY` (språkförslag). Utan nyckel svarar
+`FIELD_ENCRYPTION_KEY`, `CRON_SECRET`, `STORAGE_DRIVER=postgres` (Neon in-house;
+`supabase` finns kvar som alternativ), `PUBLIC_BASE_URL`, `CORS_ORIGIN`.
+Integrationer som aktiveras med nycklar: Stripe (betalningar, lanseringsrälsen —
+`STRIPE_SECRET_KEY`+`STRIPE_WEBHOOK_SECRET`), Swish Handel (betalningar, när
+avtalet är klart), Resend (e-post), `ANTHROPIC_API_KEY` (språkförslag). Utan nyckel svarar
 respektive yta ärligt 503 — bygg aldrig bort det.
 
 ## Mock/demo kontra verklig produktion
@@ -184,11 +185,12 @@ aldrig i Production. `/v1/internal/readiness?probe=true` (Bearer
 
 ## Deployment
 
-- **Primär väg: Vercel + Supabase.** `git push` → Vercel bygger och deployar
-  (SPA statiskt + hela API:t som en serverless-funktion); Supabase står för
-  Postgres, privat `documents`-bucket och pooler; Vercel Cron kör jobben.
+- **Primär väg: Vercel + Neon (in-house).** `git push` → Vercel bygger och deployar
+  (SPA statiskt + hela API:t som en serverless-funktion); Neon Postgres står för
+  databasen + pooler; dokument/uppladdningar bor i databasen (`STORAGE_DRIVER=postgres`,
+  tabell `storage_objects` — privat, ingen bucket); Vercel Cron kör jobben.
 - **Agentdriven deploy**: `docs/DEPLOY-AGENT.md` är körboken — följ den om
-  Supabase-/Vercel-connectors finns i sessionen. Manuell klickordning:
+  Vercel-connectorn finns i sessionen. Manuell klickordning:
   `docs/DEPLOY-NU.md`. Helhet och drift: `docs/DEPLOYMENT.md`,
   `docs/OPERATIONS.md`. Aktivering av externa tjänster: `docs/ACTIVATION.md`.
 - Repot pushas till **två** remotes: `origin` (wolfoftyreso-debug/bidrag,
@@ -238,7 +240,7 @@ användaren beställt en **fullständig revision** och i samband med den en
 miljön och handboken fördjupas då skärm för skärm.
 
 1. **Deployn själv** — användaren kör `docs/DEPLOY-AGENT.md` i en session med
-   Supabase-/Vercel-connectors. Assistera; gör det du kan via connectorerna.
+   Vercel-connectorn (in-house: Vercel + Neon). Assistera; gör det du kan via connectorerna.
    Verifiera efteråt utifrån med `tools/deploy-smoke.mjs`.
 2. **Demons plan-vy: dokumentförberedelse in-browser** — användarfynd: demon
    länkar till 1177/myndigheten i stället för att visa att systemet förbereder

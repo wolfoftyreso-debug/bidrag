@@ -1,6 +1,6 @@
 # DEPLOY-AGENT — körbok för agentdriven deploy via connectors
 
-**Målgrupp: en Claude-session med Supabase- och Vercel-connectors kopplade.**
+**Målgrupp: en Claude-session med Vercel-connector kopplad (in-house: Vercel + Neon Postgres).**
 Användaren har bett om snabbaste vägen med minsta möjliga klipp-och-klistra.
 Din uppgift är att göra allt som connectorerna tillåter och bara lämna kvar
 det som kräver användarens egna klick. Fråga aldrig användaren om något du
@@ -12,42 +12,41 @@ en connector saknas eller saknar en förmåga.
 
 ## Steg 0 — förutsättningar
 
-1. Kör `ToolSearch` efter `supabase` respektive `vercel`. Båda connectorerna
-   behövs. Saknas någon: be användaren koppla den under claude.ai →
-   Settings → Connectors (Supabase: `https://mcp.supabase.com/mcp`,
-   Vercel: `https://mcp.vercel.com`) och avsluta turen — gissa inte vidare.
+1. Kör `ToolSearch` efter `vercel` (och `neon` om en Neon-connector finns).
+   Vercel-connectorn behövs. Saknas den: be användaren koppla den under
+   claude.ai → Settings → Connectors (Vercel: `https://mcp.vercel.com`) och
+   avsluta turen — gissa inte vidare. **In-house-stacken är Vercel + Neon
+   Postgres** (ingen Supabase); objektlagringen bor i databasen
+   (`STORAGE_DRIVER=postgres`), så ingen extern bucket behövs.
 2. Läs `.env.example` — den är sanningskällan för vilka variabler som finns
    och vad de betyder.
 
-## Steg 1 — Supabase-projektet (via connectorn)
+## Steg 1 — Neon Postgres (Vercel Storage → Postgres)
 
-1. Lista organisationer; skapa projekt **`bidragskoll`**, region
-   **`eu-north-1`** (Stockholm). Bekräfta kostnaden med användaren om
-   verktyget kräver det (gratisnivån räcker för preview-testning).
-2. **Databaslösenordet**: om skapandeverktyget genererar/returnerar ett
-   lösenord — spara det för anslutningssträngarna. Om inte: be användaren
-   göra EN sak i Supabase-dashboarden (Project Settings → Database →
-   Reset database password) och klistra in det till dig. Det är flödets
-   enda oundvikliga hemlighetsinklistring.
-3. **Ladda databasen**: kör `deploy/bootstrap.sql` genom connectorn
-   (apply_migration/execute_sql). Filen är komplett och verifierad genom
-   rundtur mot tom databas: hela schemat (12 migreringar, RLS-policyer,
-   drizzles migrationstabell) + hela kunskapsbasen som INSERT-satser,
-   inga psql-metakommandon. ~396 KB — dela på satsgränser om verktyget
-   har storleksgräns (aldrig mitt i en sats; strängar innehåller `;`).
-   Filen regenereras med `bash scripts/make-bootstrap.sh` efter varje
-   migrerings- eller seedändring (skriptet rundtursverifierar själv).
+1. Skapa en **Neon Postgres**-databas för projektet, region **eu-north-1**
+   (Stockholm/Frankfurt närmast). Enklast via Vercel: projektet → **Storage →
+   Create → Postgres (Neon)** — då kopplas anslutningssträngarna in i projektets
+   env automatiskt (`DATABASE_URL` m.fl.). Alternativt en fristående Neon-databas
+   och klistra in strängarna själv.
+2. **Anslutningssträngar**: Neon ger en **poolad** host (`...-pooler.neon.tech`,
+   för runtime → `DATABASE_URL`) och en **direkt** host (för migreringar →
+   `DIRECT_DATABASE_URL`). Båda med `?sslmode=require`. Skapar Vercel-integrationen
+   dem åt dig räcker det att verifiera formen; annars bygg dem av Neons dashboard-
+   värden.
+3. **Ladda databasen**: kör `deploy/bootstrap.sql` mot Neon (Neon SQL Editor,
+   `psql "$DIRECT_DATABASE_URL" -f deploy/bootstrap.sql`, eller Neon-connectorn).
+   Filen är komplett och verifierad genom rundtur mot tom databas: hela schemat
+   (13 migreringar, RLS-policyer, drizzles migrationstabell) + hela kunskapsbasen
+   som INSERT-satser, inga psql-metakommandon. ~397 KB. Kör mot den DIREKTA
+   anslutningen, aldrig via poolern.
 4. **Verifiera räkningarna** — allt annat är ett fel:
    `funding_opportunities=72, funding_authorities=35,
-   application_schemas=80, sources=39, drizzle.__drizzle_migrations=12`.
-5. **Bucket**: skapa privat lagringsbucket `documents`
-   (`insert into storage.buckets (id, name, public)
-   values ('documents','documents',false);` — eller storage-verktyget om
-   connectorn har ett).
-6. Hämta via connectorn: projekt-URL (= `SUPABASE_URL`) och
-   `service_role`-nyckeln. Exponerar connectorn inte service-nyckeln:
-   användaren kopierar den från Project Settings → API (Reveal) — säg
-   exakt var den finns.
+   application_schemas=71, sources=36, drizzle.__drizzle_migrations=13`.
+5. **Objektlagring**: ingen bucket. `STORAGE_DRIVER=postgres` lägger
+   dokument/uppladdningar i tabellen `storage_objects` i Neon — privat, åtkomst
+   bara genom API:ts tenantkontroll. Migreringen skapade tabellen; inget mer görs.
+   Filen regenereras med `bash scripts/make-bootstrap.sh` efter varje migrerings-
+   eller seedändring (skriptet rundtursverifierar själv).
 
 ## Steg 2 — hemligheter (lokalt i din sandlåda)
 
@@ -59,43 +58,41 @@ openssl rand -hex 24   # CRON_SECRET
 
 ## Steg 3 — env-blocket (EN inklistring för användaren)
 
-Bygg anslutningssträngarna själv av projektreferensen + lösenordet:
+Neon-strängarna kommer från Vercel Storage-integrationen (eller Neons dashboard).
+Formen: `postgresql://<user>:<lösenord>@<host>-pooler.<region>.aws.neon.tech/<db>?sslmode=require`
+(poolad, → `DATABASE_URL`) och samma utan `-pooler` (direkt, → `DIRECT_DATABASE_URL`).
 
-- `DATABASE_URL` (pooler, transaction mode):
-  `postgresql://postgres.<ref>:<lösenord>@aws-0-eu-north-1.pooler.supabase.com:6543/postgres`
-- `DIRECT_DATABASE_URL` (direkt):
-  `postgresql://postgres:<lösenord>@db.<ref>.supabase.co:5432/postgres`
-
-Verifiera värdformerna mot vad connectorn/dashboarden faktiskt visar om du
-kan. Sätt ihop ETT komplett env-block (Vercels miljövariabelfält tar emot
-ett helt inklistrat .env-block och fyller alla nycklar på en gång):
+Sätt ihop ETT komplett env-block (Vercels miljövariabelfält tar emot ett helt
+inklistrat .env-block och fyller alla nycklar på en gång):
 
 ```
-DATABASE_URL=...
-DIRECT_DATABASE_URL=...
+DATABASE_URL=...            # Neon pooler (...-pooler...neon.tech, ?sslmode=require)
+DIRECT_DATABASE_URL=...     # Neon direkt (utan -pooler)
 PG_POOL_MAX=2
 AUTH_SECRET=...
 FIELD_ENCRYPTION_KEY=...
 CRON_SECRET=...
-STORAGE_DRIVER=supabase
-SUPABASE_URL=...
-SUPABASE_SERVICE_ROLE_KEY=...
-SUPABASE_STORAGE_BUCKET=documents
+STORAGE_DRIVER=postgres
+STRIPE_SECRET_KEY=sk_test_...      # test i preview, live först i produktion
+STRIPE_WEBHOOK_SECRET=whsec_...    # från Stripe-webhooken mot /v1/webhooks/payments/stripe
 PUBLIC_BASE_URL=https://<projekt>.vercel.app
 CORS_ORIGIN=https://<projekt>.vercel.app
-PAYMENTS_MOCK_ENABLED=true
+PAYMENTS_MOCK_ENABLED=true         # valfritt i preview; utelämna för att tvinga skarp Stripe
 ```
 
-Ge användaren blocket och exakt dessa instruktioner:
+Projektet **`bidragskoll`** är redan skapat och länkat i Vercel (ingen import
+behövs). Ge användaren blocket och exakt dessa instruktioner:
 
-1. Öppna **vercel.com/new** → Import → `wolfoftyreso-debug/bidragskoll`
-   (logga in med GitHub). Rör inga bygginställningar — `vercel.json` styr.
-2. Fäll ut **Environment Variables**, klistra in hela blocket i
-   nyckelfältet — alla rader fylls i automatiskt.
-3. **`PAYMENTS_MOCK_ENABLED`: bocka ur Production** — den ska bara gälla
-   Preview (koden vägrar mock i skarp produktion oavsett, men flaggan ska
-   ändå inte ligga där).
-4. Klicka **Deploy**.
+1. Vercel → projektet **bidragskoll** → **Settings → Environment Variables**,
+   klistra in hela blocket i nyckelfältet — alla rader fylls i automatiskt.
+   (Använder du Vercel Storage → Postgres läggs `DATABASE_URL` m.fl. in
+   automatiskt — dubblera inte.)
+2. **`PAYMENTS_MOCK_ENABLED`: bocka ur Production** — den ska bara gälla Preview
+   (koden vägrar mock i skarp produktion oavsett, men flaggan ska ändå inte ligga där).
+3. **Stripe-webhook**: skapa en endpoint i Stripe mot
+   `<PUBLIC_BASE_URL>/v1/webhooks/payments/stripe` (event `checkout.session.completed`)
+   och klistra in dess signing secret som `STRIPE_WEBHOOK_SECRET` (se docs/ACTIVATION.md §3).
+4. **Deployments → Redeploy** (eller pusha till `main`).
 
 `PUBLIC_BASE_URL`/`CORS_ORIGIN` kan behöva justeras efter första deployn
 när den faktiska `*.vercel.app`-adressen är känd — gör det via
@@ -105,9 +102,11 @@ Vercel-connectorn om den kan skriva env-variabler, annars be användaren.
 
 1. Vercel-connectorn: bekräfta att deployn är klar; läs byggloggen vid fel.
 2. Readiness: `GET https://<projekt>.vercel.app/v1/internal/readiness?probe=true`
-   med `Authorization: Bearer <CRON_SECRET>`. Förväntat ärligt svar:
-   `database: ready` + `payments_swish`/`email_resend`/`generation_anthropic`
-   som blockerare (de aktiveras enligt `docs/ACTIVATION.md`).
+   med `Authorization: Bearer <CRON_SECRET>`. Förväntat ärligt svar med Neon +
+   Postgres-lagring + Stripe: `database: ready`, `storage: ready` (postgres),
+   `payments: ready` (Stripe konfigurerat) — och `email_resend`/
+   `generation_anthropic` som kvarvarande blockerare tills de aktiveras enligt
+   `docs/ACTIVATION.md`. Utan Stripe-nycklar blir `payments` en blockerare (mock).
    Obs: sandlådans proxy kan blockera utgående anrop — går det inte att
    nå URL:en själv, ge användaren det färdiga curl-kommandot.
 3. Kör fjärr-röktestet om nätet tillåter (annars ge användaren kommandot):
