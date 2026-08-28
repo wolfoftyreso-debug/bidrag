@@ -1,6 +1,6 @@
 /**
  * Bidragskoll.se — interaktivt demo. Kör den RIKTIGA matchningsmotorn
- * (@bidrag/core computeMatch) mot den riktiga kunskapsbasen (72 kurerade
+ * (@bidrag/core computeMatch) mot den riktiga kunskapsbasen (alla kurerade
  * stöd) helt i webbläsaren. Samma intag som produkten: en fråga per skärm.
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -29,6 +29,9 @@ interface Opp {
 }
 
 const OPPS = OPPORTUNITIES as unknown as Opp[];
+// Härledda räkningar — visas i UI:t i stället för hårdkodade siffror.
+const OPP_COUNT = OPPS.length;
+const AUTHORITY_COUNT = new Set(OPPS.map((o) => o.authority).filter(Boolean)).size;
 // Relevanspolicyn (F-RELEVANS) delas med API:t via @bidrag/core — demon
 // bundlar samma modul, så spårfiltren kan aldrig glida isär.
 const PERSONAL = PERSONAL_INSTRUMENTS;
@@ -826,7 +829,7 @@ function App() {
           </svg>
           Bidragskoll
         </div>
-        <div className="tag">Demo — den riktiga matchningsmotorn och 72 kurerade stöd, körda helt i din webbläsare</div>
+        <div className="tag">Demo — den riktiga matchningsmotorn och {OPP_COUNT} kurerade stöd, körda helt i din webbläsare</div>
       </header>
 
       {view === 'flow' && step === 'done' && (
@@ -1055,7 +1058,7 @@ function App() {
       )}
 
       <footer className="foot">
-        Detta demo kör produktens verkliga matchningsmotor och kurerade kunskapsbas (72 stöd, 35 finansiärer, källor
+        Detta demo kör produktens verkliga matchningsmotor och kurerade kunskapsbas ({OPP_COUNT} stöd, {AUTHORITY_COUNT} finansiärer, källor
         AI-sammanställda 2026-08-13, ej människogranskade) lokalt i din webbläsare — inget skickas någonstans. I fullversionen finns
         dessutom konton, ansökningsarbetsyta med förifyllda formulär, dokumentvalv, assisterad inlämning med kvitto och
         ärendeuppföljning. Bedömningarna är vägledande — slutligt beslut fattas alltid av respektive myndighet eller finansiär.

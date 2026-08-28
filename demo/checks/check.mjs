@@ -5,6 +5,23 @@ const page = await browser.newPage({ viewport: { width: 900, height: 900 } });
 page.on('pageerror', (e) => { console.log('PAGEERROR:', e.message); process.exitCode = 1; });
 await page.goto(`file://${S}/demo/demo.html`);
 
+// Räkningarna i UI:t ska komma ur den bundlade kunskapsbasen — aldrig en
+// hårdkodad siffra som tyst blir fel vid nästa kureringspass (fynd 2026-08-28:
+// demon påstod 72 stöd när basen hade 85).
+{
+  const { readFileSync } = await import('node:fs');
+  const opps = JSON.parse(readFileSync(new URL('../demo-opportunities.json', import.meta.url), 'utf8'));
+  const authorities = new Set(opps.map((o) => o.authority).filter(Boolean)).size;
+  const head = await page.textContent('body');
+  if (!head.includes(`${opps.length} kurerade stöd`)) {
+    throw new Error(`headern anger inte ${opps.length} kurerade stöd (kunskapsbasens verkliga antal)`);
+  }
+  if (!head.includes(`${opps.length} stöd, ${authorities} finansiärer`)) {
+    throw new Error(`footern anger inte ${opps.length} stöd / ${authorities} finansiärer`);
+  }
+  console.log(`OK: räkningarna i UI:t matchar kunskapsbasen (${opps.length} stöd, ${authorities} finansiärer)`);
+}
+
 // Personligt spår: ensamstående förälder, arbetslös, låg inkomst
 await page.click('text=svårt att få ekonomin');
 await page.click('button:has-text("Själv")');
@@ -64,7 +81,7 @@ await page.click('.row >> button:has-text("Nej")'); // ej barn/unga
 // Open Discovery: rapporten visas direkt och gratis — ingen teaser, ingen betalvägg.
 await page.waitForSelector('text=Gå vidare med ansökan');
 console.log('OK: betalvägg även i projektspåret');
-await page.waitForSelector('text=Stöd som kan passa');
+await page.waitForSelector('text=/Stöd som kan passa|Bidrag och finansiering/');
 body = await page.textContent('body');
 if (!body.includes('Resebidrag för internationellt kulturutbyte')) throw new Error('resebidrag saknas');
 console.log('OK: projektspår (Jamaica-fallet)');
