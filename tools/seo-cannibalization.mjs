@@ -20,6 +20,20 @@ const SITE = process.argv[2] ? join(ROOT, process.argv[2]) : join(ROOT, 'artifac
 if (!existsSync(SITE)) { console.error(`${SITE} saknas — kör tools/genseo.mjs först`); process.exit(1); }
 
 const STOP = new Set(['och', 'för', 'att', 'i', 'på', 'du', 'din', 'ditt', 'kan', 'få', 'med', 'en', 'ett', 'de', 'som', 'är', 'so']);
+
+/**
+ * Granskade par (förälder/barn i klusterarkitekturen): en hubb och dess
+ * barnsida handlar om SAMMA ämne per design — token-överlappet är semantisk
+ * verklighet, inte två sidor som tävlar om samma intention. Hubben äger
+ * huvudtermen/orienteringen, barnsidan det konkreta stödet (villkor + ansökan);
+ * de länkar varandra. Varje post här kräver en motivering — listan är ett
+ * granskningsprotokoll, inte en tystnadsknapp.
+ */
+const REVIEWED_PAIRS = new Map([
+  ['/bidrag/ekonomiskt-bistand/ ⟷ /bidrag/kommun-forsorjningsstod/',
+    'klusterhubb ⟷ barnsida (SEO_ANSWER_CLUSTERS #3): hubben äger paraplytermen + PAA, barnsidan det sökbara stödet — granskad 2026-08-28'],
+]);
+const pairKey = (a, b) => [a, b].sort().join(' ⟷ ');
 const pages = [];
 function walk(dir, rel) {
   for (const name of readdirSync(dir)) {
@@ -57,7 +71,8 @@ for (let i = 0; i < docs.length; i++) {
     if (docs[i].tokens.size < 2 || docs[j].tokens.size < 2) continue;
     const sim = jaccard(docs[i].tokens, docs[j].tokens);
     if (sim >= THRESHOLD) {
-      risks.push({ a: docs[i].path, b: docs[j].path, similarity: Math.round(sim * 100) / 100, titleA: docs[i].title, titleB: docs[j].title });
+      const reviewed = REVIEWED_PAIRS.get(pairKey(docs[i].path, docs[j].path));
+      risks.push({ a: docs[i].path, b: docs[j].path, similarity: Math.round(sim * 100) / 100, titleA: docs[i].title, titleB: docs[j].title, ...(reviewed ? { reviewed } : {}) });
     }
   }
 }
@@ -67,9 +82,12 @@ mkdirSync(join(ROOT, 'artifacts'), { recursive: true });
 writeFileSync(join(ROOT, 'artifacts', 'seo-cannibalization.json'), JSON.stringify({ indexablePages: docs.length, threshold: THRESHOLD, risks }, null, 2));
 
 console.log(`Kannibaliseringskoll: ${docs.length} indexerbara sidor, tröskel ${THRESHOLD}.`);
-if (!risks.length) {
-  console.log('Inga kannibaliseringsrisker — varje indexerbar sida äger en egen intention.');
+const open = risks.filter((r) => !r.reviewed);
+const cleared = risks.filter((r) => r.reviewed);
+for (const r of cleared) console.log(`  GRANSKAD  ${r.a}  ⟷  ${r.b} — ${r.reviewed}`);
+if (!open.length) {
+  console.log('Inga ogranskade kannibaliseringsrisker — varje indexerbar sida äger en egen intention.');
 } else {
-  console.log(`${risks.length} risk(er) att granska:`);
-  for (const r of risks) console.log(`  ${r.similarity}  ${r.a}  ⟷  ${r.b}\n         "${r.titleA}"  /  "${r.titleB}"`);
+  console.log(`${open.length} risk(er) att granska:`);
+  for (const r of open) console.log(`  ${r.similarity}  ${r.a}  ⟷  ${r.b}\n         "${r.titleA}"  /  "${r.titleB}"`);
 }

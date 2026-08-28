@@ -1,498 +1,2225 @@
 {
-  "_kontrakt": "Tier 1-frågematris. Inga sökvolymer anges någonstans (DATA_UNAVAILABLE tills GSC/Keyword Planner kopplats in); varje fråga är märkt source: SERP-DERIVED (hämtad ur/nära de skördade formuleringarna i docs/SEO_SERP_RESEARCH.md Del 1/Del 3) eller INFERRED (rimlig svensk sökformulering författad av oss); frågetexterna är neutrala sökfraser och fabricerar aldrig belopp eller regler.",
-  "roots": [
+ "_kontrakt": "Tier 1-frågematris. Inga sökvolymer anges någonstans (DATA_UNAVAILABLE tills GSC/Keyword Planner kopplats in); varje fråga är märkt source: SERP-DERIVED (hämtad ur/nära de skördade formuleringarna i docs/SEO_SERP_RESEARCH.md Del 1/Del 3) eller INFERRED (rimlig svensk sökformulering författad av oss); frågetexterna är neutrala sökfraser och fabricerar aldrig belopp eller regler.",
+ "roots": [
+  {
+   "root": "bostadsbidrag",
+   "node": "/bidrag/bostadsbidrag/",
+   "questions": [
     {
-      "root": "bostadsbidrag",
-      "node": "/bidrag/fk-bostadsbidrag-barnfamiljer/",
-      "questions": [
-        { "q": "vad är bostadsbidrag", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "vem kan ansöka om bostadsbidrag", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "SERP-DERIVED", "secondary_node": "/guider/vem-kan-fa-bostadsbidrag/" },
-        { "q": "hur mycket bostadsbidrag kan man få", "intent": "calculation", "user_state": "vill-rakna", "source": "SERP-DERIVED" },
-        { "q": "räkna på bostadsbidrag", "intent": "calculation", "user_state": "vill-rakna", "source": "SERP-DERIVED" },
-        { "q": "bostadsbidrag hur mycket får man tjäna", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED", "secondary_node": "/guider/vem-kan-fa-bostadsbidrag/" },
-        { "q": "ansöka om bostadsbidrag försäkringskassan", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "när betalas bostadsbidraget ut", "intent": "informational", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "kan man få bostadsbidrag utan barn", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED", "secondary_node": "/guider/vem-kan-fa-bostadsbidrag/" },
-        { "q": "bostadsbidrag som student", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED", "secondary_node": "/guider/vem-kan-fa-bostadsbidrag/" },
-        { "q": "bostadsbidrag ensamstående med barn", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED", "secondary_node": "/guider/vem-kan-fa-bostadsbidrag/" },
-        { "q": "bostadsbidrag inneboende eller andra hand", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "måste man betala tillbaka bostadsbidrag", "intent": "troubleshooting", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "fått avslag på bostadsbidrag varför", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" },
-        { "q": "hur lång handläggningstid har bostadsbidrag", "intent": "status", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "bostadsbidrag nya regler 2026", "intent": "informational", "user_state": "soker-regelandring", "source": "INFERRED" }
-      ]
+     "q": "vad är bostadsbidrag",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
     },
     {
-      "root": "bostadsbidrag eller bostadstillägg",
-      "node": "/guider/bostadsbidrag-eller-bostadstillagg/",
-      "questions": [
-        { "q": "bostadsbidrag och bostadstillägg skillnad", "intent": "comparison", "user_state": "jamfor", "source": "SERP-DERIVED" },
-        { "q": "vad är skillnaden mellan bostadsbidrag och bostadstillägg", "intent": "comparison", "user_state": "jamfor", "source": "SERP-DERIVED" },
-        { "q": "kan man få både bostadsbidrag och bostadstillägg", "intent": "eligibility", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "bostadsbidrag eller bostadstillägg pensionär", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "vilket stöd för hyran gäller mig", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "bostadstillägg eller bostadsbidrag vid sjukersättning", "intent": "comparison", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "under 65 bostadstillägg eller bostadsbidrag", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "vem betalar ut bostadstillägg", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "bostadstillägg försäkringskassan eller pensionsmyndigheten", "intent": "navigational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "vilka bidrag till boendekostnader finns det", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "sökt bostadsbidrag men skulle sökt bostadstillägg", "intent": "troubleshooting", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "skillnad bostadstillägg bostadsbidrag äldreförsörjningsstöd", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" }
-      ]
+     "q": "vem kan ansöka om bostadsbidrag",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "SERP-DERIVED",
+     "secondary_node": "/guider/vem-kan-fa-bostadsbidrag/"
     },
     {
-      "root": "försörjningsstöd",
-      "node": "/bidrag/kommun-forsorjningsstod/",
-      "questions": [
-        { "q": "vad är försörjningsstöd", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "vem har rätt till försörjningsstöd", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "SERP-DERIVED" },
-        { "q": "när har jag rätt till försörjningsstöd", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "SERP-DERIVED" },
-        { "q": "vem kan få ekonomiskt bistånd", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "SERP-DERIVED" },
-        { "q": "hur mycket får man i försörjningsstöd", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "riksnormen 2026", "intent": "informational", "user_state": "soker-regelandring", "source": "INFERRED" },
-        { "q": "hur ansöker man om försörjningsstöd", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "är socialbidrag samma sak som försörjningsstöd", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "försörjningsstöd vad räknas som inkomst", "intent": "informational", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "kan man få försörjningsstöd om man äger bil", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur lång tid tar det att få försörjningsstöd", "intent": "status", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "fått avslag på försörjningsstöd vad gör jag", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" },
-        { "q": "överklaga beslut om ekonomiskt bistånd", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" },
-        { "q": "försörjningsstöd och bostadsbidrag samtidigt", "intent": "eligibility", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "akut hjälp med pengar från socialtjänsten", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" }
-      ]
+     "q": "hur mycket bostadsbidrag kan man få",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "SERP-DERIVED"
     },
     {
-      "root": "studiemedel",
-      "node": "/bidrag/csn-studiemedel/",
-      "questions": [
-        { "q": "vad är studiemedel", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "hur mycket pengar kan jag få eller låna när jag studerar", "intent": "calculation", "user_state": "vill-rakna", "source": "SERP-DERIVED" },
-        { "q": "så ansöker du om studiemedel", "intent": "application", "user_state": "vill-ansoka", "source": "SERP-DERIVED" },
-        { "q": "studera som vuxen hur du finansierar dina studier", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "hur mycket är bidrag och hur mycket är lån i studiemedlet", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "vem kan få studiemedel", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "csn fribelopp hur mycket får man tjäna", "intent": "informational", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "studiemedel efter 40", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "studiemedel för deltidsstudier", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur många veckor studiemedel har jag kvar", "intent": "status", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "när betalas studiemedlen ut", "intent": "informational", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "csn avslag för få poäng vad gör jag", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" },
-        { "q": "studiemedel för studier utomlands", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "csn mina sidor logga in", "intent": "navigational", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "studiemedel belopp 2026", "intent": "informational", "user_state": "soker-regelandring", "source": "INFERRED" }
-      ]
+     "q": "räkna på bostadsbidrag",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "SERP-DERIVED"
     },
     {
-      "root": "omställningsstudiestöd",
-      "node": "/bidrag/csn-omstallningsstudiestod/",
-      "questions": [
-        { "q": "vad är omställningsstudiestöd", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "villkor för att få omställningsstudiestöd", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "SERP-DERIVED" },
-        { "q": "vem kan få omställningsstudiestöd", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur mycket får man i omställningsstudiestöd", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "omställningsstudiestöd hur många år måste man ha arbetat", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "när öppnar ansökan för omställningsstudiestöd", "intent": "deadline", "user_state": "soker-deadline", "source": "INFERRED" },
-        { "q": "ansöka om omställningsstudiestöd steg för steg", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "vilka utbildningar ger omställningsstudiestöd", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "omställningsstudiestöd på deltid", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "vad är ett yttrande från omställningsorganisationen", "intent": "definition", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "omställningsstudiestöd handläggningstid", "intent": "status", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "omställningsstudiestöd avslag vanligaste orsakerna", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" },
-        { "q": "kan man jobba samtidigt som man har omställningsstudiestöd", "intent": "eligibility", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "omställningsstudiestöd ändringar 2026", "intent": "informational", "user_state": "soker-regelandring", "source": "INFERRED" }
-      ]
+     "q": "bostadsbidrag hur mycket får man tjäna",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED",
+     "secondary_node": "/guider/vem-kan-fa-bostadsbidrag/"
     },
     {
-      "root": "studiemedel eller omställningsstudiestöd",
-      "node": "/guider/studiemedel-eller-omstallningsstudiestod/",
-      "questions": [
-        { "q": "skillnad mellan studiemedel och omställningsstudiestöd", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "omställningsstudiestöd eller csn vad lönar sig", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "kan man få både studiemedel och omställningsstudiestöd", "intent": "eligibility", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "plugga som vuxen csn eller omställningsstudiestöd", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "vilket studiestöd passar mig", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "studiestöd för vuxna över 40 vilka alternativ finns", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "hur mycket mer får man med omställningsstudiestöd än studiemedel", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "nekad omställningsstudiestöd kan jag söka studiemedel i stället", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" },
-        { "q": "räknas omställningsstudiestöd av från studiemedelsveckorna", "intent": "informational", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "byta från studiemedel till omställningsstudiestöd", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "vidareutbilda sig mitt i livet hur finansiera", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "jämförelse studiefinansiering vuxenstudier", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" }
-      ]
+     "q": "ansöka om bostadsbidrag försäkringskassan",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
     },
     {
-      "root": "bostadstillägg",
-      "node": "/bidrag/pm-bostadstillagg/",
-      "questions": [
-        { "q": "vad är bostadstillägg", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "testa om du kan få bostadstillägg", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "SERP-DERIVED" },
-        { "q": "vem har rätt till bostadstillägg som pensionär", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur mycket bostadstillägg kan man få", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "räkna ut bostadstillägg pensionär", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "ansöka om bostadstillägg pensionsmyndigheten", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "bostadstillägg hur mycket får man ha på banken", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "kan man få bostadstillägg om man äger bostadsrätt", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "bostadstillägg vid sjukersättning eller aktivitetsersättning", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur lång handläggningstid har bostadstillägg", "intent": "status", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "kan man få bostadstillägg retroaktivt", "intent": "informational", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "avslag på bostadstillägg för hög inkomst", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" },
-        { "q": "änka låg pension bostadstillägg", "intent": "eligibility", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "bostadstillägg nya regler 2026", "intent": "informational", "user_state": "soker-regelandring", "source": "INFERRED" }
-      ]
+     "q": "när betalas bostadsbidraget ut",
+     "intent": "informational",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
     },
     {
-      "root": "underhållsstöd",
-      "node": "/bidrag/fk-underhallsstod/",
-      "questions": [
-        { "q": "vad är underhållsstöd", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "skillnaden mellan underhållsstöd och underhållsbidrag", "intent": "comparison", "user_state": "jamfor", "source": "SERP-DERIVED" },
-        { "q": "underhållsbidrag vid växelvis boende", "intent": "informational", "user_state": "bedomer-behorighet", "source": "SERP-DERIVED" },
-        { "q": "hur mycket är underhållsstödet", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "vem kan få underhållsstöd", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "ansöka om underhållsstöd hos försäkringskassan", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "andra föräldern betalar inte underhåll vad gör jag", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "höjs underhållsstödet när barnet blir äldre", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "underhållsstöd eller underhållsbidrag vad ska vi välja", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "hur räknas underhållsbidrag ut", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "när betalas underhållsstödet ut", "intent": "informational", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "måste den andra föräldern betala tillbaka underhållsstöd", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "underhållsstöd när barnet fyllt 18 och studerar", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "avslag på underhållsstöd", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" }
-      ]
+     "q": "kan man få bostadsbidrag utan barn",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED",
+     "secondary_node": "/guider/vem-kan-fa-bostadsbidrag/"
     },
     {
-      "root": "aktivitetsersättning",
-      "node": "/bidrag/fk-aktivitetsersattning/",
-      "questions": [
-        { "q": "vad är aktivitetsersättning", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "allt om aktivitetsersättning", "intent": "informational", "user_state": "kanner-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "funkis och arbetslös här är stöden", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "vem kan få aktivitetsersättning", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur mycket är aktivitetsersättningen", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "aktivitetsersättning vid förlängd skolgång", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "aktivitetsersättning krav på nedsatt arbetsförmåga", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "ansöka om aktivitetsersättning vilket läkarutlåtande krävs", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "hur länge kan man ha aktivitetsersättning", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "kan man jobba lite med aktivitetsersättning", "intent": "eligibility", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "skillnad mellan aktivitetsersättning och sjukersättning", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "aktivitetsersättning och bostadstillägg samtidigt", "intent": "eligibility", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "aktivitetsersättning handläggningstid", "intent": "status", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "avslag på aktivitetsersättning hur överklagar man", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" }
-      ]
+     "q": "bostadsbidrag som student",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED",
+     "secondary_node": "/guider/vem-kan-fa-bostadsbidrag/"
     },
     {
-      "root": "lönebidrag",
-      "node": "/guider/lonebidrag/",
-      "questions": [
-        { "q": "vad är lönebidrag", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "hur fungerar lönebidrag", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "vem kan få lönebidrag", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur mycket får arbetsgivaren i lönebidrag", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "vad är taket för lönebidrag", "intent": "informational", "user_state": "soker-regelandring", "source": "INFERRED" },
-        { "q": "skillnad på lönebidrag för anställning utveckling och trygghet", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "ansöka om lönebidrag som arbetsgivare", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "hur länge kan man ha lönebidrag", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "anställd med lönebidrag vilka rättigheter har jag", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "lönebidrag i eget företag", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "räknas lönebidrag som riktig lön", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "lönebidrag omprövning vad händer", "intent": "status", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "arbetsförmedlingen sa nej till lönebidrag", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" }
-      ]
+     "q": "bostadsbidrag ensamstående med barn",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED",
+     "secondary_node": "/guider/vem-kan-fa-bostadsbidrag/"
     },
     {
-      "root": "nystartsjobb",
-      "node": "/guider/nystartsjobb/",
-      "questions": [
-        { "q": "vad är nystartsjobb", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "vem kan få nystartsjobb", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "kan man få a-kassa med nystartsjobb", "intent": "informational", "user_state": "kanner-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "hur mycket ersättning får arbetsgivaren för nystartsjobb", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "nystartsjobb hur länge måste man ha varit arbetslös", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "ansöka om nystartsjobb steg för steg", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "hur länge kan man ha nystartsjobb", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "nystartsjobb vilken lön gäller", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "nystartsjobb eller introduktionsjobb skillnad", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "nystartsjobb för nyanlända", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "förlänga nystartsjobb hur gör man", "intent": "application", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "räknas nystartsjobb som en vanlig anställning", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "nekad nystartsjobb varför", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" }
-      ]
+     "q": "bostadsbidrag inneboende eller andra hand",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
     },
     {
-      "root": "anställa med stöd",
-      "node": "/guider/anstalla-med-stod/",
-      "questions": [
-        { "q": "vem kan du anställa med stöd", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "SERP-DERIVED" },
-        { "q": "anställa med stöd så funkar det", "intent": "informational", "user_state": "kanner-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "kan arbetsgivaren få ersättning", "intent": "eligibility", "user_state": "kanner-inte-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "bidrag för att anställa personal", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "vilka anställningsstöd finns det", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "jämför lönebidrag nystartsjobb introduktionsjobb etableringsjobb", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "vilket anställningsstöd passar min rekrytering", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "stöd för att anställa långtidsarbetslös", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "anställa person med funktionsnedsättning vilka stöd finns", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur stor är subventionen när man anställer med stöd", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "ansöka om anställningsstöd hos arbetsförmedlingen", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "anställa med stöd krav på kollektivavtal och försäkringar", "intent": "informational", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "stöd för att anställa ung utan erfarenhet", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "fick avslag på anställningsstöd som arbetsgivare", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" }
-      ]
+     "q": "måste man betala tillbaka bostadsbidrag",
+     "intent": "troubleshooting",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
     },
     {
-      "root": "starta eget bidrag",
-      "node": "/bidrag/af-stod-start-naringsverksamhet/",
-      "questions": [
-        { "q": "starta eget-bidrag så funkar det", "intent": "informational", "user_state": "kanner-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "vad är starta eget bidrag", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "finns starta eget bidrag fortfarande", "intent": "informational", "user_state": "soker-regelandring", "source": "INFERRED" },
-        { "q": "vad heter starta eget bidrag egentligen", "intent": "definition", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "vem kan få stöd till start av näringsverksamhet", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur mycket pengar får man i starta eget bidrag", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "ansöka om starta eget bidrag hos arbetsförmedlingen", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "hur länge får man starta eget bidrag", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "starta eget bidrag krav på affärsplan", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "måste man vara arbetslös för starta eget bidrag", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "starta eget bidrag och a-kassa samtidigt", "intent": "eligibility", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "bidrag för att starta företag 2026", "intent": "informational", "user_state": "soker-regelandring", "source": "INFERRED" },
-        { "q": "nekad starta eget bidrag vad gör jag", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" }
-      ]
+     "q": "fått avslag på bostadsbidrag varför",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
     },
     {
-      "root": "glasögonbidrag barn",
-      "node": "/bidrag/region-glasogonbidrag-barn/",
-      "questions": [
-        { "q": "vad är glasögonbidrag", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "glasögonbidrag barn hur mycket", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "vem har rätt till glasögonbidrag för barn", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur ansöker man om glasögonbidrag", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "glasögonbidrag upp till vilken ålder", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "glasögonbidrag i min region", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "gäller glasögonbidraget även linser", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur ofta kan man söka glasögonbidrag", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "glasögonbidrag i efterhand med kvitto", "intent": "application", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "sköter optikern glasögonbidraget åt mig", "intent": "informational", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "är glasögonbidraget olika i olika regioner", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "finns glasögonbidrag för vuxna", "intent": "eligibility", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "fick inte glasögonbidraget godkänt", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" }
-      ]
+     "q": "hur lång handläggningstid har bostadsbidrag",
+     "intent": "status",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
     },
     {
-      "root": "bostadsanpassningsbidrag",
-      "node": "/bidrag/kommun-bostadsanpassningsbidrag/",
-      "questions": [
-        { "q": "vad är bostadsanpassningsbidrag", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "vem kan få bostadsanpassningsbidrag", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "vad täcker bostadsanpassningsbidraget", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "hur mycket kan man få i bostadsanpassningsbidrag", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "ansöka om bostadsanpassningsbidrag hos kommunen", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "vilket intyg krävs för bostadsanpassningsbidrag", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "bostadsanpassning i hyresrätt krävs fastighetsägarens medgivande", "intent": "informational", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "bidrag för att anpassa badrum vid funktionsnedsättning", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "bostadsanpassning för äldre vilka stöd finns", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "hur lång handläggningstid har bostadsanpassningsbidrag", "intent": "status", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "avslag på bostadsanpassningsbidrag hur överklagar man", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" },
-        { "q": "vad händer med anpassningen om man flyttar", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "bostadsanpassningsbidrag vid flytt till ny bostad", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" }
-      ]
-    },
-    {
-      "root": "hjälp med hyran",
-      "node": "/guider/hjalp-med-hyran/",
-      "questions": [
-        { "q": "vilka bidrag kan man söka om man behöver hjälp med hyran", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "hjälp med hyran låg inkomst", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "kan inte betala hyran vart vänder jag mig", "intent": "troubleshooting", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "akut hjälp med hyran denna månad", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "hjälp med hyresskuld", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "kan socialen hjälpa till med hyran", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "bidrag till hyran som ensamstående", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hjälp med hyran som pensionär", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hjälp med hyran som student", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "arbetslös och klarar inte hyran", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "fonder som hjälper till med hyran", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "vad är kommunal hyresgaranti", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "riskerar vräkning vem kan hjälpa", "intent": "troubleshooting", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "vilket stöd för hyran har jag rätt till", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" }
-      ]
-    },
-    {
-      "root": "vilka bidrag kan jag få",
-      "node": "/guider/vilka-bidrag-kan-jag-fa/",
-      "questions": [
-        { "q": "vilka bidrag har jag rätt till", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "SERP-DERIVED" },
-        { "q": "vilka bidrag kan jag få", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "SERP-DERIVED" },
-        { "q": "bidrag låg inkomst familj", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "SERP-DERIVED" },
-        { "q": "testa vilka bidrag jag kan få", "intent": "transactional", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "bidragskalkylator", "intent": "transactional", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "vilka bidrag finns i sverige", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "lista över alla bidrag man kan söka", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "bidrag jag inte visste fanns", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "hur vet jag vilka bidrag jag kan söka", "intent": "informational", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "låg inkomst vilka bidrag kan man få", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "vilka ersättningar kan man få från försäkringskassan", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "kan man ha flera bidrag samtidigt", "intent": "eligibility", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "tjänst som kollar vilka stöd jag har rätt till", "intent": "commercial", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "app som hittar bidrag åt mig", "intent": "commercial", "user_state": "bedomer-behorighet", "source": "INFERRED" }
-      ]
-    },
-    {
-      "root": "bidrag barnfamilj",
-      "node": "/bidrag/privatpersoner/",
-      "questions": [
-        { "q": "ekonomiskt stöd för barnfamiljer vilka bidrag kan du få", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "SERP-DERIVED", "secondary_node": "/guider/bidrag-barnfamilj/" },
-        { "q": "vilka bidrag kan barnfamiljer få", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED", "secondary_node": "/guider/bidrag-barnfamilj/" },
-        { "q": "bidrag ensamstående mamma", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED", "secondary_node": "/guider/bidrag-barnfamilj/" },
-        { "q": "bidrag ensamstående förälder", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED", "secondary_node": "/guider/bidrag-barnfamilj/" },
-        { "q": "bidrag till barnfamiljer med låg inkomst", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED", "secondary_node": "/guider/bidrag-barnfamilj/" },
-        { "q": "hur fungerar flerbarnstillägget", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "hur mycket bidrag kan en barnfamilj få totalt", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED", "secondary_node": "/guider/bidrag-barnfamilj/" },
-        { "q": "barnbidrag och bostadsbidrag samtidigt", "intent": "eligibility", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "fonder för barnfamiljer att söka pengar ur", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "nybliven förälder vilka stöd finns", "intent": "eligibility", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "ekonomisk hjälp till barnens fritidsaktiviteter", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "bidrag för stor familj med många barn", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "skilsmässa med barn vilka bidrag kan jag få", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED", "secondary_node": "/guider/bidrag-barnfamilj/" },
-        { "q": "ekonomisk hjälp till barnfamilj inför sommarlovet", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" }
-      ]
-    },
-    {
-      "root": "bidrag arbetslös",
-      "node": "/guider/bidrag-arbetslos/",
-      "questions": [
-        { "q": "ekonomisk hjälp arbetslös", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "vilka bidrag kan man få som arbetslös", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "arbetslös utan a-kassa vad har jag rätt till", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur mycket pengar får man som arbetslös", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "a-kassa eller försörjningsstöd", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "kan arbetslös få bostadsbidrag", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "vad är aktivitetsstöd", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "blivit uppsagd vilka stöd finns", "intent": "eligibility", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "bidrag för arbetslös ungdom", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "anmäla sig till arbetsförmedlingen första arbetslösa dagen", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "nekad a-kassa vad gör jag nu", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" },
-        { "q": "utförsäkrad vad händer med ekonomin", "intent": "troubleshooting", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "långtidsarbetslös vilka extra stöd finns", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "klara ekonomin som arbetslös", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" }
-      ]
-    },
-    {
-      "root": "bostadstillägg och äldreförsörjningsstöd pensionär",
-      "node": "/guider/lag-pension-stod/",
-      "questions": [
-        { "q": "låg pension vilka bidrag kan jag få", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "vad är äldreförsörjningsstöd", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "skillnad mellan bostadstillägg och äldreförsörjningsstöd", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "vem kan få äldreförsörjningsstöd", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur mycket är äldreförsörjningsstödet", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "hjälp för fattigpensionärer", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "pensionär som inte klarar ekonomin vart vänder jag mig", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "ansöka om äldreförsörjningsstöd hos pensionsmyndigheten", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "prövas bostadstillägg och äldreförsörjningsstöd i samma ansökan", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "garantipension och bostadstillägg samtidigt", "intent": "eligibility", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "invandrat sent till sverige låg pension vilka stöd", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "testa om du kan få bostadstillägg som pensionär", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "fick avslag på bostadstillägg vilka andra stöd finns", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" },
-        { "q": "äldreförsörjningsstöd belopp 2026", "intent": "informational", "user_state": "soker-regelandring", "source": "INFERRED" }
-      ]
-    },
-    {
-      "root": "stipendier och fonder",
-      "node": "/guider/stipendier-och-fonder/",
-      "questions": [
-        { "q": "så hittar du stipendier", "intent": "informational", "user_state": "kanner-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "bidrag att söka i år", "intent": "informational", "user_state": "soker-deadline", "source": "SERP-DERIVED" },
-        { "q": "vad är skillnaden mellan stipendium och fond", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "stipendier att söka för studier", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "fonder att söka pengar ur som privatperson", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "fonder för ensamstående föräldrar", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "söka fonder vid sjukdom", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur söker man pengar ur en stiftelse", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "skriva en bra ansökan till en stiftelse", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "stipendier utan krav på studier", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "när är sista ansökningsdag för stipendier i höst", "intent": "deadline", "user_state": "soker-deadline", "source": "INFERRED" },
-        { "q": "är stipendier skattefria", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "lista över fonder och stiftelser i sverige", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "fonder för barn och ungdomar", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" }
-      ]
-    },
-    {
-      "root": "föreningsbidrag",
-      "node": "/bidrag/foreningar/",
-      "questions": [
-        { "q": "så söker du bidrag till din förening", "intent": "application", "user_state": "vill-ansoka", "source": "SERP-DERIVED" },
-        { "q": "min förening behöver pengar", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "vilka bidrag kan en förening söka", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "hur fungerar kommunalt föreningsbidrag", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "statsbidrag för ideella föreningar", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "vad är lok-stöd", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "bidrag för nystartad förening", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "skillnad mellan organisationsbidrag och projektbidrag", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "mucf bidrag ansökningsdatum", "intent": "deadline", "user_state": "soker-deadline", "source": "INFERRED" },
-        { "q": "bidrag till föreningslokal", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "söka pengar till ungdomsverksamhet i förening", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "vad krävs av föreningen för att söka bidrag", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur redovisar man ett föreningsbidrag", "intent": "informational", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "föreningen fick avslag på bidragsansökan", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" }
-      ]
-    },
-    {
-      "root": "eu bidrag företag",
-      "node": "/guider/eu-bidrag-foretag/",
-      "questions": [
-        { "q": "få hjälp att söka EU-bidrag", "intent": "commercial", "user_state": "vill-ansoka", "source": "SERP-DERIVED" },
-        { "q": "eu bidrag för företag vilka finns", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "eu-stöd för småföretag", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur söker man eu-bidrag", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "vad är en utlysning", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "eu-bidrag för att starta företag", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "regionala företagsstöd vilka finns", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "eu-stöd för företag på landsbygden", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "min ansökan tillväxtverket", "intent": "navigational", "user_state": "har-ansokt", "source": "INFERRED" },
-        { "q": "hur mycket kan ett företag få i eu-bidrag", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "vad krävs i medfinansiering för eu-projekt", "intent": "informational", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "konsult för eu-ansökan vad kostar det", "intent": "commercial", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "eu-utlysningar för företag 2026", "intent": "deadline", "user_state": "soker-deadline", "source": "INFERRED" },
-        { "q": "avslag på eu-ansökan kan man få återkoppling", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" }
-      ]
-    },
-    {
-      "root": "energistöd företag",
-      "node": "/guider/energistod-foretag/",
-      "questions": [
-        { "q": "bidrag energieffektivisering företag", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "SERP-DERIVED" },
-        { "q": "energistöd för företag vilka finns", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "stöd för solceller till företag", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "bidrag för energikartläggning", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "vilka företag kan söka energistöd", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "energimyndighetens utlysningar för företag", "intent": "navigational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "skillnad på energibidrag för privatpersoner och företag", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "ansöka om energistöd hur får man behörighet i e-tjänsten", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "energistöd för lantbruk", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "stöd för energieffektivisering i industrin", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "hur fungerar klimatklivet för företag", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "hur mycket stöd kan man få för energieffektivisering", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "nya energiutlysningar 2026", "intent": "deadline", "user_state": "soker-deadline", "source": "INFERRED" },
-        { "q": "fick avslag på energistöd vad gör vi nu", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" }
-      ]
-    },
-    {
-      "root": "jordbruksstöd startstöd",
-      "node": "/bidrag/jordbruksverket-startstod-unga/",
-      "questions": [
-        { "q": "vad är startstöd inom jordbruket", "intent": "definition", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "startstöd unga jordbrukare", "intent": "informational", "user_state": "kanner-till-stodet", "source": "INFERRED" },
-        { "q": "skillnad mellan startstöd och stöd till unga jordbrukare", "intent": "comparison", "user_state": "jamfor", "source": "INFERRED" },
-        { "q": "vem kan få startstöd för lantbruk", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "hur mycket är startstödet", "intent": "calculation", "user_state": "vill-rakna", "source": "INFERRED" },
-        { "q": "startstöd åldersgräns", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "vilken utbildning krävs för startstöd", "intent": "eligibility", "user_state": "bedomer-behorighet", "source": "INFERRED" },
-        { "q": "ansöka om startstöd hos jordbruksverket", "intent": "application", "user_state": "vill-ansoka", "source": "INFERRED" },
-        { "q": "ta över gård vilka bidrag finns", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "starta lantbruk vilka stöd kan man söka", "intent": "informational", "user_state": "kanner-inte-till-stodet", "source": "INFERRED" },
-        { "q": "när är ansökningsperioden för startstöd 2026", "intent": "deadline", "user_state": "soker-deadline", "source": "INFERRED" },
-        { "q": "sista dag för sam-ansökan", "intent": "deadline", "user_state": "soker-deadline", "source": "INFERRED" },
-        { "q": "avslag på startstöd hur överklagar man", "intent": "troubleshooting", "user_state": "fatt-avslag", "source": "INFERRED" }
-      ]
+     "q": "bostadsbidrag nya regler 2026",
+     "intent": "informational",
+     "user_state": "soker-regelandring",
+     "source": "INFERRED"
     }
-  ]
+   ]
+  },
+  {
+   "root": "bostadsbidrag eller bostadstillägg",
+   "node": "/guider/bostadsbidrag-eller-bostadstillagg/",
+   "questions": [
+    {
+     "q": "bostadsbidrag och bostadstillägg skillnad",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "vad är skillnaden mellan bostadsbidrag och bostadstillägg",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "kan man få både bostadsbidrag och bostadstillägg",
+     "intent": "eligibility",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bostadsbidrag eller bostadstillägg pensionär",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vilket stöd för hyran gäller mig",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bostadstillägg eller bostadsbidrag vid sjukersättning",
+     "intent": "comparison",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "under 65 bostadstillägg eller bostadsbidrag",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vem betalar ut bostadstillägg",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bostadstillägg försäkringskassan eller pensionsmyndigheten",
+     "intent": "navigational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vilka bidrag till boendekostnader finns det",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "sökt bostadsbidrag men skulle sökt bostadstillägg",
+     "intent": "troubleshooting",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "skillnad bostadstillägg bostadsbidrag äldreförsörjningsstöd",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "försörjningsstöd",
+   "node": "/bidrag/ekonomiskt-bistand/",
+   "questions": [
+    {
+     "q": "vad är försörjningsstöd",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vem har rätt till försörjningsstöd",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "när har jag rätt till försörjningsstöd",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "vem kan få ekonomiskt bistånd",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "hur mycket får man i försörjningsstöd",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "riksnormen 2026",
+     "intent": "informational",
+     "user_state": "soker-regelandring",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur ansöker man om försörjningsstöd",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "är socialbidrag samma sak som försörjningsstöd",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "försörjningsstöd vad räknas som inkomst",
+     "intent": "informational",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "kan man få försörjningsstöd om man äger bil",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur lång tid tar det att få försörjningsstöd",
+     "intent": "status",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "fått avslag på försörjningsstöd vad gör jag",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    },
+    {
+     "q": "överklaga beslut om ekonomiskt bistånd",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    },
+    {
+     "q": "försörjningsstöd och bostadsbidrag samtidigt",
+     "intent": "eligibility",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "akut hjälp med pengar från socialtjänsten",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "studiemedel",
+   "node": "/bidrag/csn-studiemedel/",
+   "questions": [
+    {
+     "q": "vad är studiemedel",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket pengar kan jag få eller låna när jag studerar",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "så ansöker du om studiemedel",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "studera som vuxen hur du finansierar dina studier",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "hur mycket är bidrag och hur mycket är lån i studiemedlet",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vem kan få studiemedel",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "csn fribelopp hur mycket får man tjäna",
+     "intent": "informational",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "studiemedel efter 40",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "studiemedel för deltidsstudier",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur många veckor studiemedel har jag kvar",
+     "intent": "status",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "när betalas studiemedlen ut",
+     "intent": "informational",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "csn avslag för få poäng vad gör jag",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    },
+    {
+     "q": "studiemedel för studier utomlands",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "csn mina sidor logga in",
+     "intent": "navigational",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "studiemedel belopp 2026",
+     "intent": "informational",
+     "user_state": "soker-regelandring",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "omställningsstudiestöd",
+   "node": "/bidrag/csn-omstallningsstudiestod/",
+   "questions": [
+    {
+     "q": "vad är omställningsstudiestöd",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "villkor för att få omställningsstudiestöd",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "vem kan få omställningsstudiestöd",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket får man i omställningsstudiestöd",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "omställningsstudiestöd hur många år måste man ha arbetat",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "när öppnar ansökan för omställningsstudiestöd",
+     "intent": "deadline",
+     "user_state": "soker-deadline",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ansöka om omställningsstudiestöd steg för steg",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vilka utbildningar ger omställningsstudiestöd",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "omställningsstudiestöd på deltid",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vad är ett yttrande från omställningsorganisationen",
+     "intent": "definition",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "omställningsstudiestöd handläggningstid",
+     "intent": "status",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "omställningsstudiestöd avslag vanligaste orsakerna",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    },
+    {
+     "q": "kan man jobba samtidigt som man har omställningsstudiestöd",
+     "intent": "eligibility",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "omställningsstudiestöd ändringar 2026",
+     "intent": "informational",
+     "user_state": "soker-regelandring",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "studiemedel eller omställningsstudiestöd",
+   "node": "/guider/studiemedel-eller-omstallningsstudiestod/",
+   "questions": [
+    {
+     "q": "skillnad mellan studiemedel och omställningsstudiestöd",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "omställningsstudiestöd eller csn vad lönar sig",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "kan man få både studiemedel och omställningsstudiestöd",
+     "intent": "eligibility",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "plugga som vuxen csn eller omställningsstudiestöd",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vilket studiestöd passar mig",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "studiestöd för vuxna över 40 vilka alternativ finns",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket mer får man med omställningsstudiestöd än studiemedel",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "nekad omställningsstudiestöd kan jag söka studiemedel i stället",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    },
+    {
+     "q": "räknas omställningsstudiestöd av från studiemedelsveckorna",
+     "intent": "informational",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "byta från studiemedel till omställningsstudiestöd",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vidareutbilda sig mitt i livet hur finansiera",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "jämförelse studiefinansiering vuxenstudier",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "bostadstillägg",
+   "node": "/bidrag/pm-bostadstillagg/",
+   "questions": [
+    {
+     "q": "vad är bostadstillägg",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "testa om du kan få bostadstillägg",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "vem har rätt till bostadstillägg som pensionär",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket bostadstillägg kan man få",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "räkna ut bostadstillägg pensionär",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ansöka om bostadstillägg pensionsmyndigheten",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bostadstillägg hur mycket får man ha på banken",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "kan man få bostadstillägg om man äger bostadsrätt",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bostadstillägg vid sjukersättning eller aktivitetsersättning",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur lång handläggningstid har bostadstillägg",
+     "intent": "status",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "kan man få bostadstillägg retroaktivt",
+     "intent": "informational",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "avslag på bostadstillägg för hög inkomst",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    },
+    {
+     "q": "änka låg pension bostadstillägg",
+     "intent": "eligibility",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bostadstillägg nya regler 2026",
+     "intent": "informational",
+     "user_state": "soker-regelandring",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "underhållsstöd",
+   "node": "/bidrag/fk-underhallsstod/",
+   "questions": [
+    {
+     "q": "vad är underhållsstöd",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "skillnaden mellan underhållsstöd och underhållsbidrag",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "underhållsbidrag vid växelvis boende",
+     "intent": "informational",
+     "user_state": "bedomer-behorighet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "hur mycket är underhållsstödet",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vem kan få underhållsstöd",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ansöka om underhållsstöd hos försäkringskassan",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "andra föräldern betalar inte underhåll vad gör jag",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "höjs underhållsstödet när barnet blir äldre",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "underhållsstöd eller underhållsbidrag vad ska vi välja",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur räknas underhållsbidrag ut",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "när betalas underhållsstödet ut",
+     "intent": "informational",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "måste den andra föräldern betala tillbaka underhållsstöd",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "underhållsstöd när barnet fyllt 18 och studerar",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "avslag på underhållsstöd",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "aktivitetsersättning",
+   "node": "/bidrag/fk-aktivitetsersattning/",
+   "questions": [
+    {
+     "q": "vad är aktivitetsersättning",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "allt om aktivitetsersättning",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "funkis och arbetslös här är stöden",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "vem kan få aktivitetsersättning",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket är aktivitetsersättningen",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "aktivitetsersättning vid förlängd skolgång",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "aktivitetsersättning krav på nedsatt arbetsförmåga",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ansöka om aktivitetsersättning vilket läkarutlåtande krävs",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur länge kan man ha aktivitetsersättning",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "kan man jobba lite med aktivitetsersättning",
+     "intent": "eligibility",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "skillnad mellan aktivitetsersättning och sjukersättning",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "aktivitetsersättning och bostadstillägg samtidigt",
+     "intent": "eligibility",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "aktivitetsersättning handläggningstid",
+     "intent": "status",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "avslag på aktivitetsersättning hur överklagar man",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "lönebidrag",
+   "node": "/guider/lonebidrag/",
+   "questions": [
+    {
+     "q": "vad är lönebidrag",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur fungerar lönebidrag",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vem kan få lönebidrag",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket får arbetsgivaren i lönebidrag",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vad är taket för lönebidrag",
+     "intent": "informational",
+     "user_state": "soker-regelandring",
+     "source": "INFERRED"
+    },
+    {
+     "q": "skillnad på lönebidrag för anställning utveckling och trygghet",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ansöka om lönebidrag som arbetsgivare",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur länge kan man ha lönebidrag",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "anställd med lönebidrag vilka rättigheter har jag",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "lönebidrag i eget företag",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "räknas lönebidrag som riktig lön",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "lönebidrag omprövning vad händer",
+     "intent": "status",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "arbetsförmedlingen sa nej till lönebidrag",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "nystartsjobb",
+   "node": "/guider/nystartsjobb/",
+   "questions": [
+    {
+     "q": "vad är nystartsjobb",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vem kan få nystartsjobb",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "kan man få a-kassa med nystartsjobb",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "hur mycket ersättning får arbetsgivaren för nystartsjobb",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "nystartsjobb hur länge måste man ha varit arbetslös",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ansöka om nystartsjobb steg för steg",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur länge kan man ha nystartsjobb",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "nystartsjobb vilken lön gäller",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "nystartsjobb eller introduktionsjobb skillnad",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "nystartsjobb för nyanlända",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "förlänga nystartsjobb hur gör man",
+     "intent": "application",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "räknas nystartsjobb som en vanlig anställning",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "nekad nystartsjobb varför",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "anställa med stöd",
+   "node": "/guider/anstalla-med-stod/",
+   "questions": [
+    {
+     "q": "vem kan du anställa med stöd",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "anställa med stöd så funkar det",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "kan arbetsgivaren få ersättning",
+     "intent": "eligibility",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "bidrag för att anställa personal",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "vilka anställningsstöd finns det",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "jämför lönebidrag nystartsjobb introduktionsjobb etableringsjobb",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vilket anställningsstöd passar min rekrytering",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "stöd för att anställa långtidsarbetslös",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "anställa person med funktionsnedsättning vilka stöd finns",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur stor är subventionen när man anställer med stöd",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ansöka om anställningsstöd hos arbetsförmedlingen",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "anställa med stöd krav på kollektivavtal och försäkringar",
+     "intent": "informational",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "stöd för att anställa ung utan erfarenhet",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "fick avslag på anställningsstöd som arbetsgivare",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "starta eget bidrag",
+   "node": "/bidrag/af-stod-start-naringsverksamhet/",
+   "questions": [
+    {
+     "q": "starta eget-bidrag så funkar det",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "vad är starta eget bidrag",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "finns starta eget bidrag fortfarande",
+     "intent": "informational",
+     "user_state": "soker-regelandring",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vad heter starta eget bidrag egentligen",
+     "intent": "definition",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vem kan få stöd till start av näringsverksamhet",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket pengar får man i starta eget bidrag",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ansöka om starta eget bidrag hos arbetsförmedlingen",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur länge får man starta eget bidrag",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "starta eget bidrag krav på affärsplan",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "måste man vara arbetslös för starta eget bidrag",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "starta eget bidrag och a-kassa samtidigt",
+     "intent": "eligibility",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bidrag för att starta företag 2026",
+     "intent": "informational",
+     "user_state": "soker-regelandring",
+     "source": "INFERRED"
+    },
+    {
+     "q": "nekad starta eget bidrag vad gör jag",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "glasögonbidrag barn",
+   "node": "/bidrag/region-glasogonbidrag-barn/",
+   "questions": [
+    {
+     "q": "vad är glasögonbidrag",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "glasögonbidrag barn hur mycket",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vem har rätt till glasögonbidrag för barn",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur ansöker man om glasögonbidrag",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "glasögonbidrag upp till vilken ålder",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "glasögonbidrag i min region",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "gäller glasögonbidraget även linser",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur ofta kan man söka glasögonbidrag",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "glasögonbidrag i efterhand med kvitto",
+     "intent": "application",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "sköter optikern glasögonbidraget åt mig",
+     "intent": "informational",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "är glasögonbidraget olika i olika regioner",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "finns glasögonbidrag för vuxna",
+     "intent": "eligibility",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "fick inte glasögonbidraget godkänt",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "bostadsanpassningsbidrag",
+   "node": "/bidrag/kommun-bostadsanpassningsbidrag/",
+   "questions": [
+    {
+     "q": "vad är bostadsanpassningsbidrag",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "vem kan få bostadsanpassningsbidrag",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vad täcker bostadsanpassningsbidraget",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket kan man få i bostadsanpassningsbidrag",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ansöka om bostadsanpassningsbidrag hos kommunen",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vilket intyg krävs för bostadsanpassningsbidrag",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bostadsanpassning i hyresrätt krävs fastighetsägarens medgivande",
+     "intent": "informational",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bidrag för att anpassa badrum vid funktionsnedsättning",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bostadsanpassning för äldre vilka stöd finns",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur lång handläggningstid har bostadsanpassningsbidrag",
+     "intent": "status",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "avslag på bostadsanpassningsbidrag hur överklagar man",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vad händer med anpassningen om man flyttar",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bostadsanpassningsbidrag vid flytt till ny bostad",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "hjälp med hyran",
+   "node": "/guider/hjalp-med-hyran/",
+   "questions": [
+    {
+     "q": "vilka bidrag kan man söka om man behöver hjälp med hyran",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "hjälp med hyran låg inkomst",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "kan inte betala hyran vart vänder jag mig",
+     "intent": "troubleshooting",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "akut hjälp med hyran denna månad",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hjälp med hyresskuld",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "kan socialen hjälpa till med hyran",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bidrag till hyran som ensamstående",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hjälp med hyran som pensionär",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hjälp med hyran som student",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "arbetslös och klarar inte hyran",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "fonder som hjälper till med hyran",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vad är kommunal hyresgaranti",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "riskerar vräkning vem kan hjälpa",
+     "intent": "troubleshooting",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vilket stöd för hyran har jag rätt till",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "vilka bidrag kan jag få",
+   "node": "/guider/vilka-bidrag-kan-jag-fa/",
+   "questions": [
+    {
+     "q": "vilka bidrag har jag rätt till",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "vilka bidrag kan jag få",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "bidrag låg inkomst familj",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "testa vilka bidrag jag kan få",
+     "intent": "transactional",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bidragskalkylator",
+     "intent": "transactional",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vilka bidrag finns i sverige",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "lista över alla bidrag man kan söka",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bidrag jag inte visste fanns",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur vet jag vilka bidrag jag kan söka",
+     "intent": "informational",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "låg inkomst vilka bidrag kan man få",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vilka ersättningar kan man få från försäkringskassan",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "kan man ha flera bidrag samtidigt",
+     "intent": "eligibility",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "tjänst som kollar vilka stöd jag har rätt till",
+     "intent": "commercial",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "app som hittar bidrag åt mig",
+     "intent": "commercial",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "bidrag barnfamilj",
+   "node": "/bidrag/privatpersoner/",
+   "questions": [
+    {
+     "q": "ekonomiskt stöd för barnfamiljer vilka bidrag kan du få",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "SERP-DERIVED",
+     "secondary_node": "/guider/bidrag-barnfamilj/"
+    },
+    {
+     "q": "vilka bidrag kan barnfamiljer få",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED",
+     "secondary_node": "/guider/bidrag-barnfamilj/"
+    },
+    {
+     "q": "bidrag ensamstående mamma",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED",
+     "secondary_node": "/guider/bidrag-barnfamilj/"
+    },
+    {
+     "q": "bidrag ensamstående förälder",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED",
+     "secondary_node": "/guider/bidrag-barnfamilj/"
+    },
+    {
+     "q": "bidrag till barnfamiljer med låg inkomst",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED",
+     "secondary_node": "/guider/bidrag-barnfamilj/"
+    },
+    {
+     "q": "hur fungerar flerbarnstillägget",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket bidrag kan en barnfamilj få totalt",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED",
+     "secondary_node": "/guider/bidrag-barnfamilj/"
+    },
+    {
+     "q": "barnbidrag och bostadsbidrag samtidigt",
+     "intent": "eligibility",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "fonder för barnfamiljer att söka pengar ur",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "nybliven förälder vilka stöd finns",
+     "intent": "eligibility",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ekonomisk hjälp till barnens fritidsaktiviteter",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bidrag för stor familj med många barn",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "skilsmässa med barn vilka bidrag kan jag få",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED",
+     "secondary_node": "/guider/bidrag-barnfamilj/"
+    },
+    {
+     "q": "ekonomisk hjälp till barnfamilj inför sommarlovet",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "bidrag arbetslös",
+   "node": "/guider/bidrag-arbetslos/",
+   "questions": [
+    {
+     "q": "ekonomisk hjälp arbetslös",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "vilka bidrag kan man få som arbetslös",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "arbetslös utan a-kassa vad har jag rätt till",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket pengar får man som arbetslös",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "a-kassa eller försörjningsstöd",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "kan arbetslös få bostadsbidrag",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vad är aktivitetsstöd",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "blivit uppsagd vilka stöd finns",
+     "intent": "eligibility",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bidrag för arbetslös ungdom",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "anmäla sig till arbetsförmedlingen första arbetslösa dagen",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "nekad a-kassa vad gör jag nu",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    },
+    {
+     "q": "utförsäkrad vad händer med ekonomin",
+     "intent": "troubleshooting",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "långtidsarbetslös vilka extra stöd finns",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "klara ekonomin som arbetslös",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "bostadstillägg och äldreförsörjningsstöd pensionär",
+   "node": "/guider/lag-pension-stod/",
+   "questions": [
+    {
+     "q": "låg pension vilka bidrag kan jag få",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vad är äldreförsörjningsstöd",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "skillnad mellan bostadstillägg och äldreförsörjningsstöd",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vem kan få äldreförsörjningsstöd",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket är äldreförsörjningsstödet",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hjälp för fattigpensionärer",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "pensionär som inte klarar ekonomin vart vänder jag mig",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ansöka om äldreförsörjningsstöd hos pensionsmyndigheten",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "prövas bostadstillägg och äldreförsörjningsstöd i samma ansökan",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "garantipension och bostadstillägg samtidigt",
+     "intent": "eligibility",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "invandrat sent till sverige låg pension vilka stöd",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "testa om du kan få bostadstillägg som pensionär",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "fick avslag på bostadstillägg vilka andra stöd finns",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    },
+    {
+     "q": "äldreförsörjningsstöd belopp 2026",
+     "intent": "informational",
+     "user_state": "soker-regelandring",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "stipendier och fonder",
+   "node": "/guider/stipendier-och-fonder/",
+   "questions": [
+    {
+     "q": "så hittar du stipendier",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "bidrag att söka i år",
+     "intent": "informational",
+     "user_state": "soker-deadline",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "vad är skillnaden mellan stipendium och fond",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "stipendier att söka för studier",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "fonder att söka pengar ur som privatperson",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "fonder för ensamstående föräldrar",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "söka fonder vid sjukdom",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur söker man pengar ur en stiftelse",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "skriva en bra ansökan till en stiftelse",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "stipendier utan krav på studier",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "när är sista ansökningsdag för stipendier i höst",
+     "intent": "deadline",
+     "user_state": "soker-deadline",
+     "source": "INFERRED"
+    },
+    {
+     "q": "är stipendier skattefria",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "lista över fonder och stiftelser i sverige",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "fonder för barn och ungdomar",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "föreningsbidrag",
+   "node": "/bidrag/foreningar/",
+   "questions": [
+    {
+     "q": "så söker du bidrag till din förening",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "min förening behöver pengar",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "vilka bidrag kan en förening söka",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur fungerar kommunalt föreningsbidrag",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "statsbidrag för ideella föreningar",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vad är lok-stöd",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bidrag för nystartad förening",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "skillnad mellan organisationsbidrag och projektbidrag",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "mucf bidrag ansökningsdatum",
+     "intent": "deadline",
+     "user_state": "soker-deadline",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bidrag till föreningslokal",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "söka pengar till ungdomsverksamhet i förening",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vad krävs av föreningen för att söka bidrag",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur redovisar man ett föreningsbidrag",
+     "intent": "informational",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "föreningen fick avslag på bidragsansökan",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "eu bidrag företag",
+   "node": "/guider/eu-bidrag-foretag/",
+   "questions": [
+    {
+     "q": "få hjälp att söka EU-bidrag",
+     "intent": "commercial",
+     "user_state": "vill-ansoka",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "eu bidrag för företag vilka finns",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "eu-stöd för småföretag",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur söker man eu-bidrag",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vad är en utlysning",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "eu-bidrag för att starta företag",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "regionala företagsstöd vilka finns",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "eu-stöd för företag på landsbygden",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "min ansökan tillväxtverket",
+     "intent": "navigational",
+     "user_state": "har-ansokt",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket kan ett företag få i eu-bidrag",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vad krävs i medfinansiering för eu-projekt",
+     "intent": "informational",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "konsult för eu-ansökan vad kostar det",
+     "intent": "commercial",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "eu-utlysningar för företag 2026",
+     "intent": "deadline",
+     "user_state": "soker-deadline",
+     "source": "INFERRED"
+    },
+    {
+     "q": "avslag på eu-ansökan kan man få återkoppling",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "energistöd företag",
+   "node": "/guider/energistod-foretag/",
+   "questions": [
+    {
+     "q": "bidrag energieffektivisering företag",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "SERP-DERIVED"
+    },
+    {
+     "q": "energistöd för företag vilka finns",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "stöd för solceller till företag",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "bidrag för energikartläggning",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vilka företag kan söka energistöd",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "energimyndighetens utlysningar för företag",
+     "intent": "navigational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "skillnad på energibidrag för privatpersoner och företag",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ansöka om energistöd hur får man behörighet i e-tjänsten",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "energistöd för lantbruk",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "stöd för energieffektivisering i industrin",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur fungerar klimatklivet för företag",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket stöd kan man få för energieffektivisering",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "nya energiutlysningar 2026",
+     "intent": "deadline",
+     "user_state": "soker-deadline",
+     "source": "INFERRED"
+    },
+    {
+     "q": "fick avslag på energistöd vad gör vi nu",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    }
+   ]
+  },
+  {
+   "root": "jordbruksstöd startstöd",
+   "node": "/bidrag/jordbruksverket-startstod-unga/",
+   "questions": [
+    {
+     "q": "vad är startstöd inom jordbruket",
+     "intent": "definition",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "startstöd unga jordbrukare",
+     "intent": "informational",
+     "user_state": "kanner-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "skillnad mellan startstöd och stöd till unga jordbrukare",
+     "intent": "comparison",
+     "user_state": "jamfor",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vem kan få startstöd för lantbruk",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "hur mycket är startstödet",
+     "intent": "calculation",
+     "user_state": "vill-rakna",
+     "source": "INFERRED"
+    },
+    {
+     "q": "startstöd åldersgräns",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "vilken utbildning krävs för startstöd",
+     "intent": "eligibility",
+     "user_state": "bedomer-behorighet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ansöka om startstöd hos jordbruksverket",
+     "intent": "application",
+     "user_state": "vill-ansoka",
+     "source": "INFERRED"
+    },
+    {
+     "q": "ta över gård vilka bidrag finns",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "starta lantbruk vilka stöd kan man söka",
+     "intent": "informational",
+     "user_state": "kanner-inte-till-stodet",
+     "source": "INFERRED"
+    },
+    {
+     "q": "när är ansökningsperioden för startstöd 2026",
+     "intent": "deadline",
+     "user_state": "soker-deadline",
+     "source": "INFERRED"
+    },
+    {
+     "q": "sista dag för sam-ansökan",
+     "intent": "deadline",
+     "user_state": "soker-deadline",
+     "source": "INFERRED"
+    },
+    {
+     "q": "avslag på startstöd hur överklagar man",
+     "intent": "troubleshooting",
+     "user_state": "fatt-avslag",
+     "source": "INFERRED"
+    }
+   ]
+  }
+ ]
 }

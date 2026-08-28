@@ -1,10 +1,10 @@
 {
  "_kontrakt": "GATE 0 block A (docs/ZERO_COMPROMISE_GATE.md): statusregister för alla keyword-rötter. GREEN kan aldrig sättas maskinellt — kräver mänsklig SERP-jämförelse sida-mot-sida (gatens manuella del). SERP-ägare endast där observation finns (seo/serp-gate0.json / serp-sprint01.json); rader med verifikation NONE har medvetet tom ägare. Genereras av tools/gatekeywords.mjs — redigeras aldrig för hand.",
  "datum_serp": "2026-08-22",
- "antal_rotter": 349,
+ "antal_rotter": 351,
  "status": {
   "GREEN": 0,
-  "YELLOW": 133,
+  "YELLOW": 135,
   "RED": 122,
   "GREY": 94
  },
@@ -945,6 +945,17 @@
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
+   "keyword": "bostadsbidrag",
+   "root": "bostadsbidrag",
+   "intent": "informational",
+   "query_familj": "k16-hjalp-med-hyran",
+   "serp_agare": "kronofogden + hyresvärdsperspektiv-sajter",
+   "var_url": "/bidrag/bostadsbidrag/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
+   "verifikation": "FRESH 2026-08-22"
+  },
+  {
    "keyword": "bostadsbidrag eller bostadstillägg",
    "root": "bostadsbidrag eller bostadstillägg",
    "intent": "comparison",
@@ -1269,7 +1280,7 @@
    "intent": "informational",
    "query_familj": "k3-forsorjningsstod",
    "serp_agare": "hejaolika (media) — inte Socialstyrelsen",
-   "var_url": "/bidrag/kommun-forsorjningsstod/",
+   "var_url": "/bidrag/ekonomiskt-bistand/",
    "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
    "status": "YELLOW",
    "verifikation": "FRESH 2026-08-22"
@@ -1867,6 +1878,17 @@
    "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
    "status": "GREY",
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
+   "keyword": "försörjningsstöd",
+   "root": "försörjningsstöd",
+   "intent": "informational",
+   "query_familj": "k3-forsorjningsstod",
+   "serp_agare": "hejaolika (media) — inte Socialstyrelsen",
+   "var_url": "/bidrag/ekonomiskt-bistand/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
+   "verifikation": "FRESH 2026-08-22"
   },
   {
    "keyword": "försörjningsstöd (ekonomiskt bistånd)",
@@ -3183,7 +3205,7 @@
    "intent": "informational",
    "query_familj": "k3-forsorjningsstod",
    "serp_agare": "hejaolika (media) — inte Socialstyrelsen",
-   "var_url": "/bidrag/kommun-forsorjningsstod/",
+   "var_url": "/bidrag/ekonomiskt-bistand/",
    "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
    "status": "YELLOW",
    "verifikation": "FRESH 2026-08-22"

@@ -316,10 +316,12 @@ function entityPage(o) {
     mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
   });
 
+  const kluster = KLUSTER_BY_CHILD.get(o.slug);
   const body = `
 <p class="eyebrow">${esc(auth?.name ?? '')} · ${esc(INSTRUMENT[o.instrumentType] ?? 'Stöd')}</p>
 <h1>${esc(short)}</h1>
 <p class="lead">${esc(o.summary)}</p>
+${kluster ? `<p class="lead">Del av översikten <a href="/${kluster.path}/">${esc(kluster.h1)}</a> — jämför varianterna och se de vanligaste frågorna där.</p>` : ''}
 
 <div class="card">
 <table class="fakta">
@@ -427,6 +429,7 @@ Myndigheterna beskriver sina egna stöd var för sig; här får du överblicken,
 <div class="path"><strong>Hitta bidrag gratis</strong>Upptäckten och resultaten är kostnadsfria och inte låsta. Ansök själv hos källan.<br><a class="knapp sekundar" href="/hitta-bidrag-gratis/">Så fungerar det</a></div>
 </div>
 <p class="lead" style="margin-top:.4rem">Se också <a href="/bidragsstatus/">bidragsstatus</a>, <a href="/finansiarer/">finansiärerna</a> bakom bidragen, och <a href="/foretagsbidragsindex/">Företagsbidragsindex</a> — Sveriges företagsstöd i öppna, citerbara siffror.</p>
+<p class="lead">Ämnesöversikter: ${KLUSTER.map((k) => `<a href="/${k.path}/">${esc(k.h1)}</a>`).join(' · ')}.</p>
 ${hubEntries
   .map(
     ({ hub, entries }) => `<h2><a href="/bidrag/${hub.slug}/">${esc(hub.title)}</a></h2>
@@ -644,19 +647,20 @@ const FBI_REGISTRY = JSON.parse(readFileSync(join(ROOT, 'seo', 'foretagsbidragsi
 // 'bostadsbidrag' ägs av kommande klusterhubb (SEO_OPPORTUNITIES §3) och
 // fästs medvetet inte på någon av de två specifika bostadsbidragssidorna.
 const PAA_QUESTIONS = JSON.parse(readFileSync(join(ROOT, 'seo', 'volumes-semrush-se.json'), 'utf8')).questions ?? {};
+// Huvudtermernas frågeset ägs av klusterhubbarna (seo/kluster.json) — här
+// ligger bara set vars term entydigt ägs av EN entity-sida.
 const PAA_BY_SLUG = {
-  'kommun-forsorjningsstod': ['försörjningsstöd', 'ekonomiskt bistånd'],
   'pm-bostadstillagg': ['bostadstillägg'],
   'fk-underhallsstod': ['underhållsstöd'],
   'fk-aktivitetsstod': ['aktivitetsstöd'],
 };
 // Kurerade extra-frågor (sanna, allmänt kända förhållanden — inte statistik).
-const PAA_EXTRA = {
-  'kommun-forsorjningsstod': [{
-    q: 'Är socialbidrag och försörjningsstöd samma sak?',
-    a: 'Ja — socialbidrag är den äldre vardagliga benämningen. Dagens formella namn är försörjningsstöd, som är en del av det ekonomiska biståndet och söks hos socialtjänsten i din kommun.',
-  }],
-};
+const PAA_EXTRA = {};
+
+// ── Klusterhubbar: hubben äger huvudtermen, entity-sidorna det specifika ─────
+const KLUSTER = JSON.parse(readFileSync(join(ROOT, 'seo', 'kluster.json'), 'utf8')).kluster;
+const KLUSTER_BY_CHILD = new Map();
+for (const k of KLUSTER) for (const s of k.childSlugs) KLUSTER_BY_CHILD.set(s, k);
 
 /** Ärligt svar på en verklig användarfråga, härlett ur seeden — aldrig påhittade nivåer. */
 function paaAnswer(q, o, authName) {
@@ -848,6 +852,94 @@ rätt stöd — <a href="/vilka-bidrag-kan-jag-fa/">kontrollera din situation</a
 if (outFlag === -1) rmSync(OUT, { recursive: true, force: true });
 mkdirSync(join(OUT, 'bidrag'), { recursive: true });
 
+/**
+ * Klusterhubb (SEO_OPPORTUNITIES §3): sidan som ÄGER huvudtermen. Doktrin-
+ * ordningen svar → väljare → verktyg (CTA) → datavy → förklaring → FAQ → källor.
+ * All löptext är kurerad i seo/kluster.json (sann mekanik, aldrig belopp);
+ * datavyn hämtas ur seeden; FAQ:n bär huvudtermens verkliga PAA-frågor.
+ */
+function klusterPage(k) {
+  const children = k.childSlugs.map((s) => opportunities.find((o) => o.slug === s)).filter(Boolean);
+  const primary = children[0];
+  const auth = authorities.find((a) => a.key === primary?.authorityKey);
+  const authName = auth?.name ?? 'den ansvariga aktören';
+  const canonical = `${BASE}/${k.path}/`;
+  const crumbs = [
+    { name: 'Bidrag', url: `${BASE}/bidrag/` },
+    { name: k.h1, url: canonical },
+  ];
+
+  // FAQ: gratis-frågan + kurerade extra + huvudtermens PAA (en per svarskategori).
+  const faq = [
+    {
+      q: `Kostar det att se om jag kan ha rätt till ${k.headTerm}?`,
+      a: 'Nej. Att upptäcka stödet och se villkoren i Bidragskoll är gratis, och resultaten är inte låsta bakom en betalvägg. Du betalar bara om du väljer att låta systemet förbereda en ansökan (19 kr per ansökan).',
+    },
+    ...(k.extraFaq ?? []),
+  ];
+  const usedCats = new Set();
+  for (const term of k.paaTerms ?? []) {
+    for (const item of PAA_QUESTIONS[term] ?? []) {
+      const lq = item.question.toLowerCase();
+      const cat = paaCategory(lq);
+      if (usedCats.has(cat)) continue;
+      usedCats.add(cat);
+      let a;
+      if (cat === 'vad') a = k.svar.split('. ').slice(0, 2).join('. ') + '.';
+      else if (cat === 'ansok') a = `${primary?.applicationMethod ?? 'Se den officiella källan.'} Att ansöka själv är alltid gratis — Bidragskoll länkar till den officiella källan.`;
+      else if (cat === 'belopp') a = `Beloppet fastställs av ${authName} och beror på din situation. Bidragskoll anger inga nivåer som inte är fastställda mot källan — aktuella belopp finns hos den officiella källan, och den kostnadsfria genomgången ställer följdfrågorna som påverkar just din nivå.`;
+      else if (cat === 'tid') a = `Tider och perioder styrs av ${authName} och kan variera — se den officiella källan för aktuella handläggnings- och utbetalningstider.`;
+      else a = `Det avgörs av villkoren hos ${authName} — se den officiella källan. Bidragskolls kostnadsfria genomgång ställer följdfrågorna som avgör hur det ser ut i just din situation.`;
+      faq.push({ q: item.question.charAt(0).toUpperCase() + item.question.slice(1) + '?', a });
+      if (faq.length >= 7) break;
+    }
+    if (faq.length >= 7) break;
+  }
+
+  const jsonld = { '@context': 'https://schema.org', '@graph': [...baseGraph(canonical, k.title, crumbs), faqJsonld(faq)] };
+  jsonld['@graph'].push({
+    '@type': 'ItemList',
+    name: k.h1,
+    itemListElement: children.map((o, i) => ({ '@type': 'ListItem', position: i + 1, name: shortTitle(o), url: `${BASE}/bidrag/${o.slug}/` })),
+  });
+
+  const avgorareOpp = k.avgorare ? opportunities.find((o) => o.slug === k.avgorare.slug) : null;
+  const body = `
+<p class="eyebrow">Översikt · ${esc(authName)}</p>
+<h1>${esc(k.h1)}</h1>
+<p class="lead">${esc(k.svar)}</p>
+
+<h2>Vilken variant gäller dig?</h2>
+<div class="paths">
+${children.map((o, i) => {
+  const v = (k.valjare ?? [])[i];
+  return `<div class="path"><strong>${esc(v?.fraga ?? shortTitle(o))}</strong>${esc(o.summary)}<br><a class="knapp" href="/bidrag/${o.slug}/">${esc(shortTitle(o))}</a></div>`;
+}).join('\n')}
+</div>
+${avgorareOpp && k.avgorare ? `<p class="lead">${esc(k.avgorare.text)} <a href="/bidrag/${avgorareOpp.slug}/">${esc(shortTitle(avgorareOpp))}</a>.</p>` : ''}
+
+<p><a class="bigcta" href="/">Kontrollera din situation — gratis</a></p>
+
+<div class="card">
+<table class="fakta">
+${children.map((o) => `<tr><th scope="row"><a href="/bidrag/${o.slug}/">${esc(shortTitle(o))}</a></th><td>${esc(deadlineText(o))} · ${esc(o.applicationMethod ?? 'Se källan')}</td></tr>`).join('\n')}
+</table>
+</div>
+
+<h2>Så fungerar det</h2>
+<p>${esc(k.forklaring)}</p>
+
+<div class="snabbsvar">
+<h2>Vanliga frågor</h2>
+<dl>${faq.map((f) => `<dt>${esc(f.q)}</dt><dd>${esc(f.a)}</dd>`).join('')}</dl>
+</div>
+
+<p class="kalla"><strong>Officiella källor:</strong> ${children.map((o) => `<a href="${esc(o.sourceUrl)}" rel="noopener">${esc(shortTitle(o))} hos ${esc(authorities.find((a) => a.key === o.authorityKey)?.name ?? 'källan')}</a>`).join(' · ')}.
+<br><strong>Senast kontrollerad:</strong> ${CHECKED}</p>`;
+
+  return layout({ title: `${k.title} | Bidragskoll`, description: k.description, canonical, crumbs, jsonld, body });
+}
+
 const pages = [];
 const noindexPaths = new Set(); // genererade men EJ i sitemap (NOINDEX_FOLLOW)
 function emit(path, html, opts = {}) {
@@ -889,6 +981,9 @@ const hubEntries = HUBS.map((hub) => ({
 emit('bidrag', indexPage(hubEntries));
 for (const { hub, entries } of hubEntries) emit(join('bidrag', hub.slug), hubPage(hub, entries, queryLinksByHub[hub.slug] ?? []));
 for (const o of [...opportunities].sort((a, b) => a.slug.localeCompare(b.slug))) emit(join('bidrag', o.slug), entityPage(o));
+
+// Klusterhubbar — hubben äger huvudtermen (länkas från /bidrag/-index; barnen länkar upp).
+for (const k of KLUSTER) emit(k.path, klusterPage(k));
 
 // Flaggskeppssidorna + bidragsstatus (root). Länkas från /bidrag/-index så de
 // nås i orphan-BFS:en, och länkar tillbaka in i katalogen.

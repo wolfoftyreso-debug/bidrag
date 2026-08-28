@@ -1,0 +1,68 @@
+{
+  "_kontrakt": "Klusterhubbar (SEO_ANSWER_CLUSTERS §Klusterregler + SEO_OPPORTUNITIES §3): hubben ÄGER huvudtermen, entity-sidorna det specifika. En primär nod per kluster. All text här är kurerad sanning — mekanismer och namnförhållanden som är stabila och verifierbara mot officiella källor; ALDRIG belopp eller nivåer (de ägs av källan). PAA-frågesetten (seo/volumes-semrush-se.json) fästs på hubben, inte på barnsidorna. Renderas av tools/genseo.mjs (klusterPage) i doktrinordningen svar → väljare → verktyg → datavy → förklaring → FAQ → källor.",
+  "kluster": [
+    {
+      "path": "bidrag/bostadsbidrag",
+      "headTerm": "bostadsbidrag",
+      "h1": "Bostadsbidrag",
+      "title": "Bostadsbidrag — vem kan få det och hur du ansöker",
+      "description": "Bostadsbidraget finns i två varianter — för unga 18–28 år och för barnfamiljer. Se vilken som gäller dig och hur du ansöker hos Försäkringskassan.",
+      "svar": "Bostadsbidrag är ett stöd från Försäkringskassan till hushåll som behöver hjälp med boendekostnaden. Det finns i två varianter: för unga mellan 18 och 28 år utan barn, och för barnfamiljer. Beloppet beror på inkomst, boendekostnad, bostadens storlek och hushållets sammansättning — och bidraget är preliminärt: det stäms av mot din faktiska årsinkomst i efterhand, så en högre inkomst än beräknat kan ge återbetalning.",
+      "valjare": [
+        {
+          "fraga": "Är du 18–28 år och har inte barn?",
+          "slug": "fk-bostadsbidrag-unga"
+        },
+        {
+          "fraga": "Har du barn som bor hos dig — helt eller växelvis?",
+          "slug": "fk-bostadsbidrag-barnfamiljer"
+        }
+      ],
+      "avgorare": {
+        "text": "Är du pensionär? Då är det inte bostadsbidrag utan bostadstillägg du ska titta på — ett annat stöd med egna regler, hos Pensionsmyndigheten.",
+        "slug": "pm-bostadstillagg"
+      },
+      "forklaring": "Försäkringskassan beslutar och betalar ut. Ansökan görs på Mina sidor, och du behöver uppgifter om din beräknade årsinkomst och din boendekostnad. Eftersom bidraget är preliminärt lönar det sig att anmäla inkomständringar direkt — det är avstämningen mot slutlig inkomst som annars kan ge återbetalningskrav. Aktuella belopp, inkomstgränser och exakta villkor finns alltid hos Försäkringskassan; Bidragskolls kostnadsfria genomgång ställer följdfrågorna som avgör hur det ser ut för just ditt hushåll.",
+      "paaTerms": [
+        "bostadsbidrag"
+      ],
+      "extraFaq": [],
+      "childSlugs": [
+        "fk-bostadsbidrag-unga",
+        "fk-bostadsbidrag-barnfamiljer"
+      ]
+    },
+    {
+      "path": "bidrag/ekonomiskt-bistand",
+      "headTerm": "ekonomiskt bistånd",
+      "h1": "Ekonomiskt bistånd och försörjningsstöd",
+      "title": "Ekonomiskt bistånd och försörjningsstöd — hela guiden",
+      "description": "Ekonomiskt bistånd är samhällets yttersta skyddsnät och söks hos socialtjänsten i din kommun. Försörjningsstöd täcker de löpande levnadskostnaderna.",
+      "svar": "Ekonomiskt bistånd är samhällets yttersta ekonomiska skyddsnät, för den som inte kan försörja sig på annat sätt. Det söks hos socialtjänsten i den kommun där du bor. Försörjningsstöd är den del av biståndet som ska täcka löpande levnadskostnader som mat, kläder och boende; därutöver kan bistånd lämnas för andra nödvändiga utgifter. Socialbidrag är det äldre vardagliga namnet på samma stöd.",
+      "valjare": [
+        {
+          "fraga": "Räcker inte pengarna till hyra, mat och räkningar?",
+          "slug": "kommun-forsorjningsstod"
+        }
+      ],
+      "avgorare": {
+        "text": "Innan biståndet prövas ska andra vägar vara uttömda — till exempel a-kassa vid arbetslöshet eller bostadsbidrag om du har rätt till det. Bidragskolls genomgång hjälper dig se vilka stöd som kan ligga före.",
+        "slug": "akassa-arbetsloshetsersattning"
+      },
+      "forklaring": "Rätten till bistånd prövas individuellt av din kommun utifrån socialtjänstlagen. En del av prövningen utgår från riksnormen, som fastställs nationellt varje år, medan skäliga kostnader för till exempel boende bedöms lokalt — därför kan beslut se olika ut i olika kommuner. Aktuella normbelopp och din kommuns ansökningsväg finns hos kommunen och Socialstyrelsen. Att ansöka är alltid gratis, och ett avslag kan överklagas.",
+      "paaTerms": [
+        "ekonomiskt bistånd",
+        "försörjningsstöd"
+      ],
+      "extraFaq": [
+        {
+          "q": "Är socialbidrag och försörjningsstöd samma sak?",
+          "a": "Ja — socialbidrag är den äldre vardagliga benämningen. Dagens formella namn är försörjningsstöd, som är en del av det ekonomiska biståndet och söks hos socialtjänsten i din kommun."
+        }
+      ],
+      "childSlugs": [
+        "kommun-forsorjningsstod"
+      ]
+    }
+  ]
+}

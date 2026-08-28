@@ -2,82 +2,134 @@
  "_kommentar": "Manuellt kurerade root keywords UTÖVER de entity-härledda (som byggs ur seeden av tools/seokeywords.mjs). Inga sökvolymer finns eller anges — volume_source är DATA_UNAVAILABLE tills GSC/Keyword Planner/tredjepartskälla kopplats in. type: category|problem|comparison|authority-term|audience|year-pattern. cluster refererar taxonomin i docs/SEO_INFORMATION_ARCHITECTURE.md.",
  "roots": [
   {
+   "root": "a-kassa",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "arbete",
+   "note": "angränsande — orienteringsinnehåll, inte vår kärna"
+  },
+  {
+   "root": "affärsutvecklingscheckar",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "tillväxt"
+  },
+  {
+   "root": "aktivitetsstöd",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "arbete"
+  },
+  {
+   "root": "aktivitetsstöd förening",
+   "type": "authority-term",
+   "audience": "förening",
+   "cluster": "idrott"
+  },
+  {
+   "root": "akut ekonomisk hjälp",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "ekonomisk-utsatthet"
+  },
+  {
+   "root": "anställningsstöd",
+   "type": "category",
+   "audience": "företag",
+   "cluster": "anställa"
+  },
+  {
+   "root": "ansökningsdatum bidrag",
+   "type": "problem",
+   "audience": "alla",
+   "cluster": "verktyg"
+  },
+  {
+   "root": "arbetsstipendium konstnär",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "kultur"
+  },
+  {
+   "root": "arvsfonden projektstöd",
+   "type": "authority-term",
+   "audience": "förening",
+   "cluster": "civilsamhälle"
+  },
+  {
+   "root": "assistansersättning",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "funktionsnedsättning",
+   "note": "completeness keyword"
+  },
+  {
+   "root": "avslag bidrag vad göra",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "process"
+  },
+  {
+   "root": "barnbidrag",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "familj",
+   "note": "universellt — utanför kunskapsbasen idag; completeness keyword"
+  },
+  {
    "root": "bidrag",
    "type": "category",
    "audience": "alla",
    "cluster": "generisk"
   },
   {
-   "root": "bidrag och stöd",
-   "type": "category",
+   "root": "bidrag 2026",
+   "type": "year-pattern",
    "audience": "alla",
-   "cluster": "generisk"
+   "cluster": "generisk",
+   "note": "årtalsmönster — evergreen-URL + årtal i title, aldrig års-URL:er"
   },
   {
-   "root": "ekonomiskt stöd",
-   "type": "category",
-   "audience": "alla",
-   "cluster": "generisk"
-  },
-  {
-   "root": "ekonomisk hjälp",
-   "type": "category",
-   "audience": "privat",
-   "cluster": "generisk"
-  },
-  {
-   "root": "statsbidrag",
-   "type": "category",
-   "audience": "organisation",
-   "cluster": "generisk"
-  },
-  {
-   "root": "statligt stöd",
-   "type": "category",
-   "audience": "alla",
-   "cluster": "generisk"
-  },
-  {
-   "root": "vilka bidrag kan jag få",
+   "root": "bidrag anpassa bostad",
    "type": "problem",
    "audience": "privat",
-   "cluster": "upptäckt"
+   "cluster": "funktionsnedsättning"
   },
   {
-   "root": "vilka bidrag finns",
-   "type": "problem",
-   "audience": "alla",
-   "cluster": "upptäckt"
-  },
-  {
-   "root": "bidrag jag inte visste fanns",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "upptäckt"
-  },
-  {
-   "root": "har jag rätt till bidrag",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "upptäckt"
-  },
-  {
-   "root": "bidrag privatperson",
+   "root": "bidrag arbetslös",
    "type": "audience",
    "audience": "privat",
-   "cluster": "privatperson"
-  },
-  {
-   "root": "bidrag familj",
-   "type": "audience",
-   "audience": "privat",
-   "cluster": "familj"
+   "cluster": "arbete"
   },
   {
    "root": "bidrag barnfamilj",
    "type": "audience",
    "audience": "privat",
    "cluster": "familj"
+  },
+  {
+   "root": "bidrag bokutgivning",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "kultur"
+  },
+  {
+   "root": "bidrag digitalisering företag",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "digitalisering"
+  },
+  {
+   "root": "bidrag eller lån",
+   "type": "comparison",
+   "audience": "alla",
+   "cluster": "generisk"
+  },
+  {
+   "root": "bidrag energieffektivisering",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "energi"
   },
   {
    "root": "bidrag ensamstående",
@@ -92,28 +144,40 @@
    "cluster": "familj"
   },
   {
-   "root": "bidrag pensionär",
-   "type": "audience",
-   "audience": "privat",
-   "cluster": "pension"
+   "root": "bidrag export",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "internationalisering"
   },
   {
-   "root": "bidrag student",
+   "root": "bidrag familj",
    "type": "audience",
    "audience": "privat",
-   "cluster": "studier"
+   "cluster": "familj"
   },
   {
-   "root": "bidrag arbetslös",
-   "type": "audience",
+   "root": "bidrag film",
+   "type": "problem",
+   "audience": "alla",
+   "cluster": "kultur"
+  },
+  {
+   "root": "bidrag flytt",
+   "type": "problem",
    "audience": "privat",
    "cluster": "arbete"
   },
   {
-   "root": "bidrag sjukskriven",
-   "type": "audience",
+   "root": "bidrag forskning och utveckling företag",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "innovation"
+  },
+  {
+   "root": "bidrag fritidsaktiviteter barn",
+   "type": "problem",
    "audience": "privat",
-   "cluster": "sjukdom"
+   "cluster": "familj"
   },
   {
    "root": "bidrag funktionsnedsättning",
@@ -122,103 +186,22 @@
    "cluster": "funktionsnedsättning"
   },
   {
-   "root": "bidrag nyanländ",
+   "root": "bidrag för att anställa",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "anställa"
+  },
+  {
+   "root": "bidrag förening",
    "type": "audience",
-   "audience": "privat",
-   "cluster": "etablering"
+   "audience": "förening",
+   "cluster": "förening"
   },
   {
-   "root": "bidrag ungdom",
+   "root": "bidrag företag",
    "type": "audience",
-   "audience": "privat",
-   "cluster": "unga"
-  },
-  {
-   "root": "bidrag under 25",
-   "type": "audience",
-   "audience": "privat",
-   "cluster": "unga"
-  },
-  {
-   "root": "hjälp med hyran",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "boende"
-  },
-  {
-   "root": "kan inte betala hyran",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "boende"
-  },
-  {
-   "root": "bidrag till boende",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "boende"
-  },
-  {
-   "root": "stöd till hyra",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "boende"
-  },
-  {
-   "root": "bidrag låg inkomst",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "ekonomisk-utsatthet"
-  },
-  {
-   "root": "ekonomisk hjälp låg inkomst",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "ekonomisk-utsatthet"
-  },
-  {
-   "root": "pengarna räcker inte",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "ekonomisk-utsatthet"
-  },
-  {
-   "root": "hjälp med ekonomin",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "ekonomisk-utsatthet"
-  },
-  {
-   "root": "akut ekonomisk hjälp",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "ekonomisk-utsatthet"
-  },
-  {
-   "root": "socialbidrag",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "ekonomisk-utsatthet",
-   "note": "vardaglig term för försörjningsstöd/ekonomiskt bistånd",
-   "target": "/bidrag/kommun-forsorjningsstod/"
-  },
-  {
-   "root": "ekonomiskt bistånd",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "ekonomisk-utsatthet",
-   "target": "/bidrag/kommun-forsorjningsstod/"
-  },
-  {
-   "root": "existensminimum",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "ekonomisk-utsatthet"
-  },
-  {
-   "root": "riksnorm",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "ekonomisk-utsatthet"
+   "audience": "företag",
+   "cluster": "företag"
   },
   {
    "root": "bidrag glasögon barn",
@@ -228,77 +211,239 @@
    "target": "/bidrag/region-glasogonbidrag-barn/"
   },
   {
-   "root": "hjälp med kostnader barn",
+   "root": "bidrag idrottsförening",
+   "type": "audience",
+   "audience": "förening",
+   "cluster": "idrott"
+  },
+  {
+   "root": "bidrag internationalisering",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "internationalisering"
+  },
+  {
+   "root": "bidrag jag inte visste fanns",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "upptäckt"
+  },
+  {
+   "root": "bidrag kompetensutveckling personal",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "kompetens"
+  },
+  {
+   "root": "bidrag kulturförening",
+   "type": "audience",
+   "audience": "förening",
+   "cluster": "kultur"
+  },
+  {
+   "root": "bidrag köpa maskiner",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "investering"
+  },
+  {
+   "root": "bidrag landsbygd",
+   "type": "problem",
+   "audience": "alla",
+   "cluster": "landsbygd"
+  },
+  {
+   "root": "bidrag låg inkomst",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "ekonomisk-utsatthet"
+  },
+  {
+   "root": "bidrag musikprojekt",
+   "type": "problem",
+   "audience": "alla",
+   "cluster": "kultur"
+  },
+  {
+   "root": "bidrag nyanländ",
+   "type": "audience",
+   "audience": "privat",
+   "cluster": "etablering"
+  },
+  {
+   "root": "bidrag och stöd",
+   "type": "category",
+   "audience": "alla",
+   "cluster": "generisk"
+  },
+  {
+   "root": "bidrag pensionär",
+   "type": "audience",
+   "audience": "privat",
+   "cluster": "pension"
+  },
+  {
+   "root": "bidrag privatperson",
+   "type": "audience",
+   "audience": "privat",
+   "cluster": "privatperson"
+  },
+  {
+   "root": "bidrag renovering",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "boende"
+  },
+  {
+   "root": "bidrag samlingslokal",
+   "type": "problem",
+   "audience": "förening",
+   "cluster": "lokaler"
+  },
+  {
+   "root": "bidrag sjukskriven",
+   "type": "audience",
+   "audience": "privat",
+   "cluster": "sjukdom"
+  },
+  {
+   "root": "bidrag skolprojekt",
+   "type": "problem",
+   "audience": "offentlig",
+   "cluster": "offentlig"
+  },
+  {
+   "root": "bidrag solceller",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "energi"
+  },
+  {
+   "root": "bidrag solceller företag",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "energi"
+  },
+  {
+   "root": "bidrag som försvinner",
+   "type": "problem",
+   "audience": "alla",
+   "cluster": "generisk"
+  },
+  {
+   "root": "bidrag starta företag",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "starta-företag"
+  },
+  {
+   "root": "bidrag student",
+   "type": "audience",
+   "audience": "privat",
+   "cluster": "studier"
+  },
+  {
+   "root": "bidrag till boende",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "boende"
+  },
+  {
+   "root": "bidrag under 25",
+   "type": "audience",
+   "audience": "privat",
+   "cluster": "unga"
+  },
+  {
+   "root": "bidrag ungdom",
+   "type": "audience",
+   "audience": "privat",
+   "cluster": "unga"
+  },
+  {
+   "root": "bidrag ungdomsorganisation",
+   "type": "audience",
+   "audience": "förening",
+   "cluster": "unga"
+  },
+  {
+   "root": "bidrag utbetalning datum",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "process"
+  },
+  {
+   "root": "bidrag värmepump",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "energi"
+  },
+  {
+   "root": "bidragskalender deadlines",
+   "type": "problem",
+   "audience": "alla",
+   "cluster": "verktyg"
+  },
+  {
+   "root": "bidragskalkylator",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "verktyg"
+  },
+  {
+   "root": "bidragskoll",
+   "type": "authority-term",
+   "audience": "alla",
+   "cluster": "brand"
+  },
+  {
+   "root": "bidragskollen",
+   "type": "authority-term",
+   "audience": "alla",
+   "cluster": "brand",
+   "note": "namnkollision — se SEO_COMPETITORS"
+  },
+  {
+   "root": "bilstöd",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "funktionsnedsättning"
+  },
+  {
+   "root": "bostadsbidrag",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "boende",
+   "target": "/bidrag/bostadsbidrag/",
+   "note": "huvudterm — ägs av klusterhubben"
+  },
+  {
+   "root": "bostadsbidrag eller bostadstillägg",
+   "type": "comparison",
+   "audience": "privat",
+   "cluster": "boende"
+  },
+  {
+   "root": "bostadstillägg",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "pension",
+   "target": "/bidrag/pm-bostadstillagg/"
+  },
+  {
+   "root": "busskort gymnasiet bidrag",
    "type": "problem",
    "audience": "privat",
    "cluster": "familj"
   },
   {
-   "root": "bidrag fritidsaktiviteter barn",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "familj"
-  },
-  {
-   "root": "barnbidrag",
+   "root": "bygdemedel",
    "type": "authority-term",
-   "audience": "privat",
-   "cluster": "familj",
-   "note": "universellt — utanför kunskapsbasen idag; completeness keyword"
+   "audience": "förening",
+   "cluster": "landsbygd"
   },
   {
-   "root": "flerbarnstillägg",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "familj"
-  },
-  {
-   "root": "föräldrapenning",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "familj",
-   "note": "completeness keyword"
-  },
-  {
-   "root": "vab ersättning",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "familj",
-   "target": "/bidrag/fk-tillfallig-foraldrapenning/"
-  },
-  {
-   "root": "underhållsbidrag",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "familj",
-   "note": "skiljs från underhållsstöd — vanlig begreppsförvirring att förklara"
-  },
-  {
-   "root": "pengar till studier",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "studier"
-  },
-  {
-   "root": "studera som vuxen ekonomi",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "studier"
-  },
-  {
-   "root": "plugga med lön",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "studier"
-  },
-  {
-   "root": "studiebidrag",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "studier"
-  },
-  {
-   "root": "studielån",
+   "root": "csn fribelopp",
    "type": "authority-term",
    "audience": "privat",
    "cluster": "studier"
@@ -310,350 +455,59 @@
    "cluster": "studier"
   },
   {
-   "root": "csn fribelopp",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "studier"
-  },
-  {
-   "root": "studiestartsstöd",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "studier",
-   "target": "/bidrag/csn-studiestartsstod/"
-  },
-  {
-   "root": "körkortslån",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "arbete",
-   "note": "completeness keyword"
-  },
-  {
-   "root": "a-kassa",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "arbete",
-   "note": "angränsande — orienteringsinnehåll, inte vår kärna"
-  },
-  {
-   "root": "ersättning arbetslös",
+   "root": "doktorand finansiering",
    "type": "problem",
-   "audience": "privat",
-   "cluster": "arbete"
+   "audience": "forskning",
+   "cluster": "forskning"
   },
   {
-   "root": "aktivitetsstöd",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "arbete"
-  },
-  {
-   "root": "etableringsersättning",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "etablering",
-   "target": "/bidrag/af-etableringsersattning/"
-  },
-  {
-   "root": "sjukpenning",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "sjukdom",
-   "note": "completeness keyword"
-  },
-  {
-   "root": "sjukersättning",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "sjukdom"
-  },
-  {
-   "root": "ersättning vid sjukdom",
+   "root": "dubbla bidrag tillåtet",
    "type": "problem",
-   "audience": "privat",
-   "cluster": "sjukdom"
+   "audience": "alla",
+   "cluster": "process"
   },
   {
-   "root": "merkostnadsersättning",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "funktionsnedsättning",
-   "target": "/bidrag/fk-merkostnadsersattning/"
-  },
-  {
-   "root": "omvårdnadsbidrag",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "funktionsnedsättning",
-   "target": "/bidrag/fk-omvardnadsbidrag/"
-  },
-  {
-   "root": "bilstöd",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "funktionsnedsättning"
-  },
-  {
-   "root": "assistansersättning",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "funktionsnedsättning",
-   "note": "completeness keyword"
-  },
-  {
-   "root": "bidrag anpassa bostad",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "funktionsnedsättning"
-  },
-  {
-   "root": "stöd anhörig",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "sjukdom"
-  },
-  {
-   "root": "närståendepenning",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "sjukdom",
-   "target": "/bidrag/fk-narstaendepenning/"
-  },
-  {
-   "root": "bostadstillägg",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "pension",
-   "target": "/bidrag/pm-bostadstillagg/"
-  },
-  {
-   "root": "äldreförsörjningsstöd",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "pension",
-   "target": "/bidrag/pm-aldreforsorjningsstod/"
-  },
-  {
-   "root": "garantipension",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "pension",
-   "note": "completeness keyword"
-  },
-  {
-   "root": "låg pension hjälp",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "pension"
-  },
-  {
-   "root": "tandvårdsbidrag",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "vård",
-   "note": "completeness keyword"
-  },
-  {
-   "root": "högkostnadsskydd",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "vård",
-   "note": "angränsande orientering"
-  },
-  {
-   "root": "flytta utomlands bidrag",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "utvandring"
-  },
-  {
-   "root": "återvandringsbidrag",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "utvandring",
-   "target": "/bidrag/migrationsverket-atervandringsbidrag/"
-  },
-  {
-   "root": "studera utomlands csn",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "utvandring"
-  },
-  {
-   "root": "jobba utomlands stöd",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "utvandring"
-  },
-  {
-   "root": "hemutrustningslån",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "etablering"
-  },
-  {
-   "root": "bidrag företag",
-   "type": "audience",
-   "audience": "företag",
-   "cluster": "företag"
-  },
-  {
-   "root": "företagsstöd",
+   "root": "ekonomisk hjälp",
    "type": "category",
-   "audience": "företag",
-   "cluster": "företag"
+   "audience": "privat",
+   "cluster": "generisk"
   },
   {
-   "root": "starta eget bidrag",
+   "root": "ekonomisk hjälp låg inkomst",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "ekonomisk-utsatthet"
+  },
+  {
+   "root": "ekonomiskt bistånd",
    "type": "authority-term",
-   "audience": "företag",
-   "cluster": "starta-företag",
-   "note": "vardaglig term för stöd till start av näringsverksamhet",
-   "target": "/bidrag/af-stod-start-naringsverksamhet/"
+   "audience": "privat",
+   "cluster": "ekonomisk-utsatthet",
+   "target": "/bidrag/ekonomiskt-bistand/"
   },
   {
-   "root": "bidrag starta företag",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "starta-företag"
-  },
-  {
-   "root": "stöd till start av näringsverksamhet",
-   "type": "authority-term",
-   "audience": "företag",
-   "cluster": "starta-företag"
-  },
-  {
-   "root": "finansiering startup",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "innovation"
-  },
-  {
-   "root": "bidrag för att anställa",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "anställa"
-  },
-  {
-   "root": "stöd anställa arbetslös",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "anställa"
-  },
-  {
-   "root": "anställningsstöd",
+   "root": "ekonomiskt stöd",
    "type": "category",
-   "audience": "företag",
-   "cluster": "anställa"
+   "audience": "alla",
+   "cluster": "generisk"
   },
   {
-   "root": "lönebidrag",
+   "root": "elevresor gymnasiet",
    "type": "authority-term",
-   "audience": "företag",
-   "cluster": "anställa"
+   "audience": "privat",
+   "cluster": "familj"
   },
   {
-   "root": "nystartsjobb",
+   "root": "elstöd",
    "type": "authority-term",
-   "audience": "företag",
-   "cluster": "anställa"
+   "audience": "alla",
+   "cluster": "energi",
+   "note": "tidsbundet — freshness-känsligt"
   },
   {
-   "root": "introduktionsjobb",
-   "type": "authority-term",
-   "audience": "företag",
-   "cluster": "anställa"
-  },
-  {
-   "root": "hjälp med lönekostnad",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "anställa"
-  },
-  {
-   "root": "bidrag kompetensutveckling personal",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "kompetens"
-  },
-  {
-   "root": "omställningsstöd kompetens",
-   "type": "authority-term",
-   "audience": "företag",
-   "cluster": "kompetens"
-  },
-  {
-   "root": "affärsutvecklingscheckar",
-   "type": "authority-term",
-   "audience": "företag",
-   "cluster": "tillväxt"
-  },
-  {
-   "root": "konsultcheckar företag",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "tillväxt"
-  },
-  {
-   "root": "bidrag digitalisering företag",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "digitalisering"
-  },
-  {
-   "root": "bidrag export",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "internationalisering"
-  },
-  {
-   "root": "bidrag internationalisering",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "internationalisering"
-  },
-  {
-   "root": "innovationsbidrag",
+   "root": "energibidrag",
    "type": "category",
-   "audience": "företag",
-   "cluster": "innovation"
-  },
-  {
-   "root": "vinnova bidrag",
-   "type": "authority-term",
-   "audience": "företag",
-   "cluster": "innovation"
-  },
-  {
-   "root": "bidrag forskning och utveckling företag",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "innovation"
-  },
-  {
-   "root": "regionalt investeringsstöd",
-   "type": "authority-term",
-   "audience": "företag",
-   "cluster": "regional"
-  },
-  {
-   "root": "bidrag köpa maskiner",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "investering"
-  },
-  {
-   "root": "investeringsstöd företag",
-   "type": "category",
-   "audience": "företag",
-   "cluster": "investering"
-  },
-  {
-   "root": "bidrag energieffektivisering",
-   "type": "problem",
-   "audience": "företag",
+   "audience": "alla",
    "cluster": "energi"
   },
   {
@@ -663,78 +517,35 @@
    "cluster": "energi"
   },
   {
-   "root": "klimatklivet",
+   "root": "erasmus bidrag",
    "type": "authority-term",
-   "audience": "företag",
-   "cluster": "klimat",
-   "target": "/bidrag/naturvardsverket-klimatklivet/"
-  },
-  {
-   "root": "industriklivet",
-   "type": "authority-term",
-   "audience": "företag",
-   "cluster": "klimat"
-  },
-  {
-   "root": "bidrag solceller företag",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "energi"
-  },
-  {
-   "root": "laddstation bidrag",
-   "type": "problem",
-   "audience": "företag",
-   "cluster": "klimat"
-  },
-  {
-   "root": "jordbruksstöd",
-   "type": "category",
-   "audience": "företag",
-   "cluster": "jordbruk"
-  },
-  {
-   "root": "eu stöd jordbruk",
-   "type": "category",
-   "audience": "företag",
-   "cluster": "jordbruk"
-  },
-  {
-   "root": "startstöd unga jordbrukare",
-   "type": "authority-term",
-   "audience": "företag",
-   "cluster": "jordbruk"
-  },
-  {
-   "root": "investeringsstöd jordbruk",
-   "type": "authority-term",
-   "audience": "företag",
-   "cluster": "jordbruk"
-  },
-  {
-   "root": "gårdsstöd",
-   "type": "authority-term",
-   "audience": "företag",
-   "cluster": "jordbruk",
-   "note": "completeness keyword"
-  },
-  {
-   "root": "bidrag landsbygd",
-   "type": "problem",
    "audience": "alla",
-   "cluster": "landsbygd"
+   "cluster": "eu"
   },
   {
-   "root": "leader projektstöd",
-   "type": "authority-term",
-   "audience": "förening",
-   "cluster": "landsbygd"
+   "root": "ersättning arbetslös",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "arbete"
   },
   {
-   "root": "bygdemedel",
+   "root": "ersättning vid sjukdom",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "sjukdom"
+  },
+  {
+   "root": "esf projektstöd",
    "type": "authority-term",
-   "audience": "förening",
-   "cluster": "landsbygd"
+   "audience": "organisation",
+   "cluster": "eu"
+  },
+  {
+   "root": "etableringsersättning",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "etablering",
+   "target": "/bidrag/af-etableringsersattning/"
   },
   {
    "root": "eu bidrag",
@@ -755,34 +566,70 @@
    "cluster": "eu"
   },
   {
-   "root": "erasmus bidrag",
-   "type": "authority-term",
-   "audience": "alla",
-   "cluster": "eu"
+   "root": "eu stöd jordbruk",
+   "type": "category",
+   "audience": "företag",
+   "cluster": "jordbruk"
   },
   {
-   "root": "esf projektstöd",
+   "root": "eures mobilitetsstöd",
    "type": "authority-term",
-   "audience": "organisation",
-   "cluster": "eu"
+   "audience": "privat",
+   "cluster": "utvandring"
   },
   {
-   "root": "horisont europa",
+   "root": "existensminimum",
    "type": "authority-term",
-   "audience": "organisation",
-   "cluster": "eu"
+   "audience": "privat",
+   "cluster": "ekonomisk-utsatthet"
   },
   {
-   "root": "kreativa europa",
-   "type": "authority-term",
-   "audience": "organisation",
-   "cluster": "kultur"
+   "root": "finansiering startup",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "innovation"
   },
   {
-   "root": "bidrag förening",
-   "type": "audience",
-   "audience": "förening",
-   "cluster": "förening"
+   "root": "flerbarnstillägg",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "familj"
+  },
+  {
+   "root": "flytta utomlands bidrag",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "utvandring"
+  },
+  {
+   "root": "flyttbidrag jobb",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "arbete"
+  },
+  {
+   "root": "fonder att söka pengar ur",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "stipendier"
+  },
+  {
+   "root": "formas utlysning",
+   "type": "authority-term",
+   "audience": "forskning",
+   "cluster": "forskning"
+  },
+  {
+   "root": "forskningsbidrag",
+   "type": "category",
+   "audience": "forskning",
+   "cluster": "forskning"
+  },
+  {
+   "root": "forte bidrag",
+   "type": "authority-term",
+   "audience": "forskning",
+   "cluster": "forskning"
   },
   {
    "root": "föreningsbidrag",
@@ -791,75 +638,202 @@
    "cluster": "förening"
   },
   {
-   "root": "bidrag idrottsförening",
-   "type": "audience",
-   "audience": "förening",
-   "cluster": "idrott"
+   "root": "företagsstöd",
+   "type": "category",
+   "audience": "företag",
+   "cluster": "företag"
   },
   {
-   "root": "lok-stöd",
+   "root": "försörjningsstöd",
    "type": "authority-term",
-   "audience": "förening",
-   "cluster": "idrott",
-   "target": "/bidrag/rf-lok-stod/"
+   "audience": "privat",
+   "cluster": "ekonomisk-utsatthet",
+   "target": "/bidrag/ekonomiskt-bistand/",
+   "note": "huvudterm — ägs av klusterhubben"
   },
   {
-   "root": "aktivitetsstöd förening",
+   "root": "försörjningsstöd eller a-kassa",
+   "type": "comparison",
+   "audience": "privat",
+   "cluster": "ekonomisk-utsatthet"
+  },
+  {
+   "root": "föräldrapenning",
    "type": "authority-term",
-   "audience": "förening",
-   "cluster": "idrott"
+   "audience": "privat",
+   "cluster": "familj",
+   "note": "completeness keyword"
   },
   {
-   "root": "bidrag kulturförening",
-   "type": "audience",
-   "audience": "förening",
+   "root": "garantipension",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "pension",
+   "note": "completeness keyword"
+  },
+  {
+   "root": "grön teknik avdrag",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "energi"
+  },
+  {
+   "root": "gårdsstöd",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "jordbruk",
+   "note": "completeness keyword"
+  },
+  {
+   "root": "har jag rätt till bidrag",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "upptäckt"
+  },
+  {
+   "root": "hemutrustningslån",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "etablering"
+  },
+  {
+   "root": "hjälp med ekonomin",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "ekonomisk-utsatthet"
+  },
+  {
+   "root": "hjälp med hyran",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "boende"
+  },
+  {
+   "root": "hjälp med kostnader barn",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "familj"
+  },
+  {
+   "root": "hjälp med lönekostnad",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "anställa"
+  },
+  {
+   "root": "horisont europa",
+   "type": "authority-term",
+   "audience": "organisation",
+   "cluster": "eu"
+  },
+  {
+   "root": "hur lång tid tar bidragsansökan",
+   "type": "problem",
+   "audience": "alla",
+   "cluster": "process"
+  },
+  {
+   "root": "högkostnadsskydd",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "vård",
+   "note": "angränsande orientering"
+  },
+  {
+   "root": "inackorderingstillägg",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "studier",
+   "target": "/bidrag/csn-inackorderingstillagg/"
+  },
+  {
+   "root": "industriklivet",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "klimat"
+  },
+  {
+   "root": "innovationsbidrag",
+   "type": "category",
+   "audience": "företag",
+   "cluster": "innovation"
+  },
+  {
+   "root": "introduktionsjobb",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "anställa"
+  },
+  {
+   "root": "investeringsstöd företag",
+   "type": "category",
+   "audience": "företag",
+   "cluster": "investering"
+  },
+  {
+   "root": "investeringsstöd jordbruk",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "jordbruk"
+  },
+  {
+   "root": "jobba utomlands stöd",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "utvandring"
+  },
+  {
+   "root": "jordbruksstöd",
+   "type": "category",
+   "audience": "företag",
+   "cluster": "jordbruk"
+  },
+  {
+   "root": "kan inte betala hyran",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "boende"
+  },
+  {
+   "root": "klimatklivet",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "klimat",
+   "target": "/bidrag/naturvardsverket-klimatklivet/"
+  },
+  {
+   "root": "kombinera bidrag",
+   "type": "problem",
+   "audience": "alla",
+   "cluster": "process"
+  },
+  {
+   "root": "konstnärsstipendium",
+   "type": "category",
+   "audience": "privat",
    "cluster": "kultur"
   },
   {
-   "root": "bidrag ungdomsorganisation",
-   "type": "audience",
-   "audience": "förening",
-   "cluster": "unga"
-  },
-  {
-   "root": "organisationsbidrag mucf",
-   "type": "authority-term",
-   "audience": "förening",
-   "cluster": "civilsamhälle"
-  },
-  {
-   "root": "projektbidrag förening",
-   "type": "category",
-   "audience": "förening",
-   "cluster": "förening"
-  },
-  {
-   "root": "bidrag samlingslokal",
+   "root": "konsultcheckar företag",
    "type": "problem",
-   "audience": "förening",
-   "cluster": "lokaler"
+   "audience": "företag",
+   "cluster": "tillväxt"
   },
   {
-   "root": "arvsfonden projektstöd",
+   "root": "kreativa europa",
    "type": "authority-term",
-   "audience": "förening",
-   "cluster": "civilsamhälle"
-  },
-  {
-   "root": "min förening behöver pengar",
-   "type": "problem",
-   "audience": "förening",
-   "cluster": "förening"
-  },
-  {
-   "root": "sponsring eller bidrag förening",
-   "type": "comparison",
-   "audience": "förening",
-   "cluster": "förening"
+   "audience": "organisation",
+   "cluster": "kultur"
   },
   {
    "root": "kulturbidrag",
    "type": "category",
+   "audience": "alla",
+   "cluster": "kultur"
+  },
+  {
+   "root": "kulturrådet bidrag",
+   "type": "authority-term",
    "audience": "alla",
    "cluster": "kultur"
   },
@@ -870,34 +844,173 @@
    "cluster": "kultur"
   },
   {
-   "root": "konstnärsstipendium",
-   "type": "category",
-   "audience": "privat",
-   "cluster": "kultur"
-  },
-  {
-   "root": "arbetsstipendium konstnär",
+   "root": "körkortslån",
    "type": "authority-term",
    "audience": "privat",
-   "cluster": "kultur"
+   "cluster": "arbete",
+   "note": "completeness keyword"
   },
   {
-   "root": "bidrag musikprojekt",
-   "type": "problem",
-   "audience": "alla",
-   "cluster": "kultur"
-  },
-  {
-   "root": "bidrag film",
-   "type": "problem",
-   "audience": "alla",
-   "cluster": "kultur"
-  },
-  {
-   "root": "bidrag bokutgivning",
+   "root": "laddstation bidrag",
    "type": "problem",
    "audience": "företag",
-   "cluster": "kultur"
+   "cluster": "klimat"
+  },
+  {
+   "root": "leader projektstöd",
+   "type": "authority-term",
+   "audience": "förening",
+   "cluster": "landsbygd"
+  },
+  {
+   "root": "lok-stöd",
+   "type": "authority-term",
+   "audience": "förening",
+   "cluster": "idrott",
+   "target": "/bidrag/rf-lok-stod/"
+  },
+  {
+   "root": "låg pension hjälp",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "pension"
+  },
+  {
+   "root": "lönebidrag",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "anställa"
+  },
+  {
+   "root": "merkostnadsersättning",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "funktionsnedsättning",
+   "target": "/bidrag/fk-merkostnadsersattning/"
+  },
+  {
+   "root": "min förening behöver pengar",
+   "type": "problem",
+   "audience": "förening",
+   "cluster": "förening"
+  },
+  {
+   "root": "nya bidrag 2026",
+   "type": "year-pattern",
+   "audience": "alla",
+   "cluster": "generisk"
+  },
+  {
+   "root": "nystartsjobb",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "anställa"
+  },
+  {
+   "root": "nystartsjobb eller lönebidrag",
+   "type": "comparison",
+   "audience": "företag",
+   "cluster": "anställa"
+  },
+  {
+   "root": "närståendepenning",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "sjukdom",
+   "target": "/bidrag/fk-narstaendepenning/"
+  },
+  {
+   "root": "omställningsstöd kompetens",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "kompetens"
+  },
+  {
+   "root": "omvårdnadsbidrag",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "funktionsnedsättning",
+   "target": "/bidrag/fk-omvardnadsbidrag/"
+  },
+  {
+   "root": "organisationsbidrag mucf",
+   "type": "authority-term",
+   "audience": "förening",
+   "cluster": "civilsamhälle"
+  },
+  {
+   "root": "pengar till studier",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "studier"
+  },
+  {
+   "root": "pengarna räcker inte",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "ekonomisk-utsatthet"
+  },
+  {
+   "root": "plugga med lön",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "studier"
+  },
+  {
+   "root": "projektbidrag förening",
+   "type": "category",
+   "audience": "förening",
+   "cluster": "förening"
+  },
+  {
+   "root": "regionalt investeringsstöd",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "regional"
+  },
+  {
+   "root": "retroaktivt bidrag",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "process"
+  },
+  {
+   "root": "riksnorm",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "ekonomisk-utsatthet"
+  },
+  {
+   "root": "riktade statsbidrag",
+   "type": "authority-term",
+   "audience": "offentlig",
+   "cluster": "offentlig"
+  },
+  {
+   "root": "rot avdrag",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "boende",
+   "note": "angränsande skatteform — orienteringsinnehåll"
+  },
+  {
+   "root": "räkna ut bostadsbidrag",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "verktyg"
+  },
+  {
+   "root": "sjukersättning",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "sjukdom"
+  },
+  {
+   "root": "sjukpenning",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "sjukdom",
+   "note": "completeness keyword"
   },
   {
    "root": "skapande skola",
@@ -906,10 +1019,74 @@
    "cluster": "kultur"
   },
   {
-   "root": "kulturrådet bidrag",
-   "type": "authority-term",
+   "root": "skatt på bidrag",
+   "type": "problem",
    "audience": "alla",
-   "cluster": "kultur"
+   "cluster": "process"
+  },
+  {
+   "root": "skolskjuts regler",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "familj"
+  },
+  {
+   "root": "socialbidrag",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "ekonomisk-utsatthet",
+   "note": "vardaglig term för försörjningsstöd/ekonomiskt bistånd",
+   "target": "/bidrag/ekonomiskt-bistand/"
+  },
+  {
+   "root": "sponsring eller bidrag förening",
+   "type": "comparison",
+   "audience": "förening",
+   "cluster": "förening"
+  },
+  {
+   "root": "starta eget bidrag",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "starta-företag",
+   "note": "vardaglig term för stöd till start av näringsverksamhet",
+   "target": "/bidrag/af-stod-start-naringsverksamhet/"
+  },
+  {
+   "root": "startstöd unga jordbrukare",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "jordbruk"
+  },
+  {
+   "root": "statligt stöd",
+   "type": "category",
+   "audience": "alla",
+   "cluster": "generisk"
+  },
+  {
+   "root": "statsbidrag",
+   "type": "category",
+   "audience": "organisation",
+   "cluster": "generisk"
+  },
+  {
+   "root": "statsbidrag kommun",
+   "type": "audience",
+   "audience": "offentlig",
+   "cluster": "offentlig"
+  },
+  {
+   "root": "statsbidrag skola",
+   "type": "audience",
+   "audience": "offentlig",
+   "cluster": "offentlig"
+  },
+  {
+   "root": "stiftelser som delar ut pengar",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "stipendier"
   },
   {
    "root": "stipendier",
@@ -924,169 +1101,28 @@
    "cluster": "stipendier"
   },
   {
-   "root": "söka stipendium",
+   "root": "studera som vuxen ekonomi",
    "type": "problem",
    "audience": "privat",
-   "cluster": "stipendier"
+   "cluster": "studier"
   },
   {
-   "root": "stiftelser som delar ut pengar",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "stipendier"
-  },
-  {
-   "root": "fonder att söka pengar ur",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "stipendier"
-  },
-  {
-   "root": "forskningsbidrag",
-   "type": "category",
-   "audience": "forskning",
-   "cluster": "forskning"
-  },
-  {
-   "root": "vetenskapsrådet bidrag",
-   "type": "authority-term",
-   "audience": "forskning",
-   "cluster": "forskning"
-  },
-  {
-   "root": "forte bidrag",
-   "type": "authority-term",
-   "audience": "forskning",
-   "cluster": "forskning"
-  },
-  {
-   "root": "formas utlysning",
-   "type": "authority-term",
-   "audience": "forskning",
-   "cluster": "forskning"
-  },
-  {
-   "root": "doktorand finansiering",
-   "type": "problem",
-   "audience": "forskning",
-   "cluster": "forskning"
-  },
-  {
-   "root": "statsbidrag skola",
-   "type": "audience",
-   "audience": "offentlig",
-   "cluster": "offentlig"
-  },
-  {
-   "root": "statsbidrag kommun",
-   "type": "audience",
-   "audience": "offentlig",
-   "cluster": "offentlig"
-  },
-  {
-   "root": "riktade statsbidrag",
-   "type": "authority-term",
-   "audience": "offentlig",
-   "cluster": "offentlig"
-  },
-  {
-   "root": "bidrag skolprojekt",
-   "type": "problem",
-   "audience": "offentlig",
-   "cluster": "offentlig"
-  },
-  {
-   "root": "bidrag renovering",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "boende"
-  },
-  {
-   "root": "rot avdrag",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "boende",
-   "note": "angränsande skatteform — orienteringsinnehåll"
-  },
-  {
-   "root": "grön teknik avdrag",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "energi"
-  },
-  {
-   "root": "bidrag solceller",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "energi"
-  },
-  {
-   "root": "bidrag värmepump",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "energi"
-  },
-  {
-   "root": "energibidrag",
-   "type": "category",
-   "audience": "alla",
-   "cluster": "energi"
-  },
-  {
-   "root": "elstöd",
-   "type": "authority-term",
-   "audience": "alla",
-   "cluster": "energi",
-   "note": "tidsbundet — freshness-känsligt"
-  },
-  {
-   "root": "bidrag flytt",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "arbete"
-  },
-  {
-   "root": "flyttbidrag jobb",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "arbete"
-  },
-  {
-   "root": "eures mobilitetsstöd",
+   "root": "studera utomlands csn",
    "type": "authority-term",
    "audience": "privat",
    "cluster": "utvandring"
   },
   {
-   "root": "skolskjuts regler",
+   "root": "studiebidrag",
    "type": "authority-term",
    "audience": "privat",
-   "cluster": "familj"
+   "cluster": "studier"
   },
   {
-   "root": "elevresor gymnasiet",
+   "root": "studielån",
    "type": "authority-term",
    "audience": "privat",
-   "cluster": "familj"
-  },
-  {
-   "root": "inackorderingstillägg",
-   "type": "authority-term",
-   "audience": "privat",
-   "cluster": "studier",
-   "target": "/bidrag/csn-inackorderingstillagg/"
-  },
-  {
-   "root": "busskort gymnasiet bidrag",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "familj"
-  },
-  {
-   "root": "nystartsjobb eller lönebidrag",
-   "type": "comparison",
-   "audience": "företag",
-   "cluster": "anställa"
+   "cluster": "studier"
   },
   {
    "root": "studiemedel eller omställningsstudiestöd",
@@ -1095,22 +1131,55 @@
    "cluster": "studier"
   },
   {
-   "root": "bostadsbidrag eller bostadstillägg",
-   "type": "comparison",
+   "root": "studiestartsstöd",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "studier",
+   "target": "/bidrag/csn-studiestartsstod/"
+  },
+  {
+   "root": "stöd anhörig",
+   "type": "problem",
+   "audience": "privat",
+   "cluster": "sjukdom"
+  },
+  {
+   "root": "stöd anställa arbetslös",
+   "type": "problem",
+   "audience": "företag",
+   "cluster": "anställa"
+  },
+  {
+   "root": "stöd till hyra",
+   "type": "problem",
    "audience": "privat",
    "cluster": "boende"
   },
   {
-   "root": "bidrag eller lån",
-   "type": "comparison",
-   "audience": "alla",
-   "cluster": "generisk"
+   "root": "stöd till start av näringsverksamhet",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "starta-företag"
   },
   {
-   "root": "försörjningsstöd eller a-kassa",
-   "type": "comparison",
+   "root": "söka stipendium",
+   "type": "problem",
    "audience": "privat",
-   "cluster": "ekonomisk-utsatthet"
+   "cluster": "stipendier"
+  },
+  {
+   "root": "tandvårdsbidrag",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "vård",
+   "note": "completeness keyword"
+  },
+  {
+   "root": "underhållsbidrag",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "familj",
+   "note": "skiljs från underhållsstöd — vanlig begreppsförvirring att förklara"
   },
   {
    "root": "underhållsstöd eller underhållsbidrag",
@@ -1119,108 +1188,55 @@
    "cluster": "familj"
   },
   {
-   "root": "bidragskalender deadlines",
-   "type": "problem",
-   "audience": "alla",
-   "cluster": "verktyg"
+   "root": "vab ersättning",
+   "type": "authority-term",
+   "audience": "privat",
+   "cluster": "familj",
+   "target": "/bidrag/fk-tillfallig-foraldrapenning/"
   },
   {
-   "root": "ansökningsdatum bidrag",
-   "type": "problem",
-   "audience": "alla",
-   "cluster": "verktyg"
+   "root": "vetenskapsrådet bidrag",
+   "type": "authority-term",
+   "audience": "forskning",
+   "cluster": "forskning"
   },
   {
-   "root": "bidragskalkylator",
+   "root": "vilka bidrag finns",
+   "type": "problem",
+   "audience": "alla",
+   "cluster": "upptäckt"
+  },
+  {
+   "root": "vilka bidrag kan jag få",
    "type": "problem",
    "audience": "privat",
-   "cluster": "verktyg"
+   "cluster": "upptäckt"
   },
   {
-   "root": "räkna ut bostadsbidrag",
-   "type": "problem",
+   "root": "vinnova bidrag",
+   "type": "authority-term",
+   "audience": "företag",
+   "cluster": "innovation"
+  },
+  {
+   "root": "äldreförsörjningsstöd",
+   "type": "authority-term",
    "audience": "privat",
-   "cluster": "verktyg"
+   "cluster": "pension",
+   "target": "/bidrag/pm-aldreforsorjningsstod/"
   },
   {
-   "root": "bidrag 2026",
-   "type": "year-pattern",
-   "audience": "alla",
-   "cluster": "generisk",
-   "note": "årtalsmönster — evergreen-URL + årtal i title, aldrig års-URL:er"
-  },
-  {
-   "root": "nya bidrag 2026",
-   "type": "year-pattern",
-   "audience": "alla",
-   "cluster": "generisk"
-  },
-  {
-   "root": "bidrag som försvinner",
-   "type": "problem",
-   "audience": "alla",
-   "cluster": "generisk"
-  },
-  {
-   "root": "avslag bidrag vad göra",
-   "type": "problem",
+   "root": "återvandringsbidrag",
+   "type": "authority-term",
    "audience": "privat",
-   "cluster": "process"
+   "cluster": "utvandring",
+   "target": "/bidrag/migrationsverket-atervandringsbidrag/"
   },
   {
    "root": "överklaga bidragsbeslut",
    "type": "problem",
    "audience": "privat",
    "cluster": "process"
-  },
-  {
-   "root": "hur lång tid tar bidragsansökan",
-   "type": "problem",
-   "audience": "alla",
-   "cluster": "process"
-  },
-  {
-   "root": "retroaktivt bidrag",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "process"
-  },
-  {
-   "root": "bidrag utbetalning datum",
-   "type": "problem",
-   "audience": "privat",
-   "cluster": "process"
-  },
-  {
-   "root": "skatt på bidrag",
-   "type": "problem",
-   "audience": "alla",
-   "cluster": "process"
-  },
-  {
-   "root": "kombinera bidrag",
-   "type": "problem",
-   "audience": "alla",
-   "cluster": "process"
-  },
-  {
-   "root": "dubbla bidrag tillåtet",
-   "type": "problem",
-   "audience": "alla",
-   "cluster": "process"
-  },
-  {
-   "root": "bidragskoll",
-   "type": "authority-term",
-   "audience": "alla",
-   "cluster": "brand"
-  },
-  {
-   "root": "bidragskollen",
-   "type": "authority-term",
-   "audience": "alla",
-   "cluster": "brand",
-   "note": "namnkollision — se SEO_COMPETITORS"
   }
  ]
 }

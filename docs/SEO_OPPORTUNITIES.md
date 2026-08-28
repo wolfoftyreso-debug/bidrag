@@ -93,8 +93,10 @@ till klusterhubben (§3 nedan).
    garantipension, lönebidrag/nystartsjobb — **kurerade 2026-08-28**, 72→84 stöd) — detta ÄR kluster-arbetets datagrund (CLAUDE.md prio 3).
 2. **Mappa P2-rötterna** till sina entity-sidor (`our_target_url`) och lyft in
    PAA-frågorna ur snapshotet som svarsobjekt/FAQ på respektive sida.
-3. **Klusterhubbar** för huvudtermerna (bostadsbidrag, ekonomiskt bistånd) enligt
-   `SEO_ANSWER_CLUSTERS.md` — hubben äger huvudtermen, entity-sidorna specifika.
+3. **Klusterhubbar** — **byggda 2026-08-28**: `/bidrag/bostadsbidrag/` (22 200/mån)
+   och `/bidrag/ekonomiskt-bistand/` (27 100/mån) enligt `SEO_ANSWER_CLUSTERS.md`
+   kluster 1+3 (seo/kluster.json → genseo klusterPage). Hubben äger huvudtermen
+   och dess PAA-set; entity-sidorna det specifika; tier1-noder + rötter ompekade.
 4. **Verktygsytan** (P3) byggs in i klustersidorna, inte som separata gimmickar.
 
 Gaten (`GATE0_REPORT.md`) är oförändrad tills klustersidorna finns — detta
