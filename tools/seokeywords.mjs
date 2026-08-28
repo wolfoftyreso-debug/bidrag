@@ -29,6 +29,17 @@ const CHECK = process.argv.includes('--check');
 const { opportunities, authorities } = await import(join(ROOT, 'apps/api/src/seed/data.ts'));
 const manual = JSON.parse(readFileSync(join(ROOT, 'seo', 'roots-manual.json'), 'utf8'));
 
+// Källmärkt volymsnapshot (Semrush, databas 'se'). Detta är den "verkliga källa"
+// som ärlighetskontraktet pekar ut: där en root matchar på normaliserad nyckel
+// joinar vi in volume/cpc/difficulty och stämplar källa+datum. Ingen matchning →
+// raden förblir DATA_UNAVAILABLE. Vi hittar aldrig på ett värde här; vi kopierar
+// bara det snapshotet innehåller. Curerad intent rörs inte.
+const volumeSnapshot = JSON.parse(readFileSync(join(ROOT, 'seo', 'volumes-semrush-se.json'), 'utf8'));
+const volumeStamp = `semrush:${volumeSnapshot.database}:${volumeSnapshot.hamtad}`;
+const volumeByKey = new Map(
+  (volumeSnapshot.volumes ?? []).map((v) => [v.normalized_keyword, v]),
+);
+
 const authorityName = new Map(authorities.map((a) => [a.key, a.name]));
 
 function normalize(s) {
@@ -143,9 +154,24 @@ for (const r of rows) {
 }
 const deduped = [...seen.values()].sort((a, b) => a.normalized_keyword.localeCompare(b.normalized_keyword, 'sv'));
 
+// Joina in verkliga volymer där snapshotet har en matchande normaliserad nyckel.
+let volumeJoined = 0;
+for (const r of deduped) {
+  const v = volumeByKey.get(r.normalized_keyword);
+  if (!v) continue;
+  r.search_volume = v.volume;
+  r.volume_source = volumeStamp;
+  if (v.cpc != null) r.cpc = v.cpc;
+  if (v.difficulty != null && v.difficulty > 0) {
+    r.difficulty = v.difficulty;
+    r.difficulty_source = volumeStamp;
+  }
+  volumeJoined += 1;
+}
+
 const doc = {
   _kontrakt:
-    'Master keyword-databas. search_volume/cpc/difficulty är null tills verklig källa finns (GSC/Keyword Planner/Semrush/Ahrefs/DataForSEO) — fabricera aldrig. SERP-fält fylls endast från dokumenterad research i docs/SEO_SERP_RESEARCH.md. Frågematrisen (query variants per root) ligger i seo/questions-*.json och mappas QUERY→INTENT→CONTENT NODE innan sidor skapas.',
+    'Master keyword-databas. search_volume/cpc/difficulty är null (volume_source=DATA_UNAVAILABLE) tills en verklig källa finns — fabricera aldrig. Där seo/volumes-semrush-se.json har en matchande normaliserad nyckel joinas verklig volym/CPC/difficulty in och stämplas volume_source=semrush:<db>:<datum>. SERP-fält fylls endast från dokumenterad research i docs/SEO_SERP_RESEARCH.md. Frågematrisen (query variants per root) ligger i seo/questions-*.json och mappas QUERY→INTENT→CONTENT NODE innan sidor skapas.',
   antal_roots: deduped.length,
   keywords: deduped,
 };
@@ -161,5 +187,5 @@ if (CHECK) {
   console.log(`Keyword-databasen är aktuell (${deduped.length} rötter).`);
 } else {
   writeFileSync(OUT, content);
-  console.log(`Skrev seo/keywords.json: ${deduped.length} rötter (${rows.length - deduped.length} dubbletter sammanslagna).`);
+  console.log(`Skrev seo/keywords.json: ${deduped.length} rötter (${rows.length - deduped.length} dubbletter sammanslagna, ${volumeJoined} med verklig Semrush-volym).`);
 }
