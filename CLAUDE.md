@@ -242,12 +242,12 @@ miljön och handboken fördjupas då skärm för skärm.
 1. **Deployn själv** — användaren kör `docs/DEPLOY-AGENT.md` i en session med
    Vercel-connectorn (in-house: Vercel + Neon). Assistera; gör det du kan via connectorerna.
    Verifiera efteråt utifrån med `tools/deploy-smoke.mjs`.
-2. **Demons plan-vy: dokumentförberedelse in-browser** — användarfynd: demon
-   länkar till 1177/myndigheten i stället för att visa att systemet förbereder
-   ansökan. Core exporterar redan `DOCUMENT_TEMPLATES`, `prefillAnswers`,
-   `renderDocument`, `validateDocumentAnswers` och demon bundlar core — visa
-   dokumentet som text + kopiera-knapp (artefaktsandlådan blockerar
-   nedladdningslänkar).
+2. **Demons plan-vy: dokumentförberedelse in-browser — LEVERERAD 2026-08-28**
+   (F-FÖRBERED). Planvyn har nu "Förbered ansökan": cores dokumentmotor körd i
+   webbläsaren med mallar filtrerade per stödtyp, förifyllnad ur utredningen,
+   validering och dokumentet som text + kopiera-knapp. Vakt:
+   `demo/checks/forberedcheck.mjs`. Kvar: fler mallar per stödtyp och
+   bilagelistan per myndighet.
 3. **De 25 bidragsklustren färdiga sökfråga→myndighetsöverlämning +
    belastningstest** — produktbeviset (`docs/LAUNCH_DEMAND_INTELLIGENCE.md`
    §8) och det som stänger GATE 0:s CONTENT-RED (`docs/GATE0_REPORT.md` —

@@ -202,3 +202,23 @@ a:not(.btn) { overflow-wrap: anywhere; }
 .utlank-rad { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; min-width: 0; }
 .utlank-block input { font: inherit; font-size: 0.86rem; flex: 1 1 12rem; min-width: 0; padding: 0.4rem 0.6rem;
   border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); color: var(--text); }
+
+/* F-FÖRBERED: dokumentförberedelsen i planvyn — cores riktiga mallmotor körd
+   i webbläsaren. Formfälten följer designsystemets fältstil; dokumentet visas
+   som text eftersom sandlådan inte tillåter nedladdning. */
+.docfalt { margin: 0.85rem 0; }
+.docfalt label { display: block; font-weight: 600; margin-bottom: 0.3rem; }
+.docfalt input[type=text], .docfalt input[type=date], .docfalt input[type=number],
+.docfalt textarea, .docfalt select {
+  font: inherit; width: 100%; padding: 0.58rem 0.75rem; border: 1px solid var(--border-strong);
+  border-radius: 10px; background: var(--surface); color: var(--text);
+  transition: border-color 120ms ease, box-shadow 120ms ease; }
+.docfalt input[type=number] { max-width: 12rem; }
+.docfalt input:focus, .docfalt textarea:focus, .docfalt select:focus {
+  outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-ring); }
+.docfalt textarea { resize: vertical; }
+.doclista { list-style: none; margin: 0.4rem 0 0; padding: 0; }
+.doclista li { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin-bottom: 0.5rem; }
+.dokument { white-space: pre-wrap; overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.86rem; line-height: 1.5; background: var(--bg-deep); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0.9rem 1rem; margin: 0 0 0.7rem; }

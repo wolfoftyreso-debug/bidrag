@@ -5,7 +5,9 @@
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { PERSONAL_INSTRUMENTS, businessRelevantSlugs, computeMatch } from '@bidrag/core';
+import { DOCUMENT_TEMPLATES, PERSONAL_INSTRUMENTS, businessRelevantSlugs, computeMatch,
+  prefillAnswers, renderDocument, validateDocumentAnswers, visibleQuestions,
+  type DocAnswers, type DocQuestion, type DocumentTemplate } from '@bidrag/core';
 import OPPORTUNITIES from './demo-opportunities.json';
 
 type Facts = Record<string, unknown>;
@@ -640,11 +642,185 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
 }
 
 /**
+ * F-FÖRBERED (användarfynd 2026-08-28: "Systemet ska guida mig i att förbereda
+ * allt inför ansökan!?"). Planvyn slutade i en länk till myndigheten — det är
+ * upptäckt, inte förberedelse, och därmed halva produkten. Här körs cores
+ * riktiga dokumentmotor i webbläsaren: samma mallar, samma förifyllnad, samma
+ * validering och samma rendering som produkten använder.
+ *
+ * Ärligheten: demon simulerar arbetslagret utan betalning och utan att skicka
+ * något någonstans. Det sägs rakt ut, tillsammans med att det alltid är gratis
+ * att ansöka själv hos myndigheten. Dokumentet visas som text med kopieraknapp
+ * — sandlådan tillåter inga nedladdningar (samma skäl som UtLank).
+ */
+function docLabel(q: DocQuestion, v: unknown): string {
+  if (typeof v === 'boolean') return v ? 'Ja' : 'Nej';
+  if (q.type === 'select') return q.options?.find((o) => o.value === v)?.label ?? String(v);
+  return String(v);
+}
+
+function DocFalt({ q, value, onChange }: { q: DocQuestion; value: unknown; onChange: (v: unknown) => void }) {
+  const id = `doc-${q.key}`;
+  return (
+    <div className="docfalt">
+      <label htmlFor={id}>{q.label}{q.required ? ' *' : ''}</label>
+      {q.type === 'textarea' && (
+        <textarea id={id} rows={3} value={(value as string) ?? ''} onChange={(e) => onChange(e.target.value)} />
+      )}
+      {(q.type === 'text' || q.type === 'date') && (
+        <input id={id} type={q.type === 'date' ? 'date' : 'text'} value={(value as string) ?? ''} onChange={(e) => onChange(e.target.value)} />
+      )}
+      {q.type === 'number' && (
+        <input id={id} type="number" value={(value as number | undefined) ?? ''} onChange={(e) => onChange(e.target.value === '' ? undefined : Number(e.target.value))} />
+      )}
+      {q.type === 'boolean' && (
+        <div className="row">
+          <button type="button" className={value === true ? 'btn primary' : 'btn small'} onClick={() => onChange(true)}>Ja</button>
+          <button type="button" className={value === false ? 'btn primary' : 'btn small'} onClick={() => onChange(false)}>Nej</button>
+        </div>
+      )}
+      {q.type === 'select' && (
+        <select id={id} value={(value as string) ?? ''} onChange={(e) => onChange(e.target.value)}>
+          <option value="" disabled>Välj…</option>
+          {q.options?.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+      )}
+      {q.guidance && <p className="meta">{q.guidance}</p>}
+    </div>
+  );
+}
+
+function ForberedVy({ opp, facts, onBack }: { opp: Opp; facts: Facts; onBack: () => void }) {
+  // Förifyllnaden kommer ur utredningens svar — samma funktion som produkten
+  // kör serverside. Demon har inget konto, så namn/kommun är alltid tomma.
+  // Bara relevanta mallar (F-RELEVANS): projektbeskrivningen hör till projekt-
+  // och företagsstöd, de personliga bilagorna till personliga stöd. Att visa
+  // fel mall är samma sorts fel som att föreslå fel stöd.
+  const personligt = PERSONAL_INSTRUMENTS.has(opp.instrumentType);
+  const mallar = useMemo(
+    () => DOCUMENT_TEMPLATES.filter((t) => (t.key === 'projektbeskrivning' ? !personligt : personligt)),
+    [personligt],
+  );
+  const prefill = useMemo(
+    () => Object.fromEntries(mallar.map((t) => [t.key, prefillAnswers(t.key, { facts })])),
+    [mallar, facts],
+  );
+  const [svar, setSvar] = useState<Record<string, DocAnswers>>(() => ({ ...prefill }));
+  const [oppen, setOppen] = useState<string>(mallar[0]!.key);
+  const [kopierad, setKopierad] = useState<string | null>(null);
+
+  const status = (t: DocumentTemplate) => validateDocumentAnswers(t, svar[t.key] ?? {});
+  const mall = mallar.find((t) => t.key === oppen) ?? mallar[0]!;
+  const mallSvar = svar[oppen] ?? {};
+  const fragor = visibleQuestions(mall, mallSvar);
+  const dom = status(mall);
+  const forifyllda = fragor.filter((q) => (prefill[mall.key] ?? {})[q.key] !== undefined);
+
+  let dokument: string | null = null;
+  if (dom.ok) {
+    dokument = renderDocument(mall, mallSvar, {
+      recipient: opp.authority,
+      opportunityTitle: opp.title,
+      date: new Date().toISOString().slice(0, 10),
+      applicantName: (mallSvar.fullName as string) || undefined,
+    }).text;
+  }
+
+  const kopiera = async (text: string) => {
+    try { await navigator.clipboard.writeText(text); setKopierad(mall.key); } catch { setKopierad('fel'); }
+  };
+
+  return (
+    <div>
+      <button className="btn subtle" onClick={onBack} style={{ marginBottom: '0.6rem' }}>← Tillbaka till planen</button>
+      <div className="card accent">
+        <h1>Förbered ansökan — {opp.title}</h1>
+        <p className="guidance">
+          Systemet fyller i det du redan svarat, frågar bara om det som saknas och skriver dokumenten åt dig.
+          Du ser hela texten innan något lämnas in — och kan ändra varje svar.
+        </p>
+        <p className="meta">
+          I produkten kostar det här arbetslagret 19 kr per ansökan och dokumenten levereras som filer efter
+          granskning. <strong>I demon är det gratis, ingenting skickas någonstans och ingen betalning sker.</strong>{' '}
+          Att fylla i och ansöka själv direkt hos {opp.authority} är alltid gratis.
+        </p>
+      </div>
+
+      <div className="card">
+        <h2>Dokument som förbereds</h2>
+        <ul className="doclista">
+          {mallar.map((t) => {
+            const d = status(t);
+            return (
+              <li key={t.key}>
+                <button className={t.key === oppen ? 'btn primary' : 'btn small'} onClick={() => { setOppen(t.key); setKopierad(null); }}>
+                  {t.title}
+                </button>
+                <span className={d.ok ? 'badge success' : 'badge warning'}>
+                  {d.ok ? 'klart' : `${d.missing.length} svar kvar`}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      <div className="card">
+        <h2>{mall.title}</h2>
+        <p className="guidance">{mall.description}</p>
+        {forifyllda.length > 0 && (
+          <div className="inforuta">
+            <strong>Redan ifyllt från din utredning:</strong>
+            <ul>
+              {forifyllda.map((q) => (
+                <li key={q.key}>{q.label}: <strong>{docLabel(q, mallSvar[q.key])}</strong></li>
+              ))}
+            </ul>
+            Du behöver aldrig svara på samma fråga två gånger — men allt går att ändra här.
+          </div>
+        )}
+        {fragor.map((q) => (
+          <DocFalt
+            key={q.key}
+            q={q}
+            value={mallSvar[q.key]}
+            onChange={(v) => setSvar((prev) => ({ ...prev, [mall.key]: { ...(prev[mall.key] ?? {}), [q.key]: v } }))}
+          />
+        ))}
+      </div>
+
+      <div className="card">
+        <h2>Så här blir dokumentet</h2>
+        {dokument === null ? (
+          <p className="meta warn">
+            Fyll i {dom.missing.map((m) => m.label).join(', ')} — då skrivs dokumentet färdigt här.
+            Vi skriver aldrig något du inte svarat.
+          </p>
+        ) : (
+          <>
+            <pre className="dokument">{dokument}</pre>
+            <div className="row">
+              <button className="btn primary" onClick={() => kopiera(dokument!)}>
+                {kopierad === mall.key ? 'Kopierad ✓' : 'Kopiera dokumentet'}
+              </button>
+              <UtLank className="btn small" href={opp.applicationUrl}>Till ansökan hos {opp.authority} →</UtLank>
+            </div>
+            {kopierad === 'fel' && (
+              <p className="meta warn">Webbläsaren tillät inte kopiering — markera texten ovan och kopiera för hand.</p>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
  * F-VIDARE: planen efter "Nästa" — ett konkret nästa steg per valt stöd.
  * Demon länkar till källan och visar vad som återstår att reda ut; i
  * produkten förbereds ansökan färdigifylld utifrån samma svar.
  */
-function PlanView({ slugs, facts, onBack, onToggle }: { slugs: string[]; facts: Facts; onBack: () => void; onToggle: (slug: string) => void }) {
+function PlanView({ slugs, facts, onBack, onToggle, onForbered }: { slugs: string[]; facts: Facts; onBack: () => void; onToggle: (slug: string) => void; onForbered: (slug: string) => void }) {
   const results = useMemo(() => runEngine(facts), [facts]);
   const rows = results.filter((r) => slugs.includes(r.opp.slug));
   return (
@@ -674,7 +850,11 @@ function PlanView({ slugs, facts, onBack, onToggle }: { slugs: string[]; facts: 
               <UtLank href={r.opp.sourceUrl}>{r.opp.sourceUrl}</UtLank> (AI-sammanställd 2026-08-13 — ej människogranskad)
             </p>
             <div className="row" style={{ marginTop: '0.5rem' }}>
-              <UtLank className="btn primary" href={r.opp.applicationUrl}>Till ansökan hos {r.opp.authority} →</UtLank>
+              {/* Förberedelsen är produktens arbetslager och därför huvudvägen;
+                  myndighetslänken står kvar intill som den alltid gratis
+                  självbetjäningsvägen (PRODUCT_DOCTRINE, Open Discovery). */}
+              <button className="btn primary" onClick={() => onForbered(r.opp.slug)}>Förbered ansökan →</button>
+              <UtLank className="btn small" href={r.opp.applicationUrl}>Ansök själv hos {r.opp.authority}</UtLank>
               <button className="btn small" onClick={() => onToggle(r.opp.slug)}>Ta bort ur planen</button>
             </div>
           </div>
@@ -837,7 +1017,9 @@ function App() {
   const [extraFacts, setExtraFacts] = useState<Facts>(saved?.extraFacts ?? {});
   const [unlocked, setUnlocked] = useState(saved?.unlocked ?? false);
   const [plan, setPlan] = useState<string[]>(saved?.plan ?? []);
-  const [view, setView] = useState<'flow' | 'konto' | 'plan'>('flow');
+  const [view, setView] = useState<'flow' | 'konto' | 'plan' | 'forbered'>('flow');
+  // Vilket stöd som förbereds just nu (F-FÖRBERED).
+  const [forbereder, setForbereder] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -1123,14 +1305,26 @@ function App() {
         />
       )}
       {view === 'plan' && (
-        <PlanView slugs={plan} facts={facts} onBack={() => setView('flow')} onToggle={togglePlan} />
+        <PlanView
+          slugs={plan}
+          facts={facts}
+          onBack={() => setView('flow')}
+          onToggle={togglePlan}
+          onForbered={(slug) => { setForbereder(slug); setView('forbered'); }}
+        />
       )}
+      {view === 'forbered' && forbereder && (() => {
+        const opp = OPPS.find((o) => o.slug === forbereder);
+        if (!opp) return null;
+        return <ForberedVy opp={opp} facts={facts} onBack={() => setView('plan')} />;
+      })()}
 
       <footer className="foot">
         Detta demo kör produktens verkliga matchningsmotor och kurerade kunskapsbas ({OPP_COUNT} stöd, {AUTHORITY_COUNT} finansiärer, källor
         AI-sammanställda 2026-08-13, ej människogranskade) lokalt i din webbläsare — inget skickas någonstans. I fullversionen finns
-        dessutom konton, ansökningsarbetsyta med förifyllda formulär, dokumentvalv, assisterad inlämning med kvitto och
-        ärendeuppföljning. Bedömningarna är vägledande — slutligt beslut fattas alltid av respektive myndighet eller finansiär.
+        dessutom konton, dokumentvalv, leverans av dokumenten som filer efter granskning, assisterad inlämning med
+        kvitto och ärendeuppföljning. Dokumentförberedelsen du ser här kör produktens riktiga mallmotor — men i demon
+        är den gratis och ingenting lämnas in. Bedömningarna är vägledande — slutligt beslut fattas alltid av respektive myndighet eller finansiär.
       </footer>
     </div>
   );
