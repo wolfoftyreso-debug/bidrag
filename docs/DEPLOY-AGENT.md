@@ -39,7 +39,7 @@ en connector saknas eller saknar en förmåga.
    migrerings- eller seedändring (skriptet rundtursverifierar själv).
 4. **Verifiera räkningarna** — allt annat är ett fel:
    `funding_opportunities=72, funding_authorities=35,
-   application_schemas=71, sources=36, drizzle.__drizzle_migrations=12`.
+   application_schemas=80, sources=39, drizzle.__drizzle_migrations=12`.
 5. **Bucket**: skapa privat lagringsbucket `documents`
    (`insert into storage.buckets (id, name, public)
    values ('documents','documents',false);` — eller storage-verktyget om
@@ -112,9 +112,9 @@ Vercel-connectorn om den kan skriva env-variabler, annars be användaren.
    nå URL:en själv, ge användaren det färdiga curl-kommandot.
 3. Kör fjärr-röktestet om nätet tillåter (annars ge användaren kommandot):
    `BASE_URL=https://<preview-url> CRON_SECRET=<värdet> node tools/deploy-smoke.mjs`
-   — i preview verifierar det HELA kedjan (konto → teaser-gate → 39 kr →
-   analys → 402 → 19 kr → ansökan → kvitton); mot produktions-URL:en
-   verifierar det att köpen vägrar ärligt (503) tills Swish finns.
+   — i preview verifierar det HELA kedjan (konto → intag → matchningar GRATIS
+   (Open Discovery) → 402 → 19 kr → ansökan → kvitton); mot produktions-URL:en
+   verifierar det att 19 kr-köpet vägrar ärligt (503) tills Swish finns.
 4. Be användaren öppna **preview-URL:en** (varje push till en gren får en)
    och köra samma flöde med ögonen. Mockbetalningarna fungerar ENDAST i
    preview — aldrig i produktion.

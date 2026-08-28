@@ -1,14 +1,16 @@
 // Fjärr-röktest av en DEPLOYAD miljö (Vercel preview/produktion eller lokal).
 // Verifierar utifrån, som en riktig klient: hälsa, readiness, konto, intag,
-// teaser-gate, köpflödet (om miljön tillåter mock), analys, 19 kr-köp,
-// ansökan, kvitton.
+// Open Discovery (matchningar visas GRATIS), 19 kr-köpet per ansökan, ansökan,
+// kvitton.
 //
 //   BASE_URL=https://<projekt>-<hash>.vercel.app node tools/deploy-smoke.mjs
 //   CRON_SECRET=... BASE_URL=... node tools/deploy-smoke.mjs   # + readiness
 //
 // Betalningar: i Vercel Preview (PAYMENTS_MOCK_ENABLED=true) körs hela
-// köpkedjan. I produktion utan Swish-avtal svarar köpen ärligt 503 — det är
-// FÖRVÄNTAT och röktestet godkänner då resten av systemet och säger det rakt.
+// köpkedjan. I produktion utan Swish-avtal svarar 19 kr-köpet ärligt 503 — det
+// är FÖRVÄNTAT och röktestet godkänner då resten av systemet och säger det rakt.
+// (Open Discovery: den enda betalytan är att FÖRBEREDA en ansökan, 19 kr;
+// matchningarna är alltid gratis. Ingen analysupplåsning finns.)
 const BASE = process.env.BASE_URL;
 if (!BASE) { console.error('Sätt BASE_URL, t.ex. BASE_URL=https://bidragskoll.vercel.app'); process.exit(2); }
 const CRON = process.env.CRON_SECRET ?? null;
@@ -85,52 +87,53 @@ check('projekt skapas', proj.status === 201, `status ${proj.status}`);
 const prid = proj.json?.project?.id;
 if (!prid) process.exit(1);
 
-// 5. Teaser-gaten: matchningar före upplåsning ska vara låsta, inte läcka
+// 5. Open Discovery: matchningarna visas GRATIS — namngivna, utan betalning.
 await call('POST', `/v1/projects/${prid}/matches`, {});
-const teaser = await call('GET', `/v1/projects/${prid}/matches`);
-const locked = teaser.json?.locked === true || teaser.json?.teaser !== undefined || !teaser.json?.matches;
-check('teaser-gaten håller före betalning', teaser.status === 200 && locked, JSON.stringify(teaser.json).slice(0, 120));
+const matchesRes = await call('GET', `/v1/projects/${prid}/matches`);
+const matches = matchesRes.json?.matches;
+check('Open Discovery: matchningar visas gratis (inga låsta/teaser)',
+  matchesRes.status === 200 && Array.isArray(matches) && matches.length > 0,
+  `${matches?.length ?? 0} matchningar`);
+const opp = matches?.[0];
+if (!opp) process.exit(1);
 
-// 6. Köpflödet — beter sig olika beroende på miljö, båda utfallen är ärliga
-const unlock = await call('POST', `/v1/projects/${prid}/analysis-unlock`, { immediateDeliveryConsent: true });
-if (unlock.status === 503) {
-  check('köp utan betalprovider vägrar ärligt (503)', unlock.json?.error === 'no_payment_provider', JSON.stringify(unlock.json));
+// 6. 402-gaten: att förbereda en ansökan kräver kredit (priset i kroppen).
+const gate = await call('POST', '/v1/applications', { projectId: prid, opportunityId: opp.opportunityId });
+check('ansökan utan kredit ger 402 med pris', gate.status === 402 && gate.json?.priceMinor === 1900,
+  `status ${gate.status}, ${gate.json?.priceMinor} öre`);
+
+// 7. Köpet av en ansökan (19 kr) — den ENDA betalytan. Två ärliga utfall:
+//    503 no_payment_provider (produktion utan Swish) → godkänn resten och säg det.
+//    201 (preview med mock) → kör hela kedjan.
+const pur = await call('POST', `/v1/projects/${prid}/application-purchase`, { immediateDeliveryConsent: true });
+if (pur.status === 503) {
+  check('19 kr-köp utan betalprovider vägrar ärligt (503)', pur.json?.error === 'no_payment_provider', JSON.stringify(pur.json));
   console.log('\nDEPLOY-SMOKE OK (utan betalflöde) — miljön har ingen betalprovider,');
   console.log('vilket är förväntat i Production utan Swish-avtal. Kör mot en');
   console.log('preview-deploy (PAYMENTS_MOCK_ENABLED=true i Preview) för hela köpkedjan.');
   process.exit(failures ? 1 : 0);
 }
-check('analysupplåsning startar (201)', unlock.status === 201, `status ${unlock.status}`);
-const method = unlock.json?.instructions?.method;
-if (method === 'mock') {
-  const uconf = await call('POST', `/v1/payments/${unlock.json.paymentId}/mock-confirm`);
-  check('mockbetalning 39 kr bekräftas', uconf.status === 200, `status ${uconf.status}`);
-} else {
+check('ansökningsköp 19 kr startar (201)', pur.status === 201 && pur.json?.amountMinor === 1900,
+  `status ${pur.status}, ${pur.json?.amountMinor} öre`);
+
+// 8. Bekräfta betalningen. Mock i preview; riktig Swish kan inte bekräftas av skript.
+const method = pur.json?.instructions?.method;
+if (method !== 'mock') {
   console.log(`     betalmetod ${method} — riktig Swish kan inte bekräftas av ett skript; avslutar här.`);
   process.exit(failures ? 1 : 0);
 }
-
-// 7. Analys efter betalning
-const m = await call('GET', `/v1/projects/${prid}/matches`);
-check('analysen är upplåst med matchningar', m.status === 200 && Array.isArray(m.json?.matches) && m.json.matches.length > 0,
-  `${m.json?.matches?.length ?? 0} matchningar`);
-const opp = m.json?.matches?.[0];
-
-// 8. 19 kr per ansökan: 402-gate → köp → bekräfta → ansökan skapas
-const gate = await call('POST', '/v1/applications', { projectId: prid, opportunityId: opp?.opportunityId });
-check('ansökan utan kredit ger 402', gate.status === 402, `status ${gate.status}`);
-const pur = await call('POST', `/v1/projects/${prid}/application-purchase`, { immediateDeliveryConsent: true });
-check('ansökningsköp 19 kr startar (201)', pur.status === 201 && pur.json?.amountMinor === 1900, `status ${pur.status}, ${pur.json?.amountMinor} öre`);
 const conf = await call('POST', `/v1/payments/${pur.json?.paymentId}/mock-confirm`);
 check('mockbetalning 19 kr bekräftas med kvitto', conf.status === 200 && !!conf.json?.receipt?.receiptNumber,
   `kvitto ${conf.json?.receipt?.receiptNumber}`);
-const app = await call('POST', '/v1/applications', { projectId: prid, opportunityId: opp?.opportunityId });
+
+// 9. Ansökan skapas med krediten.
+const app = await call('POST', '/v1/applications', { projectId: prid, opportunityId: opp.opportunityId });
 check('ansökan skapas med kredit (201)', app.status === 201, `state ${app.json?.application?.state}`);
 
-// 9. Kvitton i kontot
+// 10. Kvittot i kontot.
 const purchases = await call('GET', '/v1/purchases');
-check('Mina köp listar båda köpen med kvittonummer',
-  purchases.status === 200 && (purchases.json?.purchases ?? []).filter((p) => p.receiptNumber).length >= 2,
+check('Mina köp listar köpet med kvittonummer',
+  purchases.status === 200 && (purchases.json?.purchases ?? []).filter((p) => p.receiptNumber).length >= 1,
   `${(purchases.json?.purchases ?? []).length} köp`);
 
 console.log(failures === 0 ? '\nDEPLOY-SMOKE OK — hela kedjan verifierad mot ' + BASE : `\nDEPLOY-SMOKE FAIL — ${failures} kontroller föll`);

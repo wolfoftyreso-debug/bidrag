@@ -28,10 +28,10 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
   dokumentmallar + rendering, deterministisk ansökningsgranskning
   (`docs/APPLICATION-INTELLIGENCE.md`). 90 enhetstester.
 - **`apps/api`** — Fastify 5 + Drizzle + PostgreSQL 16, modulär monolit:
-  auth/tenancy, kunskapsgraf (72 stöd, 35 finansiärer, 71 ansökningsscheman,
-  36 källor), matchning, ansökningar, dokumentvalv, betalningar (Swish Handel-
+  auth/tenancy, kunskapsgraf (72 stöd, 35 finansiärer, 80 ansökningsscheman,
+  39 källor), matchning, ansökningar, dokumentvalv, betalningar (Swish Handel-
   adapter + mock), kvitton med moms, GDPR-självservice, kurators-API,
-  bakgrundsjobb. 198 integrationstester.
+  bakgrundsjobb. 207 integrationstester.
 - **`apps/web`** — svensk React-SPA (Vite): onboarding en-fråga-per-skärm,
   analys/teaser, köpflöden med ångerrättssamtycke, ansökningsarbetsyta,
   dokumentstudio, Mina köp/kvitton, admin.
