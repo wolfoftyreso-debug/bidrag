@@ -256,9 +256,9 @@ miljön och handboken fördjupas då skärm för skärm.
    bevispaketet; `seo/questions-tier1.json` + `docs/SEO_ANSWER_CLUSTERS.md`
    styr) **plus** pre-check-vyn (grundvillkor + underlagslista före utklick),
    instrumenteringseventen för QSDR/ARR, och belastningstest mot modellens
-   topptimmesvolymer (`scripts/loadtest.mjs`). Kända blockerare ur modellen:
-   kluster 10–12 (lönebidrag/nystartsjobb/anställa med stöd) saknar stöd i
-   kunskapsbasen — kurera innan sidorna byggs. Därefter **F2**
+   topptimmesvolymer (`scripts/loadtest.mjs`). Kluster 10–12
+   (lönebidrag/nystartsjobb/anställa med stöd) är stängda: stöden är kurerade
+   och klusterhubben /bidrag/lonebidrag/ byggd (SERP War Room 2026-08-28). Därefter **F2**
    erfarenhetslagret (licensgenomgång först; datakontrakt i
    `seo/beviljade-projekt.schema.json` + `seo/erfarenheter.schema.json`) →
    **F3** länkbara tillgångar. Öppna beslut: CONTENT_ENGINE §11. Efter deploy:

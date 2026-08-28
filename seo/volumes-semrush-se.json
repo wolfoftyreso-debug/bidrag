@@ -2018,6 +2018,38 @@
         "difficulty": 0,
         "intent_code": null
       }
+    ],
+    "lönebidrag": [
+      {
+        "question": "vad är lönebidrag",
+        "volume": 110,
+        "difficulty": 18,
+        "intent_code": null
+      },
+      {
+        "question": "hur fungerar lönebidrag",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "hur länge kan man ha lönebidrag",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "hur mycket får man i lönebidrag",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "vem får lönebidrag",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      }
     ]
   },
   "serp": {

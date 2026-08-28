@@ -43,7 +43,7 @@ Seed-termerna ur masterprompten, verkliga månadsvolymer:
 |---|---|---|---|
 | bidrag | 12 100 | 35 | huvudterm; SERP:en är blandad (se §4) |
 | starta eget bidrag | 4 400 | 28 | störst vinnbara möjlighet — nu byggd klusterhubb |
-| lönebidrag | 2 400 | 23 | **kunskapsbasgap** — kurera före sidbygge (backlogpost) |
+| lönebidrag | 2 400 | 23 | kunskapsbasen bär stödet (af-lonebidrag) — klusterhubb byggd i detta pass |
 | stipendier | 720 | 34 | eget framtida kluster |
 | bidrag arbetslös | 320 | 34 | situationssida finns (query pages) |
 | ekonomiskt stöd / eu bidrag / bidrag solceller / investeringsstöd / söka stipendier | 260 | 30/15/31/23/35 | |
@@ -148,9 +148,11 @@ stabila permanenta URL:er, breadcrumbs, källmärkning per sida.
 ## 8. Nästa drag i prioritetsordning (data avgör)
 
 1. **OPERATÖR: domänkoppling** (§2) → GSC → sitemap → baseline-loopen.
-2. **Kurera lönebidrag + nystartsjobb-klustret klart** (lönebidrag 2 400/mån
-   KD 23; af-nystartsjobb finns redan i basen; lönebidrag saknas) — kluster
-   10–12 i LAUNCH_DEMAND_INTELLIGENCE.
+2. ~~Kurera lönebidrag/nystartsjobb~~ **KLART i detta pass**: båda stöden
+   fanns redan kurerade (af-lonebidrag, af-nystartsjobb) — efterfrågemodellens
+   CRITICAL-larm byggde på en inaktuell korgmappning, nu rättad; klusterhubb
+   /bidrag/lonebidrag/ byggd (2 400/mån KD 23, "vad är lönebidrag" 110/mån
+   KD 18) med anställa med stöd-väljaren (kluster 10–12 stängda).
 3. **"Fonder att söka"-rymden**: "stiftelser och fonder att söka pengar ur"
    1 000/mån + "fonder att söka" 880/mån — svag privat SERP (bevisad av
    svenskbidragsformedlings #12 utan egen sida). Kräver kurerat

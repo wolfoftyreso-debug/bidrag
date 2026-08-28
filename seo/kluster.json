@@ -100,6 +100,38 @@
         "vinnova-innovativa-startups",
         "jordbruksverket-startstod-unga"
       ]
+    },
+    {
+      "path": "bidrag/lonebidrag",
+      "headTerm": "lönebidrag",
+      "h1": "Lönebidrag",
+      "title": "Lönebidrag — vad det är och hur arbetsgivare ansöker",
+      "description": "Lönebidrag är Arbetsförmedlingens stöd till arbetsgivare som anställer personer med nedsatt arbetsförmåga. Se hur det fungerar, vem det gäller och hur ansökan görs.",
+      "svar": "Lönebidrag är ett ekonomiskt stöd från Arbetsförmedlingen till arbetsgivare som anställer — eller behåller — en person vars arbetsförmåga är nedsatt på grund av funktionsnedsättning eller ohälsa. Bidraget kompenserar en del av lönekostnaden och kan kombineras med anpassning av arbetet; det finns i flera former, bland annat för utveckling i anställning och för trygghet i anställning. Nivå och längd bedöms individuellt av Arbetsförmedlingen.",
+      "valjare": [
+        {
+          "fraga": "Har den du vill anställa nedsatt arbetsförmåga på grund av funktionsnedsättning eller ohälsa?",
+          "slug": "af-lonebidrag"
+        },
+        {
+          "fraga": "Har den du vill anställa varit borta länge från arbetslivet eller är nyanländ?",
+          "slug": "af-nystartsjobb"
+        }
+      ],
+      "forklaring": "Lönebidrag och nystartsjobb är de två vanliga vägarna att anställa med stöd, och de svarar på olika situationer: lönebidraget kompenserar för nedsatt arbetsförmåga och kan kombineras med anpassning av arbetet, medan nystartsjobb sänker tröskeln för den som varit borta länge från arbetslivet eller är ny i Sverige. I båda fallen är det arbetsgivaren som ansöker hos Arbetsförmedlingen, och beslut ska finnas innan anställningen börjar; för nystartsjobb gäller därtill att anställningen ska ha marknadsmässiga villkor. Nivåer och perioder fastställs av Arbetsförmedlingen utifrån den anställdas situation — Bidragskoll anger inga belopp som inte är fastställda mot källan.",
+      "paaTerms": [
+        "lönebidrag"
+      ],
+      "extraFaq": [
+        {
+          "q": "Vad är skillnaden mellan lönebidrag och nystartsjobb?",
+          "a": "Båda är stöd till arbetsgivare som beslutas av Arbetsförmedlingen, men de gäller olika situationer: lönebidrag kompenserar för nedsatt arbetsförmåga på grund av funktionsnedsättning eller ohälsa, medan nystartsjobb gäller anställning av personer som varit borta länge från arbetslivet eller är nyanlända. Väljaren ovan pekar dig rätt."
+        }
+      ],
+      "childSlugs": [
+        "af-lonebidrag",
+        "af-nystartsjobb"
+      ]
     }
   ]
 }

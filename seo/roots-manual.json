@@ -879,7 +879,9 @@
    "root": "lönebidrag",
    "type": "authority-term",
    "audience": "företag",
-   "cluster": "anställa"
+   "cluster": "anställa",
+   "target": "/bidrag/lonebidrag/",
+   "note": "huvudtermen ägs av klusterhubben (anställa med stöd-väljaren)"
   },
   {
    "root": "merkostnadsersättning",
@@ -904,13 +906,16 @@
    "root": "nystartsjobb",
    "type": "authority-term",
    "audience": "företag",
-   "cluster": "anställa"
+   "cluster": "anställa",
+   "target": "/bidrag/af-nystartsjobb/"
   },
   {
    "root": "nystartsjobb eller lönebidrag",
    "type": "comparison",
    "audience": "företag",
-   "cluster": "anställa"
+   "cluster": "anställa",
+   "target": "/bidrag/lonebidrag/",
+   "note": "jämförelsen besvaras av lönebidrag-hubbens väljare"
   },
   {
    "root": "närståendepenning",

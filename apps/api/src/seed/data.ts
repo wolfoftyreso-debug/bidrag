@@ -2684,7 +2684,7 @@ export const opportunities: SeedOpportunity[] = [
     authorityKey: 'af',
     sourceKey: 'af-stod',
     programmeName: 'Anställningsstöd',
-    title: 'Arbetsförmedlingen — Lönebidrag',
+    title: 'Arbetsförmedlingen — Lönebidrag vid nedsatt arbetsförmåga',
     summary: 'Bidrag till arbetsgivare som anställer personer med nedsatt arbetsförmåga.',
     description:
       'Lönebidrag kan lämnas till arbetsgivare som anställer (eller behåller) en person vars arbetsförmåga är nedsatt av funktionsnedsättning eller ohälsa. Bidraget kompenserar en del av lönekostnaden och kan kombineras med anpassning av arbetet; det finns i flera former (utveckling, trygghet, anställning). Nivå och längd bedöms individuellt av Arbetsförmedlingen.',

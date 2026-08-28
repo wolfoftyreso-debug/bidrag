@@ -1178,7 +1178,7 @@
   {
    "id": "stod:af-lonebidrag",
    "type": "stod",
-   "label": "Arbetsförmedlingen — Lönebidrag",
+   "label": "Arbetsförmedlingen — Lönebidrag vid nedsatt arbetsförmåga",
    "url": "/bidrag/af-lonebidrag/",
    "instrument": "public_grant",
    "deadlineModel": "rolling"

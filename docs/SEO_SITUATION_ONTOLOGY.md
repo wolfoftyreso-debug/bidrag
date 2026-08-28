@@ -77,12 +77,13 @@ Noden informerar och leder till utredningen; den avgör aldrig behörighet själ
 | `/situationer/forening-behover-lokal/` | PER-012 | Boverket samlingslokaler | SERP-DERIVED |
 | `/situationer/forening-vill-driva-projekt/` | PER-012 | Arvsfonden, projektbidrag | INFERRED |
 
-¹ **Blockerare (från efterfrågemodellen, `docs/LAUNCH_DEMAND_INTELLIGENCE.md`
-§8 / GATE0_REPORT):** kluster 10–12 (lönebidrag/nystartsjobb/anställningsstöd,
-investerings-/energistöd) saknar ännu kuraterat stöd i kunskapsbasen. Dessa
-situationsnoder får **inte** byggas som indexerbara sidor förrän stöden är
-kurerade — annars blir de tunna sidor utan motoruppbackning (bryter SEO Release
-Gate). Kurering före sida.
+¹ **Blockerare — UPPDATERAD 2026-08-28 (SERP War Room):** kluster 10–12
+(lönebidrag/nystartsjobb/anställa med stöd) är **stängda** — stöden är
+kurerade (af-lonebidrag, af-nystartsjobb) och klusterhubben
+`/bidrag/lonebidrag/` byggd; efterfrågemodellens korgmappning rättad.
+Principen kvarstår för framtida noder: situationsnoder får **inte** byggas
+som indexerbara sidor förrän stöden är kurerade — annars blir de tunna sidor
+utan motoruppbackning (bryter SEO Release Gate). Kurering före sida.
 
 ## 3. Gap-map mot dagens publika yta
 

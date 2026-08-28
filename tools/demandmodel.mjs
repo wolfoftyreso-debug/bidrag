@@ -63,9 +63,9 @@ for (const e of kgraf.edges.filter((e) => e.rel === 'besvaras_av')) {
 const BASKETS = {
   2:  ['fk-bostadsbidrag-barnfamiljer', 'fk-bostadsbidrag-unga', 'pm-bostadstillagg'], // avgöraren (B4)
   6:  ['csn-studiemedel', 'csn-omstallningsstudiestod'],                               // studiestödsväljaren (B7)
-  10: [],                                                                              // lönebidrag — SAKNAS i kunskapsbasen
-  11: [],                                                                              // nystartsjobb — SAKNAS i kunskapsbasen
-  12: [],                                                                              // anställa med stöd — SAKNAS i kunskapsbasen
+  10: ['af-lonebidrag'],                                                               // lönebidrag (kurerad — gapet stängt)
+  11: ['af-nystartsjobb'],                                                             // nystartsjobb (kurerad — gapet stängt)
+  12: ['af-lonebidrag', 'af-nystartsjobb'],                                            // anställa med stöd-väljaren (klusterhubb /bidrag/lonebidrag/)
   16: ['fk-bostadsbidrag-barnfamiljer', 'fk-bostadsbidrag-unga', 'kommun-forsorjningsstod', 'pm-bostadstillagg'], // hyres-akuten (B2)
   17: null,                                                                            // samlingsvyn (B1): fördelas över alla privatpersonsstöd
   18: ['fk-bostadsbidrag-barnfamiljer', 'fk-underhallsstod', 'fk-omvardnadsbidrag', 'region-glasogonbidrag-barn', 'kommun-skolskjuts', 'majblomman-ekonomiskt-stod'], // barnfamilj (B5)

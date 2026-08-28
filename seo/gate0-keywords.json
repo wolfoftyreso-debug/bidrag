@@ -1,12 +1,12 @@
 {
  "_kontrakt": "GATE 0 block A (docs/ZERO_COMPROMISE_GATE.md): statusregister för alla keyword-rötter. GREEN kan aldrig sättas maskinellt — kräver mänsklig SERP-jämförelse sida-mot-sida (gatens manuella del). SERP-ägare endast där observation finns (seo/serp-gate0.json / serp-sprint01.json); rader med verifikation NONE har medvetet tom ägare. Genereras av tools/gatekeywords.mjs — redigeras aldrig för hand.",
  "datum_serp": "2026-08-22",
- "antal_rotter": 351,
+ "antal_rotter": 352,
  "status": {
   "GREEN": 0,
-  "YELLOW": 135,
-  "RED": 122,
-  "GREY": 94
+  "YELLOW": 136,
+  "RED": 121,
+  "GREY": 95
  },
  "rotter": [
   {
@@ -142,15 +142,15 @@
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
-   "keyword": "arbetsförmedlingen lönebidrag",
-   "root": "lönebidrag",
+   "keyword": "arbetsförmedlingen lönebidrag vid nedsatt arbetsförmåga",
+   "root": "lönebidrag vid nedsatt arbetsförmåga",
    "intent": "navigational",
-   "query_familj": "k10-lonebidrag",
-   "serp_agare": "arbetsformedlingen + media/parter",
+   "query_familj": "entity:af-lonebidrag",
+   "serp_agare": null,
    "var_url": "/bidrag/af-lonebidrag/",
-   "content_gap": "stödet saknas i kunskapsbasen (kluster 10–12) — kurera före sidbygge",
-   "status": "RED",
-   "verifikation": "FRESH-FAMILJ 2026-08-22"
+   "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
+   "status": "GREY",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
    "keyword": "arbetsförmedlingen nystartsjobb",
@@ -2567,10 +2567,21 @@
    "intent": "informational",
    "query_familj": "k10-lonebidrag",
    "serp_agare": "arbetsformedlingen + media/parter",
-   "var_url": "/bidrag/af-lonebidrag/",
+   "var_url": "/bidrag/lonebidrag/",
    "content_gap": "stödet saknas i kunskapsbasen (kluster 10–12) — kurera före sidbygge",
    "status": "RED",
-   "verifikation": "FRESH-FAMILJ 2026-08-22"
+   "verifikation": "FRESH 2026-08-22"
+  },
+  {
+   "keyword": "lönebidrag vid nedsatt arbetsförmåga",
+   "root": "lönebidrag vid nedsatt arbetsförmåga",
+   "intent": "informational",
+   "query_familj": "entity:af-lonebidrag",
+   "serp_agare": null,
+   "var_url": "/bidrag/af-lonebidrag/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
    "keyword": "majblommans riksförbund bidrag till barn i familjer där pengarna inte räcker",
@@ -2743,7 +2754,7 @@
    "intent": "comparison",
    "query_familj": "k12-anstalla-med-stod",
    "serp_agare": "ingen — fragmenterat (tillvaxtstod.se kommersiell konkurrent!)",
-   "var_url": null,
+   "var_url": "/bidrag/lonebidrag/",
    "content_gap": "stödet saknas i kunskapsbasen (kluster 10–12) — kurera före sidbygge",
    "status": "RED",
    "verifikation": "FRESH 2026-08-22"

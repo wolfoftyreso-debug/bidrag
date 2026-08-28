@@ -1,6 +1,6 @@
 {
   "_kontrakt": "Master keyword-databas. search_volume/cpc/difficulty är null (volume_source=DATA_UNAVAILABLE) tills en verklig källa finns — fabricera aldrig. Där seo/volumes-semrush-se.json har en matchande normaliserad nyckel joinas verklig volym/CPC/difficulty in och stämplas volume_source=semrush:<db>:<datum>. SERP-fält fylls endast från dokumenterad research i docs/SEO_SERP_RESEARCH.md. Frågematrisen (query variants per root) ligger i seo/questions-*.json och mappas QUERY→INTENT→CONTENT NODE innan sidor skapas.",
-  "antal_roots": 351,
+  "antal_roots": 352,
   "keywords": [
     {
       "keyword": "a-kassa",
@@ -339,9 +339,9 @@
       "notes": null
     },
     {
-      "keyword": "arbetsförmedlingen lönebidrag",
-      "normalized_keyword": "arbetsförmedlingen lönebidrag",
-      "root_keyword": "lönebidrag",
+      "keyword": "arbetsförmedlingen lönebidrag vid nedsatt arbetsförmåga",
+      "normalized_keyword": "arbetsförmedlingen lönebidrag vid nedsatt arbetsförmåga",
+      "root_keyword": "lönebidrag vid nedsatt arbetsförmåga",
       "question": null,
       "search_volume": null,
       "volume_source": "DATA_UNAVAILABLE",
@@ -6510,6 +6510,34 @@
       "difficulty_source": "semrush:se:2026-08-28",
       "intent": "informational",
       "user_state": null,
+      "entity": null,
+      "category": "anställa",
+      "subcategory": null,
+      "audience": "företag",
+      "serp_features": null,
+      "current_top_domain": null,
+      "current_top_url": null,
+      "authority_type": null,
+      "our_target_url": "/bidrag/lonebidrag/",
+      "page_type": "entity",
+      "opportunity_score": null,
+      "priority": null,
+      "status": "planned",
+      "source": "manual:authority-term",
+      "notes": "huvudtermen ägs av klusterhubben (anställa med stöd-väljaren)"
+    },
+    {
+      "keyword": "lönebidrag vid nedsatt arbetsförmåga",
+      "normalized_keyword": "lönebidrag vid nedsatt arbetsförmåga",
+      "root_keyword": "lönebidrag vid nedsatt arbetsförmåga",
+      "question": null,
+      "search_volume": null,
+      "volume_source": "DATA_UNAVAILABLE",
+      "cpc": null,
+      "difficulty": null,
+      "difficulty_source": "DATA_UNAVAILABLE",
+      "intent": "informational",
+      "user_state": null,
       "entity": "af-lonebidrag",
       "category": "public_grant",
       "subcategory": null,
@@ -6966,13 +6994,13 @@
       "current_top_domain": null,
       "current_top_url": null,
       "authority_type": null,
-      "our_target_url": null,
-      "page_type": "comparison",
+      "our_target_url": "/bidrag/lonebidrag/",
+      "page_type": "entity",
       "opportunity_score": null,
       "priority": null,
       "status": "planned",
       "source": "manual:comparison",
-      "notes": null
+      "notes": "jämförelsen besvaras av lönebidrag-hubbens väljare"
     },
     {
       "keyword": "närståendepenning",
