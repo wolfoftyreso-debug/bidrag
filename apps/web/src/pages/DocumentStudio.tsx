@@ -133,16 +133,22 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
   const [busy, setBusy] = useState(false);
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [payment, setPayment] = useState<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean } } | null>(null);
+  const [payment, setPayment] = useState<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean; redirectUrl?: string } } | null>(null);
   const [confirmedNote, setConfirmedNote] = useState(false);
 
   const buy = async () => {
     setBusy(true);
     setError(null);
     try {
-      const res = await post<{ paymentId: string; instructions: { method: string; message?: string } }>(
+      const res = await post<{ paymentId: string; instructions: { method: string; message?: string; redirectUrl?: string } }>(
         `/v1/projects/${projectId}/document-pack`, { pack: 'application', immediateDeliveryConsent: consent },
       );
+      // Stripe: lämna SPA:n för den hostade betalsidan; returvyn tar användaren tillbaka hit.
+      if (res.instructions.method === 'stripe' && res.instructions.redirectUrl) {
+        try { sessionStorage.setItem(`bidrag_return_${res.paymentId}`, window.location.pathname + window.location.search); } catch { /* privat läge */ }
+        window.location.href = res.instructions.redirectUrl;
+        return;
+      }
       setPayment(res);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Köpet kunde inte startas.');
@@ -178,7 +184,14 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
   if (payment && !confirmedNote) {
     return (
       <div className="card">
-        {payment.instructions.method === 'mock' ? (
+        {payment.instructions.method === 'stripe' ? (
+          <div style={{ textAlign: 'center' }}>
+            <p className="guidance">{payment.instructions.message}</p>
+            {payment.instructions.redirectUrl
+              ? <p><a className="btn" href={payment.instructions.redirectUrl}>Fortsätt till betalningen</a></p>
+              : <div className="alert error">Betalsidan kunde inte öppnas. Försök igen.</div>}
+          </div>
+        ) : payment.instructions.method === 'mock' ? (
           <div className="alert warning">
             <p style={{ fontWeight: 700 }}>{payment.instructions.message}</p>
             <button disabled={busy} onClick={confirmMock}>Bekräfta betalning (simulerad)</button>

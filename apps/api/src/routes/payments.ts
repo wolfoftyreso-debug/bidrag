@@ -16,8 +16,9 @@ import { config } from '../config.ts';
 import { activeProvider } from '../services/paymentProviders.ts';
 import { receiptDocument, sendReceiptEmail } from '../services/receipts.ts';
 import { textToPdf } from '../services/pdf.ts';
-import { confirmPendingPayment, verifySwishPayment } from '../services/payments.ts';
+import { confirmPendingPayment, verifySwishPayment, verifyStripePayment, confirmStripePayment, failPendingPayment } from '../services/payments.ts';
 import { fetchQrPng, swishConfigured } from '../services/integrations/swish.ts';
+import { stripeConfigured, verifyWebhookSignature } from '../services/integrations/stripe.ts';
 import { WRITER_ROLES } from '../plugins/auth.ts';
 
 /**
@@ -208,6 +209,13 @@ export async function paymentRoutes(app: FastifyInstance) {
           request.log.warn({ err, paymentId: id }, 'swish verification failed during polling');
           state = 'pending'; // vendorfel får aldrig se ut som betalningsfel
         }
+      } else if (payment.state === 'pending' && payment.provider === 'stripe' && stripeConfigured()) {
+        try {
+          state = await verifyStripePayment(payment);
+        } catch (err) {
+          request.log.warn({ err, paymentId: id }, 'stripe verification failed during polling');
+          state = 'pending'; // vendorfel får aldrig se ut som betalningsfel
+        }
       }
 
       if (state !== 'confirmed') return { state };
@@ -394,8 +402,62 @@ export async function paymentRoutes(app: FastifyInstance) {
  * verifiering — aldrig en upplåsning.
  */
 export async function paymentWebhookRoutes(app: FastifyInstance) {
+  // Behåll JSON-parsningen (Swish läser request.body) men spara även den RÅA
+  // bodyn — Stripes signatur beräknas över de exakta bytesen. Parsern är
+  // inkapslad i den här pluginen och rör inte appens övriga JSON-routes.
+  app.addContentTypeParser('application/json', { parseAs: 'string' }, (req, body, done) => {
+    (req as { rawBody?: string }).rawBody = body as string;
+    try {
+      done(null, (body as string).length ? JSON.parse(body as string) : {});
+    } catch (err) {
+      done(err as Error, undefined);
+    }
+  });
+
   app.post('/v1/webhooks/payments/:provider', { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } }, async (request, reply) => {
     const { provider } = request.params as { provider: string };
+
+    // Stripe: den signaturverifierade webhooken ÄR sanningskällan.
+    if (provider === 'stripe') {
+      if (!stripeConfigured()) return reply.code(503).send({ error: 'provider_not_configured' });
+      let event: { type?: string; data?: { object?: Record<string, unknown> } };
+      try {
+        event = verifyWebhookSignature(
+          (request as { rawBody?: string }).rawBody ?? '',
+          request.headers['stripe-signature'] as string | undefined,
+        ) as typeof event;
+      } catch (err) {
+        // Ogiltig signatur ⇒ 400, bekräfta ingenting.
+        return reply.code(400).send({ error: 'invalid_signature', message: (err as Error).message });
+      }
+
+      // Endast betalda checkout-sessioner låser upp; övriga event kvitteras utan åtgärd.
+      if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
+        const session = (event.data?.object ?? {}) as {
+          id?: string; payment_status?: string; amount_total?: number; currency?: string;
+          metadata?: { paymentId?: string }; client_reference_id?: string;
+        };
+        const paymentId = session.metadata?.paymentId ?? session.client_reference_id;
+        if (paymentId && session.payment_status === 'paid') {
+          const [payment] = await db
+            .select()
+            .from(payments)
+            .where(and(eq(payments.id, paymentId), eq(payments.provider, 'stripe')))
+            .limit(1);
+          // Okänd/främmande referens: 200 utan åtgärd — läck inte vilka betalningar som finns.
+          if (payment && payment.state === 'pending') {
+            if (session.amount_total !== payment.amountMinor || (session.currency ?? '').toUpperCase() !== payment.currency) {
+              await failPendingPayment(payment.id, `belopp/valuta avviker: ${session.amount_total} ${session.currency}`);
+            } else {
+              await confirmStripePayment(payment.id, payment.tenantId, session.id ?? '');
+              request.log.info({ paymentId: payment.id }, 'stripe webhook confirmed payment');
+            }
+          }
+        }
+      }
+      return { received: true };
+    }
+
     if (provider !== 'swish' || !swishConfigured()) {
       return reply.code(503).send({ error: 'provider_not_configured' });
     }

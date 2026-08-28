@@ -207,7 +207,7 @@ function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: str
   const [busy, setBusy] = useState(false);
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [payment, setPayment] = useState<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean } } | null>(null);
+  const [payment, setPayment] = useState<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean; redirectUrl?: string } } | null>(null);
   const [confirmed, setConfirmed] = useState(false);
 
   // F-SCROLL: köpflödets vyer är interna tillståndsbyten — börja alltid i toppen.
@@ -217,9 +217,16 @@ function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: str
     setBusy(true);
     setError(null);
     try {
-      const res = await post<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean } }>(
+      const res = await post<{ paymentId: string; instructions: { method: string; message?: string; deepLink?: string; qrAvailable?: boolean; redirectUrl?: string } }>(
         `/v1/projects/${projectId}/application-purchase`, { immediateDeliveryConsent: consent },
       );
+      // Stripe: lämna SPA:n för den hostade betalsidan. Spara vart användaren ska
+      // tillbaka (samma stödsida) så returvyn kan navigera hem efter bekräftelsen.
+      if (res.instructions.method === 'stripe' && res.instructions.redirectUrl) {
+        try { sessionStorage.setItem(`bidrag_return_${res.paymentId}`, window.location.pathname + window.location.search); } catch { /* privat läge */ }
+        window.location.href = res.instructions.redirectUrl;
+        return;
+      }
       setPayment(res);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Köpet kunde inte startas.');
@@ -253,6 +260,18 @@ function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: str
   if (confirmed) return <p className="meta-line">Betalningen är bekräftad — ansökan skapas…</p>;
 
   if (payment) {
+    // Stripe redirectar normalt bort direkt; hit når vi bara om redirect-URL:en
+    // saknades — erbjud en manuell länk i stället för att fastna.
+    if (payment.instructions.method === 'stripe') {
+      return (
+        <div style={{ textAlign: 'center' }}>
+          <p className="guidance">{payment.instructions.message}</p>
+          {payment.instructions.redirectUrl
+            ? <p><a className="btn" href={payment.instructions.redirectUrl}>Fortsätt till betalningen</a></p>
+            : <div className="alert error">Betalsidan kunde inte öppnas. Försök igen.</div>}
+        </div>
+      );
+    }
     return payment.instructions.method === 'mock' ? (
       <div className="alert warning">
         <p style={{ fontWeight: 700 }}>{payment.instructions.message}</p>

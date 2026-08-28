@@ -72,12 +72,12 @@ describe('readiness endpoint (aktiveringsberedskap)', () => {
     expect(body.checks.database!.status).toBe('ready');
     // Testmiljön kör mockbetalningar och generation-mock — det ska redovisas
     // som blockerare för produktion, aldrig döljas som "ready".
-    expect(body.checks.payments_swish!.status).toBe('mock');
+    expect(body.checks.payments!.status).toBe('mock');
     expect(body.checks.generation_anthropic!.status).toBe('mock');
     // Testmiljön har en SMTP-kanal konfigurerad (vitest.config) — redovisas som klar.
     expect(body.checks.email_resend!.status).toBe('ready');
     expect(body.ok).toBe(false);
-    expect(body.blockers).toContain('payments_swish');
+    expect(body.blockers).toContain('payments');
     expect(body.blockers).toContain('generation_anthropic');
     expect(body.blockers).not.toContain('email_resend');
     // Varje icke-klar kontroll pekar på vad aktiveringen kräver.

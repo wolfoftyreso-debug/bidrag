@@ -14,6 +14,7 @@ import { db } from '../db/client.ts';
 import { CRON_TASKS } from '../jobs/tasks.ts';
 import { emailConfigured } from '../services/email.ts';
 import { swishConfigured } from '../services/integrations/swish.ts';
+import { stripeConfigured } from '../services/integrations/stripe.ts';
 
 function authorized(header: string | undefined): boolean {
   if (!config.cronSecret || !header?.startsWith('Bearer ')) return false;
@@ -81,11 +82,15 @@ export async function internalRoutes(app: FastifyInstance) {
         checks.database = { status: 'error', detail: `Databasen svarar inte: ${(err as Error).message}` };
       }
 
-      checks.payments_swish = swishConfigured()
-        ? { status: 'ready', detail: 'Swish-certifikat och handelsalias är konfigurerade.' }
-        : config.paymentsMockEnabled
-          ? { status: 'mock', detail: 'Mockbetalningar aktiva (endast utanför produktion). Aktivering kräver SWISH_MERCHANT_ALIAS + SWISH_CERT_BASE64 + SWISH_KEY_BASE64.' }
-          : { status: 'not_configured', detail: 'Ingen betalväg. Aktivering kräver Swish Handel-avtal + certifikat (se docs/ACTIVATION.md).' };
+      // Betalväg: valfri riktig provider räcker. Stripe är lanseringsrälsen
+      // (Swish dröjer); mock endast utanför produktion; annars ingen betalväg.
+      checks.payments = stripeConfigured()
+        ? { status: 'ready', detail: 'Stripe är konfigurerat (Checkout). STRIPE_WEBHOOK_SECRET krävs för bekräftelse.' }
+        : swishConfigured()
+          ? { status: 'ready', detail: 'Swish-certifikat och handelsalias är konfigurerade.' }
+          : config.paymentsMockEnabled
+            ? { status: 'mock', detail: 'Mockbetalningar aktiva (endast utanför produktion). Aktivering: STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET, eller SWISH_MERCHANT_ALIAS + SWISH_CERT_BASE64 + SWISH_KEY_BASE64.' }
+            : { status: 'not_configured', detail: 'Ingen betalväg. Aktivering kräver Stripe (STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET) eller Swish Handel-avtal + certifikat (se docs/ACTIVATION.md).' };
 
       if (!emailConfigured()) {
         checks.email_resend = { status: 'not_configured', detail: 'Ingen e-postkanal. Aktivering kräver RESEND_API_KEY + EMAIL_FROM med verifierad domän. Kvitton i kontot och återställningskoder fungerar ändå; länk-återställning är avstängd (fail-closed).' };

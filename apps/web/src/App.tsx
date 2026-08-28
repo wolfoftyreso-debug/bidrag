@@ -19,6 +19,7 @@ import AdminPage from './pages/Admin';
 import RuleEditorPage from './pages/RuleEditor';
 import AccountPage from './pages/Account';
 import SearchPage from './pages/Search';
+import { PaymentSuccessPage, PaymentCancelledPage } from './pages/PaymentReturn';
 
 
 /** F-SCROLL: varje ruttbyte börjar i toppen — annars ärvs scrolläget från förra sidan. */
@@ -144,6 +145,8 @@ function Shell() {
           <Route path="/konto" element={<AccountPage />} />
           <Route path="/villkor" element={<TermsPage />} />
           <Route path="/kalender" element={<CalendarPage />} />
+          <Route path="/betalning/klar" element={<PaymentSuccessPage />} />
+          <Route path="/betalning/avbruten" element={<PaymentCancelledPage />} />
           <Route path="/inbjudan/:token" element={<InvitePage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

@@ -355,8 +355,7 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 
 | Variabel | Beskrivning |
 |---|---|
-| `ANALYSIS_PRICE_MINOR` | Momsen är fast 25 % (standardsats för elektroniskt levererade tjänster till konsument i Sverige) och är medvetet inte konfigurerbar — se apps/api/src/config.ts. Säljaruppgifterna nedan är Landvex AB:s riktiga uppgifter o |
-| `APPLICATION_PRICE_MINOR` | 19 kr per ansökan som förbereds i systemet (alla dokument för den ansökan ingår). |
+| `APPLICATION_PRICE_MINOR` | Momsen är fast 25 % (standardsats för elektroniskt levererade tjänster till konsument i Sverige) och är medvetet inte konfigurerbar — se apps/api/src/config.ts. Säljaruppgifterna nedan är Landvex AB:s riktiga uppgifter o |
 | `SELLER_NAME` | — |
 | `SELLER_ORG_NUMBER` | — |
 | `SELLER_VAT_NUMBER` | — |
@@ -365,6 +364,9 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | `SWISH_KEY_PASSPHRASE` | — |
 | `SWISH_API_BASE` | Test/preview: peka mot MSS-simulatorn https://mss.cpc.getswish.net |
 | `SWISH_QR_BASE` | — |
+| `STRIPE_SECRET_KEY` | Stripe Checkout (kort m.m.) — lanseringsrälsen medan Swish-avtalet dröjer. STRIPE_SECRET_KEY aktiverar providern; STRIPE_WEBHOOK_SECRET krävs för att bekräfta betalningar (den signerade webhooken är sanningskällan). Utan |
+| `STRIPE_WEBHOOK_SECRET` | — |
+| `STRIPE_API_BASE` | STRIPE_API_BASE pekas bara om i integrationstester (lokal emulator). |
 | `PAYMENTS_MOCK_ENABLED` | Utveckling/test + Vercel PREVIEW (VERCEL_ENV=preview). Ignoreras alltid i skarp produktion — sätt den ENDAST i Preview-miljön på Vercel. |
 
 ### Språkförslag (generation mode)

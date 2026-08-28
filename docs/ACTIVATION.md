@@ -69,7 +69,32 @@ Detaljer: `docs/DEPLOYMENT.md`.
 3. Verifiera: `curl -s https://<host>/healthz` → `{"ok":true}`, därefter
    readiness enligt ovan.
 
-## 3. Swish Handel (betalningar, 39 kr på riktigt)
+## 3. Stripe (betalningar — lanseringsrälsen)
+
+Betalvägen som tas i drift först (Swish-avtalet dröjer). Engångsköp på 19 kr
+per förberedd ansökan via Stripe Checkout. Den signaturverifierade webhooken är
+sanningskällan för bekräftelse; utan nycklar vägrar köpytan ärligt 503.
+
+1. Skapa ett Stripe-konto (Landvex AB). Använd **test-läge** i preview,
+   **live-läge** först i produktion.
+2. Hämta den hemliga API-nyckeln (`sk_test_…` / `sk_live_…`) → `STRIPE_SECRET_KEY`.
+3. Skapa en webhook-endpoint i Stripe → **Developers → Webhooks → Add endpoint**:
+   - URL: `<PUBLIC_BASE_URL>/v1/webhooks/payments/stripe`
+   - Event: `checkout.session.completed` (lägg gärna även
+     `checkout.session.async_payment_succeeded`).
+   - Kopiera endpointens **Signing secret** (`whsec_…`) → `STRIPE_WEBHOOK_SECRET`.
+4. Sätt miljövariablerna i Vercel (rätt miljö):
+   ```sh
+   STRIPE_SECRET_KEY=sk_test_...      # sk_live_... i produktion
+   STRIPE_WEBHOOK_SECRET=whsec_...
+   ```
+   Lämna `STRIPE_API_BASE` osatt (bara integrationstesterna pekar om den).
+5. Verifiera: readiness → `checks.payments.status: "ready"`, gör därefter en
+   riktig testbetalning end-to-end (testkort `4242 4242 4242 4242`) och
+   kontrollera att kvittot dyker upp under Mina köp (momsspecifikation,
+   kvittonummer) och att betalningen bekräftas via webhooken.
+
+## 3b. Swish Handel (betalningar — när avtalet är klart)
 
 Extern förutsättning: **handelsavtal med banken + Swish-certifikat**
 (utfärdas via Swish Certificate Management). Detta är det enda steget som
@@ -91,9 +116,10 @@ kräver en process utanför konfiguration.
    (`https://mss.cpc.getswish.net`) i preview för slutrepetition.
 4. Kontrollera att `PAYMENTS_MOCK_ENABLED` **inte** är satt i produktion —
    mocken vägrar ändå starta där, men variabeln ska bort.
-5. Verifiera: readiness → `checks.payments_swish.status: "ready"`, gör
-   därefter en riktig 39 kr-betalning end-to-end och kontrollera kvittot
-   under Mina köp (momsspecifikation, kvittonummer).
+5. Verifiera: readiness → `checks.payments.status: "ready"`, gör därefter en
+   riktig 19 kr-betalning end-to-end och kontrollera kvittot under Mina köp
+   (momsspecifikation, kvittonummer). Om både Stripe och Swish är satta vinner
+   Stripe (providerordningen); ta bort Stripe-nycklarna för att gå över helt.
 
 ## 4. Resend (e-post: återställningslänkar + kvittoutskick)
 

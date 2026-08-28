@@ -18,6 +18,7 @@ import { payments } from '../db/schema.ts';
 import { audit } from '../audit.ts';
 import { issueReceipt, sendReceiptEmail, type PaymentRow, type ReceiptRow } from './receipts.ts';
 import { retrievePaymentRequest, swishConfigured, toInstructionUUID } from './integrations/swish.ts';
+import { retrieveCheckoutSession, stripeConfigured } from './integrations/stripe.ts';
 
 export interface ConfirmOutcome {
   payment: PaymentRow;
@@ -102,4 +103,50 @@ export async function verifySwishPayment(payment: PaymentRow): Promise<'pending'
     return 'failed';
   }
   return 'pending'; // CREATED — användaren har inte betalat ännu.
+}
+
+/**
+ * Verifiera en Stripe-betalning genom att hämta Checkout Session
+ * server-till-server och agera på den VERIFIERADE statusen. Fallbacken när en
+ * webhook tappas (statuspollingen efter redirect tillbaka). Samma beloppskoll
+ * och idempotenta bekräftelse som webhooken; returnerar aktuellt state.
+ */
+export async function verifyStripePayment(payment: PaymentRow): Promise<'pending' | 'confirmed' | 'failed'> {
+  if (payment.state !== 'pending') return payment.state as 'confirmed' | 'failed';
+  if (payment.provider !== 'stripe' || !stripeConfigured() || !payment.providerReference) return 'pending';
+
+  const session = await retrieveCheckoutSession(payment.providerReference);
+
+  if (session.payment_status === 'paid') {
+    if (session.amount_total !== payment.amountMinor || (session.currency ?? '').toUpperCase() !== payment.currency) {
+      await failPendingPayment(payment.id, `belopp/valuta avviker: ${session.amount_total} ${session.currency}`);
+      return 'failed';
+    }
+    await confirmStripePayment(payment.id, payment.tenantId, session.id);
+    return 'confirmed';
+  }
+  if (session.status === 'expired') {
+    await failPendingPayment(payment.id, 'stripe checkout session expired');
+    return 'failed';
+  }
+  return 'pending'; // open/unpaid — användaren har inte betalat ännu.
+}
+
+/**
+ * Bekräfta en Stripe-betalning atomiskt + kvittomail. Delas av den signerade
+ * webhooken och statuspollingen; confirmPendingPayment gör det idempotent
+ * (dubbel webhook/poll ⇒ en bekräftelse, ett kvitto).
+ */
+export async function confirmStripePayment(paymentId: string, tenantId: string, sessionId: string): Promise<void> {
+  const outcome = await confirmPendingPayment(paymentId, { provider: 'stripe' });
+  if (!outcome) return;
+  await audit({
+    tenantId,
+    actorType: 'system',
+    action: 'payment.confirmed',
+    entityType: 'payment',
+    entityId: paymentId,
+    after: { provider: 'stripe', sessionId, receiptNumber: outcome.receipt.receiptNumber },
+  });
+  await sendReceiptEmail(outcome.receipt.id);
 }

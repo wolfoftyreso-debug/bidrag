@@ -12,11 +12,14 @@
  */
 import { config } from '../config.ts';
 import { appLink, createPaymentRequest, swishConfigured } from './integrations/swish.ts';
+import { createCheckoutSession, stripeConfigured } from './integrations/stripe.ts';
 
 export interface CreatePaymentResult {
   /** Vad klienten behöver för att slutföra betalningen. */
   instructions: {
-    method: string;            // 'swish' | 'mock'
+    method: string;            // 'stripe' | 'swish' | 'mock'
+    /** Stripe: hosted Checkout — klienten redirectar hit. */
+    redirectUrl?: string;
     /** Swish mobil: swish://paymentrequest?token=... */
     deepLink?: string;
     /** Swish desktop: QR hämtas via GET /v1/payments/:id/qr. */
@@ -64,6 +67,38 @@ const swishProvider: PaymentProvider = {
   },
 };
 
+/**
+ * Stripe Checkout (kort m.m.) — lanseringsrälsen medan Swish dröjer. Skapar en
+ * hosted Checkout Session; klienten redirectas till session.url. Bekräftelse
+ * sker ALDRIG här — bara den signaturverifierade webhooken (eller
+ * statuspollingens server-till-server-retrieve) kan bekräfta
+ * (services/payments.ts verifyStripePayment). success/cancel leder tillbaka in
+ * i appen med paymentId så frontend kan polla status.
+ */
+const stripeProvider: PaymentProvider = {
+  id: 'stripe',
+  available: stripeConfigured,
+  async create(p) {
+    const base = config.publicBaseUrl.replace(/\/$/, '');
+    const session = await createCheckoutSession({
+      paymentId: p.id,
+      amountMinor: p.amountMinor,
+      currency: p.currency,
+      productName: 'Förberedd ansökan — Bidragskoll.se',
+      successUrl: `${base}/betalning/klar?payment=${p.id}&status=success`,
+      cancelUrl: `${base}/betalning/avbruten?payment=${p.id}&status=cancel`,
+    });
+    return {
+      instructions: {
+        method: 'stripe',
+        redirectUrl: session.url ?? undefined,
+        message: 'Du skickas vidare till Stripes säkra betalsida. Sidan uppdateras när betalningen är bekräftad.',
+      },
+      providerReference: session.id,
+    };
+  },
+};
+
 const mockProvider: PaymentProvider = {
   id: 'mock',
   available: () => config.paymentsMockEnabled,
@@ -79,7 +114,9 @@ const mockProvider: PaymentProvider = {
   },
 };
 
-const providers: PaymentProvider[] = [swishProvider, mockProvider];
+// Ordning = prioritet. Riktiga providrar före mock; Stripe är lanseringsrälsen
+// (Swish dröjer), så den vinner om båda mot förmodan vore konfigurerade samtidigt.
+const providers: PaymentProvider[] = [stripeProvider, swishProvider, mockProvider];
 
 export function activeProvider(): PaymentProvider | null {
   return providers.find((p) => p.available()) ?? null;

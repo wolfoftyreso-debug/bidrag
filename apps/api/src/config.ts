@@ -118,5 +118,18 @@ export const config = {
     get apiBase() { return process.env.SWISH_API_BASE ?? 'https://cpc.getswish.net'; },
     get qrBase() { return process.env.SWISH_QR_BASE ?? 'https://mpc.getswish.net'; },
   },
+  /**
+   * Stripe Checkout (kort m.m.) — lanseringsrälsen medan Swish-avtalet dröjer.
+   * STRIPE_SECRET_KEY aktiverar providern; STRIPE_WEBHOOK_SECRET krävs för att
+   * bekräfta betalningar (den signerade webhooken är sanningskällan). Utan
+   * nycklar vägrar köpytan ärligt 503 — precis som Swish. STRIPE_API_BASE pekas
+   * om mot en lokal emulator i integrationstesterna. Getters: ingen omstart
+   * krävs vid nyckelrotation, och testerna sätter env i runtime.
+   */
+  stripe: {
+    get secretKey() { return process.env.STRIPE_SECRET_KEY ?? null; },
+    get webhookSecret() { return process.env.STRIPE_WEBHOOK_SECRET ?? null; },
+    get apiBase() { return process.env.STRIPE_API_BASE ?? 'https://api.stripe.com'; },
+  },
   logLevel: env.LOG_LEVEL ?? 'info',
 };
