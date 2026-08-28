@@ -11,6 +11,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { get } from '../api';
+import { useT } from '../i18n';
 
 function returnPath(paymentId: string | null): string {
   if (!paymentId) return '/projekt';
@@ -18,6 +19,7 @@ function returnPath(paymentId: string | null): string {
 }
 
 export function PaymentSuccessPage() {
+  const t = useT();
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const paymentId = params.get('payment');
@@ -50,29 +52,29 @@ export function PaymentSuccessPage() {
       <div className="card" style={{ maxWidth: 560, margin: '2rem auto', textAlign: 'center' }}>
         {state === 'pending' && (
           <>
-            <h1>Bekräftar din betalning…</h1>
-            <p className="guidance">Vi väntar på bekräftelsen från betalsystemet. Det tar oftast bara någon sekund — stäng inte sidan.</p>
-            <p className="meta-line" aria-live="polite">Väntar…</p>
+            <h1>{t('pay.confirmingTitle')}</h1>
+            <p className="guidance">{t('pay.confirmingBody')}</p>
+            <p className="meta-line" aria-live="polite">{t('pay.waiting')}</p>
           </>
         )}
         {state === 'confirmed' && (
           <>
-            <h1>Betalningen är klar</h1>
-            <p className="guidance">Din ansökan är upplåst. Vi tar dig tillbaka…</p>
+            <h1>{t('pay.doneTitle')}</h1>
+            <p className="guidance">{t('pay.doneBody')}</p>
           </>
         )}
         {state === 'failed' && (
           <>
-            <h1>Betalningen gick inte igenom</h1>
-            <p className="guidance">Ingen ansökan skapades och inget drogs. Du kan försöka igen.</p>
-            <Link className="btn" to={returnPath(paymentId)}>Tillbaka</Link>
+            <h1>{t('pay.failedTitle')}</h1>
+            <p className="guidance">{t('pay.failedBody')}</p>
+            <Link className="btn" to={returnPath(paymentId)}>{t('pay.back')}</Link>
           </>
         )}
         {state === 'error' && (
           <>
-            <h1>Vi kunde inte bekräfta ännu</h1>
-            <p className="guidance">Om du slutförde betalningen dyker den upp under Mina köp så snart den bekräftats. Kontakta oss om den inte gör det.</p>
-            <Link className="btn" to="/konto">Mina köp</Link>
+            <h1>{t('pay.errorTitle')}</h1>
+            <p className="guidance">{t('pay.errorBody')}</p>
+            <Link className="btn" to="/konto">{t('m.myPurchases')}</Link>
           </>
         )}
       </div>
@@ -81,14 +83,15 @@ export function PaymentSuccessPage() {
 }
 
 export function PaymentCancelledPage() {
+  const t = useT();
   const [params] = useSearchParams();
   const paymentId = params.get('payment');
   return (
     <div className="auth-page">
       <div className="card" style={{ maxWidth: 560, margin: '2rem auto', textAlign: 'center' }}>
-        <h1>Betalningen avbröts</h1>
-        <p className="guidance">Ingen betalning genomfördes och inget drogs. Du kan förbereda ansökan när du vill — eller ansöka själv direkt hos myndigheten, det är alltid gratis.</p>
-        <Link className="btn" to={returnPath(paymentId)}>Tillbaka</Link>
+        <h1>{t('pay.cancelTitle')}</h1>
+        <p className="guidance">{t('pay.cancelBody')}</p>
+        <Link className="btn" to={returnPath(paymentId)}>{t('pay.back')}</Link>
       </div>
     </div>
   );

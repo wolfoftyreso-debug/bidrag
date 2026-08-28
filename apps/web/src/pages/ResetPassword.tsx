@@ -6,8 +6,10 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ApiError, post } from '../api';
+import { useT } from '../i18n';
 
 export default function ResetPasswordPage() {
+  const t = useT();
   const { token } = useParams();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -19,7 +21,7 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     setError(null);
     if (password !== confirm) {
-      setError('Lösenorden matchar inte.');
+      setError(t('rp.mismatch'));
       return;
     }
     setBusy(true);
@@ -27,7 +29,7 @@ export default function ResetPasswordPage() {
       await post('/v1/auth/reset-password', { token, password });
       setDone(true);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Något gick fel. Försök igen.');
+      setError(err instanceof ApiError ? err.message : t('login.error.generic'));
     } finally {
       setBusy(false);
     }
@@ -39,22 +41,22 @@ export default function ResetPasswordPage() {
       <div className="card">
         {done ? (
           <>
-            <h2>Lösenordet är bytt ✓</h2>
-            <p className="guidance">Av säkerhetsskäl är alla tidigare inloggningar utloggade. Logga in med ditt nya lösenord.</p>
-            <p><Link className="btn" to="/">Till inloggningen</Link></p>
+            <h2>{t('rp.doneTitle')}</h2>
+            <p className="guidance">{t('rp.doneBody')}</p>
+            <p><Link className="btn" to="/">{t('rp.toLogin')}</Link></p>
           </>
         ) : (
           <>
-            <h2>Välj nytt lösenord</h2>
+            <h2>{t('rp.title')}</h2>
             <form onSubmit={submit}>
-              <label htmlFor="pw">Nytt lösenord</label>
+              <label htmlFor="pw">{t('login.newPassword')}</label>
               <input id="pw" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={10} autoComplete="new-password" />
-              <p className="guidance">Minst 10 tecken.</p>
-              <label htmlFor="pw2">Upprepa lösenordet</label>
+              <p className="guidance">{t('login.minChars')}</p>
+              <label htmlFor="pw2">{t('rp.repeat')}</label>
               <input id="pw2" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required minLength={10} autoComplete="new-password" />
               {error && <div className="alert error">{error}</div>}
               <button type="submit" disabled={busy} style={{ marginTop: '1rem' }}>
-                {busy ? 'Byter…' : 'Byt lösenord'}
+                {busy ? t('rp.changing') : t('login.submit.code')}
               </button>
             </form>
           </>

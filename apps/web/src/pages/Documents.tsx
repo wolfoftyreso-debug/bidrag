@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, api, downloadFile, formatDate, get } from '../api';
+import { useLabels, useT } from '../i18n';
 
 interface DocRow {
   id: string;
@@ -11,21 +12,14 @@ interface DocRow {
   createdAt: string;
 }
 
-const KINDS = [
-  { value: 'cv', label: 'CV / meritförteckning' },
-  { value: 'invitation', label: 'Inbjudan / bekräftelse' },
-  { value: 'partner_letter', label: 'Partnerbrev' },
-  { value: 'budget', label: 'Budget' },
-  { value: 'stadgar', label: 'Stadgar' },
-  { value: 'annual_report', label: 'Årsredovisning / verksamhetsberättelse' },
-  { value: 'project_description', label: 'Projektbeskrivning' },
-  { value: 'activity_programme', label: 'Aktivitetsprogram' },
-  { value: 'receipt', label: 'Kvitto / bekräftelse' },
-  { value: 'decision_letter', label: 'Beslut' },
-  { value: 'other', label: 'Övrigt' },
+const KIND_VALUES = [
+  'cv', 'invitation', 'partner_letter', 'budget', 'stadgar', 'annual_report',
+  'project_description', 'activity_programme', 'receipt', 'decision_letter', 'other',
 ];
 
 export default function DocumentsPage() {
+  const t = useT();
+  const labels = useLabels();
   const [docs, setDocs] = useState<DocRow[]>([]);
   const [kind, setKind] = useState('other');
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +44,7 @@ export default function DocumentsPage() {
       if (fileRef.current) fileRef.current.value = '';
       load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Uppladdningen misslyckades.');
+      setError(err instanceof ApiError ? err.message : t('d.uploadError'));
     } finally {
       setBusy(false);
     }
@@ -58,49 +52,47 @@ export default function DocumentsPage() {
 
   return (
     <div>
-      <h1>Dokument och underlag</h1>
-      <p className="guidance" style={{ maxWidth: 640 }}>
-        Ladda upp dina underlag en gång — CV, intyg, budgetar, partnerbrev — och återanvänd dem i alla ansökningar.
-      </p>
+      <h1>{t('d.title')}</h1>
+      <p className="guidance" style={{ maxWidth: 640 }}>{t('d.guidance')}</p>
       <div className="card">
-        <h2>Ladda upp</h2>
+        <h2>{t('d.upload')}</h2>
         <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'end', flexWrap: 'wrap' }}>
           <div>
-            <label>Typ av underlag</label>
+            <label>{t('d.kindLabel')}</label>
             <select value={kind} onChange={(e) => setKind(e.target.value)}>
-              {KINDS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
+              {KIND_VALUES.map((k) => <option key={k} value={k}>{labels.doc(k)}</option>)}
             </select>
           </div>
           <div>
-            <label>Fil (PDF, PNG, JPG, DOCX, XLSX — max 20 MB)</label>
+            <label>{t('d.fileLabel')}</label>
             <input type="file" ref={fileRef} accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx,.txt" />
           </div>
-          <button disabled={busy} onClick={upload}>Ladda upp</button>
+          <button disabled={busy} onClick={upload}>{t('d.upload')}</button>
         </div>
         {error && <div className="alert error">{error}</div>}
       </div>
       <div className="card">
-        <h2>Mitt valv ({docs.length})</h2>
-        {docs.length === 0 && <p className="meta-line">Inga dokument ännu.</p>}
+        <h2>{t('d.vault', { n: docs.length })}</h2>
+        {docs.length === 0 && <p className="meta-line">{t('d.none')}</p>}
         {docs.length > 0 && (
           <table className="data">
-            <thead><tr><th>Fil</th><th>Typ</th><th>Storlek</th><th>Säkerhet</th><th>Uppladdad</th><th /></tr></thead>
+            <thead><tr><th>{t('d.thFile')}</th><th>{t('d.thType')}</th><th>{t('d.thSize')}</th><th>{t('d.thSecurity')}</th><th>{t('d.thUploaded')}</th><th /></tr></thead>
             <tbody>
               {docs.map((d) => (
                 <tr key={d.id}>
                   <td>{d.filename}</td>
-                  <td><span className="badge">{KINDS.find((k) => k.value === d.kind)?.label ?? d.kind}</span></td>
+                  <td><span className="badge">{labels.doc(d.kind)}</span></td>
                   <td>{(d.sizeBytes / 1024).toFixed(0)} kB</td>
                   <td>
-                    {d.scanStatus === 'clean' && <span className="badge success">skannad</span>}
-                    {d.scanStatus === 'scan_unavailable' && <span className="badge">ej skannad</span>}
-                    {d.scanStatus === 'pending' && <span className="badge warning">väntar</span>}
-                    {d.scanStatus === 'blocked' && <span className="badge danger">stoppad</span>}
+                    {d.scanStatus === 'clean' && <span className="badge success">{t('d.scanClean')}</span>}
+                    {d.scanStatus === 'scan_unavailable' && <span className="badge">{t('d.scanUnavailable')}</span>}
+                    {d.scanStatus === 'pending' && <span className="badge warning">{t('d.scanPending')}</span>}
+                    {d.scanStatus === 'blocked' && <span className="badge danger">{t('d.scanBlocked')}</span>}
                   </td>
                   <td>{formatDate(d.createdAt)}</td>
                   <td>
                     <button className="subtle" onClick={() => void downloadFile(`/v1/documents/${d.id}/download`, d.filename)}>
-                      Ladda ner
+                      {t('d.download')}
                     </button>
                   </td>
                 </tr>

@@ -129,8 +129,26 @@ export function useLabels() {
       elig: (s: string) => ({ label: has(`label.elig.${s}`) ? t(`label.elig.${s}` as MessageKey) : s, tone: ELIG_TONES[s] ?? '' }),
       instr: (s: string) => (has(`label.instr.${s}`) ? t(`label.instr.${s}` as MessageKey) : s),
       verif: (s: string) => (has(`label.verif.${s}`) ? t(`label.verif.${s}` as MessageKey) : s),
+      msg: (s: string) => ({
+        label: has(`label.msg.${s}`) ? t(`label.msg.${s}` as MessageKey) : s,
+        tone: MSG_TONES[s] ?? '',
+      }),
+      role: (s: string) => (has(`label.role.${s}`) ? t(`label.role.${s}` as MessageKey) : s),
+      doc: (s: string) => (has(`label.doc.${s}`) ? t(`label.doc.${s}` as MessageKey) : s),
     };
   }, [t]);
+}
+
+const MSG_TONES: Record<string, string> = {
+  award: 'success', rejection: 'danger', decision: 'info', clarification_request: 'warning',
+  missing_document: 'warning', deadline_extension: 'info', payment_notice: 'success',
+  reporting_request: 'warning', acknowledgement: '', other: '',
+};
+
+/** BCP 47-tagg för datumformatering i valt språk (Intl/toLocaleDateString). */
+export function useDateLocale(): string {
+  const { locale } = useI18n();
+  return locale === 'sv' ? 'sv-SE' : locale === 'prs' ? 'fa-AF' : locale;
 }
 
 /** Språkväljare — används på inloggningssidan och i sidomenyn. */

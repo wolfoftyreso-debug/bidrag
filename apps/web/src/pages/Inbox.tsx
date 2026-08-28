@@ -6,6 +6,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ApiError, formatDate, get, post } from '../api';
+import { useLabels, useT } from '../i18n';
 
 interface CorrRow {
   id: string;
@@ -24,20 +25,9 @@ interface CaseRow {
   opportunityTitle: string;
 }
 
-const TYPE_LABELS: Record<string, { label: string; tone: string }> = {
-  award: { label: 'Beviljat', tone: 'success' },
-  rejection: { label: 'Avslag', tone: 'danger' },
-  decision: { label: 'Beslut', tone: 'info' },
-  clarification_request: { label: 'Komplettering begärs', tone: 'warning' },
-  missing_document: { label: 'Dokument saknas', tone: 'warning' },
-  deadline_extension: { label: 'Förlängd tid', tone: 'info' },
-  payment_notice: { label: 'Utbetalning', tone: 'success' },
-  reporting_request: { label: 'Redovisning begärs', tone: 'warning' },
-  acknowledgement: { label: 'Mottagningsbekräftelse', tone: '' },
-  other: { label: 'Övrigt', tone: '' },
-};
-
 export default function InboxPage() {
+  const t = useT();
+  const labels = useLabels();
   const [rows, setRows] = useState<CorrRow[]>([]);
   const [cases, setCases] = useState<CaseRow[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -64,21 +54,18 @@ export default function InboxPage() {
       setShowForm(false);
       load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Kunde inte registrera meddelandet.');
+      setError(err instanceof ApiError ? err.message : t('in.registerError'));
     }
   };
 
   return (
     <div>
-      <h1>Inkorg</h1>
-      <p className="guidance" style={{ maxWidth: 640 }}>
-        Samla svar från myndigheter och stiftelser på ett ställe. Registrera brev och e-post du fått — systemet kopplar dem
-        till rätt ansökan och tolkar vad de betyder. Bidragskoll.se loggar aldrig in på myndigheters portaler åt dig.
-      </p>
+      <h1>{t('nav.inbox')}</h1>
+      <p className="guidance" style={{ maxWidth: 640 }}>{t('in.guidance')}</p>
 
       <div className="card">
         <button className="secondary" onClick={() => setShowForm(!showForm)}>
-          {showForm ? 'Avbryt' : '+ Registrera meddelande'}
+          {showForm ? t('in.cancel') : t('in.registerToggle')}
         </button>
         {showForm && (
           <form
@@ -88,38 +75,38 @@ export default function InboxPage() {
               void register(e.currentTarget);
             }}
           >
-            <label>Avsändare</label>
-            <input name="sender" placeholder="t.ex. Kulturrådet" maxLength={320} />
-            <label>Ämne</label>
+            <label>{t('in.sender')}</label>
+            <input name="sender" placeholder={t('in.senderPlaceholder')} maxLength={320} />
+            <label>{t('in.subject')}</label>
             <input name="subject" required maxLength={500} />
-            <label>Innehåll (klistra in texten)</label>
+            <label>{t('in.bodyLabel')}</label>
             <textarea name="body" maxLength={50000} />
-            <label>Koppla till ansökan (frivilligt — annars försöker systemet själv)</label>
+            <label>{t('in.linkCase')}</label>
             <select name="caseId">
-              <option value="">Automatisk koppling</option>
+              <option value="">{t('in.autoLink')}</option>
               {cases.map((c) => <option key={c.id} value={c.id}>{c.opportunityTitle}</option>)}
             </select>
             {error && <div className="alert error">{error}</div>}
-            <button type="submit" style={{ marginTop: '0.8rem' }}>Registrera</button>
+            <button type="submit" style={{ marginTop: '0.8rem' }}>{t('in.register')}</button>
           </form>
         )}
       </div>
 
       <div className="card">
-        <h2>Meddelanden ({rows.length})</h2>
-        {rows.length === 0 && <p className="meta-line">Inga meddelanden ännu.</p>}
+        <h2>{t('in.messages', { n: rows.length })}</h2>
+        {rows.length === 0 && <p className="meta-line">{t('in.none')}</p>}
         {rows.map((r) => {
-          const t = TYPE_LABELS[r.messageType] ?? TYPE_LABELS.other!;
+          const msg = labels.msg(r.messageType);
           const linkedCase = cases.find((c) => c.id === r.caseId);
           return (
             <div key={r.id} style={{ padding: '0.7rem 0', borderBottom: '1px solid var(--border)' }}>
               <div>
-                <strong>{r.subject}</strong> <span className={`badge ${t.tone}`}>{t.label}</span>{' '}
-                {r.matchedBy === 'auto' && <span className="badge" title="Automatiskt kopplad — du kan ändra kopplingen.">auto-kopplad</span>}
-                {r.matchedBy === 'unmatched' && <span className="badge warning">ej kopplad</span>}
+                <strong>{r.subject}</strong> <span className={`badge ${msg.tone}`}>{msg.label}</span>{' '}
+                {r.matchedBy === 'auto' && <span className="badge" title={t('in.autoLinkedTitle')}>{t('in.autoLinked')}</span>}
+                {r.matchedBy === 'unmatched' && <span className="badge warning">{t('in.unlinked')}</span>}
               </div>
               <div className="meta-line">
-                {r.sender || 'Okänd avsändare'} · {formatDate(r.receivedAt)}
+                {r.sender || t('in.unknownSender')} · {formatDate(r.receivedAt)}
                 {linkedCase && <> · <Link to={`/ansokningar/${linkedCase.id}`}>{linkedCase.opportunityTitle}</Link></>}
               </div>
               {r.body && <p className="meta-line" style={{ whiteSpace: 'pre-wrap' }}>{r.body.slice(0, 300)}{r.body.length > 300 ? '…' : ''}</p>}

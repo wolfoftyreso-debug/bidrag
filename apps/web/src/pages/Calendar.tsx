@@ -4,7 +4,8 @@
  */
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { STATE_LABELS, formatDate, get } from '../api';
+import { formatDate, get } from '../api';
+import { useDateLocale, useLabels, useT } from '../i18n';
 
 interface CaseRow {
   id: string;
@@ -29,6 +30,9 @@ interface Entry {
 }
 
 export default function CalendarPage() {
+  const t = useT();
+  const labels = useLabels();
+  const dateLocale = useDateLocale();
   const [entries, setEntries] = useState<Entry[] | null>(null);
 
   useEffect(() => {
@@ -46,7 +50,10 @@ export default function CalendarPage() {
           date: new Date(c.deadlineAt),
           kind: 'application',
           title: c.opportunityTitle,
-          sub: `Din ansökan · ${STATE_LABELS[c.state]?.label ?? c.state} · ${days === 0 ? 'sista dagen idag' : `${days} ${days === 1 ? 'dag' : 'dagar'} kvar`}`,
+          sub: t('cal.subApplication', {
+            status: labels.state(c.state).label,
+            kvar: days === 0 ? t('cal.lastDayToday') : days === 1 ? t('cal.dayLeft') : t('cal.daysLeft', { n: days }),
+          }),
           link: `/ansokningar/${c.id}`,
           tone: days <= 7 ? 'danger' : days <= 14 ? 'warning' : 'info',
         });
@@ -59,7 +66,7 @@ export default function CalendarPage() {
           date: new Date(opp.closesAt),
           kind: 'opportunity',
           title: opp.title,
-          sub: `${opp.authorityName} · ansökan stänger`,
+          sub: t('cal.subCloses', { myndighet: opp.authorityName }),
           link: `/stod/${opp.slug}`,
           tone: '',
         });
@@ -67,22 +74,23 @@ export default function CalendarPage() {
       list.sort((x, y) => x.date.getTime() - y.date.getTime());
       setEntries(list);
     });
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t]);
 
-  if (!entries) return <p>Laddar…</p>;
+  if (!entries) return <p>{t('app.loading')}</p>;
 
   const byMonth = new Map<string, Entry[]>();
   for (const e of entries) {
-    const key = e.date.toLocaleDateString('sv-SE', { year: 'numeric', month: 'long' });
+    const key = e.date.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long' });
     byMonth.set(key, [...(byMonth.get(key) ?? []), e]);
   }
 
   return (
     <div style={{ maxWidth: 720 }}>
-      <h1>Kalender</h1>
-      <p className="guidance">Deadlines för dina ansökningar och öppna stöd som stänger. Påminnelser skickas automatiskt 14, 7 och 3 dagar före.</p>
+      <h1>{t('nav.calendar')}</h1>
+      <p className="guidance">{t('cal.guidance')}</p>
       {entries.length === 0 && (
-        <div className="card"><p className="meta-line">Inga kommande deadlines. Löpande stöd utan slutdatum visas inte här.</p></div>
+        <div className="card"><p className="meta-line">{t('cal.none')}</p></div>
       )}
       {[...byMonth.entries()].map(([month, list]) => (
         <div className="card" key={month}>
@@ -91,12 +99,12 @@ export default function CalendarPage() {
             <div className="match-row" key={i}>
               <div className="match-score" style={{ minWidth: 54 }}>
                 <div className="n" style={{ fontSize: '1.2rem' }}>{e.date.getDate()}</div>
-                <div className="of">{e.date.toLocaleDateString('sv-SE', { weekday: 'short' })}</div>
+                <div className="of">{e.date.toLocaleDateString(dateLocale, { weekday: 'short' })}</div>
               </div>
               <div style={{ flex: 1 }}>
                 <div>
                   <Link to={e.link} style={{ fontWeight: 600 }}>{e.title}</Link>{' '}
-                  {e.kind === 'application' ? <span className={`badge ${e.tone}`}>din ansökan</span> : <span className="badge">öppet stöd</span>}
+                  {e.kind === 'application' ? <span className={`badge ${e.tone}`}>{t('cal.yourApplication')}</span> : <span className="badge">{t('cal.openSupport')}</span>}
                 </div>
                 <div className="meta-line">{e.sub} · {formatDate(e.date.toISOString())}</div>
               </div>
