@@ -40,7 +40,7 @@ en connector saknas eller saknar en förmåga.
    som INSERT-satser, inga psql-metakommandon. ~397 KB. Kör mot den DIREKTA
    anslutningen, aldrig via poolern.
 4. **Verifiera räkningarna** — allt annat är ett fel:
-   `funding_opportunities=84, funding_authorities=36,
+   `funding_opportunities=85, funding_authorities=36,
    application_schemas=71, sources=37, drizzle.__drizzle_migrations=13`.
 5. **Objektlagring**: ingen bucket. `STORAGE_DRIVER=postgres` lägger
    dokument/uppladdningar i tabellen `storage_objects` i Neon — privat, åtkomst

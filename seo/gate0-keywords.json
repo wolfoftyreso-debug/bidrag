@@ -1,12 +1,12 @@
 {
  "_kontrakt": "GATE 0 block A (docs/ZERO_COMPROMISE_GATE.md): statusregister för alla keyword-rötter. GREEN kan aldrig sättas maskinellt — kräver mänsklig SERP-jämförelse sida-mot-sida (gatens manuella del). SERP-ägare endast där observation finns (seo/serp-gate0.json / serp-sprint01.json); rader med verifikation NONE har medvetet tom ägare. Genereras av tools/gatekeywords.mjs — redigeras aldrig för hand.",
  "datum_serp": "2026-08-22",
- "antal_rotter": 347,
+ "antal_rotter": 349,
  "status": {
   "GREEN": 0,
-  "YELLOW": 132,
+  "YELLOW": 133,
   "RED": 122,
-  "GREY": 93
+  "GREY": 94
  },
  "rotter": [
   {
@@ -1847,6 +1847,17 @@
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
+   "keyword": "försäkringskassan tillfällig föräldrapenning (vab)",
+   "root": "tillfällig föräldrapenning vab",
+   "intent": "navigational",
+   "query_familj": "entity:fk-tillfallig-foraldrapenning",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-tillfallig-foraldrapenning/",
+   "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
+   "status": "GREY",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
    "keyword": "försäkringskassan underhållsstöd",
    "root": "underhållsstöd",
    "intent": "navigational",
@@ -3607,6 +3618,17 @@
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
+   "keyword": "tillfällig föräldrapenning (vab)",
+   "root": "tillfällig föräldrapenning vab",
+   "intent": "informational",
+   "query_familj": "entity:fk-tillfallig-foraldrapenning",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-tillfallig-foraldrapenning/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
    "keyword": "tillväxtverket affärsutvecklingscheckar (internationalisering/digitalisering)",
    "root": "affärsutvecklingscheckar internationaliseringdigitalisering",
    "intent": "navigational",
@@ -3689,7 +3711,7 @@
    "intent": "informational",
    "query_familj": "k18-bidrag-barnfamilj",
    "serp_agare": "FK + foraldrakalkylatorn (privat kalkylsajt rankar 2:a)",
-   "var_url": null,
+   "var_url": "/bidrag/fk-tillfallig-foraldrapenning/",
    "content_gap": "angränsande myndighetsterm utanför kärnan (automatiskt/försäkringsbaserat stöd) — orienteringsinnehåll, aldrig huvudmål",
    "status": "GREY",
    "verifikation": "FRESH 2026-08-22"

@@ -137,7 +137,10 @@ for (const r of manual.roots) {
       intent: TYPE_INTENT[r.type] ?? 'informational',
       category: r.cluster,
       audience: r.audience,
-      page_type: r.cluster === 'brand' ? 'brand' : r.type === 'comparison' ? 'comparison' : 'hub-or-guide',
+      // Kurerad målsidesmappning (SEO_OPPORTUNITIES P2): en manuell rot som
+      // ägs av en befintlig entity-sida pekas dit i stället för att stå omappad.
+      our_target_url: r.target ?? null,
+      page_type: r.target ? 'entity' : r.cluster === 'brand' ? 'brand' : r.type === 'comparison' ? 'comparison' : 'hub-or-guide',
       source: `manual:${r.type}`,
       notes: r.note ?? null,
     }),

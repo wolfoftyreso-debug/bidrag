@@ -83,7 +83,7 @@ if [ "$db_up" = 1 ]; then
     psql "${BASE_URL}/${BOOT_DB}" -v ON_ERROR_STOP=1 -q -f deploy/bootstrap.sql &&
     got="$(psql "${BASE_URL}/${BOOT_DB}" -Atc \
       "select (select count(*) from public.funding_opportunities)||'/'||(select count(*) from public.funding_authorities)||'/'||(select count(*) from public.application_schemas)||'/'||(select count(*) from public.sources)||'/'||(select count(*) from drizzle.__drizzle_migrations)")" &&
-    want="84/36/71/37/${MIG_COUNT}" &&
+    want="85/36/71/37/${MIG_COUNT}" &&
     { [ "$got" = "$want" ] || { echo "räkningar: fick $got, väntade $want"; false; }; } &&
     DATABASE_URL="${BASE_URL}/${BOOT_DB}" npm run db:migrate &&
     after="$(psql "${BASE_URL}/${BOOT_DB}" -Atc 'select count(*) from drizzle.__drizzle_migrations')" &&
@@ -98,7 +98,7 @@ if [ "$db_up" = 1 ]; then
     DATABASE_URL="${BASE_URL}/${MIG_DB}" npm run db:migrate &&
     DATABASE_URL="${BASE_URL}/${MIG_DB}" npm run db:seed &&
     got="$(psql "${BASE_URL}/${MIG_DB}" -Atc 'select count(*) from public.funding_opportunities')" &&
-    { [ "$got" = "84" ] || { echo "seed gav $got stöd, väntade 84"; false; }; }
+    { [ "$got" = "85" ] || { echo "seed gav $got stöd, väntade 85"; false; }; }
   }
   step "Migreringar + seed från tom databas" migrations_from_scratch
   psql "$ADMIN_URL" -c "DROP DATABASE IF EXISTS $MIG_DB" >/dev/null 2>&1

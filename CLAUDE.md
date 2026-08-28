@@ -28,7 +28,7 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
   dokumentmallar + rendering, deterministisk ansökningsgranskning
   (`docs/APPLICATION-INTELLIGENCE.md`). 90 enhetstester.
 - **`apps/api`** — Fastify 5 + Drizzle + PostgreSQL 16, modulär monolit:
-  auth/tenancy, kunskapsgraf (84 stöd, 36 finansiärer, 71 ansökningsscheman,
+  auth/tenancy, kunskapsgraf (85 stöd, 36 finansiärer, 71 ansökningsscheman,
   37 källor), matchning, ansökningar, dokumentvalv, betalningar (Stripe Checkout
   + Swish Handel-adaptrar + mock), kvitton med moms, GDPR-självservice, kurators-API,
   bakgrundsjobb. 213 integrationstester.

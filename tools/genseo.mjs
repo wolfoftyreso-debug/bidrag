@@ -305,6 +305,8 @@ function entityPage(o) {
       ? [{ q: `Vem kan få ${shortTitle(o).toLowerCase()}?`, a: `Det avgörs av ${auth?.name ?? 'den ansvariga aktören'}. De viktigaste villkoren enligt källan: ${kravText.join('; ')}.` }]
       : []),
   ];
+  // Verkliga användarfrågor (uppmätt efterfrågan) — se PAA_BY_SLUG ovan.
+  faq.push(...paaFaqFor(o.slug, o, auth?.name ?? 'den ansvariga aktören', faq));
 
   const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, pageTitle(o), crumbs) };
   const webPageNode = jsonld['@graph'].find((n) => n['@type'] === 'WebPage');
@@ -632,6 +634,84 @@ avgörs alltid hos den officiella källan, som varje bidragssida länkar till.</
 // redovisas som "uppgift saknas" med skäl. Samma sanningslager driver sidan.
 const FBI = computeFundingIndex(opportunities, authorities, CURATED_AT);
 const FBI_REGISTRY = JSON.parse(readFileSync(join(ROOT, 'seo', 'foretagsbidragsindex-metrics.json'), 'utf8'));
+
+// ── Verkliga användarfrågor (PAA) på entity-sidorna ──────────────────────────
+// Källa: seo/volumes-semrush-se.json (Semrush phrase_questions, db=se) — de
+// faktiska formuleringar människor söker på. Svaren syntetiseras DETERMINISTISKT
+// ur seeden (summary/villkor/ansökningsväg); belopp och tider som inte är
+// fastställda mot källan besvaras ärligt med hänvisning — aldrig en påhittad
+// siffra. Frågesetten fästs bara på entydiga entity-sidor; huvudtermen
+// 'bostadsbidrag' ägs av kommande klusterhubb (SEO_OPPORTUNITIES §3) och
+// fästs medvetet inte på någon av de två specifika bostadsbidragssidorna.
+const PAA_QUESTIONS = JSON.parse(readFileSync(join(ROOT, 'seo', 'volumes-semrush-se.json'), 'utf8')).questions ?? {};
+const PAA_BY_SLUG = {
+  'kommun-forsorjningsstod': ['försörjningsstöd', 'ekonomiskt bistånd'],
+  'pm-bostadstillagg': ['bostadstillägg'],
+  'fk-underhallsstod': ['underhållsstöd'],
+  'fk-aktivitetsstod': ['aktivitetsstöd'],
+};
+// Kurerade extra-frågor (sanna, allmänt kända förhållanden — inte statistik).
+const PAA_EXTRA = {
+  'kommun-forsorjningsstod': [{
+    q: 'Är socialbidrag och försörjningsstöd samma sak?',
+    a: 'Ja — socialbidrag är den äldre vardagliga benämningen. Dagens formella namn är försörjningsstöd, som är en del av det ekonomiska biståndet och söks hos socialtjänsten i din kommun.',
+  }],
+};
+
+/** Ärligt svar på en verklig användarfråga, härlett ur seeden — aldrig påhittade nivåer. */
+function paaAnswer(q, o, authName) {
+  const lq = q.toLowerCase();
+  if (/^vad (är|betyder)/.test(lq)) {
+    return `${o.summary} De fullständiga villkoren finns hos ${authName}.`;
+  }
+  if (/hur (söker|ansöker|anmäler)/.test(lq)) {
+    return `${o.applicationMethod ?? 'Se den officiella källan.'} Att ansöka själv är alltid gratis — Bidragskoll länkar till den officiella källan.`;
+  }
+  if (/hur mycket|hur högt|hur höga|belopp|kapital|hur räknas/.test(lq)) {
+    return `Beloppet fastställs av ${authName} och beror på din situation. Bidragskoll anger inga nivåer som inte är fastställda mot källan — aktuella belopp finns hos den officiella källan, och den kostnadsfria genomgången ställer följdfrågorna som påverkar just din nivå.`;
+  }
+  if (/när (får|kommer|betalas|kan man)|hur lång tid|hur länge|betalas .* ut/.test(lq)) {
+    return `Tider och perioder styrs av ${authName} och kan variera — se den officiella källan för aktuella handläggnings- och utbetalningstider.`;
+  }
+  return `Det avgörs av villkoren hos ${authName} — se den officiella källan. Bidragskolls kostnadsfria genomgång ställer följdfrågorna som avgör hur det ser ut i just din situation.`;
+}
+
+/** Svarskategori — används för att inte upprepa samma mallsvar på flera frågevarianter. */
+function paaCategory(lq) {
+  if (/^vad (är|betyder)/.test(lq)) return 'vad';
+  if (/hur (söker|ansöker|anmäler)/.test(lq)) return 'ansok';
+  if (/hur mycket|hur högt|hur höga|belopp|kapital|hur räknas/.test(lq)) return 'belopp';
+  if (/när (får|kommer|betalas|kan man)|hur lång tid|hur länge|betalas .* ut/.test(lq)) return 'tid';
+  return 'ovrigt';
+}
+
+/**
+ * PAA-frågorna för en entity-sida: dedupe mot standard-FAQ:n OCH per
+ * svarskategori (högst en fråga per mallsvar — den med störst volym vinner,
+ * listorna är volymsorterade). Aldrig fler än 5 utöver de kurerade extra.
+ */
+function paaFaqFor(slug, o, authName, existing) {
+  const terms = PAA_BY_SLUG[slug] ?? [];
+  const seen = new Set(existing.map((f) => f.q.toLowerCase().replace(/[^a-zåäö0-9 ]/g, '').trim()));
+  const usedCats = new Set();
+  const out = [...(PAA_EXTRA[slug] ?? [])];
+  for (const term of terms) {
+    for (const item of PAA_QUESTIONS[term] ?? []) {
+      const lq = item.question.toLowerCase();
+      // Vem-kan-få-varianter täcks redan av standardfrågan "Vem kan få X?".
+      if (/^(vem (kan få|får|har rätt)|vad krävs)/.test(lq)) continue;
+      const cat = paaCategory(lq);
+      if (usedCats.has(cat)) continue;
+      const key = lq.replace(/[^a-zåäö0-9 ]/g, '').trim();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      usedCats.add(cat);
+      out.push({ q: item.question.charAt(0).toUpperCase() + item.question.slice(1) + '?', a: paaAnswer(item.question, o, authName) });
+      if (out.length >= 5 + (PAA_EXTRA[slug]?.length ?? 0)) return out;
+    }
+  }
+  return out;
+}
 
 function foretagsindexPage() {
   const path = '/foretagsbidragsindex/';

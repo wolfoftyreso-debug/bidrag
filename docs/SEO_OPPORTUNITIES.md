@@ -48,6 +48,15 @@ Detta uppgraderar kureringskön från känd hypotes till uppmätt efterfrågan:
 
 ## P2 — Stödet FINNS i KB; ytan behöver stärkas eller mappas
 
+**Status 2026-08-28: GENOMFÖRD.** 17 rötter mappade till sina entity-sidor
+(roots-manual `target` → `our_target_url` i keyword-databasen), och de verkliga
+PAA-frågorna renderas nu som ärlig FAQ (synligt + FAQPage-JSON-LD) på
+försörjningsstöd/ekonomiskt bistånd, bostadstillägg, underhållsstöd och
+aktivitetsstöd — deterministiska svar ur seeden, en fråga per svarskategori,
+aldrig påhittade belopp/tider. Synonymfrågan socialbidrag↔försörjningsstöd
+besvaras på försörjningsstödssidan. Huvudtermen bostadsbidrag lämnas medvetet
+till klusterhubben (§3 nedan).
+
 | Term | Volym/mån | KD | Målsida |
 |---|---|---|---|
 | omvårdnadsbidrag | 6 600 | 26 | `/bidrag/fk-omvardnadsbidrag/` — fanns redan i KB (probefel i första versionen) |
@@ -67,7 +76,7 @@ Detta uppgraderar kureringskön från känd hypotes till uppmätt efterfrågan:
 | klimatklivet | 1 600 | 28 | `/bidrag/naturvardsverket-klimatklivet/` |
 | lok-stöd | 1 300 | **20** | entity finns — mappa |
 | bidrag glasögon barn | 1 000 | 22 | `/bidrag/region-glasogonbidrag-barn/` (1 900 för `glasögonbidrag barn`) |
-| vab ersättning | 1 000 | **16** | lägsta KD av alla ≥1 000-termer |
+| vab ersättning | 1 000 | **16** | `/bidrag/fk-tillfallig-foraldrapenning/` — **kurerad 2026-08-28** + rot mappad |
 | etableringsersättning | 1 000 | 23 | `/bidrag/af-etableringsersattning/` |
 
 ## P3 — Verktyg (produkt-som-SEO, §16)

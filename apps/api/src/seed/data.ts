@@ -2460,6 +2460,30 @@ export const opportunities: SeedOpportunity[] = [
   }),
 
   def({
+    slug: 'fk-tillfallig-foraldrapenning',
+    authorityKey: 'forsakringskassan',
+    sourceKey: 'fk-privatperson',
+    programmeName: 'Stöd till barnfamiljer',
+    title: 'Försäkringskassan — Tillfällig föräldrapenning (vab)',
+    summary: 'Ersättning när du stannar hemma från arbetet för att ta hand om ett sjukt barn.',
+    description:
+      'Tillfällig föräldrapenning — i dagligt tal vab — kan lämnas när du avstår från arbete för att vårda ett sjukt barn som är under 12 år (i vissa fall äldre). Ersättningen baseras på din inkomst; nivå och antal dagar framgår hos Försäkringskassan. Anmäl första dagen och ansök i efterhand; läkarintyg krävs från åttonde dagen.',
+    objective: 'Göra det möjligt att vårda sjukt barn utan att förlora hela inkomsten.',
+    instrumentType: 'social_benefit',
+    applicantTypes: ['individual'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Anmäl och ansök på Mina sidor hos Försäkringskassan.',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    authenticationMethod: 'eid',
+    estimatedEffortDays: 1,
+    criteria: [
+      c('fk-tfp-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Ersättningen gäller privatpersoner'),
+      c('fk-tfp-m1', 'mandatory', 'person.hasChildrenAtHome', 'is_true', undefined, 'Du ska ha barn (normalt under 12 år) som du vårdar när det är sjukt', 'Har du barn som bor hos dig?'),
+    ],
+  }),
+
+  def({
     slug: 'fk-sjukpenning',
     authorityKey: 'forsakringskassan',
     sourceKey: 'fk-privatperson',

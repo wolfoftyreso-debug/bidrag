@@ -257,7 +257,7 @@ Vaktade övergångar (kan aldrig forceras via API:t):
 
 ## 7. Kunskapsbasen i siffror
 
-84 stöd från 36 finansiärer, 71 ansökningsscheman, 38 källor (kurerade 2026-08-13).
+85 stöd från 36 finansiärer, 71 ansökningsscheman, 38 källor (kurerade 2026-08-13).
 Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 
 | Finansiär | Stöd |
@@ -273,7 +273,7 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | Europeiska kommissionen (Erasmus+/EACEA) | 3 |
 | Formas | 1 |
 | Forte — Forskningsrådet för hälsa, arbetsliv och välfärd | 1 |
-| Försäkringskassan | 15 |
+| Försäkringskassan | 16 |
 | Jordbruksverket | 3 |
 | Konstnärsnämnden | 3 |
 | Kulturrådet | 6 |
