@@ -48,9 +48,16 @@ await f.locator('button:has-text("Nästa")').last().click();
 await f.waitForSelector('text=Din plan —', { timeout: 15000 });
 console.log('1. Planen nås i den sandlådade vyn ✓');
 
-const knapp = f.locator('a:has-text("Till ansökan hos")').first();
+// Sök på funktion, inte på etikett: knappraden i planvyns kort innehåller
+// exakt en utgående länk — den till myndigheten. (Fyndet som motiverar detta:
+// F-FÖRBERED döpte om knappen och checken slutade hitta den.)
+const knapp = f.locator('.explain .row a[href^="https://"]').first();
 const href = await knapp.getAttribute('href');
-if (!href || !href.startsWith('https://')) throw new Error(`ansökningsknappen saknar https-adress: ${href}`);
+if (!href) throw new Error('planvyns kort har ingen utgående länk till myndigheten');
+const etikett = (await knapp.innerText()).trim();
+if (!/ansök/i.test(etikett)) {
+  throw new Error(`den utgående länken beskriver inte att man ansöker: "${etikett}"`);
+}
 await knapp.click();
 await page.waitForTimeout(400);
 
