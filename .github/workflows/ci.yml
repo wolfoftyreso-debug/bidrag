@@ -39,6 +39,11 @@ jobs:
       # regenererad ur källorna eller om en operation saknar instruktion.
       - name: Manual up to date
         run: npm run manual -- --check
+
+      # Märket och illustrationerna är kod: en otillåten XML-kommentar gjorde
+      # en gång både logo-mark.svg och den härledda favicon.svg oparsbara.
+      - name: SVG guard (well-formed marks + derived favicon)
+        run: node tools/svgcheck.mjs
       - name: Unit tests (core)
         run: npm run test -w packages/core
       - name: Integration tests (api, real Postgres)

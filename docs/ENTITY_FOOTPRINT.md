@@ -14,7 +14,7 @@ namngrannen Bidragskollen (RobIsr/Mindful Innovations-appen) och dränks i
 | Domän (kanonisk) | https://bidragskoll.se |
 | Tagline | "Berätta din situation — se vilka stöd du ser ut att kunna ha rätt till." |
 | Beskrivning (60 s-versionen) | Svensk konsumenttjänst som gör ekonomiskt stöd begripligt: gratis genomgång av din situation mot en kurerad kunskapsbas med källa och kontrolldatum; analys 39 kr; att ansöka själv hos myndigheten är alltid gratis. Fattar inga myndighetsbeslut. |
-| Logotyp/märke | Guldbock på djup indigo (`apps/web/public/favicon.svg`); ordbild i Source Serif 4 |
+| Logotyp/märke | Taklinje + bock på rundad signalblå ruta (`apps/web/public/logo-mark.svg` = enda källan, `tools/genbrand.mjs` härleder favicon/app-ikoner/OG); ordbild i Source Serif 4 |
 | Färger | #232c58 / #3d4a8c / #d9b96a / #f7f5f0 (design/bidragskoll.css) |
 | Juridisk enhet | ⬜ (Landvex AB enligt betalytan — bekräfta + orgnr) |
 | Kontakt-e-post | ⬜ |

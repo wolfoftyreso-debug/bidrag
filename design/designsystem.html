@@ -12,22 +12,59 @@
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
 <style>
 body { margin: 0; background: #f7f5f0; color: #1f1d18; font-family: 'Public Sans', ui-sans-serif, system-ui, sans-serif; font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
-a { color: #3d4a8c; text-decoration: none; }
+a { color: #1273d4; text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 2px; }
-::selection { background: #eef0f9; }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+::selection { background: #e8f2fd; }
+@keyframes bk-shimmer { 0% { background-position: -220px 0; } 100% { background-position: 220px 0; } }
+@keyframes bk-blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+@keyframes bk-grow { from { width: 0; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
 </style>
 </helmet>
 <div style="max-width:980px;margin:0 auto;padding:40px 24px 96px">
 
-<header style="background:#232c58;color:#fff;border-radius:16px;padding:40px 44px;margin-bottom:40px;box-shadow:0 6px 16px rgba(35,44,88,.20),0 20px 48px rgba(35,44,88,.16)">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
-    <span style="width:12px;height:12px;border-radius:4px;background:linear-gradient(135deg,#8a97d4,#3d4a8c);display:inline-block"></span>
-    <span style="font-family:'Source Serif 4',serif;font-weight:700;font-size:21px;letter-spacing:-.01em">Bidragskoll.se</span>
+<header style="background:#0a3f78;color:#fff;border-radius:16px;padding:40px 44px;margin-bottom:40px;box-shadow:0 6px 16px rgba(10,63,120,.20),0 20px 48px rgba(10,63,120,.16)">
+  <div style="display:flex;align-items:center;gap:11px;margin-bottom:18px">
+    <svg viewBox="0 0 40 40" width="34" height="34" style="display:block;flex-shrink:0" aria-label="Bidragskoll">
+      <rect x="0" y="0" width="40" height="40" rx="11" fill="#fffdf9"></rect>
+      <polyline points="10,20.5 20,11.5 30,20.5" fill="none" stroke="#6fb2f0" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+      <polyline points="14,25.5 18.5,30 27,21" fill="none" stroke="#0a3f78" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"></polyline>
+    </svg>
+    <span style="font-family:'Source Serif 4',serif;font-weight:700;font-size:22px;letter-spacing:-.02em;line-height:1">Bidragskoll<span style="font-weight:500;color:#6fb2f0">.se</span></span>
   </div>
-  <h1 style="font-family:'Source Serif 4',serif;font-size:34px;font-weight:600;letter-spacing:-.015em;line-height:1.25;margin:0 0 10px">Designsystem — riktning Bläck</h1>
-  <p style="color:#c8cfeb;max-width:62ch;margin:0 0 8px">Berätta din livssituation → se vilka stöd du <em>ser ut att kunna ha rätt till</em> → låt systemet förbereda ansökan. Varma neutraler, dämpad indigo och seriffrubriker: myndighetsnära förtroende med modern mjukhet. Lugnt, ljust, sakligt — aldrig flashigt.</p>
-  <p style="color:#8a97d4;font-size:13px;margin:0">Ersätter tidigare blå system · speglas tillbaka till apps/web/src/styles.css, demo/demo.css och tools/genseo.mjs · Produktprinciperna är orubbliga.</p>
+  <h1 style="font-family:'Source Serif 4',serif;font-size:34px;font-weight:600;letter-spacing:-.015em;line-height:1.25;margin:0 0 10px">Designsystem — riktning Signal</h1>
+  <p style="color:#cfe4fa;max-width:62ch;margin:0 0 8px">Berätta din livssituation → se vilka stöd du <em>ser ut att kunna ha rätt till</em> → låt systemet förbereda ansökan. Varma neutraler, klar signalblå och seriffrubriker: myndighetsnära förtroende med modern mjukhet. Lugnt, ljust, sakligt — aldrig flashigt.</p>
+  <svg viewBox="0 0 480 132" style="width:100%;height:auto;max-width:660px;display:block;margin:20px 0 18px" aria-hidden="true">
+    <circle cx="437" cy="26" r="13" fill="#f5edd8"></circle>
+    <rect x="0" y="118" width="480" height="3" rx="1.5" fill="#3f8fdd"></rect>
+    <rect x="18" y="56" width="32" height="62" rx="2" fill="#1273d4"></rect>
+    <rect x="24" y="63" width="6" height="6" fill="#6fb2f0"></rect><rect x="37" y="63" width="6" height="6" fill="#6fb2f0"></rect><rect x="24" y="76" width="6" height="6" fill="#6fb2f0"></rect><rect x="37" y="76" width="6" height="6" fill="#6fb2f0"></rect><rect x="24" y="89" width="6" height="6" fill="#6fb2f0"></rect><rect x="37" y="89" width="6" height="6" fill="#6fb2f0"></rect>
+    <rect x="56" y="76" width="24" height="42" rx="2" fill="#0d5cae"></rect>
+    <rect x="62" y="83" width="5" height="5" fill="#6fb2f0"></rect><rect x="70" y="83" width="5" height="5" fill="#6fb2f0"></rect><rect x="62" y="95" width="5" height="5" fill="#6fb2f0"></rect>
+    <rect x="88" y="42" width="38" height="76" rx="2" fill="#3f8fdd"></rect>
+    <rect x="95" y="50" width="7" height="7" fill="#e8f2fd"></rect><rect x="108" y="50" width="7" height="7" fill="#e8f2fd"></rect><rect x="95" y="64" width="7" height="7" fill="#e8f2fd"></rect><rect x="108" y="64" width="7" height="7" fill="#e8f2fd"></rect><rect x="95" y="78" width="7" height="7" fill="#e8f2fd"></rect><rect x="108" y="78" width="7" height="7" fill="#e8f2fd"></rect><rect x="95" y="92" width="7" height="7" fill="#e8f2fd"></rect><rect x="108" y="92" width="7" height="7" fill="#e8f2fd"></rect>
+    <rect x="152" y="82" width="58" height="36" rx="2" fill="#fffdf9"></rect>
+    <polygon points="144,84 181,58 218,84" fill="#6fb2f0"></polygon>
+    <rect x="174" y="100" width="14" height="18" rx="1" fill="#1273d4"></rect>
+    <rect x="158" y="90" width="9" height="9" rx="1" fill="#e8f2fd"></rect><rect x="195" y="90" width="9" height="9" rx="1" fill="#e8f2fd"></rect>
+    <rect x="240" y="98" width="6" height="20" rx="2" fill="#5c5240"></rect>
+    <circle cx="243" cy="88" r="14" fill="#3f7050"></circle><circle cx="231" cy="96" r="8" fill="#6d9179"></circle><circle cx="255" cy="96" r="8" fill="#6d9179"></circle>
+    <rect x="278" y="102" width="5" height="16" rx="2" fill="#5c5240"></rect>
+    <circle cx="280" cy="94" r="11" fill="#6d9179"></circle>
+    <circle cx="314" cy="86" r="8" fill="#f5edd8"></circle>
+    <rect x="306" y="97" width="17" height="21" rx="8" fill="#e8f2fd"></rect>
+    <circle cx="335" cy="92" r="6" fill="#6fb2f0"></circle>
+    <rect x="329" y="101" width="13" height="17" rx="6" fill="#fffdf9"></rect>
+    <rect x="352" y="106" width="24" height="10" rx="5" fill="#e8f2fd"></rect>
+    <rect x="355" y="113" width="4" height="6" rx="2" fill="#e8f2fd"></rect><rect x="369" y="113" width="4" height="6" rx="2" fill="#e8f2fd"></rect>
+    <circle cx="379" cy="102" r="6" fill="#e8f2fd"></circle>
+    <polygon points="375,97 377,90 381,97" fill="#6fb2f0"></polygon>
+    <rect x="398" y="66" width="30" height="52" rx="2" fill="#1273d4"></rect>
+    <rect x="404" y="74" width="6" height="6" fill="#6fb2f0"></rect><rect x="416" y="74" width="6" height="6" fill="#6fb2f0"></rect><rect x="404" y="87" width="6" height="6" fill="#6fb2f0"></rect><rect x="416" y="87" width="6" height="6" fill="#6fb2f0"></rect>
+    <rect x="436" y="52" width="34" height="66" rx="2" fill="#0d5cae"></rect>
+    <rect x="442" y="60" width="7" height="7" fill="#e8f2fd"></rect><rect x="455" y="60" width="7" height="7" fill="#e8f2fd"></rect><rect x="442" y="74" width="7" height="7" fill="#e8f2fd"></rect><rect x="455" y="74" width="7" height="7" fill="#e8f2fd"></rect><rect x="442" y="88" width="7" height="7" fill="#e8f2fd"></rect><rect x="455" y="88" width="7" height="7" fill="#e8f2fd"></rect>
+  </svg>
+  <p style="color:#6fb2f0;font-size:13px;margin:0">Ersätter tidigare blå system · speglas tillbaka till apps/web/src/styles.css, demo/demo.css och tools/genseo.mjs · Produktprinciperna är orubbliga.</p>
 </header>
 
 <section style="margin-bottom:48px">
@@ -45,7 +82,7 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
 
 <section style="margin-bottom:48px">
   <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 4px">1. Färger (tokens)</h2>
-  <p style="color:#57534a;font-size:14px;margin:0 0 18px">Varma neutraler bär ytan; indigo är identiteten och används sparsamt. Semantiska färger alltid med mjuk bakgrundsvariant.</p>
+  <p style="color:#57534a;font-size:14px;margin:0 0 18px">Varma neutraler bär ytan; signalblå är identiteten och används sparsamt. Semantiska färger alltid med mjuk bakgrundsvariant.</p>
   <h3 style="font-size:15px;font-weight:700;margin:0 0 10px">Ytor &amp; text</h3>
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:22px">
     <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#f7f5f0"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--bg</b>#f7f5f0 · sidbakgrund</div></div>
@@ -56,13 +93,13 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
     <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#e6e2d8"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--border</b>#e6e2d8 · linje</div></div>
     <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#d5cfc0"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--border-strong</b>#d5cfc0 · fältkant</div></div>
   </div>
-  <h3 style="font-size:15px;font-weight:700;margin:0 0 10px">Primär (indigo-identitet)</h3>
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 10px">Primär (signalblå identitet)</h3>
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:22px">
-    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#3d4a8c"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary</b>#3d4a8c · knappar, länkar</div></div>
-    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#2f3a70"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary-dark</b>#2f3a70 · hover</div></div>
-    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#232c58"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary-deep</b>#232c58 · varumärke/hero</div></div>
-    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#eef0f9"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary-soft</b>#eef0f9 · markerat val, info</div></div>
-    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:rgba(61,74,140,.28)"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary-ring</b>rgba(61,74,140,.28) · fokusring 3px</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#1273d4"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary</b>#1273d4 · knappar, länkar</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#0d5cae"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary-dark</b>#0d5cae · hover</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#0a3f78"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary-deep</b>#0a3f78 · varumärke/hero</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:#e8f2fd"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary-soft</b>#e8f2fd · markerat val, info</div></div>
+    <div style="border:1px solid #e6e2d8;border-radius:10px;overflow:hidden;background:#fffdf9"><div style="height:52px;background:rgba(18,115,212,.30)"></div><div style="padding:8px 10px;font-size:12px;line-height:1.45"><b style="display:block">--primary-ring</b>rgba(18,115,212,.30) · fokusring 3px</div></div>
   </div>
   <h3 style="font-size:15px;font-weight:700;margin:0 0 10px">Semantiska</h3>
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
@@ -86,7 +123,7 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
     <div style="display:flex;align-items:baseline;gap:20px;padding:10px 0;border-bottom:1px dashed #e6e2d8"><span style="min-width:250px;font-size:12px;color:#57534a;font-family:ui-monospace,Menlo,monospace">.guidance · 13.5px muted</span><span style="color:#57534a;font-size:13.5px">Räkna med inkomst före skatt, per månad.</span></div>
     <div style="display:flex;align-items:baseline;gap:20px;padding:10px 0;border-bottom:1px dashed #e6e2d8"><span style="min-width:250px;font-size:12px;color:#57534a;font-family:ui-monospace,Menlo,monospace">.q-context · 12px uppercase</span><span style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a">Fråga 3 av 7 · Boende</span></div>
     <div style="display:flex;align-items:baseline;gap:20px;padding:10px 0;border-bottom:1px dashed #e6e2d8"><span style="min-width:250px;font-size:12px;color:#57534a;font-family:ui-monospace,Menlo,monospace">poäng · serif 26px/600</span><span style="font-family:'Source Serif 4',serif;font-size:26px;font-weight:600">86 <span style="font-family:'Public Sans',sans-serif;font-size:12px;color:#57534a;font-weight:400">av 100</span></span></div>
-    <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:14px 0 0"><b>Radier:</b> kort 14px · knappar/fält 10px · val 11px · piller 999px. <b>Skuggor:</b> skiktade, tydligt djup — kort: 0 1px 3px rgba(40,36,28,.07), 0 4px 14px rgba(40,36,28,.08) · lyft (skärmar/paneler): 0 3px 8px rgba(40,36,28,.08), 0 14px 34px rgba(40,36,28,.13) · primärknapp: 0 2px 6px rgba(35,44,88,.28). <b>Rörelse:</b> 80 ms tryck · 120–130 ms hover · 200 ms progress · prefers-reduced-motion stänger av allt. Inga gradienter på knappar — platta ytor, djup skapas med kant och skugga.</p>
+    <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:14px 0 0"><b>Radier:</b> kort 14px · knappar/fält 10px · val 11px · piller 999px. <b>Skuggor:</b> skiktade, tydligt djup — kort: 0 1px 3px rgba(40,36,28,.07), 0 4px 14px rgba(40,36,28,.08) · lyft (skärmar/paneler): 0 3px 8px rgba(40,36,28,.08), 0 14px 34px rgba(40,36,28,.13) · primärknapp: 0 2px 6px rgba(10,63,120,.26). <b>Rörelse:</b> 80 ms tryck · 120–130 ms hover · 200 ms progress · prefers-reduced-motion stänger av allt. Inga gradienter på knappar — platta ytor, djup skapas med kant och skugga.</p>
   </div>
 </section>
 
@@ -100,23 +137,23 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Hus">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
-          <polygon points="20,46 48,24 76,46" fill="#3d4a8c"></polygon>
-          <rect x="42" y="58" width="12" height="19" rx="1" fill="#232c58"></rect>
-          <rect x="31" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
-          <rect x="58" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
+          <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <polygon points="20,46 48,24 76,46" fill="#1273d4"></polygon>
+          <rect x="42" y="58" width="12" height="19" rx="1" fill="#0a3f78"></rect>
+          <rect x="31" y="51" width="8" height="8" rx="1" fill="#e8f2fd" stroke="#0a3f78" stroke-width="1.5"></rect>
+          <rect x="58" y="51" width="8" height="8" rx="1" fill="#e8f2fd" stroke="#0a3f78" stroke-width="1.5"></rect>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Hus</div><div style="color:#57534a;font-size:12px">Boende</div>
       </div>
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Familj">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <circle cx="32" cy="30" r="9" fill="#3d4a8c"></circle>
-          <rect x="22" y="42" width="20" height="34" rx="10" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
-          <circle cx="62" cy="32" r="8" fill="#232c58"></circle>
-          <rect x="53" y="43" width="18" height="33" rx="9" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
-          <circle cx="47" cy="56" r="6" fill="#8a97d4"></circle>
-          <rect x="41" y="63" width="12" height="13" rx="6" fill="#eef0f9" stroke="#232c58" stroke-width="2"></rect>
+          <circle cx="32" cy="30" r="9" fill="#1273d4"></circle>
+          <rect x="22" y="42" width="20" height="34" rx="10" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <circle cx="62" cy="32" r="8" fill="#0a3f78"></circle>
+          <rect x="53" y="43" width="18" height="33" rx="9" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <circle cx="47" cy="56" r="6" fill="#6fb2f0"></circle>
+          <rect x="41" y="63" width="12" height="13" rx="6" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2"></rect>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Familj</div><div style="color:#57534a;font-size:12px">Barn &amp; hushåll</div>
       </div>
@@ -133,11 +170,11 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Stad">
           <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="16" y="42" width="17" height="34" rx="1.5" fill="#3d4a8c"></rect>
-          <rect x="37" y="28" width="20" height="48" rx="1.5" fill="#232c58"></rect>
-          <rect x="61" y="48" width="17" height="28" rx="1.5" fill="#fffdf9" stroke="#232c58" stroke-width="2"></rect>
-          <rect x="20" y="47" width="4" height="4" fill="#eef0f9"></rect><rect x="27" y="47" width="4" height="4" fill="#eef0f9"></rect><rect x="20" y="55" width="4" height="4" fill="#eef0f9"></rect><rect x="27" y="55" width="4" height="4" fill="#eef0f9"></rect>
-          <rect x="42" y="34" width="4" height="4" fill="#8a97d4"></rect><rect x="49" y="34" width="4" height="4" fill="#8a97d4"></rect><rect x="42" y="42" width="4" height="4" fill="#8a97d4"></rect><rect x="49" y="42" width="4" height="4" fill="#8a97d4"></rect><rect x="42" y="50" width="4" height="4" fill="#8a97d4"></rect><rect x="49" y="50" width="4" height="4" fill="#8a97d4"></rect>
+          <rect x="16" y="42" width="17" height="34" rx="1.5" fill="#1273d4"></rect>
+          <rect x="37" y="28" width="20" height="48" rx="1.5" fill="#0a3f78"></rect>
+          <rect x="61" y="48" width="17" height="28" rx="1.5" fill="#fffdf9" stroke="#0a3f78" stroke-width="2"></rect>
+          <rect x="20" y="47" width="4" height="4" fill="#e8f2fd"></rect><rect x="27" y="47" width="4" height="4" fill="#e8f2fd"></rect><rect x="20" y="55" width="4" height="4" fill="#e8f2fd"></rect><rect x="27" y="55" width="4" height="4" fill="#e8f2fd"></rect>
+          <rect x="42" y="34" width="4" height="4" fill="#6fb2f0"></rect><rect x="49" y="34" width="4" height="4" fill="#6fb2f0"></rect><rect x="42" y="42" width="4" height="4" fill="#6fb2f0"></rect><rect x="49" y="42" width="4" height="4" fill="#6fb2f0"></rect><rect x="42" y="50" width="4" height="4" fill="#6fb2f0"></rect><rect x="49" y="50" width="4" height="4" fill="#6fb2f0"></rect>
           <rect x="65" y="53" width="4" height="4" fill="#d5cfc0"></rect><rect x="72" y="53" width="4" height="4" fill="#d5cfc0"></rect>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Stad</div><div style="color:#57534a;font-size:12px">Arbete &amp; kommun</div>
@@ -155,29 +192,29 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Hund">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="26" y="48" width="36" height="17" rx="8.5" fill="#232c58"></rect>
-          <rect x="30" y="62" width="6" height="14" rx="3" fill="#232c58"></rect>
-          <rect x="52" y="62" width="6" height="14" rx="3" fill="#232c58"></rect>
-          <circle cx="66" cy="44" r="10" fill="#232c58"></circle>
-          <polygon points="60,36 64,26 68,36" fill="#3d4a8c"></polygon>
-          <polygon points="68,36 72,27 75,37" fill="#3d4a8c"></polygon>
+          <rect x="26" y="48" width="36" height="17" rx="8.5" fill="#0a3f78"></rect>
+          <rect x="30" y="62" width="6" height="14" rx="3" fill="#0a3f78"></rect>
+          <rect x="52" y="62" width="6" height="14" rx="3" fill="#0a3f78"></rect>
+          <circle cx="66" cy="44" r="10" fill="#0a3f78"></circle>
+          <polygon points="60,36 64,26 68,36" fill="#1273d4"></polygon>
+          <polygon points="68,36 72,27 75,37" fill="#1273d4"></polygon>
           <circle cx="70" cy="44" r="1.8" fill="#fffdf9"></circle>
-          <rect x="18" y="42" width="10" height="6" rx="3" fill="#3d4a8c"></rect>
+          <rect x="18" y="42" width="10" height="6" rx="3" fill="#1273d4"></rect>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Hund</div><div style="color:#57534a;font-size:12px">Husdjur &amp; sällskap</div>
       </div>
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Gubbe">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <circle cx="48" cy="28" r="11" fill="#3d4a8c"></circle>
-          <rect x="34" y="42" width="28" height="34" rx="13" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
+          <circle cx="48" cy="28" r="11" fill="#1273d4"></circle>
+          <rect x="34" y="42" width="28" height="34" rx="13" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2.5"></rect>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Gubbe</div><div style="color:#57534a;font-size:12px">Du &amp; ditt konto</div>
       </div>
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Dokument">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="30" y="20" width="36" height="48" rx="3" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
+          <rect x="30" y="20" width="36" height="48" rx="3" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
           <rect x="36" y="30" width="24" height="3" rx="1.5" fill="#d5cfc0"></rect>
           <rect x="36" y="38" width="24" height="3" rx="1.5" fill="#d5cfc0"></rect>
           <rect x="36" y="46" width="16" height="3" rx="1.5" fill="#d5cfc0"></rect>
@@ -190,97 +227,97 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Skola">
           <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="22" y="46" width="52" height="31" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
-          <polygon points="16,48 48,28 80,48" fill="#232c58"></polygon>
-          <rect x="46" y="18" width="3" height="12" fill="#232c58"></rect>
-          <polygon points="49,18 62,21.5 49,25" fill="#3d4a8c"></polygon>
-          <rect x="42" y="58" width="12" height="19" rx="1" fill="#3d4a8c"></rect>
-          <rect x="28" y="53" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
-          <rect x="60" y="53" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
+          <rect x="22" y="46" width="52" height="31" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <polygon points="16,48 48,28 80,48" fill="#0a3f78"></polygon>
+          <rect x="46" y="18" width="3" height="12" fill="#0a3f78"></rect>
+          <polygon points="49,18 62,21.5 49,25" fill="#1273d4"></polygon>
+          <rect x="42" y="58" width="12" height="19" rx="1" fill="#1273d4"></rect>
+          <rect x="28" y="53" width="8" height="8" rx="1" fill="#e8f2fd" stroke="#0a3f78" stroke-width="1.5"></rect>
+          <rect x="60" y="53" width="8" height="8" rx="1" fill="#e8f2fd" stroke="#0a3f78" stroke-width="1.5"></rect>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Skola</div><div style="color:#57534a;font-size:12px">Utbildning &amp; CSN</div>
       </div>
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Vård">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <circle cx="48" cy="48" r="26" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></circle>
-          <rect x="43" y="34" width="10" height="28" rx="2" fill="#3d4a8c"></rect>
-          <rect x="34" y="43" width="28" height="10" rx="2" fill="#3d4a8c"></rect>
+          <circle cx="48" cy="48" r="26" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></circle>
+          <rect x="43" y="34" width="10" height="28" rx="2" fill="#1273d4"></rect>
+          <rect x="34" y="43" width="28" height="10" rx="2" fill="#1273d4"></rect>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Vård</div><div style="color:#57534a;font-size:12px">Hälsa &amp; sjukersättning</div>
       </div>
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Bil">
           <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="18" y="50" width="60" height="18" rx="7" fill="#3d4a8c"></rect>
-          <rect x="30" y="38" width="34" height="16" rx="6" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
-          <circle cx="32" cy="68" r="8" fill="#232c58"></circle><circle cx="32" cy="68" r="3" fill="#fffdf9"></circle>
-          <circle cx="64" cy="68" r="8" fill="#232c58"></circle><circle cx="64" cy="68" r="3" fill="#fffdf9"></circle>
+          <rect x="18" y="50" width="60" height="18" rx="7" fill="#1273d4"></rect>
+          <rect x="30" y="38" width="34" height="16" rx="6" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <circle cx="32" cy="68" r="8" fill="#0a3f78"></circle><circle cx="32" cy="68" r="3" fill="#fffdf9"></circle>
+          <circle cx="64" cy="68" r="8" fill="#0a3f78"></circle><circle cx="64" cy="68" r="3" fill="#fffdf9"></circle>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Bil</div><div style="color:#57534a;font-size:12px">Resor &amp; fordon</div>
       </div>
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Cykel">
           <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <circle cx="28" cy="62" r="14" fill="none" stroke="#232c58" stroke-width="2.5"></circle>
-          <circle cx="68" cy="62" r="14" fill="none" stroke="#232c58" stroke-width="2.5"></circle>
-          <polygon points="28,62 46,62 40,44 62,44 68,62 46,62" fill="none" stroke="#3d4a8c" stroke-width="2.5"></polygon>
-          <rect x="36" y="38" width="10" height="4" rx="2" fill="#232c58"></rect>
-          <rect x="62" y="36" width="9" height="4" rx="2" fill="#232c58"></rect>
+          <circle cx="28" cy="62" r="14" fill="none" stroke="#0a3f78" stroke-width="2.5"></circle>
+          <circle cx="68" cy="62" r="14" fill="none" stroke="#0a3f78" stroke-width="2.5"></circle>
+          <polygon points="28,62 46,62 40,44 62,44 68,62 46,62" fill="none" stroke="#1273d4" stroke-width="2.5"></polygon>
+          <rect x="36" y="38" width="10" height="4" rx="2" fill="#0a3f78"></rect>
+          <rect x="62" y="36" width="9" height="4" rx="2" fill="#0a3f78"></rect>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Cykel</div><div style="color:#57534a;font-size:12px">Vardag &amp; pendling</div>
       </div>
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Katt">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="36" y="44" width="24" height="32" rx="11" fill="#3d4a8c"></rect>
-          <circle cx="48" cy="34" r="11" fill="#3d4a8c"></circle>
-          <polygon points="39,28 41,16 47,25" fill="#232c58"></polygon>
-          <polygon points="57,28 55,16 49,25" fill="#232c58"></polygon>
+          <rect x="36" y="44" width="24" height="32" rx="11" fill="#1273d4"></rect>
+          <circle cx="48" cy="34" r="11" fill="#1273d4"></circle>
+          <polygon points="39,28 41,16 47,25" fill="#0a3f78"></polygon>
+          <polygon points="57,28 55,16 49,25" fill="#0a3f78"></polygon>
           <circle cx="44" cy="33" r="1.8" fill="#fffdf9"></circle>
           <circle cx="52" cy="33" r="1.8" fill="#fffdf9"></circle>
-          <rect x="58" y="58" width="16" height="6" rx="3" fill="#232c58"></rect>
+          <rect x="58" y="58" width="16" height="6" rx="3" fill="#0a3f78"></rect>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Katt</div><div style="color:#57534a;font-size:12px">Husdjur</div>
       </div>
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Barnvagn">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="26" y="38" width="42" height="20" rx="9" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
-          <rect x="66" y="24" width="3" height="20" rx="1.5" fill="#232c58" transform="rotate(20 67 34)"></rect>
-          <circle cx="36" cy="66" r="8" fill="#232c58"></circle><circle cx="36" cy="66" r="3" fill="#fffdf9"></circle>
-          <circle cx="58" cy="66" r="8" fill="#232c58"></circle><circle cx="58" cy="66" r="3" fill="#fffdf9"></circle>
-          <circle cx="38" cy="46" r="5" fill="#3d4a8c"></circle>
+          <rect x="26" y="38" width="42" height="20" rx="9" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <rect x="66" y="24" width="3" height="20" rx="1.5" fill="#0a3f78" transform="rotate(20 67 34)"></rect>
+          <circle cx="36" cy="66" r="8" fill="#0a3f78"></circle><circle cx="36" cy="66" r="3" fill="#fffdf9"></circle>
+          <circle cx="58" cy="66" r="8" fill="#0a3f78"></circle><circle cx="58" cy="66" r="3" fill="#fffdf9"></circle>
+          <circle cx="38" cy="46" r="5" fill="#1273d4"></circle>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Barnvagn</div><div style="color:#57534a;font-size:12px">Föräldrapenning</div>
       </div>
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Portfölj">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="38" y="30" width="20" height="12" rx="4" fill="none" stroke="#232c58" stroke-width="2.5"></rect>
-          <rect x="22" y="38" width="52" height="38" rx="5" fill="#3d4a8c"></rect>
-          <rect x="22" y="52" width="52" height="3" fill="#232c58"></rect>
-          <rect x="43" y="49" width="10" height="9" rx="2" fill="#eef0f9" stroke="#232c58" stroke-width="2"></rect>
+          <rect x="38" y="30" width="20" height="12" rx="4" fill="none" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <rect x="22" y="38" width="52" height="38" rx="5" fill="#1273d4"></rect>
+          <rect x="22" y="52" width="52" height="3" fill="#0a3f78"></rect>
+          <rect x="43" y="49" width="10" height="9" rx="2" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2"></rect>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Portfölj</div><div style="color:#57534a;font-size:12px">Arbete &amp; a-kassa</div>
       </div>
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Pensionär">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <circle cx="42" cy="28" r="10" fill="#232c58"></circle>
-          <rect x="30" y="41" width="24" height="35" rx="11" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
-          <rect x="63" y="44" width="3.5" height="32" rx="1.75" fill="#3d4a8c"></rect>
-          <rect x="58" y="42" width="12" height="3.5" rx="1.75" fill="#3d4a8c"></rect>
+          <circle cx="42" cy="28" r="10" fill="#0a3f78"></circle>
+          <rect x="30" y="41" width="24" height="35" rx="11" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <rect x="63" y="44" width="3.5" height="32" rx="1.75" fill="#1273d4"></rect>
+          <rect x="58" y="42" width="12" height="3.5" rx="1.75" fill="#1273d4"></rect>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Pensionär</div><div style="color:#57534a;font-size:12px">Pension &amp; äldre</div>
       </div>
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Flyttlåda">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="26" y="42" width="44" height="34" rx="2" fill="#d5cfc0" stroke="#232c58" stroke-width="2.5"></rect>
-          <rect x="45" y="42" width="6" height="34" fill="#3d4a8c"></rect>
-          <polygon points="26,42 14,32 40,32 48,42" fill="#efece4" stroke="#232c58" stroke-width="2.5"></polygon>
-          <polygon points="70,42 82,32 56,32 48,42" fill="#efece4" stroke="#232c58" stroke-width="2.5"></polygon>
+          <rect x="26" y="42" width="44" height="34" rx="2" fill="#d5cfc0" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <rect x="45" y="42" width="6" height="34" fill="#1273d4"></rect>
+          <polygon points="26,42 14,32 40,32 48,42" fill="#efece4" stroke="#0a3f78" stroke-width="2.5"></polygon>
+          <polygon points="70,42 82,32 56,32 48,42" fill="#efece4" stroke="#0a3f78" stroke-width="2.5"></polygon>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Flyttlåda</div><div style="color:#57534a;font-size:12px">Flytt &amp; bostadsbyte</div>
       </div>
@@ -288,7 +325,7 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Glödlampa">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
           <circle cx="48" cy="40" r="17" fill="#f5edd8" stroke="#8a6510" stroke-width="2.5"></circle>
-          <rect x="42" y="57" width="12" height="10" rx="2" fill="#232c58"></rect>
+          <rect x="42" y="57" width="12" height="10" rx="2" fill="#0a3f78"></rect>
           <rect x="46.5" y="10" width="3" height="9" rx="1.5" fill="#8a6510"></rect>
           <rect x="70" y="20" width="9" height="3" rx="1.5" fill="#8a6510" transform="rotate(45 74 21)"></rect>
           <rect x="17" y="20" width="9" height="3" rx="1.5" fill="#8a6510" transform="rotate(-45 22 21)"></rect>
@@ -298,9 +335,9 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Student">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <circle cx="48" cy="46" r="11" fill="#3d4a8c"></circle>
-          <rect x="34" y="60" width="28" height="16" rx="8" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
-          <polygon points="48,18 78,30 48,42 18,30" fill="#232c58"></polygon>
+          <circle cx="48" cy="46" r="11" fill="#1273d4"></circle>
+          <rect x="34" y="60" width="28" height="16" rx="8" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <polygon points="48,18 78,30 48,42 18,30" fill="#0a3f78"></polygon>
           <rect x="74" y="30" width="2.5" height="14" fill="#8a6510"></rect>
           <circle cx="75.2" cy="46" r="3" fill="#8a6510"></circle>
         </svg>
@@ -309,12 +346,12 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Rullstol">
           <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <circle cx="42" cy="60" r="16" fill="none" stroke="#232c58" stroke-width="2.5"></circle>
-          <circle cx="68" cy="70" r="6" fill="#232c58"></circle>
-          <circle cx="44" cy="24" r="8" fill="#3d4a8c"></circle>
-          <rect x="36" y="34" width="16" height="24" rx="7" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
-          <rect x="50" y="52" width="18" height="3" rx="1.5" fill="#3d4a8c"></rect>
-          <rect x="65" y="52" width="3" height="14" rx="1.5" fill="#3d4a8c"></rect>
+          <circle cx="42" cy="60" r="16" fill="none" stroke="#0a3f78" stroke-width="2.5"></circle>
+          <circle cx="68" cy="70" r="6" fill="#0a3f78"></circle>
+          <circle cx="44" cy="24" r="8" fill="#1273d4"></circle>
+          <rect x="36" y="34" width="16" height="24" rx="7" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <rect x="50" y="52" width="18" height="3" rx="1.5" fill="#1273d4"></rect>
+          <rect x="65" y="52" width="3" height="14" rx="1.5" fill="#1273d4"></rect>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Rullstol</div><div style="color:#57534a;font-size:12px">Funktionsstöd</div>
       </div>
@@ -334,10 +371,10 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
       <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
         <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Nyckel">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <circle cx="34" cy="40" r="14" fill="none" stroke="#3d4a8c" stroke-width="5"></circle>
-          <rect x="46" y="37" width="32" height="6" rx="3" fill="#232c58"></rect>
-          <rect x="66" y="42" width="5" height="10" rx="2" fill="#232c58"></rect>
-          <rect x="74" y="42" width="5" height="14" rx="2" fill="#232c58"></rect>
+          <circle cx="34" cy="40" r="14" fill="none" stroke="#1273d4" stroke-width="5"></circle>
+          <rect x="46" y="37" width="32" height="6" rx="3" fill="#0a3f78"></rect>
+          <rect x="66" y="42" width="5" height="10" rx="2" fill="#0a3f78"></rect>
+          <rect x="74" y="42" width="5" height="14" rx="2" fill="#0a3f78"></rect>
         </svg>
         <div style="font-weight:650;font-size:13px;margin-top:6px">Nyckel</div><div style="color:#57534a;font-size:12px">Kontrakt &amp; bostadskö</div>
       </div>
@@ -351,9 +388,9 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
       <div style="display:flex;gap:16px;align-items:flex-start">
         <svg viewBox="0 0 96 96" width="64" height="64" style="flex-shrink:0" aria-hidden="true">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
-          <polygon points="20,46 48,24 76,46" fill="#3d4a8c"></polygon>
-          <rect x="42" y="58" width="12" height="19" rx="1" fill="#232c58"></rect>
+          <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <polygon points="20,46 48,24 76,46" fill="#1273d4"></polygon>
+          <rect x="42" y="58" width="12" height="19" rx="1" fill="#0a3f78"></rect>
         </svg>
         <div>
           <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a">Fråga 4 av 7 · Boende</div>
@@ -367,77 +404,529 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
       <div style="text-align:center;padding:8px 0">
         <svg viewBox="0 0 96 96" width="96" height="96" aria-hidden="true">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="26" y="48" width="36" height="17" rx="8.5" fill="#232c58"></rect>
-          <rect x="30" y="62" width="6" height="14" rx="3" fill="#232c58"></rect>
-          <rect x="52" y="62" width="6" height="14" rx="3" fill="#232c58"></rect>
-          <circle cx="66" cy="44" r="10" fill="#232c58"></circle>
-          <polygon points="60,36 64,26 68,36" fill="#3d4a8c"></polygon>
-          <polygon points="68,36 72,27 75,37" fill="#3d4a8c"></polygon>
+          <rect x="26" y="48" width="36" height="17" rx="8.5" fill="#0a3f78"></rect>
+          <rect x="30" y="62" width="6" height="14" rx="3" fill="#0a3f78"></rect>
+          <rect x="52" y="62" width="6" height="14" rx="3" fill="#0a3f78"></rect>
+          <circle cx="66" cy="44" r="10" fill="#0a3f78"></circle>
+          <polygon points="60,36 64,26 68,36" fill="#1273d4"></polygon>
+          <polygon points="68,36 72,27 75,37" fill="#1273d4"></polygon>
           <circle cx="70" cy="44" r="1.8" fill="#fffdf9"></circle>
         </svg>
         <div style="font-weight:650;margin-top:4px">Inga ansökningar ännu</div>
         <p style="color:#57534a;font-size:13px;margin:2px 0 10px">När du förbereder en ansökan hamnar den här.</p>
-        <button style="font:inherit;font-weight:600;padding:8px 16px;border-radius:10px;border:1px solid #d5cfc0;background:#fffdf9;color:#3d4a8c;cursor:pointer;font-size:13.5px" style-hover="background:#eef0f9">Gå till din analys</button>
+        <button style="font:inherit;font-weight:600;padding:8px 16px;border-radius:10px;border:1px solid #d5cfc0;background:#fffdf9;color:#1273d4;cursor:pointer;font-size:13.5px" style-hover="background:#e8f2fd">Gå till din analys</button>
       </div>
     </div>
   </div>
 
-  <div style="background:#eef0f9;border:1.5px solid #3d4a8c;border-radius:16px;padding:32px 28px;margin-top:16px;box-shadow:0 4px 10px rgba(35,44,88,.10),0 16px 40px rgba(35,44,88,.14)">
+  <div style="background:#e8f2fd;border:1.5px solid #1273d4;border-radius:16px;padding:32px 28px;margin-top:16px;box-shadow:0 4px 10px rgba(10,63,120,.10),0 16px 40px rgba(10,63,120,.14)">
     <div style="max-width:560px;margin:0 auto;text-align:center">
       <div style="display:inline-flex;background:#fffdf9;border:1px solid #d5cfc0;border-radius:50%;padding:14px;margin-bottom:12px">
         <svg viewBox="0 0 96 96" width="96" height="96" aria-hidden="true">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
-          <polygon points="20,46 48,24 76,46" fill="#3d4a8c"></polygon>
-          <rect x="42" y="58" width="12" height="19" rx="1" fill="#232c58"></rect>
-          <rect x="31" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
-          <rect x="58" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
+          <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <polygon points="20,46 48,24 76,46" fill="#1273d4"></polygon>
+          <rect x="42" y="58" width="12" height="19" rx="1" fill="#0a3f78"></rect>
+          <rect x="31" y="51" width="8" height="8" rx="1" fill="#e8f2fd" stroke="#0a3f78" stroke-width="1.5"></rect>
+          <rect x="58" y="51" width="8" height="8" rx="1" fill="#e8f2fd" stroke="#0a3f78" stroke-width="1.5"></rect>
         </svg>
       </div>
-      <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#2f3a70;margin-bottom:4px">Nyckelfråga · Boende</div>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#0d5cae;margin-bottom:4px">Nyckelfråga · Boende</div>
       <div style="font-family:'Source Serif 4',serif;font-size:29px;font-weight:600;letter-spacing:-.015em;line-height:1.25;color:#1f1d18;margin-bottom:6px">Hur bor du?</div>
-      <p style="color:#4a5170;font-size:14px;margin:0 0 18px">Den här frågan påverkar din bedömning mest — flera stöd bygger direkt på svaret.</p>
+      <p style="color:#1b4f80;font-size:14px;margin:0 0 18px">Den här frågan påverkar din bedömning mest — flera stöd bygger direkt på svaret.</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left">
-        <button style="font:inherit;display:flex;gap:12px;align-items:center;padding:13px 15px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
-          <svg viewBox="0 0 96 96" width="34" height="34" style="flex-shrink:0" aria-hidden="true"><rect x="30" y="24" width="36" height="52" rx="2" fill="#3d4a8c"></rect><rect x="37" y="32" width="6" height="6" fill="#eef0f9"></rect><rect x="53" y="32" width="6" height="6" fill="#eef0f9"></rect><rect x="37" y="44" width="6" height="6" fill="#eef0f9"></rect><rect x="53" y="44" width="6" height="6" fill="#eef0f9"></rect><rect x="43" y="60" width="10" height="16" fill="#232c58"></rect></svg>
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;padding:13px 15px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#1273d4;box-shadow:0 2px 8px rgba(18,115,212,.18)">
+          <svg viewBox="0 0 96 96" width="34" height="34" style="flex-shrink:0" aria-hidden="true"><rect x="30" y="24" width="36" height="52" rx="2" fill="#1273d4"></rect><rect x="37" y="32" width="6" height="6" fill="#e8f2fd"></rect><rect x="53" y="32" width="6" height="6" fill="#e8f2fd"></rect><rect x="37" y="44" width="6" height="6" fill="#e8f2fd"></rect><rect x="53" y="44" width="6" height="6" fill="#e8f2fd"></rect><rect x="43" y="60" width="10" height="16" fill="#0a3f78"></rect></svg>
           Hyresrätt</button>
-        <button style="font:inherit;display:flex;gap:12px;align-items:center;padding:13px 15px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
-          <svg viewBox="0 0 96 96" width="34" height="34" style="flex-shrink:0" aria-hidden="true"><rect x="26" y="30" width="44" height="46" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="3"></rect><rect x="34" y="38" width="7" height="7" fill="#3d4a8c"></rect><rect x="55" y="38" width="7" height="7" fill="#3d4a8c"></rect><rect x="34" y="52" width="7" height="7" fill="#3d4a8c"></rect><rect x="55" y="52" width="7" height="7" fill="#3d4a8c"></rect></svg>
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;padding:13px 15px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#1273d4;box-shadow:0 2px 8px rgba(18,115,212,.18)">
+          <svg viewBox="0 0 96 96" width="34" height="34" style="flex-shrink:0" aria-hidden="true"><rect x="26" y="30" width="44" height="46" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="3"></rect><rect x="34" y="38" width="7" height="7" fill="#1273d4"></rect><rect x="55" y="38" width="7" height="7" fill="#1273d4"></rect><rect x="34" y="52" width="7" height="7" fill="#1273d4"></rect><rect x="55" y="52" width="7" height="7" fill="#1273d4"></rect></svg>
           Bostadsrätt</button>
-        <button style="font:inherit;display:flex;gap:12px;align-items:center;padding:13px 15px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
-          <svg viewBox="0 0 96 96" width="34" height="34" style="flex-shrink:0" aria-hidden="true"><rect x="28" y="46" width="40" height="30" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="3"></rect><polygon points="22,48 48,28 74,48" fill="#3d4a8c"></polygon><rect x="43" y="58" width="10" height="18" fill="#232c58"></rect></svg>
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;padding:13px 15px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#1273d4;box-shadow:0 2px 8px rgba(18,115,212,.18)">
+          <svg viewBox="0 0 96 96" width="34" height="34" style="flex-shrink:0" aria-hidden="true"><rect x="28" y="46" width="40" height="30" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="3"></rect><polygon points="22,48 48,28 74,48" fill="#1273d4"></polygon><rect x="43" y="58" width="10" height="18" fill="#0a3f78"></rect></svg>
           Äger hus</button>
-        <button style="font:inherit;display:flex;gap:12px;align-items:center;padding:13px 15px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
-          <svg viewBox="0 0 96 96" width="34" height="34" style="flex-shrink:0" aria-hidden="true"><circle cx="36" cy="32" r="10" fill="#3d4a8c"></circle><rect x="25" y="45" width="22" height="31" rx="10" fill="#eef0f9" stroke="#232c58" stroke-width="3"></rect><circle cx="64" cy="36" r="8" fill="#232c58"></circle><rect x="55" y="47" width="18" height="29" rx="9" fill="#fffdf9" stroke="#232c58" stroke-width="3"></rect></svg>
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;padding:13px 15px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#1273d4;box-shadow:0 2px 8px rgba(18,115,212,.18)">
+          <svg viewBox="0 0 96 96" width="34" height="34" style="flex-shrink:0" aria-hidden="true"><circle cx="36" cy="32" r="10" fill="#1273d4"></circle><rect x="25" y="45" width="22" height="31" rx="10" fill="#e8f2fd" stroke="#0a3f78" stroke-width="3"></rect><circle cx="64" cy="36" r="8" fill="#0a3f78"></circle><rect x="55" y="47" width="18" height="29" rx="9" fill="#fffdf9" stroke="#0a3f78" stroke-width="3"></rect></svg>
           Inneboende</button>
       </div>
     </div>
   </div>
-  <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:12px 0 0"><b>Framhävd fråga:</b> används för de 3–5 frågor som påverkar bedömningen mest. Indigo-mjuk panel med markerad kant, scen 96px i vit rundel, rubrik 29px seriff, centrerad text och illustrerade val (ikon 34px till vänster i varje val). Alla andra frågor behåller standardmönstret — max en framhävd fråga per flödessteg.</p>
+  <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:12px 0 0"><b>Framhävd fråga:</b> används för de 3–5 frågor som påverkar bedömningen mest. Ljusblå panel med markerad kant, scen 96px i vit rundel, rubrik 29px seriff, centrerad text och illustrerade val (ikon 34px till vänster i varje val). Alla andra frågor behåller standardmönstret — max en framhävd fråga per flödessteg.</p>
 </section>
 
 <section style="margin-bottom:48px">
-  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 16px">4. Komponentbibliotek</h2>
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 4px">4. Grafiska element</h2>
+  <p style="color:#57534a;font-size:14px;margin:0 0 18px">Scener, mönster, motivrundlar och inline-ikoner. Samma geometri som illustrationerna — men i roller där en hel figur blir för tung.</p>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 4px">Logotyp</h3>
+    <p style="color:#57534a;font-size:13.5px;margin:0 0 14px">Märket är en taklinje med en bock under: <b>hem</b> och <b>bedömt</b> i en form. Samma geometri som illustrationerna — runda ändar, två streckvikter, inga gradienter. Ordmärket är Source Serif 4 700 med <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">.se</code> i vikt 500 och dämpad ton.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px">
+      <div style="border:1px solid #e6e2d8;border-radius:12px;background:#fffdf9;padding:22px 20px;display:flex;align-items:center;gap:12px">
+        <svg viewBox="0 0 40 40" width="40" height="40" style="flex-shrink:0" aria-label="Bidragskoll.se"><rect width="40" height="40" rx="11" fill="#1273d4"></rect><polyline points="10,20.5 20,11.5 30,20.5" fill="none" stroke="#6fb2f0" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline points="14,25.5 18.5,30 27,21" fill="none" stroke="#fffdf9" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+        <span style="font-family:'Source Serif 4',serif;font-weight:700;font-size:23px;letter-spacing:-.02em;color:#1f1d18;line-height:1">Bidragskoll<span style="font-weight:500;color:#57534a">.se</span></span>
+      </div>
+      <div style="border:1px solid #0a3f78;border-radius:12px;background:#0a3f78;padding:22px 20px;display:flex;align-items:center;gap:12px">
+        <svg viewBox="0 0 40 40" width="40" height="40" style="flex-shrink:0" aria-label="Bidragskoll.se på mörk botten"><rect width="40" height="40" rx="11" fill="#fffdf9"></rect><polyline points="10,20.5 20,11.5 30,20.5" fill="none" stroke="#6fb2f0" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline points="14,25.5 18.5,30 27,21" fill="none" stroke="#0a3f78" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+        <span style="font-family:'Source Serif 4',serif;font-weight:700;font-size:23px;letter-spacing:-.02em;color:#fffdf9;line-height:1">Bidragskoll<span style="font-weight:500;color:#6fb2f0">.se</span></span>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;background:#f7f5f0;padding:18px 20px;display:flex;align-items:center;gap:16px;justify-content:center">
+        <svg viewBox="0 0 40 40" width="44" height="44" aria-label="Märket ensamt"><rect width="40" height="40" rx="11" fill="#1273d4"></rect><polyline points="10,20.5 20,11.5 30,20.5" fill="none" stroke="#6fb2f0" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline points="14,25.5 18.5,30 27,21" fill="none" stroke="#fffdf9" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+        <svg viewBox="0 0 40 40" width="28" height="28" aria-label="Märket 28px"><rect width="40" height="40" rx="11" fill="#1273d4"></rect><polyline points="10,20.5 20,11.5 30,20.5" fill="none" stroke="#6fb2f0" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline points="14,25.5 18.5,30 27,21" fill="none" stroke="#fffdf9" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+        <svg viewBox="0 0 40 40" width="18" height="18" aria-label="Märket 18px, favicon"><rect width="40" height="40" rx="11" fill="#1273d4"></rect><polyline points="14,25.5 18.5,30 27,21" fill="none" stroke="#fffdf9" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:14px 0 0"><b>Regler:</b> radie alltid 27,5 % av tilens sida · fri zon runt om = halva tilens höjd · under 20px faller taklinjen bort och bara bocken står kvar (favicon) · märket är signalblå på ljust, benvitt på mörkt — aldrig omfärgat, aldrig lutat, aldrig med gradient eller skugga. Ordmärket får aldrig sättas i sans.</p>
+  </div>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 4px">Scener — breda kompositioner</h3>
+    <p style="color:#57534a;font-size:13.5px;margin:0 0 14px">Flera figurer i ett landskap, alltid på gemensam marklinje. Används överst på sidor med större berättande innehåll: startsida, välkomstskärm, bekräftelse. Max en scen per sida.</p>
+
+    <div style="border:1px solid #e6e2d8;border-radius:12px;overflow:hidden;margin-bottom:14px">
+      <div style="background:#efece4;padding:14px 16px">
+        <svg viewBox="0 0 480 120" style="width:100%;height:auto;display:block" aria-label="Scen: kvarteret">
+          <circle cx="440" cy="24" r="12" fill="#f5edd8" stroke="#8a6510" stroke-width="2"></circle>
+          <rect x="0" y="104" width="480" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="16" y="54" width="30" height="50" rx="2" fill="#1273d4"></rect>
+          <rect x="22" y="61" width="6" height="6" fill="#e8f2fd"></rect><rect x="34" y="61" width="6" height="6" fill="#e8f2fd"></rect><rect x="22" y="74" width="6" height="6" fill="#e8f2fd"></rect><rect x="34" y="74" width="6" height="6" fill="#e8f2fd"></rect><rect x="22" y="87" width="6" height="6" fill="#e8f2fd"></rect><rect x="34" y="87" width="6" height="6" fill="#e8f2fd"></rect>
+          <rect x="52" y="38" width="36" height="66" rx="2" fill="#0a3f78"></rect>
+          <rect x="59" y="46" width="7" height="7" fill="#6fb2f0"></rect><rect x="72" y="46" width="7" height="7" fill="#6fb2f0"></rect><rect x="59" y="60" width="7" height="7" fill="#6fb2f0"></rect><rect x="72" y="60" width="7" height="7" fill="#6fb2f0"></rect><rect x="59" y="74" width="7" height="7" fill="#6fb2f0"></rect><rect x="72" y="74" width="7" height="7" fill="#6fb2f0"></rect>
+          <rect x="118" y="70" width="56" height="34" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <polygon points="110,72 146,46 182,72" fill="#1273d4"></polygon>
+          <rect x="139" y="86" width="14" height="18" rx="1" fill="#0a3f78"></rect>
+          <rect x="124" y="78" width="9" height="9" rx="1" fill="#e8f2fd" stroke="#0a3f78" stroke-width="1.5"></rect>
+          <rect x="159" y="78" width="9" height="9" rx="1" fill="#e8f2fd" stroke="#0a3f78" stroke-width="1.5"></rect>
+          <rect x="204" y="86" width="6" height="18" rx="2" fill="#7a6248"></rect>
+          <circle cx="207" cy="76" r="14" fill="#3f7050"></circle><circle cx="195" cy="84" r="8" fill="#6d9179"></circle><circle cx="219" cy="84" r="8" fill="#6d9179"></circle>
+          <rect x="238" y="90" width="5" height="14" rx="2" fill="#7a6248"></rect>
+          <circle cx="240" cy="82" r="10" fill="#6d9179"></circle>
+          <circle cx="276" cy="72" r="8" fill="#1273d4"></circle>
+          <rect x="268" y="83" width="17" height="21" rx="8" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2"></rect>
+          <circle cx="297" cy="78" r="6" fill="#0a3f78"></circle>
+          <rect x="291" y="87" width="13" height="17" rx="6" fill="#fffdf9" stroke="#0a3f78" stroke-width="2"></rect>
+          <rect x="316" y="92" width="24" height="10" rx="5" fill="#0a3f78"></rect>
+          <rect x="319" y="99" width="4" height="6" rx="2" fill="#0a3f78"></rect><rect x="333" y="99" width="4" height="6" rx="2" fill="#0a3f78"></rect>
+          <circle cx="343" cy="88" r="6" fill="#0a3f78"></circle>
+          <polygon points="339,83 341,76 345,83" fill="#1273d4"></polygon>
+          <rect x="368" y="60" width="28" height="44" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <rect x="374" y="68" width="6" height="6" fill="#d5cfc0"></rect><rect x="385" y="68" width="6" height="6" fill="#d5cfc0"></rect><rect x="374" y="80" width="6" height="6" fill="#d5cfc0"></rect><rect x="385" y="80" width="6" height="6" fill="#d5cfc0"></rect>
+          <rect x="406" y="48" width="32" height="56" rx="2" fill="#1273d4"></rect>
+          <rect x="412" y="56" width="7" height="7" fill="#e8f2fd"></rect><rect x="424" y="56" width="7" height="7" fill="#e8f2fd"></rect><rect x="412" y="70" width="7" height="7" fill="#e8f2fd"></rect><rect x="424" y="70" width="7" height="7" fill="#e8f2fd"></rect><rect x="412" y="84" width="7" height="7" fill="#e8f2fd"></rect><rect x="424" y="84" width="7" height="7" fill="#e8f2fd"></rect>
+          <rect x="452" y="88" width="5" height="16" rx="2" fill="#7a6248"></rect>
+          <circle cx="454" cy="80" r="10" fill="#3f7050"></circle>
+        </svg>
+      </div>
+      <div style="padding:10px 16px;font-size:13px;color:#57534a;background:#fffdf9;border-top:1px solid #e6e2d8"><b style="color:#1f1d18">Kvarteret</b> — startsida och välkomstskärm. Bär hela produktlöftet: människor, hem, samhälle.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div style="border:1px solid #e6e2d8;border-radius:12px;overflow:hidden">
+        <div style="background:#efece4;padding:14px 16px">
+          <svg viewBox="0 0 240 120" style="width:100%;height:auto;display:block" aria-label="Scen: hemma">
+            <rect x="0" y="104" width="240" height="3" rx="1.5" fill="#d5cfc0"></rect>
+            <rect x="26" y="30" width="80" height="74" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+            <rect x="26" y="30" width="80" height="10" fill="#1273d4"></rect>
+            <rect x="38" y="52" width="24" height="18" rx="1" fill="#e8f2fd" stroke="#0a3f78" stroke-width="1.5"></rect>
+            <rect x="74" y="52" width="20" height="18" rx="1" fill="#e8f2fd" stroke="#0a3f78" stroke-width="1.5"></rect>
+            <rect x="56" y="80" width="20" height="24" rx="1" fill="#0a3f78"></rect>
+            <circle cx="146" cy="52" r="10" fill="#1273d4"></circle>
+            <rect x="134" y="65" width="24" height="39" rx="11" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2.5"></rect>
+            <circle cx="176" cy="62" r="7" fill="#0a3f78"></circle>
+            <rect x="168" y="73" width="16" height="31" rx="8" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+            <rect x="196" y="92" width="22" height="9" rx="4.5" fill="#0a3f78"></rect>
+            <circle cx="220" cy="88" r="6" fill="#0a3f78"></circle>
+            <polygon points="216,83 218,76 222,83" fill="#1273d4"></polygon>
+            <rect x="199" y="99" width="4" height="6" rx="2" fill="#0a3f78"></rect><rect x="211" y="99" width="4" height="6" rx="2" fill="#0a3f78"></rect>
+          </svg>
+        </div>
+        <div style="padding:10px 16px;font-size:13px;color:#57534a;background:#fffdf9;border-top:1px solid #e6e2d8"><b style="color:#1f1d18">Hemma</b> — boende- och hushållsfrågor.</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;overflow:hidden">
+        <div style="background:#efece4;padding:14px 16px">
+          <svg viewBox="0 0 240 120" style="width:100%;height:auto;display:block" aria-label="Scen: parken">
+            <circle cx="212" cy="26" r="12" fill="#f5edd8" stroke="#8a6510" stroke-width="2"></circle>
+            <rect x="0" y="104" width="240" height="3" rx="1.5" fill="#d5cfc0"></rect>
+            <rect x="34" y="80" width="7" height="24" rx="2" fill="#7a6248"></rect>
+            <circle cx="37" cy="66" r="18" fill="#3f7050"></circle><circle cx="21" cy="76" r="10" fill="#6d9179"></circle><circle cx="53" cy="76" r="10" fill="#6d9179"></circle>
+            <rect x="96" y="86" width="48" height="6" rx="3" fill="#7a6248"></rect>
+            <rect x="99" y="92" width="4" height="12" rx="2" fill="#57534a"></rect><rect x="137" y="92" width="4" height="12" rx="2" fill="#57534a"></rect>
+            <circle cx="110" cy="62" r="8" fill="#1273d4"></circle>
+            <rect x="102" y="72" width="17" height="16" rx="8" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2"></rect>
+            <circle cx="176" cy="70" r="7" fill="#0a3f78"></circle>
+            <rect x="168" y="81" width="16" height="23" rx="8" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+            <rect x="196" y="94" width="22" height="9" rx="4.5" fill="#1273d4"></rect>
+            <circle cx="220" cy="90" r="6" fill="#1273d4"></circle>
+            <rect x="199" y="100" width="4" height="5" rx="2" fill="#1273d4"></rect><rect x="211" y="100" width="4" height="5" rx="2" fill="#1273d4"></rect>
+            <rect x="208" y="82" width="5" height="16" rx="2" fill="#7a6248"></rect>
+          </svg>
+        </div>
+        <div style="padding:10px 16px;font-size:13px;color:#57534a;background:#fffdf9;border-top:1px solid #e6e2d8"><b style="color:#1f1d18">Parken</b> — fritid, vardag, bekräftelser.</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;overflow:hidden">
+        <div style="background:#efece4;padding:14px 16px">
+          <svg viewBox="0 0 240 120" style="width:100%;height:auto;display:block" aria-label="Scen: torget">
+            <rect x="0" y="104" width="240" height="3" rx="1.5" fill="#d5cfc0"></rect>
+            <polygon points="42,32 74,50 10,50" fill="#1273d4"></polygon>
+            <rect x="12" y="50" width="60" height="4" fill="#0a3f78"></rect>
+            <rect x="18" y="54" width="7" height="46" fill="#fffdf9" stroke="#0a3f78" stroke-width="2"></rect>
+            <rect x="31" y="54" width="7" height="46" fill="#fffdf9" stroke="#0a3f78" stroke-width="2"></rect>
+            <rect x="46" y="54" width="7" height="46" fill="#fffdf9" stroke="#0a3f78" stroke-width="2"></rect>
+            <rect x="59" y="54" width="7" height="46" fill="#fffdf9" stroke="#0a3f78" stroke-width="2"></rect>
+            <rect x="10" y="100" width="64" height="5" fill="#0a3f78"></rect>
+            <rect x="108" y="60" width="13" height="8" fill="#1273d4"></rect><rect x="121" y="60" width="13" height="8" fill="#fffdf9"></rect><rect x="134" y="60" width="13" height="8" fill="#1273d4"></rect>
+            <rect x="106" y="56" width="43" height="5" rx="2" fill="#0a3f78"></rect>
+            <rect x="110" y="68" width="36" height="5" rx="2" fill="#0a3f78"></rect>
+            <rect x="112" y="73" width="4" height="31" fill="#57534a"></rect><rect x="140" y="73" width="4" height="31" fill="#57534a"></rect>
+            <circle cx="176" cy="70" r="8" fill="#1273d4"></circle>
+            <rect x="168" y="81" width="17" height="23" rx="8" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2"></rect>
+            <circle cx="199" cy="76" r="6" fill="#0a3f78"></circle>
+            <rect x="193" y="85" width="13" height="19" rx="6" fill="#fffdf9" stroke="#0a3f78" stroke-width="2"></rect>
+            <rect x="222" y="84" width="5" height="20" rx="2" fill="#7a6248"></rect>
+            <circle cx="224" cy="76" r="11" fill="#3f7050"></circle>
+          </svg>
+        </div>
+        <div style="padding:10px 16px;font-size:13px;color:#57534a;background:#fffdf9;border-top:1px solid #e6e2d8"><b style="color:#1f1d18">Torget</b> — myndigheter, kommun och stiftelser.</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;overflow:hidden">
+        <div style="background:#efece4;padding:14px 16px">
+          <svg viewBox="0 0 240 120" style="width:100%;height:auto;display:block" aria-label="Scen: pendlingen">
+            <rect x="0" y="104" width="240" height="3" rx="1.5" fill="#d5cfc0"></rect>
+            <rect x="0" y="100" width="240" height="2" fill="#57534a"></rect>
+            <rect x="14" y="46" width="26" height="54" rx="2" fill="#bcdcfa"></rect>
+            <rect x="46" y="34" width="22" height="66" rx="2" fill="#6fb2f0"></rect>
+            <rect x="94" y="46" width="86" height="40" rx="8" fill="#1273d4"></rect>
+            <rect x="102" y="53" width="20" height="14" rx="2" fill="#e8f2fd"></rect>
+            <rect x="128" y="53" width="20" height="14" rx="2" fill="#e8f2fd"></rect>
+            <rect x="154" y="53" width="18" height="14" rx="2" fill="#e8f2fd"></rect>
+            <rect x="94" y="74" width="86" height="4" fill="#0a3f78"></rect>
+            <circle cx="112" cy="90" r="9" fill="#0a3f78"></circle><circle cx="112" cy="90" r="3.5" fill="#fffdf9"></circle>
+            <circle cx="162" cy="90" r="9" fill="#0a3f78"></circle><circle cx="162" cy="90" r="3.5" fill="#fffdf9"></circle>
+            <rect x="196" y="44" width="40" height="4" rx="2" fill="#0a3f78"></rect>
+            <rect x="196" y="48" width="3" height="52" fill="#57534a"></rect><rect x="233" y="48" width="3" height="52" fill="#57534a"></rect>
+            <circle cx="214" cy="66" r="7" fill="#1273d4"></circle>
+            <rect x="207" y="76" width="15" height="24" rx="7" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2"></rect>
+          </svg>
+        </div>
+        <div style="padding:10px 16px;font-size:13px;color:#57534a;background:#fffdf9;border-top:1px solid #e6e2d8"><b style="color:#1f1d18">Pendlingen</b> — arbete, resor, färdtjänst.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 4px">Skyline-avdelare</h3>
+    <p style="color:#57534a;font-size:13.5px;margin:0 0 12px">Tre djupled i tre blåtoner. Avslutar sidor, delar av långa flöden och sitter längst ned på publika sidor. Aldrig mer än en per sida.</p>
+    <svg viewBox="0 0 960 130" style="width:100%;height:auto;display:block;border-radius:12px;background:#e8f2fd" preserveAspectRatio="none" aria-hidden="true">
+      <rect x="40" y="46" width="54" height="70" fill="#bcdcfa"></rect><rect x="110" y="30" width="42" height="86" fill="#bcdcfa"></rect><rect x="168" y="54" width="60" height="62" fill="#bcdcfa"></rect><rect x="250" y="38" width="46" height="78" fill="#bcdcfa"></rect><rect x="318" y="58" width="70" height="58" fill="#bcdcfa"></rect><rect x="408" y="26" width="40" height="90" fill="#bcdcfa"></rect><rect x="470" y="50" width="58" height="66" fill="#bcdcfa"></rect><rect x="548" y="34" width="44" height="82" fill="#bcdcfa"></rect><rect x="614" y="56" width="66" height="60" fill="#bcdcfa"></rect><rect x="700" y="40" width="42" height="76" fill="#bcdcfa"></rect><rect x="762" y="52" width="62" height="64" fill="#bcdcfa"></rect><rect x="844" y="32" width="46" height="84" fill="#bcdcfa"></rect>
+      <rect x="0" y="70" width="58" height="46" fill="#6fb2f0"></rect><rect x="76" y="58" width="50" height="58" fill="#6fb2f0"></rect><rect x="144" y="76" width="66" height="40" fill="#6fb2f0"></rect><rect x="228" y="62" width="52" height="54" fill="#6fb2f0"></rect><rect x="298" y="80" width="72" height="36" fill="#6fb2f0"></rect><rect x="388" y="60" width="48" height="56" fill="#6fb2f0"></rect><rect x="454" y="78" width="64" height="38" fill="#6fb2f0"></rect><rect x="536" y="64" width="50" height="52" fill="#6fb2f0"></rect><rect x="604" y="82" width="70" height="34" fill="#6fb2f0"></rect><rect x="692" y="66" width="48" height="50" fill="#6fb2f0"></rect><rect x="758" y="80" width="66" height="36" fill="#6fb2f0"></rect><rect x="842" y="62" width="52" height="54" fill="#6fb2f0"></rect><rect x="912" y="76" width="48" height="40" fill="#6fb2f0"></rect>
+      <rect x="18" y="96" width="66" height="26" fill="#1273d4"></rect><rect x="100" y="88" width="54" height="34" fill="#1273d4"></rect><polygon points="170,90 200,72 230,90" fill="#1273d4"></polygon><rect x="176" y="90" width="48" height="32" fill="#1273d4"></rect><rect x="248" y="94" width="70" height="28" fill="#1273d4"></rect><rect x="334" y="86" width="56" height="36" fill="#1273d4"></rect><polygon points="408,92 436,74 464,92" fill="#1273d4"></polygon><rect x="414" y="92" width="44" height="30" fill="#1273d4"></rect><rect x="480" y="96" width="72" height="26" fill="#1273d4"></rect><rect x="568" y="88" width="58" height="34" fill="#1273d4"></rect><rect x="644" y="94" width="64" height="28" fill="#1273d4"></rect><polygon points="726,90 756,72 786,90" fill="#1273d4"></polygon><rect x="732" y="90" width="48" height="32" fill="#1273d4"></rect><rect x="800" y="96" width="70" height="26" fill="#1273d4"></rect><rect x="886" y="88" width="60" height="34" fill="#1273d4"></rect>
+      <rect x="0" y="120" width="960" height="10" fill="#0a3f78"></rect>
+    </svg>
+    <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:12px 0 18px">Djupled: bakgrund <b>#bcdcfa</b> · mellanplan <b>#6fb2f0</b> · förgrund <b>#1273d4</b> · marklinje <b>#0a3f78</b>. Höjd 90–130px, alltid full bredd, alltid rak marklinje.</p>
+
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 4px">Stadsbibliotek — samhällets figurer</h3>
+    <p style="color:#57534a;font-size:13.5px;margin:0 0 14px">Åtta figurer för det offentliga: myndigheter, kollektivtrafik, vård, skola, torg. Används när stödet kommer från samhället snarare än från hushållet.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;margin-bottom:18px">
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Myndighetshus">
+          <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <polygon points="48,18 84,38 12,38" fill="#1273d4"></polygon>
+          <rect x="16" y="38" width="64" height="4" fill="#0a3f78"></rect>
+          <rect x="22" y="42" width="8" height="28" fill="#fffdf9" stroke="#0a3f78" stroke-width="2"></rect>
+          <rect x="36" y="42" width="8" height="28" fill="#fffdf9" stroke="#0a3f78" stroke-width="2"></rect>
+          <rect x="52" y="42" width="8" height="28" fill="#fffdf9" stroke="#0a3f78" stroke-width="2"></rect>
+          <rect x="66" y="42" width="8" height="28" fill="#fffdf9" stroke="#0a3f78" stroke-width="2"></rect>
+          <rect x="14" y="70" width="68" height="6" rx="1" fill="#0a3f78"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Myndighetshus</div><div style="color:#57534a;font-size:12px">Statliga stöd</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Buss">
+          <rect x="8" y="76" width="80" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="12" y="34" width="72" height="34" rx="7" fill="#1273d4"></rect>
+          <rect x="18" y="40" width="18" height="13" rx="2" fill="#e8f2fd"></rect>
+          <rect x="40" y="40" width="18" height="13" rx="2" fill="#e8f2fd"></rect>
+          <rect x="62" y="40" width="16" height="13" rx="2" fill="#e8f2fd"></rect>
+          <rect x="12" y="58" width="72" height="4" fill="#0a3f78"></rect>
+          <circle cx="28" cy="70" r="8" fill="#0a3f78"></circle><circle cx="28" cy="70" r="3" fill="#fffdf9"></circle>
+          <circle cx="68" cy="70" r="8" fill="#0a3f78"></circle><circle cx="68" cy="70" r="3" fill="#fffdf9"></circle>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Buss</div><div style="color:#57534a;font-size:12px">Resa &amp; färdtjänst</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Spårvagn">
+          <rect x="8" y="76" width="80" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="46.5" y="10" width="3" height="18" fill="#57534a"></rect>
+          <rect x="20" y="28" width="56" height="40" rx="6" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <rect x="26" y="34" width="44" height="14" rx="2" fill="#6fb2f0"></rect>
+          <rect x="20" y="54" width="56" height="6" fill="#1273d4"></rect>
+          <circle cx="34" cy="70" r="6" fill="#0a3f78"></circle><circle cx="62" cy="70" r="6" fill="#0a3f78"></circle>
+          <rect x="8" y="74" width="80" height="2" fill="#57534a"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Spårvagn</div><div style="color:#57534a;font-size:12px">Pendling &amp; kommun</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Brevlåda">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="44" y="48" width="8" height="28" fill="#57534a"></rect>
+          <rect x="26" y="24" width="44" height="28" rx="12" fill="#1273d4"></rect>
+          <rect x="34" y="34" width="28" height="5" rx="2.5" fill="#e8f2fd"></rect>
+          <rect x="26" y="50" width="44" height="4" fill="#0a3f78"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Brevlåda</div><div style="color:#57534a;font-size:12px">Ansökan skickas in</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Sjukhus">
+          <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="22" y="30" width="52" height="46" rx="3" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <rect x="22" y="30" width="52" height="10" fill="#1273d4"></rect>
+          <rect x="43" y="46" width="10" height="24" rx="2" fill="#1273d4"></rect>
+          <rect x="36" y="53" width="24" height="10" rx="2" fill="#1273d4"></rect>
+          <rect x="28" y="46" width="8" height="8" rx="1" fill="#e8f2fd"></rect>
+          <rect x="60" y="46" width="8" height="8" rx="1" fill="#e8f2fd"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Sjukhus</div><div style="color:#57534a;font-size:12px">Vård &amp; regionen</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Bibliotek">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="20" y="62" width="56" height="8" rx="2" fill="#1273d4"></rect>
+          <rect x="24" y="52" width="48" height="8" rx="2" fill="#6fb2f0"></rect>
+          <rect x="28" y="42" width="40" height="8" rx="2" fill="#0a3f78"></rect>
+          <path d="M30 40 Q48 30 66 40" fill="none" stroke="#0a3f78" stroke-width="2.5"></path>
+          <rect x="46" y="24" width="4" height="14" fill="#57534a"></rect>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Bibliotek</div><div style="color:#57534a;font-size:12px">Kunskap &amp; vägledning</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Lekplats">
+          <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <path d="M22 76 L36 26 L60 26 L74 76" fill="none" stroke="#0a3f78" stroke-width="3"></path>
+          <rect x="34" y="24" width="28" height="4" rx="2" fill="#1273d4"></rect>
+          <rect x="41" y="28" width="2.5" height="26" fill="#57534a"></rect>
+          <rect x="53" y="28" width="2.5" height="26" fill="#57534a"></rect>
+          <rect x="36" y="54" width="24" height="5" rx="2" fill="#1273d4"></rect>
+          <circle cx="70" cy="42" r="7" fill="#6fb2f0"></circle>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Lekplats</div><div style="color:#57534a;font-size:12px">Barn &amp; fritid</div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;padding:14px 10px;text-align:center;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-label="Torgstånd">
+          <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="20" y="34" width="14" height="10" fill="#1273d4"></rect><rect x="34" y="34" width="14" height="10" fill="#fffdf9"></rect><rect x="48" y="34" width="14" height="10" fill="#1273d4"></rect><rect x="62" y="34" width="14" height="10" fill="#fffdf9"></rect>
+          <rect x="18" y="30" width="60" height="5" rx="2" fill="#0a3f78"></rect>
+          <rect x="22" y="44" width="52" height="6" rx="2" fill="#0a3f78"></rect>
+          <rect x="24" y="50" width="4" height="26" fill="#57534a"></rect><rect x="68" y="50" width="4" height="26" fill="#57534a"></rect>
+          <circle cx="38" cy="58" r="5" fill="#6fb2f0"></circle><circle cx="52" cy="58" r="5" fill="#6fb2f0"></circle>
+        </svg>
+        <div style="font-weight:650;font-size:13px;margin-top:6px">Torgstånd</div><div style="color:#57534a;font-size:12px">Lokalt &amp; stiftelser</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 4px">Mönster &amp; texturer</h3>
+    <p style="color:#57534a;font-size:13.5px;margin:0 0 14px">Fyra repeterbara mönster ur samma geometri. Alltid dämpade — de ligger bakom innehåll, aldrig framför.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
+      <div style="border:1px solid #e6e2d8;border-radius:12px;overflow:hidden">
+        <svg viewBox="0 0 120 64" style="width:100%;height:auto;display:block">
+          <defs><pattern id="bk-p-dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.8" fill="#1273d4" opacity=".22"></circle></pattern></defs>
+          <rect width="120" height="64" fill="#e8f2fd"></rect><rect width="120" height="64" fill="url(#bk-p-dots)"></rect>
+        </svg>
+        <div style="padding:8px 10px;font-size:12px;background:#fffdf9;border-top:1px solid #e6e2d8"><b>Prickraster</b><div style="color:#57534a">Kortheaders, hero-ytor</div></div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;overflow:hidden">
+        <svg viewBox="0 0 120 64" style="width:100%;height:auto;display:block">
+          <defs><pattern id="bk-p-roof" width="16" height="16" patternUnits="userSpaceOnUse"><polyline points="0,12 8,4 16,12" fill="none" stroke="#0a3f78" stroke-width="1.6" opacity=".2"></polyline></pattern></defs>
+          <rect width="120" height="64" fill="#efece4"></rect><rect width="120" height="64" fill="url(#bk-p-roof)"></rect>
+        </svg>
+        <div style="padding:8px 10px;font-size:12px;background:#fffdf9;border-top:1px solid #e6e2d8"><b>Tak</b><div style="color:#57534a">Boendeteman</div></div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;overflow:hidden">
+        <svg viewBox="0 0 120 64" style="width:100%;height:auto;display:block">
+          <defs><pattern id="bk-p-grid" width="14" height="14" patternUnits="userSpaceOnUse"><path d="M0 0 H14 M0 0 V14" fill="none" stroke="#57534a" stroke-width="1" opacity=".16"></path></pattern></defs>
+          <rect width="120" height="64" fill="#f7f5f0"></rect><rect width="120" height="64" fill="url(#bk-p-grid)"></rect>
+        </svg>
+        <div style="padding:8px 10px;font-size:12px;background:#fffdf9;border-top:1px solid #e6e2d8"><b>Rutnät</b><div style="color:#57534a">Dokument &amp; blanketter</div></div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:12px;overflow:hidden">
+        <svg viewBox="0 0 120 64" style="width:100%;height:auto;display:block">
+          <defs><pattern id="bk-p-wave" width="24" height="12" patternUnits="userSpaceOnUse"><path d="M0 8 Q6 2 12 8 T24 8" fill="none" stroke="#3f7050" stroke-width="1.6" opacity=".28"></path></pattern></defs>
+          <rect width="120" height="64" fill="#ecf3ed"></rect><rect width="120" height="64" fill="url(#bk-p-wave)"></rect>
+        </svg>
+        <div style="padding:8px 10px;font-size:12px;background:#fffdf9;border-top:1px solid #e6e2d8"><b>Vågor</b><div style="color:#57534a">Bekräftelser, klart-lägen</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 4px">Motivkort — mönstrad topp + figur</h3>
+    <p style="color:#57534a;font-size:13.5px;margin:0 0 14px">Ingångar till livsområden. Mönstrad topp (64px), figuren bryter kanten, rubrik i sans.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px">
+      <div style="border:1px solid #e6e2d8;border-radius:14px;overflow:hidden;background:#fffdf9;box-shadow:0 1px 3px rgba(40,36,28,.07)" style-hover="box-shadow:0 4px 14px rgba(40,36,28,.14)">
+        <div style="position:relative;height:64px;background:#e8f2fd">
+          <svg style="width:100%;height:64px;display:block"><rect width="100%" height="100%" fill="url(#bk-p-dots)"></rect></svg>
+          <svg viewBox="0 0 96 96" width="58" height="58" style="position:absolute;left:18px;bottom:-18px;background:#fffdf9;border:1px solid #e6e2d8;border-radius:50%;padding:6px" aria-hidden="true">
+            <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect><polygon points="20,46 48,24 76,46" fill="#1273d4"></polygon><rect x="42" y="58" width="12" height="19" rx="1" fill="#0a3f78"></rect>
+          </svg>
+        </div>
+        <div style="padding:26px 18px 18px"><b style="font-size:15px">Boende</b><p style="color:#57534a;font-size:13.5px;margin:2px 0 0">Bostadsbidrag, bostadstillägg, hyresstöd.</p></div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:14px;overflow:hidden;background:#fffdf9;box-shadow:0 1px 3px rgba(40,36,28,.07)" style-hover="box-shadow:0 4px 14px rgba(40,36,28,.14)">
+        <div style="position:relative;height:64px;background:#efece4">
+          <svg style="width:100%;height:64px;display:block"><rect width="100%" height="100%" fill="url(#bk-p-roof)"></rect></svg>
+          <svg viewBox="0 0 96 96" width="58" height="58" style="position:absolute;left:18px;bottom:-18px;background:#fffdf9;border:1px solid #e6e2d8;border-radius:50%;padding:6px" aria-hidden="true">
+            <circle cx="32" cy="30" r="9" fill="#1273d4"></circle><rect x="22" y="42" width="20" height="34" rx="10" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2.5"></rect><circle cx="62" cy="32" r="8" fill="#0a3f78"></circle><rect x="53" y="43" width="18" height="33" rx="9" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+          </svg>
+        </div>
+        <div style="padding:26px 18px 18px"><b style="font-size:15px">Familj</b><p style="color:#57534a;font-size:13.5px;margin:2px 0 0">Barnbidrag, underhållsstöd, föräldrapenning.</p></div>
+      </div>
+      <div style="border:1px solid #e6e2d8;border-radius:14px;overflow:hidden;background:#fffdf9;box-shadow:0 1px 3px rgba(40,36,28,.07)" style-hover="box-shadow:0 4px 14px rgba(40,36,28,.14)">
+        <div style="position:relative;height:64px;background:#f7f5f0">
+          <svg style="width:100%;height:64px;display:block"><rect width="100%" height="100%" fill="url(#bk-p-grid)"></rect></svg>
+          <svg viewBox="0 0 96 96" width="58" height="58" style="position:absolute;left:18px;bottom:-18px;background:#fffdf9;border:1px solid #e6e2d8;border-radius:50%;padding:6px" aria-hidden="true">
+            <circle cx="40" cy="52" r="22" fill="#f5edd8" stroke="#8a6510" stroke-width="2.5"></circle><text x="40" y="59" text-anchor="middle" font-family="Source Serif 4, serif" font-size="19" font-weight="600" fill="#8a6510">kr</text><circle cx="66" cy="40" r="13" fill="#fffdf9" stroke="#8a6510" stroke-width="2"></circle>
+          </svg>
+        </div>
+        <div style="padding:26px 18px 18px"><b style="font-size:15px">Ekonomi</b><p style="color:#57534a;font-size:13.5px;margin:2px 0 0">Försörjningsstöd, a-kassa, energistöd.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 4px">Inline-ikoner 24px</h3>
+    <p style="color:#57534a;font-size:13.5px;margin:0 0 14px">En streckvikt (2,2px), kvadratisk ram, ingen fyllning utom accent. Används i knappar, listor och statusrader — aldrig som ersättning för en figur.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px">
+      <div style="text-align:center;padding:10px 6px;border:1px solid #e6e2d8;border-radius:10px;background:#f7f5f0"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#0a3f78" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 12 4l8 7"></path><path d="M6 10v10h12V10"></path></svg><div style="font-size:11.5px;color:#57534a;margin-top:4px">hem</div></div>
+      <div style="text-align:center;padding:10px 6px;border:1px solid #e6e2d8;border-radius:10px;background:#f7f5f0"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#0a3f78" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-4 3.2-6 7-6s7 2 7 6"></path></svg><div style="font-size:11.5px;color:#57534a;margin-top:4px">person</div></div>
+      <div style="text-align:center;padding:10px 6px;border:1px solid #e6e2d8;border-radius:10px;background:#f7f5f0"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#0a3f78" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M8 9h8M8 13h8M8 17h4"></path></svg><div style="font-size:11.5px;color:#57534a;margin-top:4px">dokument</div></div>
+      <div style="text-align:center;padding:10px 6px;border:1px solid #e6e2d8;border-radius:10px;background:#f7f5f0"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#3f7050" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l5 5L20 6"></path></svg><div style="font-size:11.5px;color:#57534a;margin-top:4px">klart</div></div>
+      <div style="text-align:center;padding:10px 6px;border:1px solid #e6e2d8;border-radius:10px;background:#f7f5f0"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#8a6510" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 8.5v5M12 16.2v.3"></path></svg><div style="font-size:11.5px;color:#57534a;margin-top:4px">obs</div></div>
+      <div style="text-align:center;padding:10px 6px;border:1px solid #e6e2d8;border-radius:10px;background:#f7f5f0"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#1273d4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 11.5v5M12 7.8v.3"></path></svg><div style="font-size:11.5px;color:#57534a;margin-top:4px">info</div></div>
+      <div style="text-align:center;padding:10px 6px;border:1px solid #e6e2d8;border-radius:10px;background:#f7f5f0"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#0a3f78" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="13" rx="2"></rect><path d="M8 6V4M16 6V4M4 11h16"></path></svg><div style="font-size:11.5px;color:#57534a;margin-top:4px">datum</div></div>
+      <div style="text-align:center;padding:10px 6px;border:1px solid #e6e2d8;border-radius:10px;background:#f7f5f0"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#0a3f78" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg><div style="font-size:11.5px;color:#57534a;margin-top:4px">sök</div></div>
+      <div style="text-align:center;padding:10px 6px;border:1px solid #e6e2d8;border-radius:10px;background:#f7f5f0"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#0a3f78" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M7 11l5 5 5-5"></path><path d="M4 20h16"></path></svg><div style="font-size:11.5px;color:#57534a;margin-top:4px">hämta</div></div>
+      <div style="text-align:center;padding:10px 6px;border:1px solid #e6e2d8;border-radius:10px;background:#f7f5f0"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#0a3f78" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M14 6l6 6-6 6"></path></svg><div style="font-size:11.5px;color:#57534a;margin-top:4px">nästa</div></div>
+      <div style="text-align:center;padding:10px 6px;border:1px solid #e6e2d8;border-radius:10px;background:#f7f5f0"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#0a3f78" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="2"></rect><path d="M8 9V7a4 4 0 018 0v2"></path></svg><div style="font-size:11.5px;color:#57534a;margin-top:4px">låst</div></div>
+      <div style="text-align:center;padding:10px 6px;border:1px solid #e6e2d8;border-radius:10px;background:#f7f5f0"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#0a3f78" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l7 4v5c0 4-3 6.4-7 7.4C8 19.4 5 17 5 13V8z"></path></svg><div style="font-size:11.5px;color:#57534a;margin-top:4px">trygg</div></div>
+    </div>
+  </div>
+</section>
+
+<section style="margin-bottom:48px">
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 4px">5. Datavisualisering</h2>
+  <p style="color:#57534a;font-size:14px;margin:0 0 18px">Poäng är alltid <b>av 100</b> och alltid en bedömning. Diagram visar hur bedömningen är räknad — aldrig belopp i kronor.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Poängmätare</h3>
+      <div style="display:flex;gap:18px;justify-content:space-around;align-items:flex-end">
+        <div style="text-align:center">
+          <svg viewBox="0 0 120 78" width="130" height="85" aria-label="86 av 100">
+            <path d="M14 68 A46 46 0 0 1 106 68" fill="none" stroke="#e6e2d8" stroke-width="11" stroke-linecap="round"></path>
+            <path d="M14 68 A46 46 0 0 1 106 68" fill="none" stroke="#1273d4" stroke-width="11" stroke-linecap="round" stroke-dasharray="144.5" stroke-dashoffset="20.2"></path>
+            <text x="60" y="62" text-anchor="middle" font-family="Source Serif 4, serif" font-size="28" font-weight="600" fill="#1f1d18">86</text>
+          </svg>
+          <div style="font-size:12px;color:#57534a;margin-top:-4px">Stark bedömning</div>
+        </div>
+        <div style="text-align:center">
+          <svg viewBox="0 0 120 78" width="130" height="85" aria-label="54 av 100">
+            <path d="M14 68 A46 46 0 0 1 106 68" fill="none" stroke="#e6e2d8" stroke-width="11" stroke-linecap="round"></path>
+            <path d="M14 68 A46 46 0 0 1 106 68" fill="none" stroke="#8a6510" stroke-width="11" stroke-linecap="round" stroke-dasharray="144.5" stroke-dashoffset="66.5"></path>
+            <text x="60" y="62" text-anchor="middle" font-family="Source Serif 4, serif" font-size="28" font-weight="600" fill="#1f1d18">54</text>
+          </svg>
+          <div style="font-size:12px;color:#57534a;margin-top:-4px">Osäker — svar saknas</div>
+        </div>
+      </div>
+      <p style="font-size:12.5px;color:#57534a;background:#efece4;border-radius:10px;padding:9px 13px;margin:12px 0 0">Färg efter nivå: 70+ signalblå · 40–69 varningsgul · under 40 neutral grå. Aldrig grönt — grönt skulle läsas som beslut.</p>
+    </div>
+
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Villkorsstapel</h3>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>Uppfyllda villkor</span><span style="color:#57534a">5 av 7</span></div>
+          <div style="height:9px;border-radius:5px;background:#e6e2d8;overflow:hidden;display:flex"><span style="width:57%;background:#3f7050"></span><span style="width:14%;background:#d9b96a"></span></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>Din inkomst mot gränsen</span><span style="color:#57534a">under gränsen</span></div>
+          <div style="position:relative;height:9px;border-radius:5px;background:#e6e2d8"><span style="position:absolute;left:0;top:0;bottom:0;width:62%;border-radius:5px;background:#1273d4"></span><span style="position:absolute;left:78%;top:-4px;bottom:-4px;width:2px;background:#a33d33"></span></div>
+          <div style="font-size:11.5px;color:#57534a;margin-top:3px">Röd markör = myndighetens gräns</div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>Underlag inlämnat</span><span style="color:#57534a">3 av 4 dokument</span></div>
+          <div style="display:flex;gap:4px">
+            <span style="flex:1;height:9px;border-radius:5px;background:#1273d4"></span><span style="flex:1;height:9px;border-radius:5px;background:#1273d4"></span><span style="flex:1;height:9px;border-radius:5px;background:#1273d4"></span><span style="flex:1;height:9px;border-radius:5px;background:#e6e2d8"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Fördelningsring</h3>
+      <div style="display:flex;gap:20px;align-items:center">
+        <svg viewBox="0 0 84 84" width="104" height="104" aria-label="Fördelning av stöd">
+          <circle cx="42" cy="42" r="32" fill="none" stroke="#e6e2d8" stroke-width="13"></circle>
+          <circle cx="42" cy="42" r="32" fill="none" stroke="#1273d4" stroke-width="13" stroke-dasharray="201" stroke-dashoffset="100" transform="rotate(-90 42 42)"></circle>
+          <circle cx="42" cy="42" r="32" fill="none" stroke="#6fb2f0" stroke-width="13" stroke-dasharray="201" stroke-dashoffset="151" transform="rotate(90 42 42)"></circle>
+          <circle cx="42" cy="42" r="32" fill="none" stroke="#d9b96a" stroke-width="13" stroke-dasharray="201" stroke-dashoffset="181" transform="rotate(184 42 42)"></circle>
+        </svg>
+        <div style="font-size:13.5px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;gap:8px;align-items:center"><span style="width:11px;height:11px;border-radius:3px;background:#1273d4"></span> Statliga stöd · 3</div>
+          <div style="display:flex;gap:8px;align-items:center"><span style="width:11px;height:11px;border-radius:3px;background:#6fb2f0"></span> Kommunala · 2</div>
+          <div style="display:flex;gap:8px;align-items:center"><span style="width:11px;height:11px;border-radius:3px;background:#d9b96a"></span> Stiftelser · 1</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Poäng per stöd</h3>
+      <svg viewBox="0 0 260 120" style="width:100%;height:auto;display:block" aria-label="Stapeldiagram poäng per stöd">
+        <line x1="34" y1="8" x2="34" y2="100" stroke="#e6e2d8" stroke-width="1.5"></line>
+        <line x1="34" y1="100" x2="252" y2="100" stroke="#d5cfc0" stroke-width="1.5"></line>
+        <rect x="46" y="22" width="30" height="78" rx="3" fill="#1273d4"></rect>
+        <rect x="90" y="38" width="30" height="62" rx="3" fill="#1273d4"></rect>
+        <rect x="134" y="52" width="30" height="48" rx="3" fill="#6fb2f0"></rect>
+        <rect x="178" y="66" width="30" height="34" rx="3" fill="#d9b96a"></rect>
+        <rect x="222" y="78" width="30" height="22" rx="3" fill="#d5cfc0"></rect>
+        <text x="61" y="17" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" font-weight="600" fill="#1f1d18">86</text>
+        <text x="105" y="33" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" font-weight="600" fill="#1f1d18">71</text>
+        <text x="149" y="47" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" font-weight="600" fill="#1f1d18">58</text>
+        <text x="193" y="61" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" font-weight="600" fill="#1f1d18">42</text>
+        <text x="237" y="73" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" font-weight="600" fill="#1f1d18">28</text>
+        <text x="26" y="14" text-anchor="end" font-size="9" fill="#57534a">100</text>
+        <text x="26" y="103" text-anchor="end" font-size="9" fill="#57534a">0</text>
+        <text x="61" y="112" text-anchor="middle" font-size="9" fill="#57534a">Bostad</text>
+        <text x="105" y="112" text-anchor="middle" font-size="9" fill="#57534a">Barn</text>
+        <text x="149" y="112" text-anchor="middle" font-size="9" fill="#57534a">Energi</text>
+        <text x="193" y="112" text-anchor="middle" font-size="9" fill="#57534a">Studie</text>
+        <text x="237" y="112" text-anchor="middle" font-size="9" fill="#57534a">Övrigt</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section style="margin-bottom:48px">
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 16px">6. Komponentbibliotek</h2>
 
   <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
     <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Knappar</h3>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-      <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:none;background:#3d4a8c;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(35,44,88,.28)" style-hover="background:#2f3a70">Primär</button>
-      <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:1px solid #d5cfc0;background:#fffdf9;color:#3d4a8c;cursor:pointer" style-hover="background:#eef0f9;border-color:#3d4a8c">Sekundär</button>
-      <button style="font:inherit;font-weight:600;padding:6px 14px;border-radius:9px;border:1px solid #d5cfc0;background:#fffdf9;color:#3d4a8c;cursor:pointer;font-size:13.5px" style-hover="background:#eef0f9">Liten</button>
+      <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:none;background:#1273d4;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(10,63,120,.26)" style-hover="background:#0d5cae">Primär</button>
+      <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:1px solid #d5cfc0;background:#fffdf9;color:#1273d4;cursor:pointer" style-hover="background:#e8f2fd;border-color:#1273d4">Sekundär</button>
+      <button style="font:inherit;font-weight:600;padding:6px 14px;border-radius:9px;border:1px solid #d5cfc0;background:#fffdf9;color:#1273d4;cursor:pointer;font-size:13.5px" style-hover="background:#e8f2fd">Liten</button>
       <button style="font:inherit;font-weight:500;padding:9px 14px;border-radius:10px;border:none;background:transparent;color:#57534a;cursor:pointer" style-hover="background:#efece4">Subtil</button>
-      <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:none;background:#3d4a8c;color:#fff;opacity:.45;cursor:not-allowed" disabled="disabled">Inaktiverad</button>
-      <button style="font:inherit;font-weight:600;border:none;background:none;padding:0;color:#3d4a8c;cursor:pointer" style-hover="text-decoration:underline">Länk-knapp</button>
+      <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:none;background:#1273d4;color:#fff;opacity:.45;cursor:not-allowed" disabled="disabled">Inaktiverad</button>
+      <button style="font:inherit;font-weight:600;border:none;background:none;padding:0;color:#1273d4;cursor:pointer" style-hover="text-decoration:underline">Länk-knapp</button>
     </div>
-    <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:14px 0 0">Max en primär per skärm. Köp-knappar är alltid primära och åtföljs av gratisvägen i text. Subtil för "Hoppa över"/"Ändra". Fokus: 3px ring rgba(61,74,140,.28).</p>
+    <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:14px 0 0">Max en primär per skärm. Köp-knappar är alltid primära och åtföljs av gratisvägen i text. Subtil för "Hoppa över"/"Ändra". Fokus: 3px ring rgba(18,115,212,.30).</p>
   </div>
 
   <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
     <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Svarsval — .choice (kärnan i en-fråga-per-skärm)</h3>
     <div style="display:flex;flex-direction:column;gap:9px;max-width:560px">
-      <button style="font:inherit;text-align:left;padding:14px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;color:#1f1d18" style-hover="border-color:#3d4a8c;background:#eef0f9"><span style="font-weight:600;display:block">Jag bor i hyresrätt</span><span style="color:#57534a;font-size:13px;display:block;margin-top:2px">Även andrahandskontrakt och inneboende</span></button>
-      <button style="font:inherit;text-align:left;padding:14px 16px;background:#eef0f9;border:1.5px solid #3d4a8c;border-radius:11px;cursor:pointer;color:#1f1d18"><span style="font-weight:600;display:block">Jag bor i bostadsrätt</span><span style="color:#57534a;font-size:13px;display:block;margin-top:2px">Vald — indigo yta och kant, ingen ikon behövs</span></button>
-      <button style="font:inherit;text-align:left;padding:14px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;color:#1f1d18" style-hover="border-color:#3d4a8c;background:#eef0f9"><span style="font-weight:600;display:block">Jag äger hus</span></button>
+      <button style="font:inherit;text-align:left;padding:14px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;color:#1f1d18" style-hover="border-color:#1273d4;background:#e8f2fd"><span style="font-weight:600;display:block">Jag bor i hyresrätt</span><span style="color:#57534a;font-size:13px;display:block;margin-top:2px">Även andrahandskontrakt och inneboende</span></button>
+      <button style="font:inherit;text-align:left;padding:14px 16px;background:#e8f2fd;border:1.5px solid #1273d4;border-radius:11px;cursor:pointer;color:#1f1d18"><span style="font-weight:600;display:block">Jag bor i bostadsrätt</span><span style="color:#57534a;font-size:13px;display:block;margin-top:2px">Vald — blå yta och kant, ingen ikon behövs</span></button>
+      <button style="font:inherit;text-align:left;padding:14px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;color:#1f1d18" style-hover="border-color:#1273d4;background:#e8f2fd"><span style="font-weight:600;display:block">Jag äger hus</span></button>
     </div>
   </div>
 
@@ -445,9 +934,9 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
     <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Fält &amp; formulär</h3>
     <label style="display:block;font-weight:600;margin:0 0 4px">Hushållets inkomst per månad</label>
     <p style="color:#57534a;font-size:13.5px;margin:0 0 8px">Före skatt. Ta med lön, a-kassa och andra ersättningar.</p>
-    <input type="number" placeholder="t.ex. 24 000" style="font:inherit;width:100%;max-width:260px;padding:9px 12px;border:1px solid #d5cfc0;border-radius:10px;background:#fffdf9;color:#1f1d18" style-focus="border-color:#3d4a8c;outline:none;box-shadow:0 0 0 3px rgba(61,74,140,.28)">
+    <input type="number" placeholder="t.ex. 24 000" style="font:inherit;width:100%;max-width:260px;padding:9px 12px;border:1px solid #d5cfc0;border-radius:10px;background:#fffdf9;color:#1f1d18" style-focus="border-color:#1273d4;outline:none;box-shadow:0 0 0 3px rgba(18,115,212,.30)">
     <div style="display:flex;align-items:flex-start;gap:9px;margin-top:16px;max-width:560px">
-      <input type="checkbox" id="d-ang" checked="checked" style="width:auto;margin-top:4px;accent-color:#3d4a8c">
+      <input type="checkbox" id="d-ang" checked="checked" style="width:auto;margin-top:4px;accent-color:#1273d4">
       <label for="d-ang" style="font-weight:500;font-size:14px">Jag samtycker till att tjänsten påbörjas direkt och förstår att ångerrätten därmed inte gäller för genomförd analys.</label>
     </div>
   </div>
@@ -458,11 +947,11 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
       <span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;background:#efece4;color:#57534a;border:1px solid #e6e2d8">Neutral</span>
       <span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;background:#ecf3ed;color:#3f7050">Betald</span>
       <span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;background:#f5edd8;color:#8a6510">AI-sammanställd — ej granskad av människa</span>
-      <span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;background:#eef0f9;color:#2f3a70">Under förberedelse</span>
+      <span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;background:#e8f2fd;color:#0d5cae">Under förberedelse</span>
       <span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:650;background:#f8ebe9;color:#a33d33">Avvisad</span>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px">
-      <div style="border-radius:10px;padding:11px 15px;font-size:14px;background:#eef0f9;color:#2f3a70;border:1px solid rgba(61,74,140,.16)">Svaret används bara för din bedömning. Slutligt beslut fattas alltid av myndigheten.</div>
+      <div style="border-radius:10px;padding:11px 15px;font-size:14px;background:#e8f2fd;color:#0d5cae;border:1px solid rgba(18,115,212,.20)">Svaret används bara för din bedömning. Slutligt beslut fattas alltid av myndigheten.</div>
       <div style="border-radius:10px;padding:11px 15px;font-size:14px;background:#ecf3ed;color:#3f7050;border:1px solid rgba(63,112,80,.18)">Din ansökan är förberedd. Alla dokument finns i dokumentvalvet.</div>
       <div style="border-radius:10px;padding:11px 15px;font-size:14px;background:#f5edd8;color:#8a6510;border:1px solid rgba(138,101,16,.18)">Betalningar är inte aktiverade i denna miljö ännu (Swish-avtal saknas). Inget debiteras.</div>
       <div style="border-radius:10px;padding:11px 15px;font-size:14px;background:#f8ebe9;color:#a33d33;border:1px solid rgba(163,61,51,.16)">Tjänsten kunde inte nås (503). Vi visar hellre ett ärligt fel än låtsas att det fungerar.</div>
@@ -490,17 +979,17 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
   <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
     <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">F-STABIL + F-INFO: frågelistan som står stilla</h3>
     <div style="background:#fffdf9;border:1px solid #d9b96a;border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
-      <h3 style="font-size:15px;font-weight:700;margin:0 0 4px">Några frågor kvar <span style="display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:650;background:#eef0f9;color:#2f3a70;margin-left:4px">2 besvarade</span></h3>
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 4px">Några frågor kvar <span style="display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:650;background:#e8f2fd;color:#0d5cae;margin-left:4px">2 besvarade</span></h3>
       <div style="padding:12px 0;border-bottom:1px solid #e6e2d8;opacity:.62" style-hover="opacity:1">
-        <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a;display:flex;align-items:center;gap:6px">Boende <button style="font:inherit;font-weight:700;font-size:11px;line-height:1;cursor:pointer;width:19px;height:19px;border-radius:50%;border:1.5px solid #3d4a8c;color:#3d4a8c;background:#fffdf9;padding:0" style-hover="background:#3d4a8c;color:#fff">i</button></div>
+        <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a;display:flex;align-items:center;gap:6px">Boende <button style="font:inherit;font-weight:700;font-size:11px;line-height:1;cursor:pointer;width:19px;height:19px;border-radius:50%;border:1.5px solid #1273d4;color:#1273d4;background:#fffdf9;padding:0" style-hover="background:#1273d4;color:#fff">i</button></div>
         <b>Hur bor du?</b>
-        <div style="margin-top:6px"><button style="font:inherit;text-align:left;padding:10px 14px;background:#eef0f9;border:1.5px solid #3d4a8c;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18">Hyresrätt</button></div>
+        <div style="margin-top:6px"><button style="font:inherit;text-align:left;padding:10px 14px;background:#e8f2fd;border:1.5px solid #1273d4;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18">Hyresrätt</button></div>
         <div style="color:#3f7050;font-size:13px;margin-top:5px">✓ Sparat — går att ändra</div>
       </div>
       <div style="padding:12px 0;border-bottom:1px solid #e6e2d8">
-        <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a;display:flex;align-items:center;gap:6px">Ekonomi <button style="font:inherit;font-weight:700;font-size:11px;line-height:1;cursor:pointer;width:19px;height:19px;border-radius:50%;border:1.5px solid #3d4a8c;color:#fff;background:#3d4a8c;padding:0" aria-expanded="true">i</button></div>
+        <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a;display:flex;align-items:center;gap:6px">Ekonomi <button style="font:inherit;font-weight:700;font-size:11px;line-height:1;cursor:pointer;width:19px;height:19px;border-radius:50%;border:1.5px solid #1273d4;color:#fff;background:#1273d4;padding:0" aria-expanded="true">i</button></div>
         <b>Vad är din bostadskostnad per månad?</b>
-        <div style="background:#eef0f9;border-left:3px solid #3d4a8c;border-radius:0 10px 10px 0;padding:12px 16px;margin:8px 0;font-size:13.5px">
+        <div style="background:#e8f2fd;border-left:3px solid #1273d4;border-radius:0 10px 10px 0;padding:12px 16px;margin:8px 0;font-size:13.5px">
           <b>Varför frågar vi detta?</b>
           <ul style="margin:6px 0 8px;padding-left:18px">
             <li style="margin-bottom:4px"><b>Bostadsbidrag</b> — villkor: bostadskostnaden avgör bidragets storlek. <a href="#">Om stödet</a> · <a href="#">Officiell källa</a></li>
@@ -508,7 +997,7 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
           </ul>
           Svaret används bara för din bedömning. Slutligt beslut fattas alltid av myndigheten.
         </div>
-        <input type="number" placeholder="kr/mån" style="font:inherit;width:100%;max-width:220px;padding:9px 12px;border:1px solid #d5cfc0;border-radius:10px;background:#fffdf9;color:#1f1d18" style-focus="border-color:#3d4a8c;outline:none;box-shadow:0 0 0 3px rgba(61,74,140,.28)">
+        <input type="number" placeholder="kr/mån" style="font:inherit;width:100%;max-width:220px;padding:9px 12px;border:1px solid #d5cfc0;border-radius:10px;background:#fffdf9;color:#1f1d18" style-focus="border-color:#1273d4;outline:none;box-shadow:0 0 0 3px rgba(18,115,212,.30)">
       </div>
       <div style="padding:12px 0;opacity:.62" style-hover="opacity:1">
         <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a">Arbete</div>
@@ -528,7 +1017,7 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
         <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14.5px;font-weight:700"><span>Att betala</span><span>39 kr</span></div>
       </div>
       <p style="color:#57534a;font-size:13px;margin:10px 0 8px">Att ansöka själv direkt hos myndigheten är alltid gratis. Det här köpet gäller vår analys och förberedelse.</p>
-      <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:none;background:#3d4a8c;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(35,44,88,.28)" style-hover="background:#2f3a70">Betala med Swish</button>
+      <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:none;background:#1273d4;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(10,63,120,.26)" style-hover="background:#0d5cae">Betala med Swish</button>
     </div>
     <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
       <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Teaser — blurrade rader</h3>
@@ -567,33 +1056,199 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
 </section>
 
 <section style="margin-bottom:48px">
-  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 16px">5. Nyckelskärmar</h2>
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 4px">7. Tillstånd &amp; återkoppling</h2>
+  <p style="color:#57534a;font-size:14px;margin:0 0 18px">Varje tillstånd har en egen yta — laddning, tomt, fel, klart. Illustrationen bär känslan, texten bär beskedet.</p>
 
-  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">5.1 Onboarding — en fråga per skärm</h3>
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Statusspår — ansökans resa</h3>
+    <div style="display:flex;align-items:flex-start;gap:0;flex-wrap:wrap">
+      <div style="flex:1;min-width:120px;text-align:center;position:relative">
+        <svg viewBox="0 0 96 96" width="52" height="52" style="background:#ecf3ed;border-radius:50%;padding:7px" aria-hidden="true"><circle cx="48" cy="48" r="30" fill="none" stroke="#3f7050" stroke-width="6"></circle><path d="M32 50 L44 62 L66 38" fill="none" stroke="#3f7050" stroke-width="7" stroke-linecap="round"></path></svg>
+        <div style="font-weight:650;font-size:13.5px;margin-top:5px">Analys klar</div>
+        <div style="color:#57534a;font-size:12px">12 aug</div>
+      </div>
+      <div style="flex:1;min-width:120px;text-align:center">
+        <svg viewBox="0 0 96 96" width="52" height="52" style="background:#ecf3ed;border-radius:50%;padding:7px" aria-hidden="true"><rect x="30" y="20" width="36" height="48" rx="3" fill="#fffdf9" stroke="#3f7050" stroke-width="3"></rect><rect x="36" y="30" width="24" height="3" rx="1.5" fill="#3f7050"></rect><rect x="36" y="38" width="24" height="3" rx="1.5" fill="#3f7050"></rect><rect x="36" y="46" width="14" height="3" rx="1.5" fill="#3f7050"></rect></svg>
+        <div style="font-weight:650;font-size:13.5px;margin-top:5px">Underlag samlat</div>
+        <div style="color:#57534a;font-size:12px">13 aug</div>
+      </div>
+      <div style="flex:1;min-width:120px;text-align:center">
+        <svg viewBox="0 0 96 96" width="52" height="52" style="background:#e8f2fd;border-radius:50%;padding:7px" aria-hidden="true"><rect x="24" y="40" width="48" height="32" rx="4" fill="#fffdf9" stroke="#1273d4" stroke-width="3"></rect><path d="M26 44 L48 60 L70 44" fill="none" stroke="#1273d4" stroke-width="3"></path><circle cx="70" cy="34" r="9" fill="#1273d4"></circle></svg>
+        <div style="font-weight:650;font-size:13.5px;margin-top:5px">Skickas av dig</div>
+        <div style="color:#1273d4;font-size:12px;font-weight:600">Nästa steg</div>
+      </div>
+      <div style="flex:1;min-width:120px;text-align:center;opacity:.5">
+        <svg viewBox="0 0 96 96" width="52" height="52" style="background:#efece4;border-radius:50%;padding:7px" aria-hidden="true"><rect x="22" y="46" width="52" height="31" rx="2" fill="#fffdf9" stroke="#57534a" stroke-width="3"></rect><polygon points="16,48 48,28 80,48" fill="#57534a"></polygon><rect x="42" y="58" width="12" height="19" fill="#57534a"></rect></svg>
+        <div style="font-weight:650;font-size:13.5px;margin-top:5px">Myndighetens beslut</div>
+        <div style="color:#57534a;font-size:12px">Avgörs av dem</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px;margin:14px 0 0">Sista steget är alltid nedtonat och märkt som myndighetens — spåret får aldrig antyda att vi avgör utfallet.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Laddning</h3>
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
+        <svg viewBox="0 0 96 96" width="46" height="46" aria-hidden="true"><rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect><rect x="30" y="20" width="36" height="48" rx="3" fill="#fffdf9" stroke="#0a3f78" stroke-width="3"></rect><rect x="36" y="30" width="24" height="3.5" rx="1.75" fill="#d5cfc0"></rect><rect x="36" y="39" width="24" height="3.5" rx="1.75" fill="#d5cfc0"></rect><rect x="36" y="48" width="14" height="3.5" rx="1.75" fill="#1273d4"></rect></svg>
+        <div>
+          <b style="font-size:14px">Läser igenom villkoren…</b>
+          <div style="display:flex;gap:4px;margin-top:5px">
+            <span style="width:6px;height:6px;border-radius:50%;background:#1273d4;animation:bk-blink 1.2s infinite"></span>
+            <span style="width:6px;height:6px;border-radius:50%;background:#1273d4;animation:bk-blink 1.2s infinite .2s"></span>
+            <span style="width:6px;height:6px;border-radius:50%;background:#1273d4;animation:bk-blink 1.2s infinite .4s"></span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="height:12px;border-radius:6px;width:80%;background:linear-gradient(90deg,#efece4,#e0dbcf,#efece4);background-size:220px 100%;animation:bk-shimmer 1.4s linear infinite"></span>
+        <span style="height:12px;border-radius:6px;width:96%;background:linear-gradient(90deg,#efece4,#e0dbcf,#efece4);background-size:220px 100%;animation:bk-shimmer 1.4s linear infinite"></span>
+        <span style="height:12px;border-radius:6px;width:62%;background:linear-gradient(90deg,#efece4,#e0dbcf,#efece4);background-size:220px 100%;animation:bk-shimmer 1.4s linear infinite"></span>
+      </div>
+      <p style="font-size:12.5px;color:#57534a;margin:12px 0 0">Skelett behåller radhöjder så inget hoppar när innehållet kommer (F-STABIL gäller även laddning).</p>
+    </div>
+
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Ärlig felyta (503)</h3>
+      <div style="text-align:center;padding:4px 0">
+        <svg viewBox="0 0 96 96" width="84" height="84" aria-hidden="true">
+          <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+          <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#a33d33" stroke-width="2.5"></rect>
+          <polygon points="20,46 48,24 76,46" fill="#a33d33"></polygon>
+          <rect x="42" y="58" width="12" height="19" rx="1" fill="#57534a"></rect>
+          <rect x="30" y="50" width="10" height="10" rx="1" fill="#f8ebe9" stroke="#a33d33" stroke-width="1.5"></rect>
+          <path d="M56 52 L66 62 M66 52 L56 62" stroke="#a33d33" stroke-width="2.5" stroke-linecap="round"></path>
+        </svg>
+        <div style="font-weight:700;margin-top:4px">Swish är inte aktiverat ännu</div>
+        <p style="color:#57534a;font-size:13.5px;margin:3px 0 10px">Avtalet är inte klart i den här miljön. Inget debiteras, och inget är sparat halvvägs.</p>
+        <button style="font:inherit;font-weight:600;padding:8px 16px;border-radius:10px;border:1px solid #d5cfc0;background:#fffdf9;color:#1273d4;cursor:pointer;font-size:13.5px" style-hover="background:#e8f2fd">Tillbaka till analysen</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Notis (toast)</h3>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:11px;align-items:flex-start;background:#fffdf9;border:1px solid #3f7050;border-left-width:4px;border-radius:12px;padding:12px 14px;box-shadow:0 3px 10px rgba(40,36,28,.12)">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#3f7050" stroke-width="2.4" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><path d="M4 13l5 5L20 6"></path></svg>
+          <div><b style="font-size:14px">Svaret är sparat</b><div style="color:#57534a;font-size:13px">Bedömningen räknades om — Bostadsbidrag steg till 86.</div></div>
+        </div>
+        <div style="display:flex;gap:11px;align-items:flex-start;background:#fffdf9;border:1px solid #d9b96a;border-left-width:4px;border-radius:12px;padding:12px 14px;box-shadow:0 3px 10px rgba(40,36,28,.12)">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#8a6510" stroke-width="2.4" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 8.5v5M12 16.2v.3"></path></svg>
+          <div><b style="font-size:14px">Ett dokument saknas</b><div style="color:#57534a;font-size:13px">Hyresavi behövs innan ansökan kan förberedas.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Dialog</h3>
+      <div style="background:#efece4;border-radius:12px;padding:18px">
+        <div style="background:#fffdf9;border:1px solid #d5cfc0;border-radius:14px;padding:20px;box-shadow:0 6px 20px rgba(40,36,28,.18)">
+          <svg viewBox="0 0 96 96" width="52" height="52" style="background:#e8f2fd;border-radius:50%;padding:7px;display:block;margin-bottom:8px" aria-hidden="true"><circle cx="48" cy="30" r="11" fill="#1273d4"></circle><rect x="34" y="44" width="28" height="30" rx="13" fill="#e8f2fd" stroke="#0a3f78" stroke-width="3"></rect></svg>
+          <b style="font-size:15px">Ändra ett tidigare svar?</b>
+          <p style="color:#57534a;font-size:13.5px;margin:3px 0 12px">Bedömningen räknas om direkt. Inga svar försvinner — de står kvar där de var.</p>
+          <div style="display:flex;gap:9px;flex-wrap:wrap">
+            <button style="font:inherit;font-weight:600;padding:8px 16px;border-radius:10px;border:none;background:#1273d4;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(10,63,120,.26);font-size:13.5px" style-hover="background:#0d5cae">Ja, ändra svaret</button>
+            <button style="font:inherit;font-weight:500;padding:8px 14px;border-radius:10px;border:none;background:transparent;color:#57534a;cursor:pointer;font-size:13.5px" style-hover="background:#efece4">Avbryt</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Tomma lägen</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px">
+      <div style="text-align:center;border:1px dashed #d5cfc0;border-radius:12px;padding:18px 14px;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-hidden="true"><rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect><rect x="26" y="48" width="36" height="17" rx="8.5" fill="#0a3f78"></rect><rect x="30" y="62" width="6" height="14" rx="3" fill="#0a3f78"></rect><rect x="52" y="62" width="6" height="14" rx="3" fill="#0a3f78"></rect><circle cx="66" cy="44" r="10" fill="#0a3f78"></circle><polygon points="60,36 64,26 68,36" fill="#1273d4"></polygon><polygon points="68,36 72,27 75,37" fill="#1273d4"></polygon><circle cx="70" cy="44" r="1.8" fill="#fffdf9"></circle></svg>
+        <div style="font-weight:650;font-size:14px">Inga ansökningar ännu</div>
+        <p style="color:#57534a;font-size:13px;margin:2px 0 0">De hamnar här när du förbereder en.</p>
+      </div>
+      <div style="text-align:center;border:1px dashed #d5cfc0;border-radius:12px;padding:18px 14px;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-hidden="true"><rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect><rect x="26" y="42" width="44" height="34" rx="2" fill="#d5cfc0" stroke="#0a3f78" stroke-width="2.5"></rect><rect x="45" y="42" width="6" height="34" fill="#1273d4"></rect><polygon points="26,42 14,32 40,32 48,42" fill="#efece4" stroke="#0a3f78" stroke-width="2.5"></polygon><polygon points="70,42 82,32 56,32 48,42" fill="#efece4" stroke="#0a3f78" stroke-width="2.5"></polygon></svg>
+        <div style="font-weight:650;font-size:14px">Dokumentvalvet är tomt</div>
+        <p style="color:#57534a;font-size:13px;margin:2px 0 0">Ladda upp en hyresavi eller ett beslut.</p>
+      </div>
+      <div style="text-align:center;border:1px dashed #d5cfc0;border-radius:12px;padding:18px 14px;background:#f7f5f0">
+        <svg viewBox="0 0 96 96" width="72" height="72" aria-hidden="true"><rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect><circle cx="44" cy="42" r="20" fill="none" stroke="#0a3f78" stroke-width="3"></circle><path d="M58 56 L74 72" stroke="#0a3f78" stroke-width="4" stroke-linecap="round"></path><path d="M36 42 h16" stroke="#57534a" stroke-width="3" stroke-linecap="round"></path></svg>
+        <div style="font-weight:650;font-size:14px">Inga träffar</div>
+        <p style="color:#57534a;font-size:13px;margin:2px 0 0">Prova ett bredare sökord — eller gör genomgången.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="margin-bottom:48px">
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 16px">8. Nyckelskärmar</h2>
+
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">8.1 Startsida — scenen bär löftet</h3>
+  <div data-screen-label="Start" style="border:1px solid #d5cfc0;border-radius:14px;overflow:hidden;box-shadow:0 3px 8px rgba(40,36,28,.08),0 14px 34px rgba(40,36,28,.13);margin:0 0 28px;background:#f7f5f0">
+    <div style="background:#efece4;border-bottom:1px solid #e6e2d8;padding:7px 14px;font-size:12px;color:#57534a;display:flex;gap:8px;align-items:center"><span style="letter-spacing:2px;color:#d5cfc0;font-size:9px">● ● ●</span> bidragskoll.se</div>
+    <div style="padding:26px 24px 30px;max-width:660px;margin:0 auto;text-align:center">
+      <svg viewBox="0 0 480 120" style="width:100%;height:auto;display:block;margin-bottom:14px" aria-hidden="true">
+        <circle cx="440" cy="24" r="12" fill="#f5edd8" stroke="#8a6510" stroke-width="2"></circle>
+        <rect x="0" y="104" width="480" height="3" rx="1.5" fill="#d5cfc0"></rect>
+        <rect x="16" y="54" width="30" height="50" rx="2" fill="#1273d4"></rect>
+        <rect x="22" y="61" width="6" height="6" fill="#e8f2fd"></rect><rect x="34" y="61" width="6" height="6" fill="#e8f2fd"></rect><rect x="22" y="74" width="6" height="6" fill="#e8f2fd"></rect><rect x="34" y="74" width="6" height="6" fill="#e8f2fd"></rect>
+        <rect x="52" y="38" width="36" height="66" rx="2" fill="#0a3f78"></rect>
+        <rect x="59" y="46" width="7" height="7" fill="#6fb2f0"></rect><rect x="72" y="46" width="7" height="7" fill="#6fb2f0"></rect><rect x="59" y="60" width="7" height="7" fill="#6fb2f0"></rect><rect x="72" y="60" width="7" height="7" fill="#6fb2f0"></rect>
+        <rect x="118" y="70" width="56" height="34" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+        <polygon points="110,72 146,46 182,72" fill="#1273d4"></polygon>
+        <rect x="139" y="86" width="14" height="18" rx="1" fill="#0a3f78"></rect>
+        <rect x="204" y="86" width="6" height="18" rx="2" fill="#7a6248"></rect>
+        <circle cx="207" cy="76" r="14" fill="#3f7050"></circle><circle cx="195" cy="84" r="8" fill="#6d9179"></circle><circle cx="219" cy="84" r="8" fill="#6d9179"></circle>
+        <circle cx="276" cy="72" r="8" fill="#1273d4"></circle>
+        <rect x="268" y="83" width="17" height="21" rx="8" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2"></rect>
+        <circle cx="297" cy="78" r="6" fill="#0a3f78"></circle>
+        <rect x="291" y="87" width="13" height="17" rx="6" fill="#fffdf9" stroke="#0a3f78" stroke-width="2"></rect>
+        <rect x="316" y="92" width="24" height="10" rx="5" fill="#0a3f78"></rect>
+        <rect x="319" y="99" width="4" height="6" rx="2" fill="#0a3f78"></rect><rect x="333" y="99" width="4" height="6" rx="2" fill="#0a3f78"></rect>
+        <circle cx="343" cy="88" r="6" fill="#0a3f78"></circle><polygon points="339,83 341,76 345,83" fill="#1273d4"></polygon>
+        <rect x="368" y="60" width="28" height="44" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+        <rect x="406" y="48" width="32" height="56" rx="2" fill="#1273d4"></rect>
+        <rect x="412" y="56" width="7" height="7" fill="#e8f2fd"></rect><rect x="424" y="56" width="7" height="7" fill="#e8f2fd"></rect><rect x="412" y="70" width="7" height="7" fill="#e8f2fd"></rect><rect x="424" y="70" width="7" height="7" fill="#e8f2fd"></rect>
+        <rect x="452" y="88" width="5" height="16" rx="2" fill="#7a6248"></rect><circle cx="454" cy="80" r="10" fill="#3f7050"></circle>
+      </svg>
+      <div style="font-family:'Source Serif 4',serif;font-size:29px;font-weight:600;letter-spacing:-.015em;line-height:1.25;margin-bottom:6px">Vilka stöd ser du ut att kunna ha rätt till?</div>
+      <p style="color:#57534a;font-size:15px;margin:0 0 16px;max-width:52ch;margin-left:auto;margin-right:auto">Svara på sju frågor om din livssituation. Vi jämför mot villkoren hos myndigheter, kommuner och stiftelser — och visar vad som ser lovande ut.</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button style="font:inherit;font-weight:600;padding:11px 22px;border-radius:10px;border:none;background:#1273d4;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(10,63,120,.26)" style-hover="background:#0d5cae">Starta genomgången — kostnadsfritt</button>
+        <button style="font:inherit;font-weight:600;padding:11px 22px;border-radius:10px;border:1px solid #d5cfc0;background:#fffdf9;color:#1273d4;cursor:pointer" style-hover="background:#e8f2fd">Läs om stöden</button>
+      </div>
+      <div style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:18px;font-size:13px;color:#57534a">
+        <span style="display:flex;gap:6px;align-items:center"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#3f7050" stroke-width="2.4" stroke-linecap="round"><path d="M4 13l5 5L20 6"></path></svg> Inget personnummer</span>
+        <span style="display:flex;gap:6px;align-items:center"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#3f7050" stroke-width="2.4" stroke-linecap="round"><path d="M4 13l5 5L20 6"></path></svg> Sju frågor, cirka tre minuter</span>
+        <span style="display:flex;gap:6px;align-items:center"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#3f7050" stroke-width="2.4" stroke-linecap="round"><path d="M4 13l5 5L20 6"></path></svg> Att ansöka själv är alltid gratis</span>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">8.2 Onboarding — en fråga per skärm</h3>
   <div data-screen-label="Onboarding" style="border:1px solid #d5cfc0;border-radius:14px;overflow:hidden;box-shadow:0 3px 8px rgba(40,36,28,.08),0 14px 34px rgba(40,36,28,.13);margin:0 0 28px;background:#f7f5f0">
     <div style="background:#efece4;border-bottom:1px solid #e6e2d8;padding:7px 14px;font-size:12px;color:#57534a;display:flex;gap:8px;align-items:center"><span style="letter-spacing:2px;color:#d5cfc0;font-size:9px">● ● ●</span> bidragskoll.se/start · mobilbredd i praktiken</div>
     <div style="padding:28px 24px;max-width:620px;margin:0 auto">
-      <div style="display:flex;gap:5px;margin-bottom:20px"><span style="flex:1;height:4px;border-radius:2px;background:#3d4a8c"></span><span style="flex:1;height:4px;border-radius:2px;background:#3d4a8c"></span><span style="flex:1;height:4px;border-radius:2px;background:#3d4a8c"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span></div>
-      <svg viewBox="0 0 96 96" width="80" height="80" style="display:block;margin-bottom:10px;background:#eef0f9;border-radius:50%;padding:9px" aria-hidden="true">
+      <div style="display:flex;gap:5px;margin-bottom:20px"><span style="flex:1;height:4px;border-radius:2px;background:#1273d4"></span><span style="flex:1;height:4px;border-radius:2px;background:#1273d4"></span><span style="flex:1;height:4px;border-radius:2px;background:#1273d4"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span></div>
+      <svg viewBox="0 0 96 96" width="80" height="80" style="display:block;margin-bottom:10px;background:#e8f2fd;border-radius:50%;padding:9px" aria-hidden="true">
         <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-        <circle cx="32" cy="30" r="9" fill="#3d4a8c"></circle>
-        <rect x="22" y="42" width="20" height="34" rx="10" fill="#eef0f9" stroke="#232c58" stroke-width="2.5"></rect>
-        <circle cx="62" cy="32" r="8" fill="#232c58"></circle>
-        <rect x="53" y="43" width="18" height="33" rx="9" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
-        <circle cx="47" cy="56" r="6" fill="#8a97d4"></circle>
-        <rect x="41" y="63" width="12" height="13" rx="6" fill="#eef0f9" stroke="#232c58" stroke-width="2"></rect>
+        <circle cx="32" cy="30" r="9" fill="#1273d4"></circle>
+        <rect x="22" y="42" width="20" height="34" rx="10" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2.5"></rect>
+        <circle cx="62" cy="32" r="8" fill="#0a3f78"></circle>
+        <rect x="53" y="43" width="18" height="33" rx="9" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+        <circle cx="47" cy="56" r="6" fill="#6fb2f0"></circle>
+        <rect x="41" y="63" width="12" height="13" rx="6" fill="#e8f2fd" stroke="#0a3f78" stroke-width="2"></rect>
       </svg>
-      <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a;display:flex;align-items:center;gap:6px;margin-bottom:4px">Fråga 3 av 7 · Familj <button style="font:inherit;font-weight:700;font-size:11px;line-height:1;cursor:pointer;width:19px;height:19px;border-radius:50%;border:1.5px solid #3d4a8c;color:#3d4a8c;background:#fffdf9;padding:0" style-hover="background:#3d4a8c;color:#fff">i</button></div>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a;display:flex;align-items:center;gap:6px;margin-bottom:4px">Fråga 3 av 7 · Familj <button style="font:inherit;font-weight:700;font-size:11px;line-height:1;cursor:pointer;width:19px;height:19px;border-radius:50%;border:1.5px solid #1273d4;color:#1273d4;background:#fffdf9;padding:0" style-hover="background:#1273d4;color:#fff">i</button></div>
       <div style="font-family:'Source Serif 4',serif;font-size:25px;font-weight:600;letter-spacing:-.01em;line-height:1.3;margin-bottom:4px">Har du hemmavarande barn?</div>
       <p style="color:#57534a;font-size:13.5px;margin:0 0 16px">Räkna barn under 18 år som bor hos dig hela eller delar av tiden.</p>
       <div style="display:flex;flex-direction:column;gap:9px">
-        <button style="font:inherit;display:flex;gap:12px;align-items:center;text-align:left;padding:13px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
-          <svg viewBox="0 0 96 96" width="32" height="32" style="flex-shrink:0" aria-hidden="true"><circle cx="48" cy="30" r="13" fill="#3d4a8c"></circle><rect x="32" y="46" width="32" height="30" rx="14" fill="#eef0f9" stroke="#232c58" stroke-width="3"></rect></svg>
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;text-align:left;padding:13px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#1273d4;box-shadow:0 2px 8px rgba(18,115,212,.18)">
+          <svg viewBox="0 0 96 96" width="32" height="32" style="flex-shrink:0" aria-hidden="true"><circle cx="48" cy="30" r="13" fill="#1273d4"></circle><rect x="32" y="46" width="32" height="30" rx="14" fill="#e8f2fd" stroke="#0a3f78" stroke-width="3"></rect></svg>
           Ja, på heltid</button>
-        <button style="font:inherit;display:flex;gap:12px;align-items:center;text-align:left;padding:13px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
-          <svg viewBox="0 0 96 96" width="32" height="32" style="flex-shrink:0" aria-hidden="true"><rect x="14" y="52" width="28" height="24" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="3"></rect><polygon points="10,54 28,40 46,54" fill="#3d4a8c"></polygon><rect x="54" y="52" width="28" height="24" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="3"></rect><polygon points="50,54 68,40 86,54" fill="#232c58"></polygon></svg>
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;text-align:left;padding:13px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#1273d4;box-shadow:0 2px 8px rgba(18,115,212,.18)">
+          <svg viewBox="0 0 96 96" width="32" height="32" style="flex-shrink:0" aria-hidden="true"><rect x="14" y="52" width="28" height="24" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="3"></rect><polygon points="10,54 28,40 46,54" fill="#1273d4"></polygon><rect x="54" y="52" width="28" height="24" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="3"></rect><polygon points="50,54 68,40 86,54" fill="#0a3f78"></polygon></svg>
           Ja, växelvis boende</button>
-        <button style="font:inherit;display:flex;gap:12px;align-items:center;text-align:left;padding:13px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#3d4a8c;box-shadow:0 2px 8px rgba(61,74,140,.14)">
+        <button style="font:inherit;display:flex;gap:12px;align-items:center;text-align:left;padding:13px 16px;background:#fffdf9;border:1px solid #d5cfc0;border-radius:11px;cursor:pointer;font-weight:600;color:#1f1d18" style-hover="border-color:#1273d4;box-shadow:0 2px 8px rgba(18,115,212,.18)">
           <svg viewBox="0 0 96 96" width="32" height="32" style="flex-shrink:0" aria-hidden="true"><circle cx="48" cy="48" r="26" fill="none" stroke="#57534a" stroke-width="4"></circle><rect x="36" y="45" width="24" height="6" rx="3" fill="#57534a"></rect></svg>
           Nej</button>
       </div>
@@ -601,18 +1256,18 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
     </div>
   </div>
 
-  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">5.2 Teaser — gratis upptäckt före betalvägg</h3>
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">8.3 Teaser — gratis upptäckt före betalvägg</h3>
   <div data-screen-label="Teaser" style="border:1px solid #d5cfc0;border-radius:14px;overflow:hidden;box-shadow:0 3px 8px rgba(40,36,28,.08),0 14px 34px rgba(40,36,28,.13);margin:0 0 28px;background:#f7f5f0">
     <div style="background:#efece4;border-bottom:1px solid #e6e2d8;padding:7px 14px;font-size:12px;color:#57534a;display:flex;gap:8px;align-items:center"><span style="letter-spacing:2px;color:#d5cfc0;font-size:9px">● ● ●</span> bidragskoll.se/analys (låst läge)</div>
     <div style="padding:28px 24px;max-width:620px;margin:0 auto">
       <div style="display:flex;gap:14px;align-items:flex-end;margin-bottom:6px">
         <svg viewBox="0 0 96 96" width="56" height="56" style="flex-shrink:0" aria-hidden="true">
           <rect x="12" y="76" width="72" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="16" y="42" width="17" height="34" rx="1.5" fill="#3d4a8c"></rect>
-          <rect x="37" y="28" width="20" height="48" rx="1.5" fill="#232c58"></rect>
-          <rect x="61" y="48" width="17" height="28" rx="1.5" fill="#fffdf9" stroke="#232c58" stroke-width="2"></rect>
-          <rect x="42" y="34" width="4" height="4" fill="#8a97d4"></rect><rect x="49" y="34" width="4" height="4" fill="#8a97d4"></rect><rect x="42" y="42" width="4" height="4" fill="#8a97d4"></rect><rect x="49" y="42" width="4" height="4" fill="#8a97d4"></rect>
-          <rect x="20" y="47" width="4" height="4" fill="#eef0f9"></rect><rect x="27" y="47" width="4" height="4" fill="#eef0f9"></rect>
+          <rect x="16" y="42" width="17" height="34" rx="1.5" fill="#1273d4"></rect>
+          <rect x="37" y="28" width="20" height="48" rx="1.5" fill="#0a3f78"></rect>
+          <rect x="61" y="48" width="17" height="28" rx="1.5" fill="#fffdf9" stroke="#0a3f78" stroke-width="2"></rect>
+          <rect x="42" y="34" width="4" height="4" fill="#6fb2f0"></rect><rect x="49" y="34" width="4" height="4" fill="#6fb2f0"></rect><rect x="42" y="42" width="4" height="4" fill="#6fb2f0"></rect><rect x="49" y="42" width="4" height="4" fill="#6fb2f0"></rect>
+          <rect x="20" y="47" width="4" height="4" fill="#e8f2fd"></rect><rect x="27" y="47" width="4" height="4" fill="#e8f2fd"></rect>
         </svg>
         <div style="font-family:'Source Serif 4',serif;font-size:25px;font-weight:600;letter-spacing:-.01em;line-height:1.3">Vi hittade 6 stöd som ser lovande ut</div>
       </div>
@@ -621,15 +1276,15 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
       <div style="display:flex;gap:16px;align-items:flex-start;padding:10px 0"><div style="min-width:56px;text-align:center"><div style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600">74</div><div style="color:#57534a;font-size:11px">av 100</div></div><div><span style="filter:blur(4.5px);user-select:none;opacity:.85">Studiefinansieringsstöd</span><div style="color:#57534a;font-size:13px">Statlig myndighet</div></div></div>
       <div style="padding:14px 16px;background:#fffdf9;border:1px solid #e6e2d8;border-radius:12px;margin-top:12px"><div style="display:flex;justify-content:space-between;font-size:14.5px"><span style="color:#57534a">Analysupplåsning (engångsbelopp)</span><span>39 kr</span></div></div>
       <div style="display:flex;align-items:flex-start;gap:9px;margin:14px 0">
-        <input type="checkbox" id="d-ang2" style="width:auto;margin-top:4px;accent-color:#3d4a8c">
+        <input type="checkbox" id="d-ang2" style="width:auto;margin-top:4px;accent-color:#1273d4">
         <label for="d-ang2" style="font-weight:500;font-size:14px">Jag samtycker till att analysen levereras direkt och att ångerrätten därmed inte gäller den.</label>
       </div>
-      <button style="font:inherit;font-weight:600;padding:10px 20px;border-radius:10px;border:none;background:#3d4a8c;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(35,44,88,.28)" style-hover="background:#2f3a70">Lås upp analysen — 39 kr</button>
+      <button style="font:inherit;font-weight:600;padding:10px 20px;border-radius:10px;border:none;background:#1273d4;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(10,63,120,.26)" style-hover="background:#0d5cae">Lås upp analysen — 39 kr</button>
       <p style="color:#57534a;font-size:13px;margin:10px 0 0">Att ansöka själv direkt hos myndigheten är alltid gratis — det här köpet gäller vår analys. Slutligt beslut fattas alltid av myndigheten.</p>
     </div>
   </div>
 
-  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">5.3 Analysvyn — stabil frågelista + Dina svar</h3>
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">8.4 Analysvyn — stabil frågelista + Dina svar</h3>
   <div data-screen-label="Analys" style="border:1px solid #d5cfc0;border-radius:14px;overflow:hidden;box-shadow:0 3px 8px rgba(40,36,28,.08),0 14px 34px rgba(40,36,28,.13);margin:0 0 28px;background:#f7f5f0">
     <div style="background:#efece4;border-bottom:1px solid #e6e2d8;padding:7px 14px;font-size:12px;color:#57534a;display:flex;gap:8px;align-items:center"><span style="letter-spacing:2px;color:#d5cfc0;font-size:9px">● ● ●</span> bidragskoll.se/analys (upplåst)</div>
     <div style="padding:28px 24px;max-width:620px;margin:0 auto">
@@ -638,14 +1293,14 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
         <div style="min-width:56px;text-align:center"><div style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600">86</div><div style="color:#57534a;font-size:11px">av 100</div></div>
         <div style="flex:1"><b>Bostadsbidrag</b> <span style="display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:650;background:#f5edd8;color:#8a6510;margin-left:4px">AI-sammanställd</span>
           <div style="color:#57534a;font-size:13px;margin-top:2px">Försäkringskassan · löpande ansökan</div>
-          <button style="font:inherit;font-weight:600;color:#3d4a8c;background:none;border:none;padding:0;cursor:pointer;font-size:14px;margin-top:4px" style-hover="text-decoration:underline">Visa varför ↓</button></div>
-        <button style="font:inherit;font-weight:600;padding:6px 14px;border-radius:9px;border:1px solid #d5cfc0;background:#fffdf9;color:#3d4a8c;cursor:pointer;font-size:13.5px;flex-shrink:0" style-hover="background:#eef0f9">Förbered ansökan · 19 kr</button>
+          <button style="font:inherit;font-weight:600;color:#1273d4;background:none;border:none;padding:0;cursor:pointer;font-size:14px;margin-top:4px" style-hover="text-decoration:underline">Visa varför ↓</button></div>
+        <button style="font:inherit;font-weight:600;padding:6px 14px;border-radius:9px;border:1px solid #d5cfc0;background:#fffdf9;color:#1273d4;cursor:pointer;font-size:13.5px;flex-shrink:0" style-hover="background:#e8f2fd">Förbered ansökan · 19 kr</button>
       </div>
       <div style="background:#fffdf9;border:1px solid #d9b96a;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-top:16px">
         <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">Några frågor kvar</h3>
-        <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a;display:flex;align-items:center;gap:6px;margin-bottom:4px">Ekonomi <button style="font:inherit;font-weight:700;font-size:11px;line-height:1;cursor:pointer;width:19px;height:19px;border-radius:50%;border:1.5px solid #3d4a8c;color:#3d4a8c;background:#fffdf9;padding:0" style-hover="background:#3d4a8c;color:#fff">i</button></div>
+        <div style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#57534a;display:flex;align-items:center;gap:6px;margin-bottom:4px">Ekonomi <button style="font:inherit;font-weight:700;font-size:11px;line-height:1;cursor:pointer;width:19px;height:19px;border-radius:50%;border:1.5px solid #1273d4;color:#1273d4;background:#fffdf9;padding:0" style-hover="background:#1273d4;color:#fff">i</button></div>
         <b>Vad är din bostadskostnad per månad?</b>
-        <div style="margin-top:8px"><input type="number" placeholder="kr/mån" style="font:inherit;width:100%;max-width:220px;padding:9px 12px;border:1px solid #d5cfc0;border-radius:10px;background:#fffdf9;color:#1f1d18" style-focus="border-color:#3d4a8c;outline:none;box-shadow:0 0 0 3px rgba(61,74,140,.28)"></div>
+        <div style="margin-top:8px"><input type="number" placeholder="kr/mån" style="font:inherit;width:100%;max-width:220px;padding:9px 12px;border:1px solid #d5cfc0;border-radius:10px;background:#fffdf9;color:#1f1d18" style-focus="border-color:#1273d4;outline:none;box-shadow:0 0 0 3px rgba(18,115,212,.30)"></div>
       </div>
       <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-top:14px">
         <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">Dina svar</h3>
@@ -655,29 +1310,29 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
     </div>
   </div>
 
-  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">5.4 Ansökningsarbetsyta &amp; dokumentstudio</h3>
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">8.5 Ansökningsarbetsyta &amp; dokumentstudio</h3>
   <div data-screen-label="Arbetsyta" style="border:1px solid #d5cfc0;border-radius:14px;overflow:hidden;box-shadow:0 3px 8px rgba(40,36,28,.08),0 14px 34px rgba(40,36,28,.13);margin:0 0 28px;background:#f7f5f0">
     <div style="background:#efece4;border-bottom:1px solid #e6e2d8;padding:7px 14px;font-size:12px;color:#57534a;display:flex;gap:8px;align-items:center"><span style="letter-spacing:2px;color:#d5cfc0;font-size:9px">● ● ●</span> bidragskoll.se/ansokningar/… · skrivbordsbredd med sidomeny</div>
     <div style="display:flex">
       <nav style="width:230px;flex-shrink:0;background:#fffdf9;border-right:1px solid #e6e2d8;padding:22px 12px;display:flex;flex-direction:column;gap:3px">
-        <div style="display:flex;align-items:center;gap:8px;padding:0 10px 16px"><span style="width:10px;height:10px;border-radius:3px;background:linear-gradient(135deg,#3d4a8c,#232c58)"></span><span style="font-family:'Source Serif 4',serif;font-weight:700;font-size:16px;color:#232c58">Bidragskoll</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:0 10px 16px"><svg viewBox="0 0 40 40" width="24" height="24" style="display:block;flex-shrink:0" aria-label="Bidragskoll"><rect x="0" y="0" width="40" height="40" rx="11" fill="#1273d4"></rect><polyline points="10,20.5 20,11.5 30,20.5" fill="none" stroke="#6fb2f0" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline points="14,25.5 18.5,30 27,21" fill="none" stroke="#fffdf9" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg><span style="font-family:'Source Serif 4',serif;font-weight:700;font-size:17px;letter-spacing:-.02em;color:#0a3f78">Bidragskoll</span></div>
         <a href="#" style="padding:8px 11px;border-radius:9px;color:#1f1d18;font-weight:500;border-left:3px solid transparent" style-hover="background:#efece4;text-decoration:none">Översikt</a>
-        <a href="#" style="padding:8px 11px;border-radius:9px;background:#eef0f9;color:#2f3a70;font-weight:650;border-left:3px solid #3d4a8c" style-hover="text-decoration:none">Ansökningar</a>
+        <a href="#" style="padding:8px 11px;border-radius:9px;background:#e8f2fd;color:#0d5cae;font-weight:650;border-left:3px solid #1273d4" style-hover="text-decoration:none">Ansökningar</a>
         <a href="#" style="padding:8px 11px;border-radius:9px;color:#1f1d18;font-weight:500;border-left:3px solid transparent" style-hover="background:#efece4;text-decoration:none">Dokument</a>
         <a href="#" style="padding:8px 11px;border-radius:9px;color:#1f1d18;font-weight:500;border-left:3px solid transparent" style-hover="background:#efece4;text-decoration:none">Mina köp</a>
         <a href="#" style="padding:8px 11px;border-radius:9px;color:#1f1d18;font-weight:500;border-left:3px solid transparent" style-hover="background:#efece4;text-decoration:none">Konto</a>
       </nav>
       <div style="flex:1;padding:24px 26px">
-        <div style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin-bottom:10px">Bostadsbidrag <span style="display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:650;background:#eef0f9;color:#2f3a70;font-family:'Public Sans',sans-serif;vertical-align:3px;margin-left:4px">Under förberedelse</span></div>
-        <div style="display:flex;gap:5px;max-width:420px;margin-bottom:16px"><span style="flex:1;height:4px;border-radius:2px;background:#3d4a8c"></span><span style="flex:1;height:4px;border-radius:2px;background:#3d4a8c"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span></div>
+        <div style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin-bottom:10px">Bostadsbidrag <span style="display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:650;background:#e8f2fd;color:#0d5cae;font-family:'Public Sans',sans-serif;vertical-align:3px;margin-left:4px">Under förberedelse</span></div>
+        <div style="display:flex;gap:5px;max-width:420px;margin-bottom:16px"><span style="flex:1;height:4px;border-radius:2px;background:#1273d4"></span><span style="flex:1;height:4px;border-radius:2px;background:#1273d4"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span><span style="flex:1;height:4px;border-radius:2px;background:#ddd8cc"></span></div>
         <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
           <h3 style="font-size:15px;font-weight:700;margin:0 0 10px">Ansökningsunderlag</h3>
           <label style="display:block;font-weight:600;margin:0 0 4px">Beskriv din boendesituation</label>
           <p style="color:#57534a;font-size:13.5px;margin:0 0 8px">Förifyllt från dina svar — kontrollera och justera.</p>
-          <textarea style="font:inherit;width:100%;min-height:70px;padding:9px 12px;border:1px solid #d5cfc0;border-radius:10px;background:#fffdf9;color:#1f1d18;resize:vertical" style-focus="border-color:#3d4a8c;outline:none;box-shadow:0 0 0 3px rgba(61,74,140,.28)">Jag bor i hyresrätt tillsammans med två barn…</textarea>
+          <textarea style="font:inherit;width:100%;min-height:70px;padding:9px 12px;border:1px solid #d5cfc0;border-radius:10px;background:#fffdf9;color:#1f1d18;resize:vertical" style-focus="border-color:#1273d4;outline:none;box-shadow:0 0 0 3px rgba(18,115,212,.30)">Jag bor i hyresrätt tillsammans med två barn…</textarea>
           <div style="display:flex;gap:10px;margin-top:12px">
-            <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:1px solid #d5cfc0;background:#fffdf9;color:#3d4a8c;cursor:pointer" style-hover="background:#eef0f9">Föreslå formulering</button>
-            <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:none;background:#3d4a8c;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(35,44,88,.28)" style-hover="background:#2f3a70">Spara utkast</button>
+            <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:1px solid #d5cfc0;background:#fffdf9;color:#1273d4;cursor:pointer" style-hover="background:#e8f2fd">Föreslå formulering</button>
+            <button style="font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:none;background:#1273d4;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(10,63,120,.26)" style-hover="background:#0d5cae">Spara utkast</button>
           </div>
           <div style="border-top:1px solid #e6e2d8;margin-top:14px;padding-top:12px;font-size:13px;color:#57534a">Dokumentet renderas ur mallen för Försäkringskassans ansökan. Du skickar själv in det till myndigheten — det är alltid gratis.</div>
         </div>
@@ -685,7 +1340,52 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
     </div>
   </div>
 
-  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">5.5 Publik SEO-sida (mall)</h3>
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">8.6 Klart — ansökan förberedd</h3>
+  <div data-screen-label="Klart" style="border:1px solid #d5cfc0;border-radius:14px;overflow:hidden;box-shadow:0 3px 8px rgba(40,36,28,.08),0 14px 34px rgba(40,36,28,.13);margin:0 0 28px;background:#f7f5f0">
+    <div style="background:#efece4;border-bottom:1px solid #e6e2d8;padding:7px 14px;font-size:12px;color:#57534a;display:flex;gap:8px;align-items:center"><span style="letter-spacing:2px;color:#d5cfc0;font-size:9px">● ● ●</span> bidragskoll.se/ansokningar/bostadsbidrag/klart</div>
+    <div style="padding:26px 24px 30px;max-width:620px;margin:0 auto">
+      <div style="border:1px solid #e6e2d8;border-radius:14px;overflow:hidden;background:#fffdf9;box-shadow:0 1px 3px rgba(40,36,28,.07)">
+        <svg style="width:100%;height:54px;display:block"><rect width="100%" height="100%" fill="#ecf3ed"></rect><rect width="100%" height="100%" fill="url(#bk-p-wave)"></rect></svg>
+        <div style="padding:0 22px 22px;text-align:center;margin-top:-30px">
+          <svg viewBox="0 0 96 96" width="86" height="86" style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:50%;padding:8px" aria-hidden="true">
+            <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
+            <rect x="30" y="20" width="36" height="48" rx="3" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+            <rect x="36" y="30" width="24" height="3" rx="1.5" fill="#d5cfc0"></rect><rect x="36" y="38" width="24" height="3" rx="1.5" fill="#d5cfc0"></rect><rect x="36" y="46" width="16" height="3" rx="1.5" fill="#d5cfc0"></rect>
+            <circle cx="62" cy="62" r="12" fill="#3f7050"></circle>
+            <path d="M56 62 L60 66 L69 57" fill="none" stroke="#fffdf9" stroke-width="3" stroke-linecap="round"></path>
+          </svg>
+          <div style="font-family:'Source Serif 4',serif;font-size:25px;font-weight:600;letter-spacing:-.01em;margin-top:6px">Din ansökan är förberedd</div>
+          <p style="color:#57534a;font-size:14px;margin:4px 0 0">Fyra dokument ligger i ditt valv, ifyllda med dina svar. Du skickar in dem själv till Försäkringskassan — det är alltid gratis.</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <button style="font:inherit;font-weight:600;padding:10px 20px;border-radius:10px;border:none;background:#1273d4;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(10,63,120,.26);display:flex;gap:8px;align-items:center" style-hover="background:#0d5cae"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M7 11l5 5 5-5M4 20h16"></path></svg> Hämta alla dokument</button>
+        <button style="font:inherit;font-weight:600;padding:10px 20px;border-radius:10px;border:1px solid #d5cfc0;background:#fffdf9;color:#1273d4;cursor:pointer" style-hover="background:#e8f2fd">Öppna dokumentvalvet</button>
+      </div>
+
+      <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(40,36,28,.07);margin-top:14px">
+        <h3 style="font-size:15px;font-weight:700;margin:0 0 10px">Så här går det vidare</h3>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;gap:12px;align-items:flex-start;padding-bottom:12px;border-left:2px solid #3f7050;margin-left:9px;padding-left:16px;position:relative">
+            <span style="position:absolute;left:-8px;top:2px;width:14px;height:14px;border-radius:50%;background:#3f7050;border:2px solid #fffdf9"></span>
+            <div><b style="font-size:14px">Analys och underlag klart</b><div style="color:#57534a;font-size:13px">13 aug · av oss</div></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding-bottom:12px;border-left:2px solid #1273d4;margin-left:9px;padding-left:16px;position:relative">
+            <span style="position:absolute;left:-8px;top:2px;width:14px;height:14px;border-radius:50%;background:#1273d4;border:2px solid #fffdf9"></span>
+            <div><b style="font-size:14px">Du skickar in till myndigheten</b><div style="color:#57534a;font-size:13px">Nästa steg · via forsakringskassan.se eller post</div></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;border-left:2px solid #e6e2d8;margin-left:9px;padding-left:16px;position:relative;opacity:.62">
+            <span style="position:absolute;left:-8px;top:2px;width:14px;height:14px;border-radius:50%;background:#d5cfc0;border:2px solid #fffdf9"></span>
+            <div><b style="font-size:14px">Myndigheten beslutar</b><div style="color:#57534a;font-size:13px">Handläggningstid och beslut avgörs helt av dem</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="border-radius:10px;padding:11px 15px;font-size:14px;background:#e8f2fd;color:#0d5cae;border:1px solid rgba(18,115,212,.20);margin-top:14px">Dokumenten är AI-sammanställda utifrån dina svar och officiella källor — läs igenom dem innan du skickar. Slutligt beslut fattas alltid av myndigheten.</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px;font-weight:700;margin:0 0 8px">8.7 Publik SEO-sida (mall)</h3>
   <div data-screen-label="SEO-sida" style="border:1px solid #d5cfc0;border-radius:14px;overflow:hidden;box-shadow:0 3px 8px rgba(40,36,28,.08),0 14px 34px rgba(40,36,28,.13);margin:0 0 8px;background:#f7f5f0">
     <div style="background:#efece4;border-bottom:1px solid #e6e2d8;padding:7px 14px;font-size:12px;color:#57534a;display:flex;gap:8px;align-items:center"><span style="letter-spacing:2px;color:#d5cfc0;font-size:9px">● ● ●</span> bidragskoll.se/bidrag/bostadsbidrag · statiskt genererad</div>
     <div style="padding:28px 24px;max-width:620px;margin:0 auto">
@@ -693,11 +1393,11 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
       <div style="display:flex;gap:14px;align-items:flex-end;margin-bottom:8px">
         <svg viewBox="0 0 96 96" width="56" height="56" style="flex-shrink:0" aria-hidden="true">
           <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0"></rect>
-          <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#232c58" stroke-width="2.5"></rect>
-          <polygon points="20,46 48,24 76,46" fill="#3d4a8c"></polygon>
-          <rect x="42" y="58" width="12" height="19" rx="1" fill="#232c58"></rect>
-          <rect x="31" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
-          <rect x="58" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" stroke-width="1.5"></rect>
+          <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#0a3f78" stroke-width="2.5"></rect>
+          <polygon points="20,46 48,24 76,46" fill="#1273d4"></polygon>
+          <rect x="42" y="58" width="12" height="19" rx="1" fill="#0a3f78"></rect>
+          <rect x="31" y="51" width="8" height="8" rx="1" fill="#e8f2fd" stroke="#0a3f78" stroke-width="1.5"></rect>
+          <rect x="58" y="51" width="8" height="8" rx="1" fill="#e8f2fd" stroke="#0a3f78" stroke-width="1.5"></rect>
         </svg>
         <div style="font-family:'Source Serif 4',serif;font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:1.3">Bostadsbidrag — vem kan få det och hur det fungerar</div>
       </div>
@@ -709,14 +1409,14 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
           <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;color:#57534a">Senast kontrollerad</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">2026-08-12</td></tr>
         </tbody>
       </table>
-      <div style="border-radius:10px;padding:11px 15px;font-size:14px;background:#eef0f9;color:#2f3a70;border:1px solid rgba(61,74,140,.16);margin-top:14px">Vill du veta om just du ser ut att kunna ha rätt till det här stödet? <a href="#">Gör den kostnadsfria genomgången</a>.</div>
+      <div style="border-radius:10px;padding:11px 15px;font-size:14px;background:#e8f2fd;color:#0d5cae;border:1px solid rgba(18,115,212,.20);margin-top:14px">Vill du veta om just du ser ut att kunna ha rätt till det här stödet? <a href="#">Gör den kostnadsfria genomgången</a>.</div>
       <div style="border-top:1px solid #e6e2d8;margin-top:14px;padding-top:12px;font-size:13px;color:#57534a">Källa: forsakringskassan.se · Innehållet är AI-sammanställt från officiell källa — ej granskat av människa. Slutligt beslut fattas alltid av myndigheten.</div>
     </div>
   </div>
 </section>
 
 <section>
-  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 16px">6. Röst &amp; ton</h2>
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 16px">9. Röst &amp; ton</h2>
   <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
     <table style="width:100%;border-collapse:collapse;font-size:14px">
       <thead><tr>
@@ -736,7 +1436,100 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
   </div>
 </section>
 
-<footer style="border-top:1px solid #e6e2d8;margin-top:48px;padding-top:16px;font-size:13px;color:#57534a">Bidragskoll.se designsystem · riktning Bläck (1a) · 2026-08-22 · för tillbaka ändringar till apps/web/src/styles.css, demo/demo.css och tools/genseo.mjs.</footer>
+<section style="margin-top:48px">
+  <h2 style="font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 4px">10. Implementeringsschema</h2>
+  <p style="color:#57534a;font-size:14px;margin:0 0 18px">Genomgående plan från token till publik sida. Sex faser, i ordning — varje fas har filer, arbetsuppgifter och ett klart-kriterium. Ingen fas påbörjas innan föregående är grön.</p>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Fas 0 — Tokens &amp; typografi (grund)</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:13.5px">
+      <thead><tr>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0">Uppgift</th>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0;width:230px">Fil</th>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0;width:190px">Klart när</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Ersätt <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">:root</code>-blocket med den nya tokenuppsättningen</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;font-family:ui-monospace,Menlo,monospace;font-size:12px">apps/web/src/styles.css</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Inga hårdkodade hex kvar i filen</td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Lägg in Public Sans + Source Serif 4 (self-hosted woff2, <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">font-display:swap</code>)</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;font-family:ui-monospace,Menlo,monospace;font-size:12px">apps/web/public/fonts/</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Ingen extern fontförfrågan i nätverksloggen</td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Rubriknivåer till seriff, brödtext till sans</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;font-family:ui-monospace,Menlo,monospace;font-size:12px">styles.css · h1/h2/h3</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">h3 är fortfarande sans (avsiktligt)</td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Skugg- och radietokens</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;font-family:ui-monospace,Menlo,monospace;font-size:12px">styles.css</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Alla kort använder <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">var(--shadow)</code></td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Spegla tokens till demo och SEO-generator</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;font-family:ui-monospace,Menlo,monospace;font-size:12px">demo/demo.css · tools/genseo.mjs</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Tre filer visuellt identiska</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:12px;font-size:13px;color:#57534a;background:#efece4;border-radius:10px;padding:10px 14px"><b>Sök-och-ersätt (gamla → nya):</b> <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">#2050d8→#1273d4</code> · <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">#f5f6f8→#f7f5f0</code> · <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">#ffffff→#fffdf9</code> · <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">#5b6579→#57534a</code> · <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">#dfe3ea→#e6e2d8</code> · alla <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">linear-gradient</code> på knappar bort.</div>
+  </div>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08);margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 12px">Fas 1–5 — komponenter, grafik och skärmar</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:13.5px">
+      <thead><tr>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0;width:52px">Fas</th>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0">Innehåll</th>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0;width:200px">Berör</th>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0;width:170px">Klart när</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;font-weight:700">1</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8"><b>Baskomponenter:</b> knappar (4 varianter), fält, <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">.choice</code>, badges, alerts, tabell, nyckel/värde, fokusringar</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Hela appen — CSS-lager</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Alla interaktiva element har synlig fokusring</td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;font-weight:700">2</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8"><b>Illustrationer:</b> 30 figurer + 5 scener + skyline-avdelare + 4 mönster som SVG-sprite; ämne→figur-mappning i kod</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">public/ill/ · ny <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">ill.js</code></td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Varje frågekategori har en figur</td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;font-weight:700">3</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8"><b>Onboarding:</b> progressindikator, spot-figur per fråga, framhävd fråga för de fem tyngsta, ⓘ-inforuta (F-INFO)</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Frågeflödet</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">En fråga per skärm, inget hoppar</td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;font-weight:700">4</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8"><b>Analys &amp; betalning:</b> matchrad, förklaringslista, poängmätare, villkorsstapel, teaser med masker, paybox, ångerrättsruta</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Analysvyn, betalflödet</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Gratisvägen syns intill varje köpknapp</td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8;font-weight:700">5</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8"><b>Arbetsyta, klart-läge &amp; publika sidor:</b> sidomeny, dokumentstudio, statusspår, tidslinje, SEO-mall med källrad</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Inloggat läge + genseo</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Alla sidor bär källa och datum</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 10px">Var illustrationen ska sitta</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:13.5px">
+        <tbody>
+          <tr><td style="padding:7px 8px;border-bottom:1px solid #e6e2d8;color:#57534a;width:150px">Startsida</td><td style="padding:7px 8px;border-bottom:1px solid #e6e2d8">Scen <b>Kvarteret</b>, 480 bred</td></tr>
+          <tr><td style="padding:7px 8px;border-bottom:1px solid #e6e2d8;color:#57534a">Frågeskärm</td><td style="padding:7px 8px;border-bottom:1px solid #e6e2d8">Spot 72–80px, ämnets figur</td></tr>
+          <tr><td style="padding:7px 8px;border-bottom:1px solid #e6e2d8;color:#57534a">Nyckelfråga</td><td style="padding:7px 8px;border-bottom:1px solid #e6e2d8">Scen 96px i rundel + val med 34px-ikon</td></tr>
+          <tr><td style="padding:7px 8px;border-bottom:1px solid #e6e2d8;color:#57534a">Kategoriingång</td><td style="padding:7px 8px;border-bottom:1px solid #e6e2d8">Motivkort, mönstrad topp 64px</td></tr>
+          <tr><td style="padding:7px 8px;border-bottom:1px solid #e6e2d8;color:#57534a">Tomt läge / fel</td><td style="padding:7px 8px;border-bottom:1px solid #e6e2d8">Figur 72–96px, centrerad</td></tr>
+          <tr><td style="padding:7px 8px;border-bottom:1px solid #e6e2d8;color:#57534a">Klart-läge</td><td style="padding:7px 8px;border-bottom:1px solid #e6e2d8">Vågbanner + dokumentfigur</td></tr>
+          <tr><td style="padding:7px 8px;color:#57534a">Sidfot, publika sidor</td><td style="padding:7px 8px">Skyline-avdelare, full bredd</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+      <h3 style="font-size:15px;font-weight:700;margin:0 0 10px">QA-checklista före release</h3>
+      <div style="display:flex;flex-direction:column;gap:7px;font-size:13.5px">
+        <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:#3f7050;font-weight:700;flex-shrink:0">✓</span> Kontrast: brödtext ≥ 7:1, sekundärtext ≥ 6:1, all vit text på blått ≥ 4,5:1</div>
+        <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:#3f7050;font-weight:700;flex-shrink:0">✓</span> Tabbordning följer läsordningen; fokusring syns på mörk och ljus botten</div>
+        <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:#3f7050;font-weight:700;flex-shrink:0">✓</span> Varje illustration har <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">aria-label</code> eller <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">aria-hidden</code></div>
+        <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:#3f7050;font-weight:700;flex-shrink:0">✓</span> <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">prefers-reduced-motion</code> stänger av skimmer och blink</div>
+        <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:#3f7050;font-weight:700;flex-shrink:0">✓</span> 360px bredd: inget horisontellt skroll, träffytor ≥ 44px</div>
+        <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:#3f7050;font-weight:700;flex-shrink:0">✓</span> Språkgranskning: inget "berättigad", "du får" eller "garanterat" i hela kodbasen</div>
+        <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:#3f7050;font-weight:700;flex-shrink:0">✓</span> Myndighetsfriskrivning finns på varje analys- och dokumentyta</div>
+        <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:#3f7050;font-weight:700;flex-shrink:0">✓</span> Ingen fråga efter personnummer någonstans i flödet</div>
+        <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:#3f7050;font-weight:700;flex-shrink:0">✓</span> Ej aktiverade integrationer visar ärlig 503-yta, inte tom skärm</div>
+        <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:#3f7050;font-weight:700;flex-shrink:0">✓</span> Teaser: riktiga stödnamn finns inte i klientens nätverkssvar</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#fffdf9;border:1px solid #e6e2d8;border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(40,36,28,.07),0 4px 14px rgba(40,36,28,.08)">
+    <h3 style="font-size:15px;font-weight:700;margin:0 0 10px">Risker &amp; beslut som måste tas</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:13.5px">
+      <thead><tr>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0">Risk</th>
+        <th style="text-align:left;color:#57534a;font-weight:650;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid #d5cfc0">Motåtgärd</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Signalblått kan läsas som myndighetens egen blå</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Alltid vårt märke i sidhuvudet + friskrivning i sidfoten; aldrig myndighetslogotyper i vår kromning</td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Illustrationerna gör allvarliga besked lättsamma</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Ingen figur på avslags- eller betalningsytor utom den ärliga felytan</td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">SVG-vikt på mobil</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">En sprite, inline-kritiska figurer, lazy för scener under vikningen</td></tr>
+        <tr><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Poängmätaren tolkas som beslut</td><td style="padding:8px 10px;border-bottom:1px solid #e6e2d8">Aldrig grönt, alltid "av 100" och alltid friskrivningen intill</td></tr>
+        <tr><td style="padding:8px 10px">Två typsnitt ökar första renderingstiden</td><td style="padding:8px 10px">Self-hosted woff2, <code style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">preload</code> på seriffens 600-vikt, sans som fallback-stack</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer style="border-top:1px solid #e6e2d8;margin-top:48px;padding-top:16px;font-size:13px;color:#57534a">Bidragskoll.se designsystem · riktning Signal (v2) · 2026-08-22 · för tillbaka ändringar till apps/web/src/styles.css, demo/demo.css och tools/genseo.mjs.</footer>
 </div>
 </x-dc>
 </body>

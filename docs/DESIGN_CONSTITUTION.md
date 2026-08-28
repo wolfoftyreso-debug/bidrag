@@ -5,6 +5,12 @@
 Claude Design); detta dokument är principerna som styr hur källan får ändras
 och användas. Vid konflikt vinner konstitutionen.
 
+Gällande riktning: **"Signal"** (2026-08-28), som ersatte **"Bläck"**
+(2026-08-22). Bytet var identitet, inte omdesign: ytor, text, semantiska
+färger, radier, skuggnivåer, typografi och alla mönster är oförändrade — det
+som ändrades är primärfamiljen (klarare signalblå), den nya tonen
+`--primary-light` och märket. Ändringstabellen står i `design/README.md`.
+
 ## 1. Känslan: varmt institutionellt ("den varma myndighetskramen")
 
 Myndighetens ordning, saklighet, förutsägbarhet, dokumentation och respekt —
@@ -26,7 +32,8 @@ signalerar att kanske inte heller informationen stämmer.
 ## 3. Systemets byggstenar (status)
 
 Definierat och i drift (design/bidragskoll.css): tokens (varma neutraler,
-indigo, semantiska färger, guldaccent), typografi (Public Sans UI + Source
+signalblå primärfamilj `--primary` / `-dark` / `-deep` / `-light` / `-soft` /
+`-ring`, semantiska färger, guldaccent), typografi (Public Sans UI + Source
 Serif 4 för rubriker/poäng/varumärke), radier, elevation (tre skuggnivåer +
 CTA-skuggan), knappar (primär/sekundär/subtil med medveten lyft-hierarki),
 svarsval (.choice + .ikon + framhävd nyckelfråga med illustrationsscen),
@@ -35,6 +42,21 @@ frågelistans tre lägen (F-STABIL), inforutan (F-INFO), betalyta, blurmask,
 den inbundna låsta rapporten (F-EXKLUSIV), illustrationsbibliotek 22 figurer
 med regler (max 3 färger, kontur i deep, varm markrad, aldrig ren dekor, en
 figur per skärm, alltid tom alt).
+
+**Märket** är en systemkomponent, inte en bild: en rundad ruta i `--primary`
+med en taklinje i `--primary-light` och en bock i `--surface` under — "hem" och
+"bedömt" i en form, två streckvikter, runda ändar, inga gradienter. Rutan hör
+till märket och får inte plockas bort. Under ~24px (favicon, 32px-ikonen)
+faller taklinjen bort och bocken bär ensam med tyngre streck; den regeln
+härleds, den ritas inte.
+`apps/web/public/logo-mark.svg` är **enda källan**; favicon, app-ikoner och
+OG-bilden härleds ur den av `node tools/genbrand.mjs`. Ingen får rita ett eget
+märke eller handredigera de härledda filerna — ändra SVG:n, kör skriptet. `tools/svgcheck.mjs`
+i verify och CI vaktar båda leden: varje märke och illustration måste vara
+välformad XML, och favicon.svg måste bära märkets bock och ingen geometri som
+inte står i källan. Vakten finns för
+att Signal-märket en gång gick ut med `--` i en XML-kommentar och därmed
+renderades som trasig bild — utan att något bygge klagade.
 
 **Saknas som systemkomponenter (M9 i backloggen):** skeleton states, empty
 states (`.tomt-lage` finns som CSS men används inte systematiskt), error
@@ -74,7 +96,9 @@ ingen konstgjord knapphet, inga förkryssade rutor, inga dark patterns.
 ## 8. Ändringsprocess
 
 Designändring: design/-källan först (via Claude Design eller direkt) → förs
-till apps/web/src/styles.css + demo/demo.css + tools/genseo.mjs → verify +
-demokontroller + uicheck gröna → skärmbildsbevis i PR/commit. Prestanda är
+till apps/web/src/styles.css + demo/demo.css + tools/genseo.mjs (+ `node
+tools/genbrand.mjs` om märket rörts) → verify + demokontroller + uicheck
+gröna → skärmbildsbevis i PR/commit. En riktningsändring uppdaterar också
+`design/README.md`s ändringstabell och §3 här — annars är den inte färdig. Prestanda är
 del av design: en ändring som försämrar CWV-målen (SEO_RELEASE_GATE) är inte
 färdig.

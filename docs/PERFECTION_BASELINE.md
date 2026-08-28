@@ -33,7 +33,7 @@ demons kontroller, WCAG-passet B1 (motförhöret), färsk brand-SERP.
 
 | # | Fynd | Status |
 |---|---|---|
-| C1 | Ingen favicon/brand assets någonstans | **ÅTGÄRDAT**: eget märke (guldbock på indigo — "koll"), favicon.svg/.ico, apple-touch, PWA-ikoner 192/512, webmanifest, theme-color; i webbapp + alla 77 publika sidor |
+| C1 | Ingen favicon/brand assets någonstans | **ÅTGÄRDAT**: eget märke (taklinje + bock, signalblå — "hem" och "koll" i en form), favicon.svg/.ico, apple-touch, PWA-ikoner 192/512, webmanifest, theme-color; i webbapp + alla 77 publika sidor |
 | C2 | Social metadata saknades (og:image, twitter, webbappens hela OG) | **ÅTGÄRDAT**: varumärkes-OG-bild + komplett OG/twitter överallt; seocheck failar bygget utan |
 | C3 | Soft-404: alla okända URL:er gav 200 + SPA (indexeringsgift) och appens 404 var tyst redirect | **ÅTGÄRDAT**: genseo emitterar hjälpsam 404.html (noindex, §40-språk), vercel-rewriten exkluderar den statiska ytan, SPA fick riktig 404-vy |
 | C4 | Entity footprint obefintlig | **SPEC KLAR — kräver användaren** (konton, register); ENTITY_FOOTPRINT.md |

@@ -446,8 +446,8 @@ function Choice({ label, onClick, sub }: { label: string; sub?: string; onClick:
 }
 
 /**
- * Framhävd nyckelfråga (designsystemet Bläck, design/README.md): för de frågor
- * som väger tyngst — indigo-mjuk panel, illustration i vit rundel (figuren
+ * Framhävd nyckelfråga (designsystemet Signal, design/README.md): för de frågor
+ * som väger tyngst — mjuk blå panel, illustration i vit rundel (figuren
  * speglar frågans ämne, alt="" eftersom rubriken bär betydelsen), max en per
  * flödessteg. Samma fokushantering som Q (motförhöret B1).
  */

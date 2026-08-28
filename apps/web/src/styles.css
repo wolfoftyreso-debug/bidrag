@@ -1,9 +1,9 @@
 /*
- * Bidragskoll.se designsystem "BLÄCK" (2026-08-22) — high-trust administrative
+ * Bidragskoll.se designsystem "SIGNAL" (2026-08-28) — high-trust administrative
  * product. Källa: design/bidragskoll.css (paketerat ur Claude Design) — ändra
- * designspråket där först, för sedan hit. Varma neutraler, dämpad indigo,
+ * designspråket där först, för sedan hit. Varma neutraler, signalblå identitet,
  * Public Sans för UI + Source Serif 4 för rubriker/poäng, platta knappar med
- * indigo-tonad skugga. Aldrig flashigt: innehållet är privatekonomi och
+ * blåtonad skugga. Aldrig flashigt: innehållet är privatekonomi och
  * rättigheter. Orubbligt: en fråga per skärm · bedömning aldrig beslut ·
  * F-STABIL · F-INFO · ärlighet före glans · gratisvägen sägs alltid.
  */
@@ -19,12 +19,13 @@
   --border: #e6e2d8;
   --border-strong: #d5cfc0;
 
-  /* Primär (dämpad indigo-identitet) */
-  --primary: #0056A3;
-  --primary-dark: #004481;
-  --primary-deep: #003a6d;
-  --primary-soft: #e8f0f8;
-  --primary-ring: rgba(0, 86, 163, 0.28);
+  /* Primär (signalblå identitet — märket: taklinje i --primary-light, bock i --primary-deep) */
+  --primary: #1273d4;
+  --primary-dark: #0d5cae;
+  --primary-deep: #0a3f78;
+  --primary-light: #6fb2f0;
+  --primary-soft: #e8f2fd;
+  --primary-ring: rgba(18, 115, 212, 0.30);
 
   /* Semantiska */
   --success: #3f7050; --success-soft: #ecf3ed;
@@ -38,7 +39,7 @@
   --radius-choice: 11px;
   --shadow: 0 1px 3px rgba(40, 36, 28, 0.07), 0 4px 14px rgba(40, 36, 28, 0.08);
   --shadow-lift: 0 3px 8px rgba(40, 36, 28, 0.08), 0 14px 34px rgba(40, 36, 28, 0.13);
-  --shadow-btn: 0 2px 6px rgba(0, 86, 163, 0.28);
+  --shadow-btn: 0 2px 6px rgba(10, 63, 120, 0.26);
 
   --font-sans: 'Public Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-serif: 'Source Serif 4', Georgia, serif;
@@ -238,9 +239,9 @@ table.data tr:hover td { background: var(--bg); }
 /* (AST-audit: dött CSS för den borttagna betalvägg-teasern/exklusiv-låst-analys
    (F-EXKLUSIV) togs bort — .blurred-name och .rapport-* användes inte längre i
    någon komponent efter Open Discovery. .checkbox-row-basregeln finns kvar nedan/ovan.) */
-button.upplas, .btn.upplas { background: #fffdf9; color: #003a6d; border: none;
+button.upplas, .btn.upplas { background: #fffdf9; color: #0a3f78; border: none;
   font-weight: 700; box-shadow: 0 3px 12px rgba(0,0,0,0.30); }
-button.upplas:hover, .btn.upplas:hover { background: #e8f0f8; color: #003a6d; }
+button.upplas:hover, .btn.upplas:hover { background: #e8f2fd; color: #0a3f78; }
 
 /* RTL (arabiska, dari, persiska): layouten speglas av logiska egenskaper
    ovan; riktningspilen på framhävda val måste dock byta tecken själv. */

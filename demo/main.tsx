@@ -238,28 +238,28 @@ function Q({ title, guidance, children }: { title: string; guidance?: string; ch
   );
 }
 
-/* Illustrationer (designsystemet Bläck, design/illustrationer/): geometriska
+/* Illustrationer (designsystemet Signal, design/illustrationer/): geometriska
    figurer, max 3 färger ur paletten, kontur i --primary-deep, varm markrad.
    Inlinas här eftersom demon är en enda fil. aria-hidden — rubriken bär betydelsen. */
 const ILL: Record<string, React.ReactNode> = {
   glodlampa: (
     <svg viewBox="0 0 96 96" aria-hidden="true">
-      <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0" /><circle cx="48" cy="40" r="17" fill="#f5edd8" stroke="#8a6510" strokeWidth="2.5" /><rect x="42" y="57" width="12" height="10" rx="2" fill="#232c58" /><rect x="46.5" y="10" width="3" height="9" rx="1.5" fill="#8a6510" /><rect x="70" y="20" width="9" height="3" rx="1.5" fill="#8a6510" transform="rotate(45 74 21)" /><rect x="17" y="20" width="9" height="3" rx="1.5" fill="#8a6510" transform="rotate(-45 22 21)" />
+      <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0" /> <circle cx="48" cy="40" r="17" fill="#f5edd8" stroke="#8a6510" strokeWidth="2.5" /> <rect x="42" y="57" width="12" height="10" rx="2" fill="#0a3f78" /> <rect x="46.5" y="10" width="3" height="9" rx="1.5" fill="#8a6510" /> <rect x="70" y="20" width="9" height="3" rx="1.5" fill="#8a6510" transform="rotate(45 74 21)" /> <rect x="17" y="20" width="9" height="3" rx="1.5" fill="#8a6510" transform="rotate(-45 22 21)" />
     </svg>
   ),
   hus: (
     <svg viewBox="0 0 96 96" aria-hidden="true">
-      <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0" /><rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#232c58" strokeWidth="2.5" /><polygon points="20,46 48,24 76,46" fill="#3d4a8c" /><rect x="42" y="58" width="12" height="19" rx="1" fill="#232c58" /><rect x="31" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" strokeWidth="1.5" /><rect x="58" y="51" width="8" height="8" rx="1" fill="#eef0f9" stroke="#232c58" strokeWidth="1.5" />
+      <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0" /> <rect x="26" y="44" width="44" height="33" rx="2" fill="#fffdf9" stroke="#0a3f78" strokeWidth="2.5" /> <polygon points="20,46 48,24 76,46" fill="#1273d4" /> <rect x="42" y="58" width="12" height="19" rx="1" fill="#0a3f78" /> <rect x="31" y="51" width="8" height="8" rx="1" fill="#e8f2fd" stroke="#0a3f78" strokeWidth="1.5" /> <rect x="58" y="51" width="8" height="8" rx="1" fill="#e8f2fd" stroke="#0a3f78" strokeWidth="1.5" />
     </svg>
   ),
   familj: (
     <svg viewBox="0 0 96 96" aria-hidden="true">
-      <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0" /><circle cx="32" cy="30" r="9" fill="#3d4a8c" /><rect x="22" y="42" width="20" height="34" rx="10" fill="#eef0f9" stroke="#232c58" strokeWidth="2.5" /><circle cx="62" cy="32" r="8" fill="#232c58" /><rect x="53" y="43" width="18" height="33" rx="9" fill="#fffdf9" stroke="#232c58" strokeWidth="2.5" /><circle cx="47" cy="56" r="6" fill="#8a97d4" /><rect x="41" y="63" width="12" height="13" rx="6" fill="#eef0f9" stroke="#232c58" strokeWidth="2" />
+      <rect x="16" y="76" width="64" height="3" rx="1.5" fill="#d5cfc0" /> <circle cx="32" cy="30" r="9" fill="#1273d4" /> <rect x="22" y="42" width="20" height="34" rx="10" fill="#e8f2fd" stroke="#0a3f78" strokeWidth="2.5" /> <circle cx="62" cy="32" r="8" fill="#0a3f78" /> <rect x="53" y="43" width="18" height="33" rx="9" fill="#fffdf9" stroke="#0a3f78" strokeWidth="2.5" /> <circle cx="47" cy="56" r="6" fill="#6fb2f0" /> <rect x="41" y="63" width="12" height="13" rx="6" fill="#e8f2fd" stroke="#0a3f78" strokeWidth="2" />
     </svg>
   ),
 };
 
-/* Framhävd nyckelfråga (Bläck): för frågorna som väger tyngst — max en per
+/* Framhävd nyckelfråga (Signal): för frågorna som väger tyngst — max en per
    flödessteg, figuren speglar frågans ämne. */
 function QFramhavd({ title, guidance, ill, children }: { title: string; guidance?: string; ill: keyof typeof ILL; children: React.ReactNode }) {
   return (
@@ -818,15 +818,7 @@ function App() {
     <div className="page">
       <header className="masthead">
         <div className="brand">
-          <svg className="brand-mark" viewBox="0 0 100 100" aria-hidden="true">
-            <g fill="none" stroke="#0056A3" strokeWidth="15.5" strokeLinecap="round">
-              <line x1="44.5" y1="56" x2="27.5" y2="38" />
-              <line x1="44.5" y1="56" x2="77.5" y2="23" />
-              <line x1="44.5" y1="56" x2="22.5" y2="85" />
-              <line x1="44.5" y1="56" x2="73.5" y2="86" />
-            </g>
-            <circle cx="36.5" cy="19" r="12.5" fill="#0056A3" />
-          </svg>
+          <svg className="brand-mark" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#1273d4"/> <polyline points="10,20.5 20,11.5 30,20.5" fill="none" stroke="#6fb2f0" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"/> <polyline points="14,25.5 18.5,30 27,21" fill="none" stroke="#fffdf9" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           Bidragskoll
         </div>
         <div className="tag">Demo — den riktiga matchningsmotorn och {OPP_COUNT} kurerade stöd, körda helt i din webbläsare</div>

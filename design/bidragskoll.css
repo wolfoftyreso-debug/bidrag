@@ -17,12 +17,13 @@
   --border: #e6e2d8;        /* standardlinje */
   --border-strong: #d5cfc0; /* fältkanter, tabellhuvuden */
 
-  /* Primär (dämpad indigo-identitet) */
-  --primary: #0056A3;
-  --primary-dark: #004481;
-  --primary-deep: #003a6d;  /* varumärke, hero, konturer i illustrationer */
-  --primary-soft: #e8f0f8;  /* markerade val, info-ytor, framhävd fråga */
-  --primary-ring: rgba(0, 86, 163, 0.28); /* fokusring 3px */
+  /* Primär (signalblå identitet — designsystem "Signal") */
+  --primary: #1273d4;
+  --primary-dark: #0d5cae;
+  --primary-deep: #0a3f78;  /* varumärke, hero, konturer i illustrationer */
+  --primary-light: #6fb2f0; /* taklinjen i märket, ljusa accenter i scener */
+  --primary-soft: #e8f2fd;  /* markerade val, info-ytor, framhävd fråga */
+  --primary-ring: rgba(18, 115, 212, 0.30); /* fokusring 3px */
 
   /* Semantiska */
   --success: #3f7050; --success-soft: #ecf3ed;
@@ -36,7 +37,7 @@
   --radius-choice: 11px;
   --shadow: 0 1px 3px rgba(40,36,28,.07), 0 4px 14px rgba(40,36,28,.08);
   --shadow-lift: 0 3px 8px rgba(40,36,28,.08), 0 14px 34px rgba(40,36,28,.13);
-  --shadow-btn: 0 2px 6px rgba(0, 86, 163,.28);
+  --shadow-btn: 0 2px 6px rgba(10, 63, 120,.26);
 
   /* Typsnitt: sans för UI, seriff för rubriker & poäng */
   --font-sans: 'Public Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;

@@ -63,6 +63,7 @@ step "Relevansrevisionen (personor mot alla stöd, F-RELEVANS)" node tools/audit
 step "Produktdoktrinen (situations-först, ingen entry-gate, värde före betalning)" node tools/doctrine.mjs
 step "Semantic guard (Open Discovery + kanonisk entitet, FAS SEO-2)" node tools/semanticguard.mjs
 step "I18N: alla 11 språk kompletta och konsistenta (I18N_PROGRAM)" node --experimental-strip-types tools/i18ncheck.mjs
+step "SVG-vakten: välformade märken/illustrationer + härledd favicon (DESIGN_CONSTITUTION §3)" node tools/svgcheck.mjs
 if [ "$db_up" = 1 ]; then
   psql "$ADMIN_URL" -Atc "select 1 from pg_database where datname='bidrag_test'" | grep -q 1 \
     || psql "$ADMIN_URL" -c 'CREATE DATABASE bidrag_test' >/dev/null
