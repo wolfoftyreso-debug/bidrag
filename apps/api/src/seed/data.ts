@@ -58,6 +58,9 @@ export const authorities: SeedAuthority[] = [
   { key: 'forte', name: 'Forte — Forskningsrådet för hälsa, arbetsliv och välfärd', country: 'SE', kind: 'state_agency', website: 'https://forte.se' },
   { key: 'sparbanksstiftelserna', name: 'Sparbanksstiftelsen i ditt område', country: 'SE', kind: 'foundation', website: 'https://www.sparbankerna.se' },
   { key: 'radiohjalpen', name: 'Radiohjälpen', country: 'SE', kind: 'foundation', website: 'https://www.radiohjalpen.se' },
+  // "Din a-kassa" — samma mönster som "Din region"/"Din kommun": vilken kassa
+  // som gäller beror på bransch/medlemskap; Sveriges a-kassor är paraplyet.
+  { key: 'akassa', name: 'Din a-kassa', country: 'SE', kind: 'association', website: 'https://www.sverigesakassor.se' },
 ];
 
 export interface SeedSource {
@@ -94,6 +97,8 @@ export const seedSources: SeedSource[] = [
   { key: 'skolverket-skolskjuts', authorityKey: 'kommun', name: 'Skolverket — Skolskjuts', url: 'https://www.skolverket.se/', method: 'html', quality: 'A' },
   { key: 'riksdagen-elevresor', authorityKey: 'kommun', name: 'Lag (1991:1110) om kommunernas skyldighet att svara för vissa elevresor', url: 'https://www.riksdagen.se/sv/dokument-och-lagar/', method: 'html', quality: 'A' },
   { key: 'af-stod', authorityKey: 'af', name: 'Arbetsförmedlingen — Stöd och bidrag', url: 'https://arbetsformedlingen.se/', method: 'html', quality: 'A' },
+  { key: 'akassa-ersattning', authorityKey: 'akassa', name: 'Sveriges a-kassor — Så fungerar a-kassan', url: 'https://www.sverigesakassor.se/', method: 'html', quality: 'A' },
+  { key: '1177-patientavgifter', authorityKey: 'region', name: '1177 — Patientavgifter och högkostnadsskydd', url: 'https://www.1177.se/', method: 'html', quality: 'A' },
   { key: 'migrationsverket-atervandring', authorityKey: 'migrationsverket', name: 'Migrationsverket — Återvandring', url: 'https://www.migrationsverket.se/', method: 'html', quality: 'A' },
   { key: 'raa-bidrag', authorityKey: 'raa', name: 'Riksantikvarieämbetet — Bidrag', url: 'https://www.raa.se/', method: 'html', quality: 'A' },
   { key: 'si-program', authorityKey: 'si', name: 'Svenska institutet — Utlysningar', url: 'https://si.se/', method: 'html', quality: 'A' },
@@ -2369,6 +2374,307 @@ export const opportunities: SeedOpportunity[] = [
       c('rh-ps-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Organisationen ska vara svensk'),
       c('rh-ps-m1', 'mandatory', 'organisation.has90Account', 'is_true', undefined, 'Organisationen ska ha 90-konto (Svensk Insamlingskontroll)', 'Har organisationen ett 90-konto?'),
       c('rh-ps-m2', 'mandatory', 'project.isTimeLimited', 'is_true', undefined, 'Bidrag ges till avgränsade projekt, inte löpande verksamhet', 'Är insatsen ett avgränsat projekt (inte ordinarie verksamhet)?'),
+    ],
+  }),
+
+  // ── Kureringspass P1 (2026-08-28): stöd med uppmätt sökefterfrågan ─────────
+  // Datagrund: docs/SEO_OPPORTUNITIES.md (Semrush se, 2026-08-28). Varje post
+  // följer red team F1: inga belopp som inte fastställts mot källan — beloppen
+  // beskrivs kvalitativt och läsaren hänvisas till källan. Medvetet EJ kurerade
+  // trots uppmätt volym: elstöd (avslutat stöd — att lista det vore påhitt av
+  // ett pågående stöd), underhållsbidrag (civilrättsligt mellan föräldrar, inte
+  // ett stöd man söker hos myndighet; underhållsstöd finns redan), socialbidrag
+  // (synonym till försörjningsstöd — samma stöd, ingen egen post).
+
+  def({
+    slug: 'fk-barnbidrag',
+    authorityKey: 'forsakringskassan',
+    sourceKey: 'fk-privatperson',
+    programmeName: 'Stöd till barnfamiljer',
+    title: 'Försäkringskassan — Barnbidrag',
+    summary: 'Månatligt bidrag för barn som bor i Sverige, från födseln till 16 års ålder.',
+    description:
+      'Barnbidrag lämnas för barn som bor i Sverige, normalt utan ansökan — det betalas ut automatiskt från månaden efter födseln eller flytten till Sverige. Ansökan behövs i vissa fall, till exempel när barnet flyttar hit eller vid ändrad utbetalningsmottagare. Beloppet per barn och månad framgår hos Försäkringskassan. Från och med det andra barnet lämnas även flerbarnstillägg (egen post).',
+    objective: 'Ekonomisk grundtrygghet för barnfamiljer.',
+    instrumentType: 'social_benefit',
+    applicantTypes: ['individual'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Betalas normalt ut automatiskt; ansökan i särskilda fall på Mina sidor hos Försäkringskassan.',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    authenticationMethod: 'eid',
+    estimatedEffortDays: 1,
+    criteria: [
+      c('fk-bb-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Bidraget gäller privatpersoner'),
+      c('fk-bb-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Barnet ska bo i Sverige'),
+      c('fk-bb-m1', 'mandatory', 'person.hasChildrenAtHome', 'is_true', undefined, 'Du ska ha barn under 16 år som bor hos dig', 'Har du barn som bor hos dig?'),
+    ],
+  }),
+
+  def({
+    slug: 'fk-flerbarnstillagg',
+    authorityKey: 'forsakringskassan',
+    sourceKey: 'fk-privatperson',
+    programmeName: 'Stöd till barnfamiljer',
+    title: 'Försäkringskassan — Flerbarnstillägg',
+    summary: 'Automatiskt tillägg till barnbidraget från och med det andra barnet.',
+    description:
+      'Flerbarnstillägg lämnas automatiskt till den som får barnbidrag för två eller fler barn — ingen separat ansökan behövs i normalfallet. Tillägget ökar med antalet barn; nivåerna framgår hos Försäkringskassan. Den som har barn över 16 år som studerar kan i vissa fall behöva anmäla för fortsatt flerbarnstillägg.',
+    objective: 'Förstärkt stöd till familjer med flera barn.',
+    instrumentType: 'social_benefit',
+    applicantTypes: ['individual'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Betalas normalt ut automatiskt tillsammans med barnbidraget.',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    authenticationMethod: 'eid',
+    estimatedEffortDays: 1,
+    criteria: [
+      c('fk-fbt-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Tillägget gäller privatpersoner'),
+      c('fk-fbt-m1', 'mandatory', 'person.hasChildrenAtHome', 'is_true', undefined, 'Gäller från och med det andra barnet du får barnbidrag för', 'Har du barn som bor hos dig?'),
+    ],
+  }),
+
+  def({
+    slug: 'fk-foraldrapenning',
+    authorityKey: 'forsakringskassan',
+    sourceKey: 'fk-privatperson',
+    programmeName: 'Stöd till barnfamiljer',
+    title: 'Försäkringskassan — Föräldrapenning',
+    summary: 'Ersättning för att vara ledig från arbete eller studier för att ta hand om barn.',
+    description:
+      'Föräldrapenning kan tas ut av föräldrar (och i vissa fall andra vårdnadshavare) för tid med barnet, från graviditet tills barnet fyllt tolv år, med flest dagar under de första åren. Ersättningens nivå beror på din inkomst och vilken typ av dagar du tar ut; nivåer och regler framgår hos Försäkringskassan. Ansökan görs i efterhand för de dagar du varit ledig.',
+    objective: 'Möjliggöra föräldraledighet med ersättning.',
+    instrumentType: 'social_benefit',
+    applicantTypes: ['individual'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Ansökan görs på Mina sidor hos Försäkringskassan.',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    authenticationMethod: 'eid',
+    estimatedEffortDays: 1,
+    criteria: [
+      c('fk-fp-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Ersättningen gäller privatpersoner'),
+      c('fk-fp-m1', 'mandatory', 'person.hasChildrenAtHome', 'is_true', undefined, 'Du ska ha (eller vänta) barn som du avstår arbete för att ta hand om', 'Har du barn som bor hos dig?'),
+    ],
+  }),
+
+  def({
+    slug: 'fk-sjukpenning',
+    authorityKey: 'forsakringskassan',
+    sourceKey: 'fk-privatperson',
+    programmeName: 'Vid sjukdom',
+    title: 'Försäkringskassan — Sjukpenning',
+    summary: 'Ersättning när du inte kan arbeta som vanligt på grund av sjukdom.',
+    description:
+      'Sjukpenning kan lämnas när sjukdom sätter ned din arbetsförmåga med minst en fjärdedel. Anställda får normalt sjuklön från arbetsgivaren de första två veckorna; därefter kan sjukpenning från Försäkringskassan ta vid. Egenföretagare och arbetslösa ansöker direkt. Läkarintyg krävs efter en tid; nivåer och regler framgår hos Försäkringskassan.',
+    objective: 'Försörjning när arbetsförmågan är nedsatt av sjukdom.',
+    instrumentType: 'social_benefit',
+    applicantTypes: ['individual'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Ansökan görs på Mina sidor hos Försäkringskassan; läkarintyg bifogas.',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    authenticationMethod: 'eid',
+    estimatedEffortDays: 1,
+    criteria: [
+      c('fk-sp-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Ersättningen gäller privatpersoner'),
+      c('fk-sp-m1', 'mandatory', 'person.sickReducedWorkCapacity', 'is_true', undefined, 'Sjukdomen ska sätta ned din arbetsförmåga med minst en fjärdedel', 'Har du en sjukdom eller skada som just nu sätter ned din förmåga att arbeta?', undefined, ['medical_certificate']),
+    ],
+  }),
+
+  def({
+    slug: 'fk-sjukersattning',
+    authorityKey: 'forsakringskassan',
+    sourceKey: 'fk-privatperson',
+    programmeName: 'Vid sjukdom',
+    title: 'Försäkringskassan — Sjukersättning',
+    summary: 'Ersättning när arbetsförmågan är stadigvarande nedsatt — det som tidigare kallades förtidspension.',
+    description:
+      'Sjukersättning kan lämnas till den som troligen aldrig kommer att kunna arbeta heltid på grund av sjukdom, skada eller funktionsnedsättning. Arbetsförmågan ska vara stadigvarande nedsatt med minst en fjärdedel i förhållande till hela arbetsmarknaden. Ersättningen kan vara inkomstrelaterad eller på garantinivå; regler och nivåer framgår hos Försäkringskassan.',
+    objective: 'Långsiktig försörjning vid varaktigt nedsatt arbetsförmåga.',
+    instrumentType: 'social_benefit',
+    applicantTypes: ['individual'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Ansökan görs hos Försäkringskassan; läkarutlåtande krävs.',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    authenticationMethod: 'eid',
+    estimatedEffortDays: 3,
+    criteria: [
+      c('fk-se-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Ersättningen gäller privatpersoner'),
+      // Gaten först (funktionsnedsättningsspåret): utan ja på intagets
+      // upptäcktsfråga är stödet uteslutet och följdfrågorna ställs aldrig.
+      c('fk-se-m0', 'mandatory', 'person.disabilityOrLongTermIllnessInFamily', 'is_true', undefined, 'Ersättningen är aktuell vid varaktig sjukdom eller funktionsnedsättning', 'Har du eller någon nära anhörig en funktionsnedsättning eller en långvarig eller allvarlig sjukdom?'),
+      c('fk-se-m1', 'mandatory', 'person.hasLastingDisability', 'is_true', undefined, 'Arbetsförmågan ska vara stadigvarande nedsatt av sjukdom eller funktionsnedsättning', 'Har du eller ditt barn en funktionsnedsättning som väntas bestå i minst ett år?', undefined, ['medical_certificate']),
+    ],
+  }),
+
+  def({
+    slug: 'fk-aktivitetsstod',
+    authorityKey: 'forsakringskassan',
+    sourceKey: 'fk-privatperson',
+    programmeName: 'Vid arbetslöshet',
+    title: 'Försäkringskassan — Aktivitetsstöd',
+    summary: 'Ersättning när du deltar i ett arbetsmarknadspolitiskt program hos Arbetsförmedlingen.',
+    description:
+      'Aktivitetsstöd lämnas till den som deltar i ett program hos Arbetsförmedlingen, till exempel jobb- och utvecklingsgarantin eller arbetsmarknadsutbildning. Arbetsförmedlingen anvisar programmet; Försäkringskassan beslutar om och betalar ut ersättningen, som bland annat beror på om du uppfyller villkoren för a-kassa. Yngre deltagare kan i stället få utvecklingsersättning.',
+    objective: 'Försörjning under program som stärker vägen till arbete.',
+    instrumentType: 'social_benefit',
+    applicantTypes: ['individual'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Programmet anvisas av Arbetsförmedlingen; ersättningen ansöks månadsvis hos Försäkringskassan.',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    authenticationMethod: 'eid',
+    estimatedEffortDays: 1,
+    criteria: [
+      c('fk-as-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Ersättningen gäller privatpersoner'),
+      c('fk-as-m1', 'mandatory', 'person.registeredUnemployed', 'is_true', undefined, 'Du ska vara inskriven hos Arbetsförmedlingen', 'Är du inskriven som arbetssökande hos Arbetsförmedlingen?'),
+      c('fk-as-m2', 'mandatory', 'person.inAfProgram', 'is_true', undefined, 'Du ska delta i ett arbetsmarknadspolitiskt program', 'Deltar du i ett program hos Arbetsförmedlingen (t.ex. jobb- och utvecklingsgarantin)?'),
+    ],
+  }),
+
+  def({
+    slug: 'fk-tandvardsbidrag',
+    authorityKey: 'forsakringskassan',
+    sourceKey: 'fk-privatperson',
+    programmeName: 'Tandvårdsstöd',
+    title: 'Försäkringskassan — Allmänt tandvårdsbidrag (ATB)',
+    summary: 'Årligt tillgodohavande som dras av direkt hos tandläkaren eller tandhygienisten.',
+    description:
+      'Det allmänna tandvårdsbidraget gäller alla från det år de fyller 24 och används automatiskt som avdrag när du besöker en ansluten tandläkare eller tandhygienist — ingen ansökan behövs. Beloppet beror på ålder och kan sparas ett år; nivåerna framgår hos Försäkringskassan. Den med särskilda behov kan därutöver ha rätt till särskilt tandvårdsbidrag.',
+    objective: 'Sänka tröskeln till regelbunden tandvård.',
+    instrumentType: 'social_benefit',
+    applicantTypes: ['individual'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Ingen ansökan — säg till hos tandvården att du vill använda bidraget.',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    estimatedEffortDays: 1,
+    criteria: [
+      c('fk-atb-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Bidraget gäller privatpersoner'),
+      c('fk-atb-h2', 'hard', 'person.age24Plus', 'is_true', undefined, 'Bidraget gäller från och med det år du fyller 24'),
+    ],
+  }),
+
+
+
+  def({
+    slug: 'pm-garantipension',
+    authorityKey: 'pensionsmyndigheten',
+    sourceKey: 'pm-bostadstillagg',
+    programmeName: 'Grundskydd för pensionärer',
+    title: 'Pensionsmyndigheten — Garantipension',
+    summary: 'Grundskydd för den som haft låg eller ingen arbetsinkomst under livet.',
+    description:
+      'Garantipension är ett grundskydd i den allmänna pensionen för den som haft låg eller ingen inkomstgrundad pension. Den betalas normalt ut automatiskt när du ansöker om allmän pension från riktåldern — ingen separat ansökan behövs om du bor i Sverige. Nivån beror på inkomstpensionens storlek, civilstånd och försäkringstid; detaljerna framgår hos Pensionsmyndigheten.',
+    objective: 'Lägsta rimliga pensionsnivå oavsett tidigare inkomster.',
+    instrumentType: 'social_benefit',
+    applicantTypes: ['individual'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Ingår i ansökan om allmän pension hos Pensionsmyndigheten; prövas automatiskt.',
+    applicationUrl: 'https://www.pensionsmyndigheten.se/',
+    sourceUrl: 'https://www.pensionsmyndigheten.se/',
+    authenticationMethod: 'eid',
+    estimatedEffortDays: 1,
+    criteria: [
+      c('pm-gp-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Gäller privatpersoner'),
+      c('pm-gp-m1', 'mandatory', 'person.age67Plus', 'is_true', undefined, 'Garantipension lämnas från riktåldern (67 år från 2026)', 'Har du uppnått riktåldern för pension (67 år 2026)?'),
+    ],
+  }),
+
+  def({
+    slug: 'region-hogkostnadsskydd-vard',
+    authorityKey: 'region',
+    sourceKey: '1177-patientavgifter',
+    programmeName: 'Patientavgifter',
+    title: 'Din region — Högkostnadsskydd för sjukvård',
+    summary: 'Tak för vad du behöver betala i patientavgifter under en tolvmånadersperiod — därefter frikort.',
+    description:
+      'Högkostnadsskyddet innebär att du under en period på tolv månader aldrig betalar mer än ett takbelopp i patientavgifter för öppen sjukvård; därefter får du frikort för resten av perioden. Registreringen sker normalt automatiskt i regionens system när du betalar. Takbeloppet fastställs årligen — se 1177 för aktuell nivå. Motsvarande skydd finns för läkemedel och sjukresor.',
+    objective: 'Skydda mot höga sammanlagda vårdkostnader.',
+    instrumentType: 'social_benefit',
+    applicantTypes: ['individual'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Ingen ansökan — registreras normalt automatiskt i regionens system; spara kvitton vid besök i annan region.',
+    applicationUrl: 'https://www.1177.se/',
+    sourceUrl: 'https://www.1177.se/',
+    estimatedEffortDays: 1,
+    criteria: [
+      c('reg-hk-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Skyddet gäller privatpersoner'),
+      c('reg-hk-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Gäller vård i Sverige'),
+    ],
+  }),
+
+  def({
+    slug: 'akassa-arbetsloshetsersattning',
+    authorityKey: 'akassa',
+    sourceKey: 'akassa-ersattning',
+    programmeName: 'Arbetslöshetsförsäkringen',
+    title: 'Din a-kassa — Arbetslöshetsersättning (a-kassa)',
+    summary: 'Ersättning vid arbetslöshet — inkomstbaserad för medlemmar, grundbelopp för övriga.',
+    description:
+      'Arbetslöshetsersättning lämnas av a-kassorna till den som är arbetslös, inskriven hos Arbetsförmedlingen, aktivt söker arbete och uppfyller arbetsvillkoret. Medlemmar som uppfyllt medlemsvillkoret kan få inkomstbaserad ersättning; den som inte är medlem kan ha rätt till grundbelopp via Alfa-kassan. Vilken a-kassa som passar beror på bransch; villkor och nivåer framgår hos din a-kassa och Sveriges a-kassor.',
+    objective: 'Inkomsttrygghet under omställning mellan arbeten.',
+    instrumentType: 'social_benefit',
+    applicantTypes: ['individual'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Skriv in dig hos Arbetsförmedlingen första arbetslösa dagen; ansök sedan hos din a-kassa (Mina sidor).',
+    applicationUrl: 'https://www.sverigesakassor.se/',
+    sourceUrl: 'https://www.sverigesakassor.se/',
+    authenticationMethod: 'eid',
+    estimatedEffortDays: 1,
+    criteria: [
+      c('ak-ae-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Ersättningen gäller privatpersoner'),
+      c('ak-ae-m1', 'mandatory', 'person.registeredUnemployed', 'is_true', undefined, 'Du ska vara inskriven hos Arbetsförmedlingen och aktivt söka arbete', 'Är du inskriven som arbetssökande hos Arbetsförmedlingen?'),
+    ],
+  }),
+
+
+  def({
+    slug: 'af-nystartsjobb',
+    authorityKey: 'af',
+    sourceKey: 'af-stod',
+    programmeName: 'Anställningsstöd',
+    title: 'Arbetsförmedlingen — Nystartsjobb',
+    summary: 'Ekonomiskt stöd till arbetsgivare som anställer någon som varit borta länge från arbetslivet.',
+    description:
+      'Nystartsjobb ger arbetsgivare ett bidrag motsvarande en del av lönekostnaden vid anställning av personer som varit arbetslösa en längre tid, är nyanlända eller av andra skäl varit borta från arbetslivet. Stödets storlek och längd beror på den anställdas situation; villkoren framgår hos Arbetsförmedlingen. Anställningen ska ha marknadsmässiga villkor och beslut ska finnas innan den påbörjas.',
+    objective: 'Sänka tröskeln in på arbetsmarknaden för dem som stått utanför.',
+    instrumentType: 'public_grant',
+    applicantTypes: ['company', 'sole_trader', 'association'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Arbetsgivaren ansöker hos Arbetsförmedlingen innan anställningen börjar.',
+    applicationUrl: 'https://arbetsformedlingen.se/',
+    sourceUrl: 'https://arbetsformedlingen.se/',
+    estimatedEffortDays: 2,
+    criteria: [
+      c('af-nj-m1', 'mandatory', 'project.plansToHire', 'is_true', undefined, 'Stödet förutsätter att ni planerar att anställa', 'Planerar ni att anställa?'),
+      c('af-nj-m2', 'mandatory', 'project.hireCandidateAwayFromWork', 'is_true', undefined, 'Den som anställs ska ha varit borta från arbetslivet en längre tid eller vara nyanländ', 'Gäller anställningen någon som varit arbetslös länge eller är ny i Sverige?'),
+    ],
+  }),
+
+  def({
+    slug: 'af-lonebidrag',
+    authorityKey: 'af',
+    sourceKey: 'af-stod',
+    programmeName: 'Anställningsstöd',
+    title: 'Arbetsförmedlingen — Lönebidrag',
+    summary: 'Bidrag till arbetsgivare som anställer personer med nedsatt arbetsförmåga.',
+    description:
+      'Lönebidrag kan lämnas till arbetsgivare som anställer (eller behåller) en person vars arbetsförmåga är nedsatt av funktionsnedsättning eller ohälsa. Bidraget kompenserar en del av lönekostnaden och kan kombineras med anpassning av arbetet; det finns i flera former (utveckling, trygghet, anställning). Nivå och längd bedöms individuellt av Arbetsförmedlingen.',
+    objective: 'Göra det möjligt att anställa utifrån förmåga, inte hinder.',
+    instrumentType: 'public_grant',
+    applicantTypes: ['company', 'sole_trader', 'association'],
+    deadlineModel: 'rolling',
+    applicationMethod: 'Arbetsgivaren ansöker hos Arbetsförmedlingen innan anställningen börjar.',
+    applicationUrl: 'https://arbetsformedlingen.se/',
+    sourceUrl: 'https://arbetsformedlingen.se/',
+    estimatedEffortDays: 2,
+    criteria: [
+      c('af-lb-m1', 'mandatory', 'project.plansToHire', 'is_true', undefined, 'Stödet förutsätter att ni planerar att anställa eller behålla en medarbetare', 'Planerar ni att anställa?'),
+      c('af-lb-m2', 'mandatory', 'project.hireCandidateReducedWorkCapacity', 'is_true', undefined, 'Den anställda ska ha nedsatt arbetsförmåga på grund av funktionsnedsättning eller ohälsa', 'Gäller anställningen en person med nedsatt arbetsförmåga?'),
     ],
   }),
 ];

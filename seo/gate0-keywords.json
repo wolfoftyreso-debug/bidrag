@@ -1,12 +1,12 @@
 {
  "_kontrakt": "GATE 0 block A (docs/ZERO_COMPROMISE_GATE.md): statusregister för alla keyword-rötter. GREEN kan aldrig sättas maskinellt — kräver mänsklig SERP-jämförelse sida-mot-sida (gatens manuella del). SERP-ägare endast där observation finns (seo/serp-gate0.json / serp-sprint01.json); rader med verifikation NONE har medvetet tom ägare. Genereras av tools/gatekeywords.mjs — redigeras aldrig för hand.",
  "datum_serp": "2026-08-22",
- "antal_rotter": 332,
+ "antal_rotter": 347,
  "status": {
   "GREEN": 0,
-  "YELLOW": 120,
-  "RED": 120,
-  "GREY": 92
+  "YELLOW": 132,
+  "RED": 122,
+  "GREY": 93
  },
  "rotter": [
   {
@@ -57,12 +57,12 @@
    "keyword": "aktivitetsstöd",
    "root": "aktivitetsstöd",
    "intent": "informational",
-   "query_familj": "k19-arbetslos-tidslinjen",
-   "serp_agare": "lånesajter/fackmedia/banker — AF och FK frånvarande",
-   "var_url": null,
-   "content_gap": "angränsande myndighetsterm utanför kärnan (automatiskt/försäkringsbaserat stöd) — orienteringsinnehåll, aldrig huvudmål",
-   "status": "GREY",
-   "verifikation": "FRESH 2026-08-22"
+   "query_familj": "entity:fk-aktivitetsstod",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-aktivitetsstod/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
    "keyword": "aktivitetsstöd förening",
@@ -95,6 +95,17 @@
    "var_url": "/bidrag/arvsfonden-projektstod/",
    "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
    "status": "GREY",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
+   "keyword": "allmänt tandvårdsbidrag (atb)",
+   "root": "allmänt tandvårdsbidrag atb",
+   "intent": "informational",
+   "query_familj": "entity:fk-tandvardsbidrag",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-tandvardsbidrag/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
@@ -131,6 +142,28 @@
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
+   "keyword": "arbetsförmedlingen lönebidrag",
+   "root": "lönebidrag",
+   "intent": "navigational",
+   "query_familj": "k10-lonebidrag",
+   "serp_agare": "arbetsformedlingen + media/parter",
+   "var_url": "/bidrag/af-lonebidrag/",
+   "content_gap": "stödet saknas i kunskapsbasen (kluster 10–12) — kurera före sidbygge",
+   "status": "RED",
+   "verifikation": "FRESH-FAMILJ 2026-08-22"
+  },
+  {
+   "keyword": "arbetsförmedlingen nystartsjobb",
+   "root": "nystartsjobb",
+   "intent": "navigational",
+   "query_familj": "k11-nystartsjobb",
+   "serp_agare": "arbetsformedlingen",
+   "var_url": "/bidrag/af-nystartsjobb/",
+   "content_gap": "stödet saknas i kunskapsbasen (kluster 10–12) — kurera före sidbygge",
+   "status": "RED",
+   "verifikation": "FRESH-FAMILJ 2026-08-22"
+  },
+  {
    "keyword": "arbetsförmedlingen stöd till start av näringsverksamhet",
    "root": "stöd till start av näringsverksamhet",
    "intent": "navigational",
@@ -150,6 +183,17 @@
    "var_url": "/bidrag/af-eures-targeted-mobility/",
    "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
    "status": "GREY",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
+   "keyword": "arbetslöshetsersättning (a-kassa)",
+   "root": "arbetslöshetsersättning a kassa",
+   "intent": "informational",
+   "query_familj": "entity:akassa-arbetsloshetsersattning",
+   "serp_agare": null,
+   "var_url": "/bidrag/akassa-arbetsloshetsersattning/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
@@ -213,9 +257,9 @@
    "intent": "informational",
    "query_familj": "ent-barnbidrag",
    "serp_agare": "lånesajter/innehållssajter FÖRE FK",
-   "var_url": null,
-   "content_gap": "angränsande myndighetsterm utanför kärnan (automatiskt/försäkringsbaserat stöd) — orienteringsinnehåll, aldrig huvudmål",
-   "status": "GREY",
+   "var_url": "/bidrag/fk-barnbidrag/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
    "verifikation": "FRESH-FAMILJ 2026-08-22"
   },
   {
@@ -1088,6 +1132,17 @@
    "verifikation": "FRESH 2026-08-22"
   },
   {
+   "keyword": "din a-kassa arbetslöshetsersättning (a-kassa)",
+   "root": "arbetslöshetsersättning a kassa",
+   "intent": "navigational",
+   "query_familj": "entity:akassa-arbetsloshetsersattning",
+   "serp_agare": null,
+   "var_url": "/bidrag/akassa-arbetsloshetsersattning/",
+   "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
+   "status": "GREY",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
    "keyword": "din kommun bostadsanpassningsbidrag",
    "root": "bostadsanpassningsbidrag",
    "intent": "navigational",
@@ -1138,6 +1193,17 @@
    "query_familj": "entity:region-glasogonbidrag-barn",
    "serp_agare": null,
    "var_url": "/bidrag/region-glasogonbidrag-barn/",
+   "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
+   "status": "GREY",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
+   "keyword": "din region högkostnadsskydd för sjukvård",
+   "root": "högkostnadsskydd för sjukvård",
+   "intent": "navigational",
+   "query_familj": "entity:region-hogkostnadsskydd-vard",
+   "serp_agare": null,
+   "var_url": "/bidrag/region-hogkostnadsskydd-vard/",
    "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
    "status": "GREY",
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
@@ -1498,12 +1564,12 @@
    "keyword": "flerbarnstillägg",
    "root": "flerbarnstillägg",
    "intent": "informational",
-   "query_familj": "k18-bidrag-barnfamilj",
-   "serp_agare": "FK + foraldrakalkylatorn (privat kalkylsajt rankar 2:a)",
-   "var_url": null,
-   "content_gap": "angränsande myndighetsterm utanför kärnan (automatiskt/försäkringsbaserat stöd) — orienteringsinnehåll, aldrig huvudmål",
-   "status": "GREY",
-   "verifikation": "FRESH 2026-08-22"
+   "query_familj": "entity:fk-flerbarnstillagg",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-flerbarnstillagg/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
    "keyword": "flytta utomlands bidrag",
@@ -1638,6 +1704,39 @@
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
+   "keyword": "försäkringskassan aktivitetsstöd",
+   "root": "aktivitetsstöd",
+   "intent": "navigational",
+   "query_familj": "entity:fk-aktivitetsstod",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-aktivitetsstod/",
+   "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
+   "status": "GREY",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
+   "keyword": "försäkringskassan allmänt tandvårdsbidrag (atb)",
+   "root": "allmänt tandvårdsbidrag atb",
+   "intent": "navigational",
+   "query_familj": "entity:fk-tandvardsbidrag",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-tandvardsbidrag/",
+   "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
+   "status": "GREY",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
+   "keyword": "försäkringskassan barnbidrag",
+   "root": "barnbidrag",
+   "intent": "navigational",
+   "query_familj": "ent-barnbidrag",
+   "serp_agare": "lånesajter/innehållssajter FÖRE FK",
+   "var_url": "/bidrag/fk-barnbidrag/",
+   "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
+   "status": "GREY",
+   "verifikation": "FRESH-FAMILJ 2026-08-22"
+  },
+  {
    "keyword": "försäkringskassan bilstöd vid funktionsnedsättning",
    "root": "bilstöd vid funktionsnedsättning",
    "intent": "navigational",
@@ -1671,6 +1770,28 @@
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
+   "keyword": "försäkringskassan flerbarnstillägg",
+   "root": "flerbarnstillägg",
+   "intent": "navigational",
+   "query_familj": "entity:fk-flerbarnstillagg",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-flerbarnstillagg/",
+   "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
+   "status": "GREY",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
+   "keyword": "försäkringskassan föräldrapenning",
+   "root": "föräldrapenning",
+   "intent": "navigational",
+   "query_familj": "entity:fk-foraldrapenning",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-foraldrapenning/",
+   "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
+   "status": "GREY",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
    "keyword": "försäkringskassan merkostnadsersättning vid funktionsnedsättning",
    "root": "merkostnadsersättning vid funktionsnedsättning",
    "intent": "navigational",
@@ -1699,6 +1820,28 @@
    "query_familj": "entity:fk-omvardnadsbidrag",
    "serp_agare": null,
    "var_url": "/bidrag/fk-omvardnadsbidrag/",
+   "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
+   "status": "GREY",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
+   "keyword": "försäkringskassan sjukersättning",
+   "root": "sjukersättning",
+   "intent": "navigational",
+   "query_familj": "entity:fk-sjukersattning",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-sjukersattning/",
+   "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
+   "status": "GREY",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
+   "keyword": "försäkringskassan sjukpenning",
+   "root": "sjukpenning",
+   "intent": "navigational",
+   "query_familj": "entity:fk-sjukpenning",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-sjukpenning/",
    "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
    "status": "GREY",
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
@@ -1740,23 +1883,23 @@
    "keyword": "föräldrapenning",
    "root": "föräldrapenning",
    "intent": "informational",
-   "query_familj": "k18-bidrag-barnfamilj",
-   "serp_agare": "FK + foraldrakalkylatorn (privat kalkylsajt rankar 2:a)",
-   "var_url": null,
-   "content_gap": "angränsande myndighetsterm utanför kärnan (automatiskt/försäkringsbaserat stöd) — orienteringsinnehåll, aldrig huvudmål",
-   "status": "GREY",
-   "verifikation": "FRESH 2026-08-22"
+   "query_familj": "entity:fk-foraldrapenning",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-foraldrapenning/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
    "keyword": "garantipension",
    "root": "garantipension",
    "intent": "informational",
-   "query_familj": "k20-lag-pension",
-   "serp_agare": "pensionsmyndigheten",
-   "var_url": null,
-   "content_gap": "angränsande myndighetsterm utanför kärnan (automatiskt/försäkringsbaserat stöd) — orienteringsinnehåll, aldrig huvudmål",
-   "status": "GREY",
-   "verifikation": "FRESH 2026-08-22"
+   "query_familj": "entity:pm-garantipension",
+   "serp_agare": null,
+   "var_url": "/bidrag/pm-garantipension/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
    "keyword": "glasögonbidrag för barn och unga (8–19 år)",
@@ -1896,10 +2039,21 @@
    "intent": "informational",
    "query_familj": null,
    "serp_agare": null,
-   "var_url": null,
-   "content_gap": "angränsande myndighetsterm utanför kärnan (automatiskt/försäkringsbaserat stöd) — orienteringsinnehåll, aldrig huvudmål",
-   "status": "GREY",
+   "var_url": "/bidrag/region-hogkostnadsskydd-vard/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
    "verifikation": "NONE — ägare ej observerad, lämnas tom"
+  },
+  {
+   "keyword": "högkostnadsskydd för sjukvård",
+   "root": "högkostnadsskydd för sjukvård",
+   "intent": "informational",
+   "query_familj": "entity:region-hogkostnadsskydd-vard",
+   "serp_agare": null,
+   "var_url": "/bidrag/region-hogkostnadsskydd-vard/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
    "keyword": "inackorderingstillägg",
@@ -2380,10 +2534,10 @@
    "intent": "informational",
    "query_familj": "k10-lonebidrag",
    "serp_agare": "arbetsformedlingen + media/parter",
-   "var_url": null,
+   "var_url": "/bidrag/af-lonebidrag/",
    "content_gap": "stödet saknas i kunskapsbasen (kluster 10–12) — kurera före sidbygge",
    "status": "RED",
-   "verifikation": "FRESH 2026-08-22"
+   "verifikation": "FRESH-FAMILJ 2026-08-22"
   },
   {
    "keyword": "majblommans riksförbund bidrag till barn i familjer där pengarna inte räcker",
@@ -2545,10 +2699,10 @@
    "intent": "informational",
    "query_familj": "k11-nystartsjobb",
    "serp_agare": "arbetsformedlingen",
-   "var_url": null,
+   "var_url": "/bidrag/af-nystartsjobb/",
    "content_gap": "stödet saknas i kunskapsbasen (kluster 10–12) — kurera före sidbygge",
    "status": "RED",
-   "verifikation": "FRESH 2026-08-22"
+   "verifikation": "FRESH-FAMILJ 2026-08-22"
   },
   {
    "keyword": "nystartsjobb eller lönebidrag",
@@ -2667,6 +2821,17 @@
    "query_familj": "entity:pm-bostadstillagg",
    "serp_agare": null,
    "var_url": "/bidrag/pm-bostadstillagg/",
+   "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
+   "status": "GREY",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
+  },
+  {
+   "keyword": "pensionsmyndigheten garantipension",
+   "root": "garantipension",
+   "intent": "navigational",
+   "query_familj": "entity:pm-garantipension",
+   "serp_agare": null,
+   "var_url": "/bidrag/pm-garantipension/",
    "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
    "status": "GREY",
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
@@ -2928,23 +3093,23 @@
    "keyword": "sjukersättning",
    "root": "sjukersättning",
    "intent": "informational",
-   "query_familj": "s27-sjukskriven",
-   "serp_agare": "media + forum — ingen äger hjälpfrågan",
-   "var_url": null,
-   "content_gap": "angränsande myndighetsterm utanför kärnan (automatiskt/försäkringsbaserat stöd) — orienteringsinnehåll, aldrig huvudmål",
-   "status": "GREY",
-   "verifikation": "FRESH 2026-08-22"
+   "query_familj": "entity:fk-sjukersattning",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-sjukersattning/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
    "keyword": "sjukpenning",
    "root": "sjukpenning",
    "intent": "informational",
-   "query_familj": "s27-sjukskriven",
-   "serp_agare": "media + forum — ingen äger hjälpfrågan",
-   "var_url": null,
-   "content_gap": "angränsande myndighetsterm utanför kärnan (automatiskt/försäkringsbaserat stöd) — orienteringsinnehåll, aldrig huvudmål",
-   "status": "GREY",
-   "verifikation": "FRESH 2026-08-22"
+   "query_familj": "entity:fk-sjukpenning",
+   "serp_agare": null,
+   "var_url": "/bidrag/fk-sjukpenning/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
+   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
    "keyword": "skapande skola",
@@ -3425,9 +3590,9 @@
    "intent": "informational",
    "query_familj": null,
    "serp_agare": null,
-   "var_url": null,
-   "content_gap": "angränsande myndighetsterm utanför kärnan (automatiskt/försäkringsbaserat stöd) — orienteringsinnehåll, aldrig huvudmål",
-   "status": "GREY",
+   "var_url": "/bidrag/fk-tandvardsbidrag/",
+   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
+   "status": "YELLOW",
    "verifikation": "NONE — ägare ej observerad, lämnas tom"
   },
   {

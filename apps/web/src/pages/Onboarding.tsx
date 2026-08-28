@@ -184,6 +184,7 @@ function personalFacts(a: Answers): Record<string, unknown> {
     const age = new Date().getFullYear() - a.birthYear;
     facts['person.ageYears'] = age;
     facts['person.ageUnder29'] = age <= 28;
+    facts['person.age24Plus'] = age >= 24;
     facts['person.age40OrYounger'] = age <= 40;
     facts['person.age60Plus'] = age >= 60;
     facts['person.age62Plus'] = age >= 62;

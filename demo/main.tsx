@@ -115,6 +115,7 @@ function buildFacts(a: A): Facts {
       const age = new Date().getFullYear() - (a.birthYear as number);
       f['person.ageYears'] = age;
       f['person.ageUnder29'] = age <= 28;
+      f['person.age24Plus'] = age >= 24;
       f['person.age40OrYounger'] = age <= 40;
       f['person.age60Plus'] = age >= 60;
       f['person.age62Plus'] = age >= 62;

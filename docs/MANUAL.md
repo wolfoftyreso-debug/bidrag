@@ -257,22 +257,23 @@ Vaktade övergångar (kan aldrig forceras via API:t):
 
 ## 7. Kunskapsbasen i siffror
 
-72 stöd från 35 finansiärer, 71 ansökningsscheman, 36 källor (kurerade 2026-08-13).
+84 stöd från 36 finansiärer, 71 ansökningsscheman, 38 källor (kurerade 2026-08-13).
 Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 
 | Finansiär | Stöd |
 |---|---|
 | Allmänna arvsfonden | 1 |
-| Arbetsförmedlingen | 3 |
+| Arbetsförmedlingen | 5 |
 | Boverket | 1 |
 | CSN — Centrala studiestödsnämnden | 6 |
+| Din a-kassa | 1 |
 | Din kommun | 4 |
-| Din region | 2 |
+| Din region | 3 |
 | Energimyndigheten | 2 |
 | Europeiska kommissionen (Erasmus+/EACEA) | 3 |
 | Formas | 1 |
 | Forte — Forskningsrådet för hälsa, arbetsliv och välfärd | 1 |
-| Försäkringskassan | 8 |
+| Försäkringskassan | 15 |
 | Jordbruksverket | 3 |
 | Konstnärsnämnden | 3 |
 | Kulturrådet | 6 |
@@ -282,7 +283,7 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | MUCF — Myndigheten för ungdoms- och civilsamhällesfrågor | 3 |
 | Naturvårdsverket | 3 |
 | Nordisk kulturfond | 1 |
-| Pensionsmyndigheten | 2 |
+| Pensionsmyndigheten | 3 |
 | Radiohjälpen | 1 |
 | Riksantikvarieämbetet | 1 |
 | Riksidrottsförbundet | 1 |

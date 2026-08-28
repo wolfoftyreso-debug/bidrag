@@ -28,8 +28,8 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
   dokumentmallar + rendering, deterministisk ansökningsgranskning
   (`docs/APPLICATION-INTELLIGENCE.md`). 90 enhetstester.
 - **`apps/api`** — Fastify 5 + Drizzle + PostgreSQL 16, modulär monolit:
-  auth/tenancy, kunskapsgraf (72 stöd, 35 finansiärer, 71 ansökningsscheman,
-  36 källor), matchning, ansökningar, dokumentvalv, betalningar (Stripe Checkout
+  auth/tenancy, kunskapsgraf (84 stöd, 36 finansiärer, 71 ansökningsscheman,
+  37 källor), matchning, ansökningar, dokumentvalv, betalningar (Stripe Checkout
   + Swish Handel-adaptrar + mock), kvitton med moms, GDPR-självservice, kurators-API,
   bakgrundsjobb. 213 integrationstester.
 - **`apps/web`** — svensk React-SPA (Vite): onboarding en-fråga-per-skärm,
@@ -40,8 +40,8 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
 - **Deploy-beredskap** — Vercel serverless-ingång (`api/index.ts`),
   `vercel.json` (bygge, SPA-routning, 5 cron-jobb), `deploy/bootstrap.sql`,
   Dockerfile + `deploy/k8s/` som alternativ väg, CI grön.
-- **Publik SEO-yta** — `tools/genseo.mjs` genererar 77 statiska sidor
-  (`/bidrag/` + 4 målgruppshubbar + 72 entity-sidor + sitemap + robots) ur
+- **Publik SEO-yta** — `tools/genseo.mjs` genererar den statiska publika ytan
+  (`/bidrag/` + 4 målgruppshubbar + en entity-sida per stöd + sitemap + robots) ur
   seeden vid varje Vercel-bygge; QA-crawlas av `tools/seocheck.mjs` i verify.
   Strategi/research i `docs/SEO_*.md`; keyword-databas i `seo/`
   (332 rötter, inga påhittade volymer — allt källmärkt).

@@ -38,14 +38,11 @@ Detta uppgraderar kureringskön från känd hypotes till uppmätt efterfrågan:
 | sjukpenning | 12 100 | 27 | saknas |
 | tandvårdsbidrag | 9 900 | 30 | saknas |
 | garantipension | 6 600 | 26 | saknas |
-| omvårdnadsbidrag | 6 600 | 26 | saknas |
 | sjukersättning | 6 600 | 28 | saknas |
 | elstöd | 5 400 | 27 | saknas |
 | underhållsbidrag | 5 400 | **19** | saknas (skiljesida mot underhållsstöd — jfr-frågan finns i PAA-datan) |
 | nystartsjobb | 4 400 | 34 | saknas — **bekräftar kluster 10–12-luckan** (CLAUDE.md prio 3) |
-| starta eget bidrag | 4 400 | 28 | saknas |
 | flerbarnstillägg | 3 600 | 28 | saknas |
-| merkostnadsersättning | 3 600 | 25 | saknas |
 | lönebidrag | 2 400 | **23** | saknas — kluster 10–12 |
 | socialbidrag | 2 900 | 33 | synonym till försörjningsstöd — redirect/samma sida, ej egen |
 
@@ -53,6 +50,9 @@ Detta uppgraderar kureringskön från känd hypotes till uppmätt efterfrågan:
 
 | Term | Volym/mån | KD | Målsida |
 |---|---|---|---|
+| omvårdnadsbidrag | 6 600 | 26 | `/bidrag/fk-omvardnadsbidrag/` — fanns redan i KB (probefel i första versionen) |
+| starta eget bidrag | 4 400 | 28 | `/bidrag/af-stod-start-naringsverksamhet/` — fanns redan i KB |
+| merkostnadsersättning | 3 600 | 25 | `/bidrag/fk-merkostnadsersattning/` — fanns redan i KB |
 | ekonomiskt bistånd | 27 100 | 34 | entity finns (försörjningsstöd) — huvudtermen ska ägas av klustersidan; PAA-frågor klara |
 | bostadsbidrag (huvudterm) | 22 200 | 44 | två entity-sidor (unga/barnfamiljer) — klusterhubb ska äga huvudtermen; 15 PAA-frågor klara |
 | bostadstillägg | 8 100 | 31 | `/bidrag/pm-bostadstillagg/` — PAA-frågor klara |
@@ -81,8 +81,7 @@ Detta uppgraderar kureringskön från känd hypotes till uppmätt efterfrågan:
 
 1. **Kurera P1-stöden i kunskapsbasen** (störst: aktivitetsstöd, tandvårdsbidrag,
    sjukpenning/sjukersättning, föräldrapenning/barnbidrag/flerbarnstillägg,
-   underhållsbidrag, garantipension, omvårdnadsbidrag/merkostnadsersättning,
-   lönebidrag/nystartsjobb) — detta ÄR kluster-arbetets datagrund (CLAUDE.md prio 3).
+   garantipension, lönebidrag/nystartsjobb — **kurerade 2026-08-28**, 72→84 stöd) — detta ÄR kluster-arbetets datagrund (CLAUDE.md prio 3).
 2. **Mappa P2-rötterna** till sina entity-sidor (`our_target_url`) och lyft in
    PAA-frågorna ur snapshotet som svarsobjekt/FAQ på respektive sida.
 3. **Klusterhubbar** för huvudtermerna (bostadsbidrag, ekonomiskt bistånd) enligt

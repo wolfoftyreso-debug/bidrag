@@ -21,7 +21,7 @@ Kurerat läge: **2026-08-13T00:00:00Z**. Kandidater: **13** · INDEX **9** · NO
 | innovationsstöd företag | `/foretag/innovationsstod/` | applicant=company ∧ sector=innovation | 4 | **INDEX** | 4 matchande stöd; materiellt mer specifik än målgruppshubben; varje stöd har officiell källa |
 | jordbruksstöd företag | `/foretag/jordbruksstod/` | applicant=company ∧ sector=agriculture | 2 | **NOINDEX_FOLLOW** | endast 2 matchande stöd — för tunt för att tävla i Google |
 | miljöstöd företag | `/foretag/miljostod/` | applicant=company ∧ sector=environment | 5 | **INDEX** | 5 matchande stöd; materiellt mer specifik än målgruppshubben; varje stöd har officiell källa |
-| ekonomiskt stöd och ersättningar privatperson | `/privatperson/ersattningar/` | applicant=individual ∧ instrument=social_benefit | 20 | **INDEX** | 20 matchande stöd; materiellt mer specifik än målgruppshubben; varje stöd har officiell källa |
+| ekonomiskt stöd och ersättningar privatperson | `/privatperson/ersattningar/` | applicant=individual ∧ instrument=social_benefit | 30 | **INDEX** | 30 matchande stöd; materiellt mer specifik än målgruppshubben; varje stöd har officiell källa |
 | studiestöd och bidrag för studier | `/privatperson/studiestod/` | applicant=individual ∧ instrument=educational_support | 5 | **INDEX** | 5 matchande stöd; materiellt mer specifik än målgruppshubben; varje stöd har officiell källa |
 
 ## Domtröskeln

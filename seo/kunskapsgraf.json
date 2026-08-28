@@ -1,14 +1,14 @@
 {
  "_kontrakt": "Kunskapsgrafen v1 — genererad av tools/genkgraf.mjs ur seeden + seo/intents-100.json; redigera ALDRIG för hand. Grafen är lager 6 i docs/CONTENT_ENGINE.md: internlänkning, relaterade stöd och situationsnoder hämtar härifrån. 'relaterad'-kanter = delar ≥2 kriteriefält och minst en målgruppshubb (deterministisk heuristik v1 — redaktionell kurering kan skärpa den senare, i generatorn, inte i filen). Regenerera vid seed-/intentändring; verify kör --check.",
  "genererad_ur_seed": "2026-08-13T00:00:00Z",
- "antal_noder": 253,
- "antal_kanter": 1271,
+ "antal_noder": 272,
+ "antal_kanter": 1407,
  "noder_per_typ": {
   "intent": 42,
-  "kriterium": 100,
+  "kriterium": 106,
   "malgrupp": 4,
-  "myndighet": 35,
-  "stod": 72
+  "myndighet": 36,
+  "stod": 84
  },
  "nodes": [
   {
@@ -490,6 +490,11 @@
    "label": "organisation.youthMembersShareOver60"
   },
   {
+   "id": "kriterium:person.age24Plus",
+   "type": "kriterium",
+   "label": "person.age24Plus"
+  },
+  {
    "id": "kriterium:person.age25to60",
    "type": "kriterium",
    "label": "person.age25to60"
@@ -610,6 +615,11 @@
    "label": "person.hasLastingDisability"
   },
   {
+   "id": "kriterium:person.inAfProgram",
+   "type": "kriterium",
+   "label": "person.inAfProgram"
+  },
+  {
    "id": "kriterium:person.incomeInsufficientForBasicNeeds",
    "type": "kriterium",
    "label": "person.incomeInsufficientForBasicNeeds"
@@ -710,6 +720,11 @@
    "label": "person.shortPriorEducation"
   },
   {
+   "id": "kriterium:person.sickReducedWorkCapacity",
+   "type": "kriterium",
+   "label": "person.sickReducedWorkCapacity"
+  },
+  {
    "id": "kriterium:person.veryLowOrNoPension",
    "type": "kriterium",
    "label": "person.veryLowOrNoPension"
@@ -780,6 +795,16 @@
    "label": "project.hasThreeCountryPartnership"
   },
   {
+   "id": "kriterium:project.hireCandidateAwayFromWork",
+   "type": "kriterium",
+   "label": "project.hireCandidateAwayFromWork"
+  },
+  {
+   "id": "kriterium:project.hireCandidateReducedWorkCapacity",
+   "type": "kriterium",
+   "label": "project.hireCandidateReducedWorkCapacity"
+  },
+  {
    "id": "kriterium:project.inAffectedArea",
    "type": "kriterium",
    "label": "project.inAffectedArea"
@@ -833,6 +858,11 @@
    "id": "kriterium:project.plansEuApplication",
    "type": "kriterium",
    "label": "project.plansEuApplication"
+  },
+  {
+   "id": "kriterium:project.plansToHire",
+   "type": "kriterium",
+   "label": "project.plansToHire"
   },
   {
    "id": "kriterium:project.reducesIndustrialEmissions",
@@ -918,6 +948,12 @@
    "type": "myndighet",
    "label": "Arbetsförmedlingen",
    "url": "https://arbetsformedlingen.se"
+  },
+  {
+   "id": "myndighet:akassa",
+   "type": "myndighet",
+   "label": "Din a-kassa",
+   "url": "https://www.sverigesakassor.se"
   },
   {
    "id": "myndighet:arvsfonden",
@@ -1140,10 +1176,34 @@
    "deadlineModel": "rolling"
   },
   {
+   "id": "stod:af-lonebidrag",
+   "type": "stod",
+   "label": "Arbetsförmedlingen — Lönebidrag",
+   "url": "/bidrag/af-lonebidrag/",
+   "instrument": "public_grant",
+   "deadlineModel": "rolling"
+  },
+  {
+   "id": "stod:af-nystartsjobb",
+   "type": "stod",
+   "label": "Arbetsförmedlingen — Nystartsjobb",
+   "url": "/bidrag/af-nystartsjobb/",
+   "instrument": "public_grant",
+   "deadlineModel": "rolling"
+  },
+  {
    "id": "stod:af-stod-start-naringsverksamhet",
    "type": "stod",
    "label": "Arbetsförmedlingen — Stöd till start av näringsverksamhet",
    "url": "/bidrag/af-stod-start-naringsverksamhet/",
+   "instrument": "social_benefit",
+   "deadlineModel": "rolling"
+  },
+  {
+   "id": "stod:akassa-arbetsloshetsersattning",
+   "type": "stod",
+   "label": "Din a-kassa — Arbetslöshetsersättning (a-kassa)",
+   "url": "/bidrag/akassa-arbetsloshetsersattning/",
    "instrument": "social_benefit",
    "deadlineModel": "rolling"
   },
@@ -1276,6 +1336,22 @@
    "deadlineModel": "rolling"
   },
   {
+   "id": "stod:fk-aktivitetsstod",
+   "type": "stod",
+   "label": "Försäkringskassan — Aktivitetsstöd",
+   "url": "/bidrag/fk-aktivitetsstod/",
+   "instrument": "social_benefit",
+   "deadlineModel": "rolling"
+  },
+  {
+   "id": "stod:fk-barnbidrag",
+   "type": "stod",
+   "label": "Försäkringskassan — Barnbidrag",
+   "url": "/bidrag/fk-barnbidrag/",
+   "instrument": "social_benefit",
+   "deadlineModel": "rolling"
+  },
+  {
    "id": "stod:fk-bilstod",
    "type": "stod",
    "label": "Försäkringskassan — Bilstöd vid funktionsnedsättning",
@@ -1300,6 +1376,22 @@
    "deadlineModel": "rolling"
   },
   {
+   "id": "stod:fk-flerbarnstillagg",
+   "type": "stod",
+   "label": "Försäkringskassan — Flerbarnstillägg",
+   "url": "/bidrag/fk-flerbarnstillagg/",
+   "instrument": "social_benefit",
+   "deadlineModel": "rolling"
+  },
+  {
+   "id": "stod:fk-foraldrapenning",
+   "type": "stod",
+   "label": "Försäkringskassan — Föräldrapenning",
+   "url": "/bidrag/fk-foraldrapenning/",
+   "instrument": "social_benefit",
+   "deadlineModel": "rolling"
+  },
+  {
    "id": "stod:fk-merkostnadsersattning",
    "type": "stod",
    "label": "Försäkringskassan — Merkostnadsersättning vid funktionsnedsättning",
@@ -1320,6 +1412,30 @@
    "type": "stod",
    "label": "Försäkringskassan — Omvårdnadsbidrag för barn med funktionsnedsättning",
    "url": "/bidrag/fk-omvardnadsbidrag/",
+   "instrument": "social_benefit",
+   "deadlineModel": "rolling"
+  },
+  {
+   "id": "stod:fk-sjukersattning",
+   "type": "stod",
+   "label": "Försäkringskassan — Sjukersättning",
+   "url": "/bidrag/fk-sjukersattning/",
+   "instrument": "social_benefit",
+   "deadlineModel": "rolling"
+  },
+  {
+   "id": "stod:fk-sjukpenning",
+   "type": "stod",
+   "label": "Försäkringskassan — Sjukpenning",
+   "url": "/bidrag/fk-sjukpenning/",
+   "instrument": "social_benefit",
+   "deadlineModel": "rolling"
+  },
+  {
+   "id": "stod:fk-tandvardsbidrag",
+   "type": "stod",
+   "label": "Försäkringskassan — Allmänt tandvårdsbidrag (ATB)",
+   "url": "/bidrag/fk-tandvardsbidrag/",
    "instrument": "social_benefit",
    "deadlineModel": "rolling"
   },
@@ -1596,6 +1712,14 @@
    "deadlineModel": "rolling"
   },
   {
+   "id": "stod:pm-garantipension",
+   "type": "stod",
+   "label": "Pensionsmyndigheten — Garantipension",
+   "url": "/bidrag/pm-garantipension/",
+   "instrument": "social_benefit",
+   "deadlineModel": "rolling"
+  },
+  {
    "id": "stod:postkodstiftelsen-projektstod",
    "type": "stod",
    "label": "Svenska Postkodstiftelsen — Projektstöd",
@@ -1624,6 +1748,14 @@
    "type": "stod",
    "label": "Din region — Glasögonbidrag för barn och unga (8–19 år)",
    "url": "/bidrag/region-glasogonbidrag-barn/",
+   "instrument": "social_benefit",
+   "deadlineModel": "rolling"
+  },
+  {
+   "id": "stod:region-hogkostnadsskydd-vard",
+   "type": "stod",
+   "label": "Din region — Högkostnadsskydd för sjukvård",
+   "url": "/bidrag/region-hogkostnadsskydd-vard/",
    "instrument": "social_benefit",
    "deadlineModel": "rolling"
   },
@@ -1824,6 +1956,11 @@
   {
    "from": "stod:af-etableringsersattning",
    "rel": "relaterad",
+   "to": "stod:akassa-arbetsloshetsersattning"
+  },
+  {
+   "from": "stod:af-etableringsersattning",
+   "rel": "relaterad",
    "to": "stod:csn-hemutrustningslan"
   },
   {
@@ -1840,6 +1977,16 @@
    "from": "stod:af-etableringsersattning",
    "rel": "relaterad",
    "to": "stod:fk-aktivitetsersattning"
+  },
+  {
+   "from": "stod:af-etableringsersattning",
+   "rel": "relaterad",
+   "to": "stod:fk-aktivitetsstod"
+  },
+  {
+   "from": "stod:af-etableringsersattning",
+   "rel": "relaterad",
+   "to": "stod:fk-barnbidrag"
   },
   {
    "from": "stod:af-etableringsersattning",
@@ -1933,6 +2080,11 @@
   },
   {
    "from": "stod:af-etableringsersattning",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:af-etableringsersattning",
    "rel": "riktar_sig_till",
    "to": "malgrupp:privatpersoner"
   },
@@ -1990,6 +2142,11 @@
    "from": "stod:af-eures-targeted-mobility",
    "rel": "relaterad",
    "to": "stod:fk-aktivitetsersattning"
+  },
+  {
+   "from": "stod:af-eures-targeted-mobility",
+   "rel": "relaterad",
+   "to": "stod:fk-barnbidrag"
   },
   {
    "from": "stod:af-eures-targeted-mobility",
@@ -2088,8 +2245,63 @@
   },
   {
    "from": "stod:af-eures-targeted-mobility",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:af-eures-targeted-mobility",
    "rel": "riktar_sig_till",
    "to": "malgrupp:privatpersoner"
+  },
+  {
+   "from": "stod:af-lonebidrag",
+   "rel": "ges_av",
+   "to": "myndighet:af"
+  },
+  {
+   "from": "stod:af-lonebidrag",
+   "rel": "kraver",
+   "to": "kriterium:project.hireCandidateReducedWorkCapacity"
+  },
+  {
+   "from": "stod:af-lonebidrag",
+   "rel": "kraver",
+   "to": "kriterium:project.plansToHire"
+  },
+  {
+   "from": "stod:af-lonebidrag",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:foreningar"
+  },
+  {
+   "from": "stod:af-lonebidrag",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:foretag"
+  },
+  {
+   "from": "stod:af-nystartsjobb",
+   "rel": "ges_av",
+   "to": "myndighet:af"
+  },
+  {
+   "from": "stod:af-nystartsjobb",
+   "rel": "kraver",
+   "to": "kriterium:project.hireCandidateAwayFromWork"
+  },
+  {
+   "from": "stod:af-nystartsjobb",
+   "rel": "kraver",
+   "to": "kriterium:project.plansToHire"
+  },
+  {
+   "from": "stod:af-nystartsjobb",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:foreningar"
+  },
+  {
+   "from": "stod:af-nystartsjobb",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:foretag"
   },
   {
    "from": "stod:af-stod-start-naringsverksamhet",
@@ -2119,6 +2331,11 @@
   {
    "from": "stod:af-stod-start-naringsverksamhet",
    "rel": "relaterad",
+   "to": "stod:akassa-arbetsloshetsersattning"
+  },
+  {
+   "from": "stod:af-stod-start-naringsverksamhet",
+   "rel": "relaterad",
    "to": "stod:csn-hemutrustningslan"
   },
   {
@@ -2135,6 +2352,16 @@
    "from": "stod:af-stod-start-naringsverksamhet",
    "rel": "relaterad",
    "to": "stod:fk-aktivitetsersattning"
+  },
+  {
+   "from": "stod:af-stod-start-naringsverksamhet",
+   "rel": "relaterad",
+   "to": "stod:fk-aktivitetsstod"
+  },
+  {
+   "from": "stod:af-stod-start-naringsverksamhet",
+   "rel": "relaterad",
+   "to": "stod:fk-barnbidrag"
   },
   {
    "from": "stod:af-stod-start-naringsverksamhet",
@@ -2228,6 +2455,41 @@
   },
   {
    "from": "stod:af-stod-start-naringsverksamhet",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:af-stod-start-naringsverksamhet",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:privatpersoner"
+  },
+  {
+   "from": "stod:akassa-arbetsloshetsersattning",
+   "rel": "ges_av",
+   "to": "myndighet:akassa"
+  },
+  {
+   "from": "stod:akassa-arbetsloshetsersattning",
+   "rel": "kraver",
+   "to": "kriterium:applicant.type"
+  },
+  {
+   "from": "stod:akassa-arbetsloshetsersattning",
+   "rel": "kraver",
+   "to": "kriterium:person.registeredUnemployed"
+  },
+  {
+   "from": "stod:akassa-arbetsloshetsersattning",
+   "rel": "relaterad",
+   "to": "stod:csn-studiestartsstod"
+  },
+  {
+   "from": "stod:akassa-arbetsloshetsersattning",
+   "rel": "relaterad",
+   "to": "stod:fk-aktivitetsstod"
+  },
+  {
+   "from": "stod:akassa-arbetsloshetsersattning",
    "rel": "riktar_sig_till",
    "to": "malgrupp:privatpersoner"
   },
@@ -2554,6 +2816,11 @@
   {
    "from": "stod:csn-hemutrustningslan",
    "rel": "relaterad",
+   "to": "stod:fk-barnbidrag"
+  },
+  {
+   "from": "stod:csn-hemutrustningslan",
+   "rel": "relaterad",
    "to": "stod:fk-bilstod"
   },
   {
@@ -2643,6 +2910,11 @@
   },
   {
    "from": "stod:csn-hemutrustningslan",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:csn-hemutrustningslan",
    "rel": "riktar_sig_till",
    "to": "malgrupp:privatpersoner"
   },
@@ -2689,6 +2961,11 @@
   {
    "from": "stod:csn-inackorderingstillagg",
    "rel": "relaterad",
+   "to": "stod:fk-barnbidrag"
+  },
+  {
+   "from": "stod:csn-inackorderingstillagg",
+   "rel": "relaterad",
    "to": "stod:fk-bilstod"
   },
   {
@@ -2700,6 +2977,16 @@
    "from": "stod:csn-inackorderingstillagg",
    "rel": "relaterad",
    "to": "stod:fk-bostadsbidrag-unga"
+  },
+  {
+   "from": "stod:csn-inackorderingstillagg",
+   "rel": "relaterad",
+   "to": "stod:fk-flerbarnstillagg"
+  },
+  {
+   "from": "stod:csn-inackorderingstillagg",
+   "rel": "relaterad",
+   "to": "stod:fk-foraldrapenning"
   },
   {
    "from": "stod:csn-inackorderingstillagg",
@@ -2780,6 +3067,11 @@
    "from": "stod:csn-inackorderingstillagg",
    "rel": "relaterad",
    "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:csn-inackorderingstillagg",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
   },
   {
    "from": "stod:csn-inackorderingstillagg",
@@ -2919,6 +3211,16 @@
   {
    "from": "stod:csn-studiestartsstod",
    "rel": "relaterad",
+   "to": "stod:fk-aktivitetsstod"
+  },
+  {
+   "from": "stod:csn-studiestartsstod",
+   "rel": "relaterad",
+   "to": "stod:fk-barnbidrag"
+  },
+  {
+   "from": "stod:csn-studiestartsstod",
+   "rel": "relaterad",
    "to": "stod:fk-bilstod"
   },
   {
@@ -3005,6 +3307,11 @@
    "from": "stod:csn-studiestartsstod",
    "rel": "relaterad",
    "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:csn-studiestartsstod",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
   },
   {
    "from": "stod:csn-studiestartsstod",
@@ -4139,6 +4446,11 @@
   {
    "from": "stod:fk-aktivitetsersattning",
    "rel": "relaterad",
+   "to": "stod:fk-barnbidrag"
+  },
+  {
+   "from": "stod:fk-aktivitetsersattning",
+   "rel": "relaterad",
    "to": "stod:fk-bilstod"
   },
   {
@@ -4228,6 +4540,171 @@
   },
   {
    "from": "stod:fk-aktivitetsersattning",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:fk-aktivitetsersattning",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:privatpersoner"
+  },
+  {
+   "from": "stod:fk-aktivitetsstod",
+   "rel": "ges_av",
+   "to": "myndighet:forsakringskassan"
+  },
+  {
+   "from": "stod:fk-aktivitetsstod",
+   "rel": "kraver",
+   "to": "kriterium:applicant.type"
+  },
+  {
+   "from": "stod:fk-aktivitetsstod",
+   "rel": "kraver",
+   "to": "kriterium:person.inAfProgram"
+  },
+  {
+   "from": "stod:fk-aktivitetsstod",
+   "rel": "kraver",
+   "to": "kriterium:person.registeredUnemployed"
+  },
+  {
+   "from": "stod:fk-aktivitetsstod",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:privatpersoner"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "ges_av",
+   "to": "myndighet:forsakringskassan"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "kraver",
+   "to": "kriterium:applicant.country"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "kraver",
+   "to": "kriterium:applicant.type"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "kraver",
+   "to": "kriterium:person.hasChildrenAtHome"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:fk-bilstod"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:fk-bostadsbidrag-barnfamiljer"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:fk-bostadsbidrag-unga"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:fk-flerbarnstillagg"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:fk-foraldrapenning"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:fk-merkostnadsersattning"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:fk-narstaendepenning"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:fk-omvardnadsbidrag"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:fk-underhallsstod"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:jordbruksverket-startstod-unga"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:kommun-bostadsanpassningsbidrag"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:kommun-elevresor-gymnasiet"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:kommun-forsorjningsstod"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:kommun-skolskjuts"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:konstnarsnamnden-arbetsstipendium"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:konstnarsnamnden-internationellt-kulturutbyte"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:kulturradet-internationellt-resebidrag-musik"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:majblomman-bidrag-barn"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:pm-aldreforsorjningsstod"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:pm-bostadstillagg"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:fk-barnbidrag",
    "rel": "riktar_sig_till",
    "to": "malgrupp:privatpersoner"
   },
@@ -4285,6 +4762,11 @@
    "from": "stod:fk-bilstod",
    "rel": "relaterad",
    "to": "stod:fk-omvardnadsbidrag"
+  },
+  {
+   "from": "stod:fk-bilstod",
+   "rel": "relaterad",
+   "to": "stod:fk-sjukersattning"
   },
   {
    "from": "stod:fk-bilstod",
@@ -4348,6 +4830,11 @@
   },
   {
    "from": "stod:fk-bilstod",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:fk-bilstod",
    "rel": "riktar_sig_till",
    "to": "malgrupp:privatpersoner"
   },
@@ -4385,6 +4872,16 @@
    "from": "stod:fk-bostadsbidrag-barnfamiljer",
    "rel": "relaterad",
    "to": "stod:fk-bostadsbidrag-unga"
+  },
+  {
+   "from": "stod:fk-bostadsbidrag-barnfamiljer",
+   "rel": "relaterad",
+   "to": "stod:fk-flerbarnstillagg"
+  },
+  {
+   "from": "stod:fk-bostadsbidrag-barnfamiljer",
+   "rel": "relaterad",
+   "to": "stod:fk-foraldrapenning"
   },
   {
    "from": "stod:fk-bostadsbidrag-barnfamiljer",
@@ -4465,6 +4962,11 @@
    "from": "stod:fk-bostadsbidrag-barnfamiljer",
    "rel": "relaterad",
    "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:fk-bostadsbidrag-barnfamiljer",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
   },
   {
    "from": "stod:fk-bostadsbidrag-barnfamiljer",
@@ -4578,6 +5080,116 @@
   },
   {
    "from": "stod:fk-bostadsbidrag-unga",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:fk-bostadsbidrag-unga",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:privatpersoner"
+  },
+  {
+   "from": "stod:fk-flerbarnstillagg",
+   "rel": "ges_av",
+   "to": "myndighet:forsakringskassan"
+  },
+  {
+   "from": "stod:fk-flerbarnstillagg",
+   "rel": "kraver",
+   "to": "kriterium:applicant.type"
+  },
+  {
+   "from": "stod:fk-flerbarnstillagg",
+   "rel": "kraver",
+   "to": "kriterium:person.hasChildrenAtHome"
+  },
+  {
+   "from": "stod:fk-flerbarnstillagg",
+   "rel": "relaterad",
+   "to": "stod:fk-foraldrapenning"
+  },
+  {
+   "from": "stod:fk-flerbarnstillagg",
+   "rel": "relaterad",
+   "to": "stod:fk-omvardnadsbidrag"
+  },
+  {
+   "from": "stod:fk-flerbarnstillagg",
+   "rel": "relaterad",
+   "to": "stod:fk-underhallsstod"
+  },
+  {
+   "from": "stod:fk-flerbarnstillagg",
+   "rel": "relaterad",
+   "to": "stod:kommun-elevresor-gymnasiet"
+  },
+  {
+   "from": "stod:fk-flerbarnstillagg",
+   "rel": "relaterad",
+   "to": "stod:kommun-skolskjuts"
+  },
+  {
+   "from": "stod:fk-flerbarnstillagg",
+   "rel": "relaterad",
+   "to": "stod:majblomman-bidrag-barn"
+  },
+  {
+   "from": "stod:fk-flerbarnstillagg",
+   "rel": "relaterad",
+   "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:fk-flerbarnstillagg",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:privatpersoner"
+  },
+  {
+   "from": "stod:fk-foraldrapenning",
+   "rel": "ges_av",
+   "to": "myndighet:forsakringskassan"
+  },
+  {
+   "from": "stod:fk-foraldrapenning",
+   "rel": "kraver",
+   "to": "kriterium:applicant.type"
+  },
+  {
+   "from": "stod:fk-foraldrapenning",
+   "rel": "kraver",
+   "to": "kriterium:person.hasChildrenAtHome"
+  },
+  {
+   "from": "stod:fk-foraldrapenning",
+   "rel": "relaterad",
+   "to": "stod:fk-omvardnadsbidrag"
+  },
+  {
+   "from": "stod:fk-foraldrapenning",
+   "rel": "relaterad",
+   "to": "stod:fk-underhallsstod"
+  },
+  {
+   "from": "stod:fk-foraldrapenning",
+   "rel": "relaterad",
+   "to": "stod:kommun-elevresor-gymnasiet"
+  },
+  {
+   "from": "stod:fk-foraldrapenning",
+   "rel": "relaterad",
+   "to": "stod:kommun-skolskjuts"
+  },
+  {
+   "from": "stod:fk-foraldrapenning",
+   "rel": "relaterad",
+   "to": "stod:majblomman-bidrag-barn"
+  },
+  {
+   "from": "stod:fk-foraldrapenning",
+   "rel": "relaterad",
+   "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:fk-foraldrapenning",
    "rel": "riktar_sig_till",
    "to": "malgrupp:privatpersoner"
   },
@@ -4620,6 +5232,11 @@
    "from": "stod:fk-merkostnadsersattning",
    "rel": "relaterad",
    "to": "stod:fk-omvardnadsbidrag"
+  },
+  {
+   "from": "stod:fk-merkostnadsersattning",
+   "rel": "relaterad",
+   "to": "stod:fk-sjukersattning"
   },
   {
    "from": "stod:fk-merkostnadsersattning",
@@ -4680,6 +5297,11 @@
    "from": "stod:fk-merkostnadsersattning",
    "rel": "relaterad",
    "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:fk-merkostnadsersattning",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
   },
   {
    "from": "stod:fk-merkostnadsersattning",
@@ -4773,6 +5395,11 @@
   },
   {
    "from": "stod:fk-narstaendepenning",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:fk-narstaendepenning",
    "rel": "riktar_sig_till",
    "to": "malgrupp:privatpersoner"
   },
@@ -4805,6 +5432,11 @@
    "from": "stod:fk-omvardnadsbidrag",
    "rel": "kraver",
    "to": "kriterium:person.hasChildrenAtHome"
+  },
+  {
+   "from": "stod:fk-omvardnadsbidrag",
+   "rel": "relaterad",
+   "to": "stod:fk-sjukersattning"
   },
   {
    "from": "stod:fk-omvardnadsbidrag",
@@ -4873,6 +5505,81 @@
   },
   {
    "from": "stod:fk-omvardnadsbidrag",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:fk-omvardnadsbidrag",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:privatpersoner"
+  },
+  {
+   "from": "stod:fk-sjukersattning",
+   "rel": "ges_av",
+   "to": "myndighet:forsakringskassan"
+  },
+  {
+   "from": "stod:fk-sjukersattning",
+   "rel": "kraver",
+   "to": "kriterium:applicant.type"
+  },
+  {
+   "from": "stod:fk-sjukersattning",
+   "rel": "kraver",
+   "to": "kriterium:person.disabilityOrLongTermIllnessInFamily"
+  },
+  {
+   "from": "stod:fk-sjukersattning",
+   "rel": "kraver",
+   "to": "kriterium:person.hasLastingDisability"
+  },
+  {
+   "from": "stod:fk-sjukersattning",
+   "rel": "relaterad",
+   "to": "stod:kommun-bostadsanpassningsbidrag"
+  },
+  {
+   "from": "stod:fk-sjukersattning",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:privatpersoner"
+  },
+  {
+   "from": "stod:fk-sjukpenning",
+   "rel": "ges_av",
+   "to": "myndighet:forsakringskassan"
+  },
+  {
+   "from": "stod:fk-sjukpenning",
+   "rel": "kraver",
+   "to": "kriterium:applicant.type"
+  },
+  {
+   "from": "stod:fk-sjukpenning",
+   "rel": "kraver",
+   "to": "kriterium:person.sickReducedWorkCapacity"
+  },
+  {
+   "from": "stod:fk-sjukpenning",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:privatpersoner"
+  },
+  {
+   "from": "stod:fk-tandvardsbidrag",
+   "rel": "ges_av",
+   "to": "myndighet:forsakringskassan"
+  },
+  {
+   "from": "stod:fk-tandvardsbidrag",
+   "rel": "kraver",
+   "to": "kriterium:applicant.type"
+  },
+  {
+   "from": "stod:fk-tandvardsbidrag",
+   "rel": "kraver",
+   "to": "kriterium:person.age24Plus"
+  },
+  {
+   "from": "stod:fk-tandvardsbidrag",
    "rel": "riktar_sig_till",
    "to": "malgrupp:privatpersoner"
   },
@@ -5274,6 +5981,11 @@
   {
    "from": "stod:jordbruksverket-startstod-unga",
    "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:jordbruksverket-startstod-unga",
+   "rel": "relaterad",
    "to": "stod:region-kulturstod"
   },
   {
@@ -5393,6 +6105,11 @@
   },
   {
    "from": "stod:kommun-bostadsanpassningsbidrag",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:kommun-bostadsanpassningsbidrag",
    "rel": "riktar_sig_till",
    "to": "malgrupp:privatpersoner"
   },
@@ -5470,6 +6187,11 @@
    "from": "stod:kommun-elevresor-gymnasiet",
    "rel": "relaterad",
    "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:kommun-elevresor-gymnasiet",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
   },
   {
    "from": "stod:kommun-elevresor-gymnasiet",
@@ -5648,6 +6370,11 @@
   },
   {
    "from": "stod:kommun-forsorjningsstod",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:kommun-forsorjningsstod",
    "rel": "riktar_sig_till",
    "to": "malgrupp:privatpersoner"
   },
@@ -5715,6 +6442,11 @@
    "from": "stod:kommun-skolskjuts",
    "rel": "relaterad",
    "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:kommun-skolskjuts",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
   },
   {
    "from": "stod:kommun-skolskjuts",
@@ -5790,6 +6522,11 @@
    "from": "stod:konstnarsnamnden-arbetsstipendium",
    "rel": "relaterad",
    "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:konstnarsnamnden-arbetsstipendium",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
   },
   {
    "from": "stod:konstnarsnamnden-arbetsstipendium",
@@ -5880,6 +6617,11 @@
    "from": "stod:konstnarsnamnden-internationellt-kulturutbyte",
    "rel": "relaterad",
    "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:konstnarsnamnden-internationellt-kulturutbyte",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
   },
   {
    "from": "stod:konstnarsnamnden-internationellt-kulturutbyte",
@@ -6220,6 +6962,11 @@
    "from": "stod:kulturradet-internationellt-resebidrag-musik",
    "rel": "relaterad",
    "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:kulturradet-internationellt-resebidrag-musik",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
   },
   {
    "from": "stod:kulturradet-internationellt-resebidrag-musik",
@@ -6800,6 +7547,11 @@
    "from": "stod:majblomman-bidrag-barn",
    "rel": "relaterad",
    "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:majblomman-bidrag-barn",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
   },
   {
    "from": "stod:majblomman-bidrag-barn",
@@ -7449,7 +8201,17 @@
   {
    "from": "stod:pm-aldreforsorjningsstod",
    "rel": "relaterad",
+   "to": "stod:pm-garantipension"
+  },
+  {
+   "from": "stod:pm-aldreforsorjningsstod",
+   "rel": "relaterad",
    "to": "stod:region-glasogonbidrag-barn"
+  },
+  {
+   "from": "stod:pm-aldreforsorjningsstod",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
   },
   {
    "from": "stod:pm-aldreforsorjningsstod",
@@ -7493,6 +8255,31 @@
   },
   {
    "from": "stod:pm-bostadstillagg",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:pm-bostadstillagg",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:privatpersoner"
+  },
+  {
+   "from": "stod:pm-garantipension",
+   "rel": "ges_av",
+   "to": "myndighet:pensionsmyndigheten"
+  },
+  {
+   "from": "stod:pm-garantipension",
+   "rel": "kraver",
+   "to": "kriterium:applicant.type"
+  },
+  {
+   "from": "stod:pm-garantipension",
+   "rel": "kraver",
+   "to": "kriterium:person.age67Plus"
+  },
+  {
+   "from": "stod:pm-garantipension",
    "rel": "riktar_sig_till",
    "to": "malgrupp:privatpersoner"
   },
@@ -7653,6 +8440,31 @@
   },
   {
    "from": "stod:region-glasogonbidrag-barn",
+   "rel": "relaterad",
+   "to": "stod:region-hogkostnadsskydd-vard"
+  },
+  {
+   "from": "stod:region-glasogonbidrag-barn",
+   "rel": "riktar_sig_till",
+   "to": "malgrupp:privatpersoner"
+  },
+  {
+   "from": "stod:region-hogkostnadsskydd-vard",
+   "rel": "ges_av",
+   "to": "myndighet:region"
+  },
+  {
+   "from": "stod:region-hogkostnadsskydd-vard",
+   "rel": "kraver",
+   "to": "kriterium:applicant.country"
+  },
+  {
+   "from": "stod:region-hogkostnadsskydd-vard",
+   "rel": "kraver",
+   "to": "kriterium:applicant.type"
+  },
+  {
+   "from": "stod:region-hogkostnadsskydd-vard",
    "rel": "riktar_sig_till",
    "to": "malgrupp:privatpersoner"
   },
