@@ -24,15 +24,25 @@
       "destination": "/api/index"
     },
     {
-      "source": "/((?!api/|assets/|favicon|bidrag/|hitta-bidrag-gratis/|vilka-bidrag-kan-jag-fa/|bidragsstatus/|finansiarer/|foretagsbidragsindex/|foretag/|privatperson/|forening/|enskild-firma/|og/|icon-|site\\.webmanifest|sitemap\\.xml|robots\\.txt|404).*)",
+      "source": "/((?!api/|assets/|favicon|bidrag/|oppna-bidrag/|en/bidrag/|es/bidrag/|fr/bidrag/|ar/bidrag/|fa/bidrag/|prs/bidrag/|ru/bidrag/|uk/bidrag/|so/bidrag/|ti/bidrag/|hitta-bidrag-gratis/|vilka-bidrag-kan-jag-fa/|bidragsstatus/|finansiarer/|foretagsbidragsindex/|foretag/|privatperson/|forening/|enskild-firma/|og/|icon-|site\\.webmanifest|sitemap\\.xml|robots\\.txt|404).*)",
       "destination": "/index.html"
     }
   ],
   "headers": [
     {
       "source": "/(.*)",
-      "has": [{ "type": "host", "value": ".*\\.vercel\\.app" }],
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
+      "has": [
+        {
+          "type": "host",
+          "value": ".*\\.vercel\\.app"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
     }
   ],
   "crons": [

@@ -13,6 +13,7 @@
  *
  * Körs i verify. Ingen nätverksåtkomst, ingen extern data.
  */
+import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -87,8 +88,32 @@ for (const code of KB_LOCALES) {
   }
 }
 
+// ── Fas C: publika ytans kurerade strängar (seo/publik-i18n.json) ──────────
+// De flerspråkiga landningssidorna byggs av dessa; en lucka i ett språk skulle
+// annars rendera en halvsvensk sida (och ett halvt löfte) på det språket.
+const PUBLIK = JSON.parse(readFileSync(join(ROOT, 'seo', 'publik-i18n.json'), 'utf8')).sprak;
+const publikSvKeys = Object.keys(PUBLIK.sv ?? {});
+if (!publikSvKeys.length) fail('publik-i18n.json: sv-blocket saknas (källspråket)');
+for (const code of LOCALES) {
+  const dict = PUBLIK[code];
+  if (!dict) { fail(`publik/${code}: språket saknas i publik-i18n.json`); continue; }
+  for (const k of publikSvKeys) {
+    const v = dict[k];
+    if (typeof v !== 'string' || !v.trim()) fail(`publik/${code}: tom eller saknad sträng '${k}'`);
+    else if (placeholders(PUBLIK.sv[k]) !== placeholders(v)) {
+      fail(`publik/${code}: platshållarna i '${k}' matchar inte källan`);
+    }
+  }
+  for (const k of Object.keys(dict)) if (!publikSvKeys.includes(k)) fail(`publik/${code}: okänd nyckel '${k}'`);
+  if (RTL.has(code)) {
+    const vals = Object.values(dict);
+    const withScript = vals.filter((v) => hasRtlScript(String(v))).length;
+    if (withScript / vals.length < 0.9) fail(`publik/${code}: bara ${withScript}/${vals.length} strängar bär RTL-skrift — fel fil?`);
+  }
+}
+
 if (errors) {
   console.error(`i18ncheck: ${errors} fel i språkfilerna.`);
   process.exit(1);
 }
-console.log(`I18N-koll: ${LOCALES.length} språk, ${svKeys.length} nycklar per språk + kunskapsbas ${kbSources.size} källtexter × ${KB_LOCALES.length} språk — komplett och konsistent.`);
+console.log(`I18N-koll: ${LOCALES.length} språk, ${svKeys.length} nycklar per språk + kunskapsbas ${kbSources.size} källtexter × ${KB_LOCALES.length} språk + publik yta ${publikSvKeys.length} strängar × ${LOCALES.length} språk — komplett och konsistent.`);

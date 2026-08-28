@@ -41,6 +41,37 @@ const CHECKED = CURATED_AT.slice(0, 10);
 // divergerar.
 const ENTITY = JSON.parse(readFileSync(join(ROOT, 'seo', 'entity.json'), 'utf8'));
 
+// ── I18N fas C: flerspråkiga landningssidor ─────────────────────────────────
+// EN substantiell sida per språk (/{lang}/bidrag/) — inte massöversatta
+// kopior av hela ytan (doorway-/spamrisk, docs/I18N_PROGRAM.md fas C).
+// Sidans egen copy kommer från seo/publik-i18n.json (kurerad); stödens
+// sammanfattningar kommer från fas B-översättningarna i seeden. Officiella
+// stöd- och myndighetsnamn översätts aldrig.
+const PUBLIK_I18N = JSON.parse(readFileSync(join(ROOT, 'seo', 'publik-i18n.json'), 'utf8')).sprak;
+const { KB_TRANSLATIONS } = await import(join(ROOT, 'apps/api/src/seed/i18n/index.ts'));
+// Språkkoder + HTML-attribut. prs (dari) renderas som fa-AF: en giltig
+// BCP 47-tagg som sökmotorer förstår, till skillnad från den interna koden.
+const SEO_LOCALES = [
+  { code: 'en', hreflang: 'en', dir: 'ltr', native: 'English' },
+  { code: 'es', hreflang: 'es', dir: 'ltr', native: 'Español' },
+  { code: 'fr', hreflang: 'fr', dir: 'ltr', native: 'Français' },
+  { code: 'ar', hreflang: 'ar', dir: 'rtl', native: 'العربية' },
+  { code: 'fa', hreflang: 'fa', dir: 'rtl', native: 'فارسی' },
+  { code: 'prs', hreflang: 'fa-AF', dir: 'rtl', native: 'دری' },
+  { code: 'ru', hreflang: 'ru', dir: 'ltr', native: 'Русский' },
+  { code: 'uk', hreflang: 'uk', dir: 'ltr', native: 'Українська' },
+  { code: 'so', hreflang: 'so', dir: 'ltr', native: 'Af Soomaali' },
+  { code: 'ti', hreflang: 'ti', dir: 'ltr', native: 'ትግርኛ' },
+];
+// Hela hreflang-klustret: svenska /bidrag/ är x-default och kanonisk källa.
+const HREFLANG_CLUSTER = [
+  { hreflang: 'sv', url: `${BASE}/bidrag/` },
+  ...SEO_LOCALES.map((l) => ({ hreflang: l.hreflang, url: `${BASE}/${l.code}/bidrag/` })),
+  { hreflang: 'x-default', url: `${BASE}/bidrag/` },
+];
+const hreflangTags = () =>
+  HREFLANG_CLUSTER.map((a) => `<link rel="alternate" hreflang="${a.hreflang}" href="${a.url}">`).join('\n');
+
 // ── Etiketter (speglar produktens språk) ─────────────────────────────────────
 const INSTRUMENT = {
   public_grant: 'Statligt bidrag', eu_grant: 'EU-stöd', scholarship: 'Stipendium', stipend: 'Stipendium',
@@ -73,6 +104,7 @@ const HUBS = [
   { slug: 'offentlig-sektor', title: 'Statsbidrag och stöd för offentlig sektor och forskning', short: 'Offentlig sektor & forskning', types: ['municipality', 'region', 'public_body', 'university'] },
 ];
 
+const OG_LOCALE = { sv: 'sv_SE', en: 'en_GB', es: 'es_ES', fr: 'fr_FR', ar: 'ar_AR', fa: 'fa_IR', prs: 'fa_AF', ru: 'ru_RU', uk: 'uk_UA', so: 'so_SO', ti: 'ti_ER' };
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const kr = (minor) => `${Math.round(minor / 100).toLocaleString('sv-SE')} kr`;
 const shortTitle = (o) => (o.title.split(' — ').pop() ?? o.title).trim();
@@ -147,11 +179,13 @@ h1{font-family:var(--serif);font-weight:600;font-size:1.7rem;line-height:1.25;le
 .eyebrow{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--soft)}
 .lead{font-size:1.06rem;color:var(--ink);max-width:64ch}
 h2{font-family:var(--serif);font-weight:600;font-size:1.25rem;margin:1.6rem 0 .5rem}
+h3{font-family:var(--serif);font-weight:600;font-size:1.06rem;margin:1.3rem 0 .3rem}
+.sprakval{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:.4rem .9rem;font-size:.95rem}.sprakval li{margin:0}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.1rem 1.3rem;margin:1rem 0}
-table.fakta{width:100%;border-collapse:collapse;font-size:.95rem;table-layout:fixed}table.fakta th{text-align:left;font-weight:600;padding:.45rem .6rem .45rem 0;vertical-align:top;width:34%;color:var(--soft);font-size:.86rem}table.fakta td{overflow-wrap:break-word}
+table.fakta{width:100%;border-collapse:collapse;font-size:.95rem;table-layout:fixed}table.fakta th{text-align:start;font-weight:600;padding:.45rem .6rem .45rem 0;vertical-align:top;width:34%;color:var(--soft);font-size:.86rem}table.fakta td{overflow-wrap:break-word}
 table.fakta td{padding:.45rem 0;border-bottom:1px solid var(--line)}table.fakta tr:last-child td{border-bottom:0}
-ul{padding-left:1.2rem}li{margin:.35rem 0;max-width:62ch}
-.honest{background:var(--warnbg);border-left:3px solid var(--warn);border-radius:0 8px 8px 0;padding:.75rem 1rem;font-size:.9rem;margin:1rem 0}
+ul{padding-inline-start:1.2rem}li{margin:.35rem 0;max-width:62ch}
+.honest{background:var(--warnbg);border-inline-start:3px solid var(--warn);border-start-start-radius:0;border-end-start-radius:0;border-start-end-radius:8px;border-end-end-radius:8px;padding:.75rem 1rem;font-size:.9rem;margin:1rem 0}
 .paths{display:grid;gap:.8rem;grid-template-columns:1fr;margin:.6rem 0}
 .path{border:1px solid var(--line);border-radius:10px;padding:.9rem 1.05rem;background:var(--card)}
 .path strong{display:block;margin-bottom:.2rem}
@@ -174,24 +208,25 @@ a{color:var(--blue)}@media(min-width:640px){.paths{grid-template-columns:1fr 1fr
 .bigcta{display:inline-block;background:var(--blue);color:#fff;text-decoration:none;font-weight:700;padding:.7rem 1.4rem;border-radius:12px;font-size:1.02rem;box-shadow:0 2px 8px rgba(0,86,163,.3);margin:.6rem 0}
 `;
 
-function layout({ title, description, canonical, crumbs, jsonld, body }) {
+// lang/dir/alternates/chrome: fas C. Utan dem renderas sidan som förut (sv).
+function layout({ title, description, canonical, crumbs, jsonld, body, lang = 'sv', dir = 'ltr', alternates = '', chrome = null }) {
   const crumbHtml = crumbs
     .map((c, i) => (i === crumbs.length - 1 ? esc(c.name) : `<a href="${c.url}">${esc(c.name)}</a>`))
     .join(' › ');
   return `<!doctype html>
-<html lang="sv">
+<html lang="${lang}"${dir === 'rtl' ? ' dir="rtl"' : ''}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${canonical}">
-<meta property="og:site_name" content="Bidragskoll.se">
+${alternates}<meta property="og:site_name" content="Bidragskoll.se">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${canonical}">
 <meta property="og:type" content="website">
-<meta property="og:locale" content="sv_SE">
+<meta property="og:locale" content="${OG_LOCALE[lang] ?? 'sv_SE'}">
 <meta property="og:image" content="${BASE}/og/bidragskoll-og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -213,16 +248,16 @@ function layout({ title, description, canonical, crumbs, jsonld, body }) {
 </head>
 <body>
 <div class="wrap">
-<header class="site"><a class="brand" href="/bidrag/"><svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="#0056A3" stroke-width="15.5" stroke-linecap="round"><line x1="44.5" y1="56" x2="27.5" y2="38"/><line x1="44.5" y1="56" x2="77.5" y2="23"/><line x1="44.5" y1="56" x2="22.5" y2="85"/><line x1="44.5" y1="56" x2="73.5" y2="86"/></g><circle cx="36.5" cy="19" r="12.5" fill="#0056A3"/></svg>Bidragskoll</a><a class="cta" href="/">Starta din utredning</a></header>
-<nav class="crumbs" aria-label="Du är här">${crumbHtml}</nav>
+<header class="site"><a class="brand" href="/bidrag/"><svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="#0056A3" stroke-width="15.5" stroke-linecap="round"><line x1="44.5" y1="56" x2="27.5" y2="38"/><line x1="44.5" y1="56" x2="77.5" y2="23"/><line x1="44.5" y1="56" x2="22.5" y2="85"/><line x1="44.5" y1="56" x2="73.5" y2="86"/></g><circle cx="36.5" cy="19" r="12.5" fill="#0056A3"/></svg>Bidragskoll</a><a class="cta" href="${chrome ? chrome.appHref : '/'}">${esc(chrome ? chrome.cta : 'Starta din utredning')}</a></header>
+<nav class="crumbs" aria-label="${esc(chrome ? chrome.crumbLabel : 'Du är här')}">${crumbHtml}</nav>
 ${body}
 <footer class="site">
-<p><strong>Bidragskoll.se</strong> är en oberoende orienterings- och förberedelsetjänst — inte en myndighet.
+${chrome ? `<p>${esc(chrome.footerAbout)}</p>\n<p>${esc(chrome.footerSource)} · <a href="/villkor">Köpvillkor</a></p>` : `<p><strong>Bidragskoll.se</strong> är en oberoende orienterings- och förberedelsetjänst — inte en myndighet.
 Bedömningar är vägledande; beslut fattas alltid av den ansvariga myndigheten eller finansiären.
 Att ansöka själv direkt hos källan är alltid gratis.</p>
 <p>Källpolicy: varje stöd länkar till sin officiella källa och visar när uppgifterna senast kontrollerades.
 Innehållet är AI-sammanställt från officiella källor och ännu inte granskat av människa — kontrollera alltid
-aktuella villkor hos källan. · <a href="/villkor">Köpvillkor</a></p>
+aktuella villkor hos källan. · <a href="/villkor">Köpvillkor</a></p>`}
 </footer>
 </div>
 </body>
@@ -230,7 +265,7 @@ aktuella villkor hos källan. · <a href="/villkor">Köpvillkor</a></p>
 `;
 }
 
-function baseGraph(canonical, title, crumbs) {
+function baseGraph(canonical, title, crumbs, pageLang = 'sv') {
   return [
     {
       '@type': 'Organization', '@id': `${BASE}/#org`, name: ENTITY.name, legalName: ENTITY.legalName, url: `${BASE}/`,
@@ -257,7 +292,7 @@ function baseGraph(canonical, title, crumbs) {
       '@type': 'BreadcrumbList',
       itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: `${BASE}${c.url}` })),
     },
-    { '@type': 'WebPage', url: canonical, name: title, inLanguage: 'sv', dateModified: CHECKED, isPartOf: { '@id': `${BASE}/#website` } },
+    { '@type': 'WebPage', url: canonical, name: title, inLanguage: pageLang, dateModified: CHECKED, isPartOf: { '@id': `${BASE}/#website` } },
   ];
 }
 
@@ -437,6 +472,7 @@ function indexPage(hubEntries) {
   const title = 'Bidrag och stöd i Sverige – hela katalogen | Bidragskoll';
   const description = `${opportunities.length} bidrag, ersättningar och stöd från ${authorities.length} myndigheter och finansiärer — samlade med villkor, belopp, deadlines och officiella källor.`;
   const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title, crumbs) };
+  const alternates = hreflangTags() + '\n';
   const body = `
 <h1>Bidrag och stöd i Sverige</h1>
 <p class="lead">Bidragskoll samlar ${opportunities.length} bidrag, ersättningar och stöd från ${authorities.length}
@@ -449,6 +485,7 @@ Myndigheterna beskriver sina egna stöd var för sig; här får du överblicken,
 </div>
 <p class="lead" style="margin-top:.4rem">Se också <a href="/oppna-bidrag/">öppna bidrag just nu</a>, <a href="/bidragsstatus/">bidragsstatus</a>, <a href="/finansiarer/">finansiärerna</a> bakom bidragen, och <a href="/foretagsbidragsindex/">Företagsbidragsindex</a> — Sveriges företagsstöd i öppna, citerbara siffror.</p>
 <p class="lead">Ämnesöversikter: ${KLUSTER.map((k) => `<a href="/${k.path}/">${esc(k.h1)}</a>`).join(' · ')}.</p>
+${langPickerHtml()}
 ${hubEntries
   .map(
     ({ hub, entries }) => `<h2><a href="/bidrag/${hub.slug}/">${esc(hub.title)}</a></h2>
@@ -462,7 +499,7 @@ från officiella källor och ännu inte granskat av människa; varje sida visar 
 senast kontrollerades. Att ansöka själv direkt hos myndigheten är alltid gratis.</div>
 <p class="kalla"><strong>Senast kontrollerad:</strong> ${CHECKED}</p>
 `;
-  return layout({ title, description, canonical, crumbs, jsonld, body });
+  return layout({ title, description, canonical, crumbs, jsonld, body, alternates });
 }
 
 // ── Flaggskeppssidor (FAS SEO-2): svar → åtgärd → stödinformation ────────────
@@ -1008,6 +1045,76 @@ ${children.map((o) => `<tr><th scope="row"><a href="/bidrag/${o.slug}/">${esc(sh
   return layout({ title: `${k.title} | Bidragskoll`, description: k.description, canonical, crumbs, jsonld, body });
 }
 
+
+// ── I18N fas C: en (1) flerspråkig landningssida per språk ──────────────────
+// Substantiell, inte en doorway: hela katalogen med officiella namn (aldrig
+// översatta) + fas B:s översatta sammanfattningar, plus kurerad copy ur
+// seo/publik-i18n.json. Detaljsidorna förblir svenska och sidan säger det.
+function langLandingPage(loc) {
+  const t = PUBLIK_I18N[loc.code];
+  const kb = KB_TRANSLATIONS[loc.code] ?? {};
+  const tr = (text) => kb[text] ?? text;
+  const path = `/${loc.code}/bidrag/`;
+  const canonical = `${BASE}${path}`;
+  const crumbs = [{ name: t.crumbBidrag, url: path }];
+  const fill = (str) => str.replace('{n}', String(opportunities.length)).replace('{m}', String(authorities.length));
+  const hubLabel = { privatpersoner: t.hubPrivatpersoner, foretag: t.hubForetag, foreningar: t.hubForeningar, 'offentlig-sektor': t.hubOffentlig };
+
+  const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, t.title, crumbs, loc.hreflang) };
+  const sections = HUBS.map((hub) => {
+    const entries = opportunities
+      .filter((o) => (o.applicantTypes ?? []).some((x) => hub.types.includes(x)))
+      .sort((a, b) => shortTitle(a).localeCompare(shortTitle(b), 'sv'));
+    if (!entries.length) return '';
+    return `<h3>${esc(hubLabel[hub.slug])} — ${esc(t.supportsCount.replace('{n}', String(entries.length)))}</h3>
+<ul class="stodlista">${entries
+      .map((o) => `<li><a href="/bidrag/${o.slug}/">${esc(anchorTitle(o))}</a><span class="sum">${esc(tr(o.summary))}</span></li>`)
+      .join('')}</ul>`;
+  }).join('\n');
+
+  // Språkvalet är både navigering och en tydlig hreflang-signal för sökmotorn.
+  const others = [
+    `<li><a href="/bidrag/">Svenska</a></li>`,
+    ...SEO_LOCALES.filter((l) => l.code !== loc.code).map((l) => `<li><a href="/${l.code}/bidrag/">${esc(l.native)}</a></li>`),
+  ].join('');
+
+  const body = `
+<h1>${esc(t.h1)}</h1>
+<p class="lead">${esc(fill(t.lead))}</p>
+<div class="honest">${esc(t.aiTranslated)}</div>
+<p><a class="bigcta" href="/?sprak=${loc.code}">${esc(t.cta)}</a></p>
+
+<h2>${esc(t.howHeading)}</h2>
+<p>${esc(t.howBody)}</p>
+
+<h2>${esc(t.groupsHeading)}</h2>
+<p>${esc(t.swedishDetails)} ${esc(t.officialNamesNote)}</p>
+${sections}
+
+<div class="honest">${esc(t.honest)}</div>
+
+<h2>${esc(t.otherLanguages)}</h2>
+<ul class="sprakval">${others}</ul>
+
+<p class="kalla"><strong>${esc(t.lastChecked)}:</strong> ${CHECKED} · <a href="/bidrag/">${esc(t.toSwedishCatalogue)}</a></p>
+`;
+  return {
+    path,
+    html: layout({
+      title: t.title, description: t.description, canonical, crumbs, jsonld, body,
+      lang: loc.hreflang, dir: loc.dir, alternates: hreflangTags() + '\n',
+      chrome: {
+        appHref: `/?sprak=${loc.code}`, cta: t.cta, crumbLabel: t.crumbBidrag,
+        footerAbout: t.footerAbout, footerSource: t.footerSource,
+      },
+    }),
+  };
+}
+
+function langPickerHtml() {
+  return `<p class="lead">Andra språk: ${SEO_LOCALES.map((l) => `<a href="/${l.code}/bidrag/">${esc(l.native)}</a>`).join(' · ')}.</p>`;
+}
+
 const pages = [];
 const noindexPaths = new Set(); // genererade men EJ i sitemap (NOINDEX_FOLLOW)
 function emit(path, html, opts = {}) {
@@ -1049,6 +1156,12 @@ const hubEntries = HUBS.map((hub) => ({
 emit('bidrag', indexPage(hubEntries));
 for (const { hub, entries } of hubEntries) emit(join('bidrag', hub.slug), hubPage(hub, entries, queryLinksByHub[hub.slug] ?? []));
 for (const o of [...opportunities].sort((a, b) => a.slug.localeCompare(b.slug))) emit(join('bidrag', o.slug), entityPage(o));
+
+// I18N fas C: flerspråkiga landningssidor (en per språk).
+for (const loc of SEO_LOCALES) {
+  const p = langLandingPage(loc);
+  emit(p.path.replace(/^\/|\/$/g, ''), p.html);
+}
 
 // Klusterhubbar — hubben äger huvudtermen (länkas från /bidrag/-index; barnen länkar upp).
 for (const k of KLUSTER) emit(k.path, klusterPage(k));

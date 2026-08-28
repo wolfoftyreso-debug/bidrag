@@ -290,7 +290,7 @@ exposure is low: registering a source URL requires the `data_curator` role,
 which is not self-service (RT03-S1), so only a compromised legitimate source
 could trigger it. Tracked as backlog M14.
 
-## 14. Translations are AI-made and unreviewed (I18N fas A–B)
+## 14. Translations are AI-made and unreviewed (I18N fas A–C)
 
 The web app is available in 11 languages, and as of fas B (2026-08-28) the
 knowledge base's user-facing texts — benefit summaries and intake questions
@@ -299,10 +299,13 @@ language via the API (docs/I18N_PROGRAM.md). Every non-Swedish string was
 translated by AI and has NOT been reviewed by a native speaker. The UI says so
 honestly on every non-Swedish view (same doctrine as the `ai_curated` label).
 Somali (so) and Tigrinya (ti) are the weakest and are flagged for priority
-human review before the label can be lifted for those languages. Still
-Swedish by design or pending fas C: benefit descriptions and criteria
-condition texts, legal texts, documents to authorities, the public SEO
-surface, the demo, and free-text search (matches Swedish text only). If a
+human review before the label can be lifted for those languages. Since fas C
+(2026-08-28) the public surface also has one landing page per language at
+`/{lang}/bidrag/`, with a full hreflang cluster. Still Swedish by design or
+pending later phases: benefit descriptions and criteria condition texts, the
+per-benefit detail pages (linked from the translated landing pages, which say
+so), legal texts, documents to authorities, the demo, and free-text search
+(matches Swedish text only). If a
 Swedish source text changes without an updated translation, the API falls
 back to Swedish for that string (honest fallback; the verify guard blocks
 pushes with missing translations). Official benefit/authority names are never

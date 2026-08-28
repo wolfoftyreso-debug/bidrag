@@ -1,7 +1,7 @@
 # I18N-programmet — flerspråkig Bidragskoll
 
-**Status: fas A levererad (upptäcktsslingan). Styrande dokument för allt
-språkarbete.** Beslut 2026-08-28: Bidragskoll ska finnas fullt utbyggd på samma
+**Status: fas A, A2, B och C v1 levererade.** Styrande dokument för allt
+språkarbete. Beslut 2026-08-28: Bidragskoll ska finnas fullt utbyggd på samma
 språkpalett som informationsverige.se.
 
 ## Språken
@@ -81,10 +81,28 @@ Interna koden `prs` renderas som `lang="fa-AF"` i dokumentroten (BCP 47).
   namn), villkorsbeskrivningar, dokument och juridik förblir svenska;
   sökningen (`q=`) matchar fortfarande svensk text. Integrationstest:
   `apps/api/test/kbI18n.test.ts`.
-- **Fas C**: publika SEO-ytan — kvalitetsgrindad översättning med hreflang
-  (`fa-AF` för dari), börjar med hubbarna och de största entity-sidorna.
-  ALDRIG maskinöversatta massidor utan granskning (GATE 0-/spam-risk).
-  Demon: efter fas B (bundlar samma innehåll).
+- **Fas C v1 — LEVERERAD 2026-08-28**: publika SEO-ytan. EN substantiell
+  landningssida per språk på `/{lang}/bidrag/` (10 sidor), byggd av kurerad
+  copy (`seo/publik-i18n.json`, 23 strängar × 11 språk) + fas B:s översatta
+  sammanfattningar för hela katalogen (129 stödrader per sida). Komplett,
+  ömsesidigt hreflang-kluster med `x-default` → svenska katalogen; `fa-AF`
+  för dari; `lang`/`dir=rtl` per sida; logiska CSS-egenskaper i den publika
+  mallen. Länken in i appen bär `?sprak=xx`, så språket följer med från
+  sökresultatet hela vägen in i utredningen. Vakt: `tools/seocheck.mjs`
+  kräver rätt `lang`/`dir`, full hreflang-reciprocitet och att varje
+  alternate pekar på en sida som finns; `tools/i18ncheck.mjs` vaktar
+  strängfilen.
+
+  **Medvetet INTE gjort (och varför):** entity-sidorna per stöd översätts
+  inte — deras substans (beskrivning, villkorstexter, ansökningsväg) ligger
+  utanför fas B:s omfattning, så en översatt entity-sida skulle bli en
+  halvsvensk sida. Målgrupps- och klusterhubbar per språk byggs inte heller:
+  det vore 40+ näst intill identiska sidor per språk, dvs. precis den
+  doorway-/skalprofil GATE 0 förbjuder. **Expansionsgrind:** fler sidor per
+  språk först när (a) motsvarande källtexter är översatta och (b) språket
+  passerat granskningsprotokollet nedan.
+
+  Demon: efter fas B/C (bundlar samma innehåll) — ej påbörjad.
 
 ## Granskningsprotokollet
 

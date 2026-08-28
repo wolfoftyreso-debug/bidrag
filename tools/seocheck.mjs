@@ -8,7 +8,9 @@
  *  - meta description finns, unik och ≤ 170 tecken
  *  - canonical finns och matchar sidans faktiska sökväg
  *  - JSON-LD parsar och innehåller Organization + BreadcrumbList
- *  - lang="sv"
+ *  - lang: svenska sidor lang="sv"; fas C-landningssidorna bär sitt eget
+ *    språk, dir="rtl" där det behövs, och ett komplett, ömsesidigt hreflang-
+ *    kluster (inkl. x-default) — annars konkurrerar språkversionerna.
  *  - alla interna länkar under /bidrag/ pekar på sidor som existerar
  *  - ingen orphan: varje sida nås från /bidrag/ via interna länkar (BFS)
  *  - sitemap.xml listar exakt de genererade sidorna (inga fler, inga färre)
@@ -42,7 +44,14 @@ walk(SITE, '/');
 // Statiska sidprefix (allt annat i href, t.ex. /villkor, /konto, /, är SPA-vyer
 // som inte genereras här och därför inte länkgranskas). Query Pages ligger under
 // målgruppsprefixen /foretag/ /privatperson/ /forening/ /enskild-firma/.
-const STATIC = ['/bidrag/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/', '/bidragsstatus/', '/oppna-bidrag/', '/finansiarer/', '/foretagsbidragsindex/', '/foretag/', '/privatperson/', '/forening/', '/enskild-firma/'];
+const SEO_LOCALES = [
+  { code: 'en', hreflang: 'en', dir: 'ltr' }, { code: 'es', hreflang: 'es', dir: 'ltr' },
+  { code: 'fr', hreflang: 'fr', dir: 'ltr' }, { code: 'ar', hreflang: 'ar', dir: 'rtl' },
+  { code: 'fa', hreflang: 'fa', dir: 'rtl' }, { code: 'prs', hreflang: 'fa-AF', dir: 'rtl' },
+  { code: 'ru', hreflang: 'ru', dir: 'ltr' }, { code: 'uk', hreflang: 'uk', dir: 'ltr' },
+  { code: 'so', hreflang: 'so', dir: 'ltr' }, { code: 'ti', hreflang: 'ti', dir: 'ltr' },
+];
+const STATIC = [...SEO_LOCALES.map((l) => `/${l.code}/bidrag/`), '/bidrag/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/', '/bidragsstatus/', '/oppna-bidrag/', '/finansiarer/', '/foretagsbidragsindex/', '/foretag/', '/privatperson/', '/forening/', '/enskild-firma/'];
 // Toppnivåingångar för orphan-BFS (faktiska sidor, länkade från appens nav /
 // katalogindex). Query Pages + finansiärssidor nås därifrån via index-/hubblänkar.
 const BFS_SEEDS = ['/bidrag/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/', '/bidragsstatus/', '/finansiarer/', '/foretagsbidragsindex/'];
@@ -76,7 +85,32 @@ for (const [path, html] of pages) {
   const canonical = html.match(/<link rel="canonical" href="([^"]*)"/)?.[1];
   if (canonical !== `${BASE}${path}`) err(`${path}: canonical är ${canonical}, väntade ${BASE}${path}`);
 
-  if (!/<html lang="sv">/.test(html)) err(`${path}: lang="sv" saknas`);
+  // Fas C: /{lang}/bidrag/ bär sitt eget språk; allt annat är svenskt.
+  const langMatch = html.match(/<html lang="([^"]+)"([^>]*)>/);
+  if (!langMatch) err(`${path}: <html lang> saknas`);
+  else {
+    const seoLoc = SEO_LOCALES.find((l) => path === `/${l.code}/bidrag/`);
+    const expected = seoLoc ? seoLoc.hreflang : 'sv';
+    if (langMatch[1] !== expected) err(`${path}: lang="${langMatch[1]}" (förväntade "${expected}")`);
+    const hasRtl = / dir="rtl"/.test(langMatch[2]);
+    if (Boolean(seoLoc && seoLoc.dir === 'rtl') !== hasRtl) {
+      err(`${path}: dir="rtl" ${hasRtl ? 'satt men språket är LTR' : 'saknas för RTL-språk'}`);
+    }
+    // Hreflang-klustret: alla sidor i klustret ska lista ALLA versioner + x-default.
+    if (seoLoc || path === '/bidrag/') {
+      const tags = [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)">/g)];
+      const got = new Set(tags.map((m) => m[1]));
+      for (const need of ['sv', 'x-default', ...SEO_LOCALES.map((l) => l.hreflang)]) {
+        if (!got.has(need)) err(`${path}: hreflang saknar "${need}"`);
+      }
+      const xdef = tags.find((m) => m[1] === 'x-default');
+      if (xdef && !xdef[2].endsWith('/bidrag/')) err(`${path}: x-default pekar inte på den svenska katalogen`);
+      for (const [, hl, href] of tags) {
+        const target = href.replace(/^https?:\/\/[^/]+/, '');
+        if (!pages.has(target)) err(`${path}: hreflang "${hl}" pekar på ${target} som inte finns`);
+      }
+    }
+  }
 
   // Perfektionsgaten (§11–13): social metadata + varumärkes-head på varje sida.
   if (!html.includes('property="og:image"')) err(`${path}: og:image saknas`);

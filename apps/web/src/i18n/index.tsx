@@ -51,6 +51,22 @@ const MESSAGES: Record<Locale, Record<MessageKey, string>> = { sv, en, so, ar, p
 const STORAGE_KEY = 'bidrag.sprak.v1';
 
 function loadLocale(): Locale {
+  // I18N fas C: de publika landningssidorna (/{lang}/bidrag/) länkar in i
+  // appen med ?sprak=xx, så språkvalet följer med hela vägen från sökresultatet
+  // till utredningen. URL:en vinner över tidigare val och sparas.
+  try {
+    const fromUrl = new URLSearchParams(window.location.search).get('sprak');
+    if (fromUrl && LOCALES.some((l) => l.code === fromUrl)) {
+      try {
+        localStorage.setItem(STORAGE_KEY, fromUrl);
+      } catch {
+        /* privat läge — språket gäller ändå för den här sessionen */
+      }
+      return fromUrl as Locale;
+    }
+  } catch {
+    /* ingen window/URL (t.ex. i test) — fall vidare till sparat val */
+  }
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved && LOCALES.some((l) => l.code === saved)) return saved as Locale;
