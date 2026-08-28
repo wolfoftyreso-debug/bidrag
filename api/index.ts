@@ -13,7 +13,13 @@
  * vilket ger normal Fastify-prestanda efter första anropet.
  */
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { buildServer } from '../apps/api/src/server.ts';
+// VIKTIGT: importera den KOMPILERADE servern (apps/api byggs i vercel.json:s
+// buildCommand före funktionspaketeringen). En .ts-import överlever ordagrant
+// in i Vercels funktionsbundle och kan inte lösas i runtime —
+// FUNCTION_INVOCATION_FAILED på varje anrop (verifierat i runtime-loggarna
+// 2026-08-28). Lokalt fungerar .ts bara tack vare --experimental-strip-types,
+// vilket är precis varför simuleringen inte fångade felet.
+import { buildServer } from '../apps/api/dist/server.js';
 
 let appPromise: ReturnType<typeof buildServer> | null = null;
 

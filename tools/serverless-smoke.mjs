@@ -47,19 +47,25 @@ const prof = await call('POST', '/v1/profiles', {
 });
 const proj = await call('POST', '/v1/projects', { profileId: prof.json.profile.id, title: 'Serverless', intent: 'test' });
 const pid = proj.json.project.id;
+// Open Discovery: matchningarna visas GRATIS — namngivna, aldrig låsta.
 await call('POST', `/v1/projects/${pid}/matches`, {});
-const teaser = await call('GET', `/v1/projects/${pid}/matches`);
-if (!teaser.json.locked) throw new Error('teaser saknas');
-console.log('OK: matchning + teaser');
+const matches = await call('GET', `/v1/projects/${pid}/matches`);
+if (!Array.isArray(matches.json.matches) || matches.json.matches.length === 0) throw new Error('matchningar saknas');
+console.log(`OK: Open Discovery — ${matches.json.matches.length} gratis matchningar genom handlern`);
 
-const unlock = await call('POST', `/v1/projects/${pid}/analysis-unlock`, { email: 'sv@test.example', immediateDeliveryConsent: true });
-console.log("unlock:", unlock.status, JSON.stringify(unlock.json).slice(0,200));
-const confirm = await call('POST', `/v1/payments/${unlock.json.paymentId}/mock-confirm`);
-console.log("confirm:", confirm.status, JSON.stringify(confirm.json).slice(0,200));
+// Den enda betalytan: förbered en ansökan (19 kr) → mock-confirm → kvitto med moms.
+const opp = matches.json.matches[0];
+const gate = await call('POST', '/v1/applications', { projectId: pid, opportunityId: opp.opportunityId });
+if (gate.status !== 402 || gate.json.priceMinor !== 1900) throw new Error(`402-gate: ${gate.status} ${gate.json.priceMinor}`);
+const pur = await call('POST', `/v1/projects/${pid}/application-purchase`, { email: 'sv@test.example', immediateDeliveryConsent: true });
+if (pur.status !== 201) throw new Error(`köp: ${pur.status} ${JSON.stringify(pur.json).slice(0, 160)}`);
+const confirm = await call('POST', `/v1/payments/${pur.json.paymentId}/mock-confirm`);
 if (!confirm.json.receipt?.receiptNumber) throw new Error('kvitto saknas');
 const receipt = await call('GET', `/v1/projects/${pid}/receipt`);
-if (receipt.json.receipt.vatAmountMinor !== 780) throw new Error('moms fel');
-console.log(`OK: betalning + kvitto ${confirm.json.receipt.receiptNumber} genom handlern`);
+if (receipt.json.receipt.vatAmountMinor !== 380) throw new Error(`moms fel: ${receipt.json.receipt.vatAmountMinor} (väntade 380 av 1900)`);
+const app2 = await call('POST', '/v1/applications', { projectId: pid, opportunityId: opp.opportunityId });
+if (app2.status !== 201) throw new Error(`ansökan med kredit: ${app2.status}`);
+console.log(`OK: 402 → 19 kr-köp → kvitto ${confirm.json.receipt.receiptNumber} (moms 380 öre) → ansökan, genom handlern`);
 
 const cronNoAuth = await call('POST', '/v1/internal/cron/deadline-scan');
 if (cronNoAuth.status !== 401) throw new Error(`cron utan token: ${cronNoAuth.status}`);

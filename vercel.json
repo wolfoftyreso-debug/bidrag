@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "npm run build -w packages/core && npm run build -w apps/web && node --experimental-strip-types tools/genseo.mjs --out apps/web/dist",
+  "buildCommand": "npm run build -w packages/core -w apps/api -w apps/web && node --experimental-strip-types tools/genseo.mjs --out apps/web/dist",
   "outputDirectory": "apps/web/dist",
   "installCommand": "npm ci --no-audit --no-fund",
   "functions": {
@@ -20,8 +20,19 @@
       "destination": "/api/index"
     },
     {
+      "source": "/readyz",
+      "destination": "/api/index"
+    },
+    {
       "source": "/((?!api/|assets/|favicon|bidrag/|hitta-bidrag-gratis/|vilka-bidrag-kan-jag-fa/|bidragsstatus/|finansiarer/|foretagsbidragsindex/|foretag/|privatperson/|forening/|enskild-firma/|og/|icon-|site\\.webmanifest|sitemap\\.xml|robots\\.txt|404).*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": ".*\\.vercel\\.app" }],
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
     }
   ],
   "crons": [
