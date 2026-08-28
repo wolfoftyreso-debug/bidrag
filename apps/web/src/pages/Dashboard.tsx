@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { STATE_LABELS, formatDate, get } from '../api';
-import { useT } from '../i18n';
+import { formatDate, get } from '../api';
+import { useLabels, useT } from '../i18n';
 
 interface CaseRow {
   id: string;
@@ -25,6 +25,7 @@ interface ProjectRow {
 
 export default function DashboardPage() {
   const t = useT();
+  const labels = useLabels();
   const [cases, setCases] = useState<CaseRow[]>([]);
   const [notifications, setNotifications] = useState<NotificationRow[]>([]);
   const [projects, setProjects] = useState<ProjectRow[]>([]);
@@ -93,7 +94,7 @@ export default function DashboardPage() {
             <p key={c.id}>
               <Link to={`/ansokningar/${c.id}`}>{c.opportunityTitle}</Link>
               <br />
-              <span className={`badge ${STATE_LABELS[c.state]?.tone ?? ''}`}>{STATE_LABELS[c.state]?.label ?? c.state}</span>
+              <span className={`badge ${labels.state(c.state).tone}`}>{labels.state(c.state).label}</span>
             </p>
           ))}
         </div>
@@ -134,7 +135,7 @@ export default function DashboardPage() {
                 <tr key={c.id}>
                   <td><Link to={`/ansokningar/${c.id}`}>{c.opportunityTitle}</Link></td>
                   <td>{c.projectTitle}</td>
-                  <td><span className={`badge ${STATE_LABELS[c.state]?.tone ?? ''}`}>{STATE_LABELS[c.state]?.label ?? c.state}</span></td>
+                  <td><span className={`badge ${labels.state(c.state).tone}`}>{labels.state(c.state).label}</span></td>
                   <td>{formatDate(c.deadlineAt)}</td>
                 </tr>
               ))}

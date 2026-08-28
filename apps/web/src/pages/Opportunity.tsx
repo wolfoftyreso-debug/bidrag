@@ -6,7 +6,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { PurchaseConsent } from '../components/PurchaseConsent';
-import { ApiError, INSTRUMENT_LABELS, formatDate, formatSek, get, post } from '../api';
+import { ApiError, formatDate, formatSek, get, post } from '../api';
+import { useLabels, useT } from '../i18n';
+
+type T = ReturnType<typeof useT>;
 
 interface Criterion {
   id: string;
@@ -48,15 +51,9 @@ interface OpportunityDetail {
   hasApplicationSchema: boolean;
 }
 
-const VERIFICATION_LABELS: Record<string, string> = {
-  unverified: 'Ej verifierad',
-  machine_extracted: 'Automatiskt inläst — ej granskad',
-  ai_curated: 'AI-sammanställd från officiell källa — ej granskad av människa',
-  human_curated: 'Manuellt sammanställd från officiell källa',
-  human_verified: 'Verifierad mot officiell källa',
-};
-
 export default function OpportunityPage() {
+  const t = useT();
+  const labels = useLabels();
   const { id } = useParams();
   const [params] = useSearchParams();
   const projectId = params.get('projekt');
@@ -67,11 +64,12 @@ export default function OpportunityPage() {
   const [priceMinor, setPriceMinor] = useState<number | null>(null);
 
   useEffect(() => {
-    if (id) get<OpportunityDetail>(`/v1/funding-opportunities/${id}`).then(setData).catch(() => setError('Stödet kunde inte hämtas.'));
+    if (id) get<OpportunityDetail>(`/v1/funding-opportunities/${id}`).then(setData).catch(() => setError(t('o.loadError')));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (error) return <div className="alert error">{error}</div>;
-  if (!data) return <p>Laddar…</p>;
+  if (!data) return <p>{t('app.loading')}</p>;
 
   const { opportunity: opp, authority, ruleVersion } = data;
 
@@ -93,54 +91,49 @@ export default function OpportunityPage() {
         setBusy(false);
         return;
       }
-      setError(err instanceof ApiError ? err.message : 'Kunde inte skapa ansökan.');
+      setError(err instanceof ApiError ? err.message : t('o.createError'));
       setBusy(false);
     }
   };
 
   return (
     <div style={{ maxWidth: 760 }}>
-      <p><Link to={projectId ? `/projekt/${projectId}` : '/projekt'}>&larr; Tillbaka till matchningar</Link></p>
+      <p><Link to={projectId ? `/projekt/${projectId}` : '/projekt'}>{t('o.backToMatches')}</Link></p>
       <h1>{opp.title}</h1>
       <p className="meta-line">
-        {authority?.name} · <span className="badge info">{INSTRUMENT_LABELS[opp.instrumentType] ?? opp.instrumentType}</span>
+        {authority?.name} · <span className="badge info">{labels.instr(opp.instrumentType)}</span>
       </p>
 
       <div className="card">
         <p style={{ fontSize: '1.05rem' }}>{opp.summary}</p>
         <p>{opp.description}</p>
         <dl className="kv" style={{ marginTop: '1rem' }}>
-          <dt>Belopp</dt>
+          <dt>{t('o.amount')}</dt>
           <dd>
-            {opp.maxAmountMinor ? `Upp till ${formatSek(opp.maxAmountMinor)}` : 'Varierar — se källan'}
-            {opp.maxFundingSharePercent ? ` (max ${opp.maxFundingSharePercent} % av kostnaden)` : ''}
+            {opp.maxAmountMinor ? t('o.amountUpTo', { belopp: formatSek(opp.maxAmountMinor) }) : t('o.amountVaries')}
+            {opp.maxFundingSharePercent ? t('o.amountShare', { procent: opp.maxFundingSharePercent }) : ''}
           </dd>
-          <dt>Ansökan stänger</dt>
+          <dt>{t('o.closes')}</dt>
           <dd>
             {opp.closesAt
               ? formatDate(opp.closesAt)
               : opp.deadlineModel === 'rolling'
-                ? 'Löpande ansökan'
-                : 'Nästa omgång är inte publicerad ännu'}
+                ? t('m.rolling')
+                : t('o.nextRoundLong')}
           </dd>
-          <dt>Uppskattad arbetsinsats</dt>
-          <dd>cirka {opp.estimatedEffortDays} arbetsdagar</dd>
-          <dt>Så ansöker du</dt>
+          <dt>{t('o.effort')}</dt>
+          <dd>{t('o.effortDays', { n: opp.estimatedEffortDays })}</dd>
+          <dt>{t('o.howToApply')}</dt>
           <dd>{opp.applicationMethod}</dd>
         </dl>
-        <div className="alert info" style={{ marginTop: '1rem' }}>
-          Den slutliga inlämningen görs i myndighetens officiella tjänst. Bidragskoll.se förbereder hela ansökan, håller ordning på
-          underlag och deadlines, och hjälper dig hela vägen — men vi påstår aldrig att något är inlämnat utan kvitto.
-        </div>
+        <div className="alert info" style={{ marginTop: '1rem' }}>{t('o.submissionNote')}</div>
       </div>
 
       {ruleVersion && (
         <div className="card">
-          <h2>Krav och bedömning</h2>
-          <p className="guidance">
-            Så här bedömer systemet din matchning. Det är en bedömning utifrån publicerade kriterier — inte myndighetens beslut.
-          </p>
-          <h3>Krav som måste uppfyllas</h3>
+          <h2>{t('o.criteriaTitle')}</h2>
+          <p className="guidance">{t('o.criteriaGuidance')}</p>
+          <h3>{t('o.mustMeet')}</h3>
           {ruleVersion.criteria
             .filter((c) => c.kind !== 'weighted')
             .map((c) => (
@@ -149,7 +142,7 @@ export default function OpportunityPage() {
                 <span>{c.description}</span>
               </div>
             ))}
-          <h3>Stärker ansökan</h3>
+          <h3>{t('o.strengthens')}</h3>
           {ruleVersion.criteria
             .filter((c) => c.kind === 'weighted')
             .map((c) => (
@@ -160,12 +153,12 @@ export default function OpportunityPage() {
             ))}
           {ruleVersion.evidenceRequirements.length > 0 && (
             <>
-              <h3>Underlag som behövs</h3>
+              <h3>{t('o.evidenceTitle')}</h3>
               {ruleVersion.evidenceRequirements.map((e) => (
                 <div className="explain-item" key={e.kind}>
                   <span className="explain-icon">{e.mandatory ? '!' : '·'}</span>
                   <span>
-                    {e.description} {e.mandatory ? <span className="badge warning">obligatorisk</span> : <span className="badge">frivillig</span>}
+                    {e.description} {e.mandatory ? <span className="badge warning">{t('o.mandatory')}</span> : <span className="badge">{t('o.optional')}</span>}
                   </span>
                 </div>
               ))}
@@ -176,23 +169,23 @@ export default function OpportunityPage() {
 
       {projectId && (
         <div className="card">
-          <h2>Redo att börja?</h2>
-          <p>Ansökan förifylls med det du redan berättat. Du kan spara och fortsätta när du vill.</p>
+          <h2>{t('o.readyTitle')}</h2>
+          <p>{t('o.readyBody')}</p>
           {priceMinor === null ? (
-            <button disabled={busy} onClick={startApplication}>Förbered ansökan i systemet</button>
+            <button disabled={busy} onClick={startApplication}>{t('o.prepareInSystem')}</button>
           ) : (
-            <ApplicationPurchase projectId={projectId} priceMinor={priceMinor} onPaid={startApplication} />
+            <ApplicationPurchase projectId={projectId} priceMinor={priceMinor} onPaid={startApplication} t={t} />
           )}
         </div>
       )}
 
       <div className="source-line">
-        <strong>Källa:</strong> <a href={opp.sourceUrl} target="_blank" rel="noreferrer">{opp.sourceUrl}</a>
+        <strong>{t('o.source')}</strong> <a href={opp.sourceUrl} target="_blank" rel="noreferrer">{opp.sourceUrl}</a>
         <br />
-        <strong>Senast verifierad:</strong> {formatDate(opp.lastVerifiedAt)} · {VERIFICATION_LABELS[opp.verificationStatus] ?? opp.verificationStatus} · Källkvalitet {opp.sourceQuality}
-        {ruleVersion && <> · Regelversion {ruleVersion.version} (gäller från {formatDate(ruleVersion.effectiveFrom)})</>}
+        <strong>{t('o.lastVerifiedLabel')}</strong> {formatDate(opp.lastVerifiedAt)} · {labels.verif(opp.verificationStatus)} · {t('o.sourceQuality', { kvalitet: opp.sourceQuality })}
+        {ruleVersion && <> · {t('o.ruleVersion', { version: ruleVersion.version, datum: formatDate(ruleVersion.effectiveFrom) })}</>}
         <br />
-        Kontrollera alltid aktuella villkor hos källan innan du skickar in.
+        {t('o.checkSource')}
       </div>
     </div>
   );
@@ -202,8 +195,10 @@ export default function OpportunityPage() {
  * Köpflödet för en ansökan (19 kr per ansökan) — samma betalningsmönster som
  * analysen och dokumentstudion: mock-knapp i utveckling, Swish-QR/deeplink i
  * drift, och ansökan skapas först när betalningen är bekräftad server-side.
+ * OBS: ångerrättssamtycket (PurchaseConsent) har bindande svensk lydelse —
+ * det översätts inte i fas A (I18N_PROGRAM §gränser).
  */
-function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: string; priceMinor: number; onPaid: () => void }) {
+function ApplicationPurchase({ projectId, priceMinor, onPaid, t }: { projectId: string; priceMinor: number; onPaid: () => void; t: T }) {
   const [busy, setBusy] = useState(false);
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -229,7 +224,7 @@ function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: str
       }
       setPayment(res);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Köpet kunde inte startas.');
+      setError(err instanceof ApiError ? err.message : t('o.payStartError'));
     } finally {
       setBusy(false);
     }
@@ -243,7 +238,7 @@ function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: str
       setConfirmed(true);
       onPaid();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Bekräftelsen misslyckades.');
+      setError(err instanceof ApiError ? err.message : t('o.payConfirmError'));
       setBusy(false);
     }
   };
@@ -257,7 +252,7 @@ function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: str
     return () => clearInterval(iv);
   }, [payment, confirmed, onPaid]);
 
-  if (confirmed) return <p className="meta-line">Betalningen är bekräftad — ansökan skapas…</p>;
+  if (confirmed) return <p className="meta-line">{t('o.payConfirmed')}</p>;
 
   if (payment) {
     // Stripe redirectar normalt bort direkt; hit når vi bara om redirect-URL:en
@@ -267,25 +262,25 @@ function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: str
         <div style={{ textAlign: 'center' }}>
           <p className="guidance">{payment.instructions.message}</p>
           {payment.instructions.redirectUrl
-            ? <p><a className="btn" href={payment.instructions.redirectUrl}>Fortsätt till betalningen</a></p>
-            : <div className="alert error">Betalsidan kunde inte öppnas. Försök igen.</div>}
+            ? <p><a className="btn" href={payment.instructions.redirectUrl}>{t('o.payContinue')}</a></p>
+            : <div className="alert error">{t('o.payPageError')}</div>}
         </div>
       );
     }
     return payment.instructions.method === 'mock' ? (
       <div className="alert warning">
         <p style={{ fontWeight: 700 }}>{payment.instructions.message}</p>
-        <button disabled={busy} onClick={confirmMock}>Bekräfta betalning (simulerad)</button>
+        <button disabled={busy} onClick={confirmMock}>{t('o.payMockConfirm')}</button>
         {error && <div className="alert error">{error}</div>}
       </div>
     ) : (
       <div style={{ textAlign: 'center' }}>
-        <h3>Betala med Swish</h3>
+        <h3>{t('o.paySwishTitle')}</h3>
         {payment.instructions.qrAvailable && (
-          <img src={`/v1/payments/${payment.paymentId}/qr`} alt="Swish QR-kod" width={220} height={220} style={{ display: 'block', margin: '0.5rem auto' }} />
+          <img src={`/v1/payments/${payment.paymentId}/qr`} alt={t('o.paySwishQrAlt')} width={220} height={220} style={{ display: 'block', margin: '0.5rem auto' }} />
         )}
-        {payment.instructions.deepLink && <p><a className="btn" href={payment.instructions.deepLink}>Öppna Swish</a></p>}
-        <p className="meta-line">Väntar på betalning…</p>
+        {payment.instructions.deepLink && <p><a className="btn" href={payment.instructions.deepLink}>{t('o.paySwishOpen')}</a></p>}
+        <p className="meta-line">{t('o.payWaiting')}</p>
         {error && <div className="alert error">{error}</div>}
       </div>
     );
@@ -293,12 +288,9 @@ function ApplicationPurchase({ projectId, priceMinor, onPaid }: { projectId: str
 
   return (
     <div>
-      <p className="guidance">
-        Att förbereda en ansökan i systemet kostar {formatSek(priceMinor)} per ansökan — alla dokument för den
-        ansökan ingår. Du kan alltid ansöka själv direkt hos myndigheten, det är gratis.
-      </p>
+      <p className="guidance">{t('o.payGuidance', { pris: formatSek(priceMinor) })}</p>
       <PurchaseConsent checked={consent} onChange={setConsent} idSuffix="-ansokan" />
-      <button disabled={busy || !consent} onClick={buy}>Förbered ansökan — {formatSek(priceMinor)}</button>
+      <button disabled={busy || !consent} onClick={buy}>{t('o.payButton', { pris: formatSek(priceMinor) })}</button>
       {error && <div className="alert error">{error}</div>}
     </div>
   );

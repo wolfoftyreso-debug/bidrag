@@ -108,6 +108,31 @@ export function useT() {
   }, [locale]);
 }
 
+/** Tonerna är språkoberoende — bara etiketten översätts. Källa: api.ts:s
+ * ursprungliga kartor; nycklarna label.state/elig/instr.* i språkfilerna. */
+const STATE_TONES: Record<string, 'info' | 'success' | 'warning' | 'danger' | ''> = {
+  DISCOVERED: '', MATCHED: '', SELECTED: 'info', PREPARING: 'info', READY_FOR_REVIEW: 'info',
+  READY_TO_SUBMIT: 'warning', SUBMITTING: 'warning', SUBMITTED: 'success', ACKNOWLEDGED: 'success',
+  UNDER_REVIEW: 'info', ACTION_REQUIRED: 'danger', DECISION_RECEIVED: 'info', AWARDED: 'success',
+  REJECTED: 'danger', WITHDRAWN: '', CLOSED: '',
+};
+const ELIG_TONES: Record<string, string> = { eligible: 'success', unknown: 'warning', excluded: 'danger' };
+
+/** Lokaliserade etikettuppslag för tillstånd/behörighet/stödform/kurering.
+ * Okänd nyckel → rå kod (ärligt hellre än fel etikett). */
+export function useLabels() {
+  const t = useT();
+  return useMemo(() => {
+    const has = (key: string): key is MessageKey => key in sv;
+    return {
+      state: (s: string) => ({ label: has(`label.state.${s}`) ? t(`label.state.${s}` as MessageKey) : s, tone: STATE_TONES[s] ?? '' }),
+      elig: (s: string) => ({ label: has(`label.elig.${s}`) ? t(`label.elig.${s}` as MessageKey) : s, tone: ELIG_TONES[s] ?? '' }),
+      instr: (s: string) => (has(`label.instr.${s}`) ? t(`label.instr.${s}` as MessageKey) : s),
+      verif: (s: string) => (has(`label.verif.${s}`) ? t(`label.verif.${s}` as MessageKey) : s),
+    };
+  }, [t]);
+}
+
 /** Språkväljare — används på inloggningssidan och i sidomenyn. */
 export function LanguagePicker({ compact }: { compact?: boolean }) {
   const { locale, setLocale } = useI18n();
