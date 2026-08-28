@@ -55,7 +55,21 @@ const APPLICANT = {
 const HUBS = [
   { slug: 'privatpersoner', title: 'Bidrag och ersättningar för privatpersoner', short: 'Privatpersoner', types: ['individual'] },
   { slug: 'foretag', title: 'Stöd och bidrag för företag', short: 'Företag', types: ['company', 'economic_association'] },
-  { slug: 'foreningar', title: 'Bidrag för föreningar och civilsamhälle', short: 'Föreningar', types: ['association', 'informal_group'] },
+  // Föreningshubben bär förenings-klustrets verkliga sökspråk (Semrush se
+  // 2026-08-28: "bidrag till förening" 210, "söka bidrag ideell förening" 170,
+  // "bidrag ideell förening" 140, "föreningsbidrag" 210 — SERP:en ägs idag av
+  // en privat endasidesaktör, dvs. bevisat vinnbar). titleQuery/leadQuery/faq
+  // renderas av hubPage; FAQ-frågorna är verkliga PAA-frågor (volumes-filen).
+  {
+    slug: 'foreningar', title: 'Bidrag för föreningar och civilsamhälle', short: 'Föreningar', types: ['association', 'informal_group'],
+    titleQuery: 'Bidrag till förening – stöd för ideella föreningar',
+    leadQuery: 'Här finns de statliga och kommunala stöd en ideell förening kan söka — verksamhetsbidrag, projektstöd, aktivitetsstöd och lokalbidrag — samlade med villkor och officiell källa.',
+    faq: [
+      { q: 'Vilka bidrag kan en ideell förening söka?', a: 'Det finns tre huvudvägar: statliga stöd (till exempel via MUCF, Kulturrådet och Riksidrottsförbundet), kommunala föreningsbidrag hos kultur- och fritidsförvaltningen, och stiftelser eller fonder. Listan på den här sidan visar stöden i Bidragskolls kunskapsbas, var och en med villkor och officiell källa.' },
+      { q: 'Hur söker man bidrag till en förening?', a: 'Ansökan görs alltid hos respektive finansiär — kommunala föreningsbidrag hos kommunens kultur- och fritidsförvaltning, statliga stöd i respektive myndighets e-tjänst. Varje stöd på sidan länkar till sin officiella ansökningsväg, och att ansöka själv är alltid gratis.' },
+      { q: 'Hur mycket bidrag får en förening?', a: 'Beloppen fastställs av respektive finansiär och varierar med stödform, verksamhet och ort — Bidragskoll anger inga nivåer som inte är fastställda mot källan. Aktuella belopp finns hos den officiella källan som varje stöd länkar till.' },
+    ],
+  },
   { slug: 'offentlig-sektor', title: 'Statsbidrag och stöd för offentlig sektor och forskning', short: 'Offentlig sektor & forskning', types: ['municipality', 'region', 'public_body', 'university'] },
 ];
 
@@ -381,7 +395,9 @@ ${rel.length ? `<h2>Relaterade stöd</h2>
 function hubPage(hub, entries, queryLinks = []) {
   const canonical = `${BASE}/bidrag/${hub.slug}/`;
   const crumbs = [{ name: 'Bidrag', url: '/bidrag/' }, { name: hub.short, url: `/bidrag/${hub.slug}/` }];
-  const title = `${hub.title} | Bidragskoll`;
+  // titleQuery: hubbar vars huvudterm har uppmätt sökspråk bär det i titeln
+  // (verklig Semrush-data, se HUBS) — övriga behåller katalogtiteln.
+  const title = `${hub.titleQuery ?? hub.title} | Bidragskoll`;
   const description = `${entries.length} stöd för ${hub.short.toLowerCase()} — villkor, belopp och ansökan, med källa och senast kontrollerad-datum för varje stöd.`;
   const byInstrument = new Map();
   for (const o of entries) {
@@ -390,10 +406,11 @@ function hubPage(hub, entries, queryLinks = []) {
     byInstrument.get(key).push(o);
   }
   const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title, crumbs) };
+  if (hub.faq?.length) jsonld['@graph'].push(faqJsonld(hub.faq));
   const body = `
 <h1>${esc(hub.title)}</h1>
 <p class="lead">${entries.length} stöd i Bidragskolls kunskapsbas riktar sig till ${esc(hub.short.toLowerCase())}.
-Varje stöd visas med villkor, belopp och officiell källa. Osäker på vad som gäller dig?
+${hub.leadQuery ? esc(hub.leadQuery) + '\n' : ''}Varje stöd visas med villkor, belopp och officiell källa. Osäker på vad som gäller dig?
 <a href="/">Bidragskolls utredning</a> ställer frågorna åt dig — en i taget.</p>
 ${queryLinks.length ? `<h2>Vanliga sökningar</h2>
 <ul class="stodlista">${queryLinks.map((q) => `<li><a href="${q.url}">${esc(q.label)}</a></li>`).join('')}</ul>` : ''}
@@ -407,6 +424,8 @@ ${[...byInstrument.entries()]
       .join('')}</ul>`,
   )
   .join('')}
+${hub.faq?.length ? `<div class="snabbsvar"><h2>Vanliga frågor</h2>
+<dl>${hub.faq.map((f) => `<dt>${esc(f.q)}</dt><dd>${esc(f.a)}</dd>`).join('')}</dl></div>` : ''}
 <p class="kalla"><strong>Senast kontrollerad:</strong> ${CHECKED} · Innehållet är AI-sammanställt från officiella källor — kontrollera alltid aktuella villkor hos respektive källa.</p>
 `;
   return layout({ title, description, canonical, crumbs, jsonld, body });
@@ -428,7 +447,7 @@ Myndigheterna beskriver sina egna stöd var för sig; här får du överblicken,
 <div class="path"><strong>Vilka bidrag kan jag få?</strong>Det beror på vem du är. Kontrollera gratis — du behöver inte veta vad bidraget heter.<br><a class="knapp" href="/vilka-bidrag-kan-jag-fa/">Kontrollera din situation</a></div>
 <div class="path"><strong>Hitta bidrag gratis</strong>Upptäckten och resultaten är kostnadsfria och inte låsta. Ansök själv hos källan.<br><a class="knapp sekundar" href="/hitta-bidrag-gratis/">Så fungerar det</a></div>
 </div>
-<p class="lead" style="margin-top:.4rem">Se också <a href="/bidragsstatus/">bidragsstatus</a>, <a href="/finansiarer/">finansiärerna</a> bakom bidragen, och <a href="/foretagsbidragsindex/">Företagsbidragsindex</a> — Sveriges företagsstöd i öppna, citerbara siffror.</p>
+<p class="lead" style="margin-top:.4rem">Se också <a href="/oppna-bidrag/">öppna bidrag just nu</a>, <a href="/bidragsstatus/">bidragsstatus</a>, <a href="/finansiarer/">finansiärerna</a> bakom bidragen, och <a href="/foretagsbidragsindex/">Företagsbidragsindex</a> — Sveriges företagsstöd i öppna, citerbara siffror.</p>
 <p class="lead">Ämnesöversikter: ${KLUSTER.map((k) => `<a href="/${k.path}/">${esc(k.h1)}</a>`).join(' · ')}.</p>
 ${hubEntries
   .map(
@@ -599,6 +618,47 @@ granskat av människa. Att ansöka själv direkt hos källan är alltid gratis.<
   return { path, html, noindex };
 }
 
+// ── Öppna bidrag (TIME-intent, SERP War Room 2026-08-28) ─────────────────────
+// Sökintentionen "öppna bidrag / bidrag att söka just nu" saknar en samlad,
+// myndighetsövergripande vy — myndigheterna listar bara sina egna stöd. Sidan
+// beräknas helt ur kunskapsbasens deadlinemodell (rolling/recurring/closesAt):
+// äkta information gain, inga påhittade datum. "Nya bidrag" byggs MEDVETET
+// inte förrän kunskapsbasen ärligt kan spåra nyhet (se docs/SEO_WAR_ROOM.md).
+function oppnaBidragPage() {
+  const path = '/oppna-bidrag/';
+  const canonical = `${BASE}${path}`;
+  const crumbs = [{ name: 'Bidrag', url: '/bidrag/' }, { name: 'Öppna bidrag', url: path }];
+  const title = 'Öppna bidrag – löpande stöd och kommande deadlines | Bidragskoll';
+  const rolling = opportunities.filter((o) => o.deadlineModel === 'rolling').sort((a, b) => shortTitle(a).localeCompare(shortTitle(b), 'sv'));
+  const closingSoon = opportunities.filter((o) => o.closesAt && o.closesAt.slice(0, 10) >= CHECKED).sort((a, b) => a.closesAt.localeCompare(b.closesAt));
+  const recurring = opportunities.filter((o) => o.deadlineModel === 'recurring' || o.deadlineModel === 'upcoming_round').sort((a, b) => shortTitle(a).localeCompare(shortTitle(b), 'sv'));
+  const description = `${rolling.length} stöd är löpande öppna utan fast deadline och ${recurring.length} öppnar i omgångar — samlade över myndighetsgränserna, med källa och senast kontrollerad-datum.`.slice(0, 168);
+  const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title.slice(0, 70), crumbs) };
+  const li = (o, extra = '') => `<li><a href="/bidrag/${o.slug}/">${esc(anchorTitle(o))}</a><span class="sum">${esc(o.summary)}${extra}</span></li>`;
+  const body = `
+<p class="eyebrow">Levande datavy</p>
+<h1>Öppna bidrag just nu</h1>
+<p class="lead">Vilka bidrag går att söka just nu? ${rolling.length} av de ${opportunities.length} stöden i
+Bidragskolls kunskapsbas är löpande öppna — de har ingen fast deadline utan kan sökas när som helst.
+Ytterligare ${recurring.length} öppnar i omgångar hos sina finansiärer. Öppettider ändras hos källan;
+varje stöd visar sin officiella källa och när uppgifterna senast kontrollerades.</p>
+<p><a class="bigcta" href="/">Kontrollera vilka som passar dig — gratis</a></p>
+${closingSoon.length ? `<h2>Stänger snart — satta deadlines i kunskapsbasen</h2>
+<ul class="stodlista">${closingSoon.map((o) => li(o, ` <em>· ${esc(deadlineText(o))}</em>`)).join('')}</ul>` : ''}
+<h2>Löpande öppna stöd (${rolling.length})</h2>
+<p>Stöd utan fast ansökningsdeadline — de söks när behovet uppstår, direkt hos den officiella källan.</p>
+<ul class="stodlista">${rolling.map((o) => li(o)).join('')}</ul>
+<h2>Öppnar i omgångar (${recurring.length})</h2>
+<p>Stöd som öppnar och stänger i återkommande utlysningsomgångar — aktuella omgångstider finns hos respektive finansiär.</p>
+<ul class="stodlista">${recurring.map((o) => li(o, ` <em>· ${esc(deadlineText(o))}</em>`)).join('')}</ul>
+<div class="honest">Detta är en överblick ur Bidragskolls kunskapsbas, inte en realtidskälla. Ett stöds
+öppet/stängt-status avgörs alltid hos den officiella källan, som varje bidragssida länkar till.
+Innehållet är AI-sammanställt från officiella källor och ännu inte granskat av människa.</div>
+<p class="kalla"><strong>Senast kontrollerad:</strong> ${CHECKED} · Se även <a href="/bidragsstatus/">bidragsstatus</a> — kunskapsbasens samlade siffror.</p>
+`;
+  return { path, html: layout({ title: title.slice(0, 70), description, canonical, crumbs, jsonld, body }) };
+}
+
 // ── Bidragsstatus (SEO-3/§12): citerbar datavy, beräknad ur seeden ───────────
 function bidragsstatusPage() {
   const path = '/bidragsstatus/';
@@ -625,9 +685,15 @@ och deadlines ändras hos källan — kontrollera alltid det aktuella hos respek
 </table></div>
 <h2>Per målgrupp</h2>
 <ul class="stodlista">${perHub.map(({ h, n }) => `<li><a href="/bidrag/${h.slug}/">${esc(h.title)}</a><span class="sum">${n} stöd</span></li>`).join('')}</ul>
+${dated.filter((o) => o.closesAt.slice(0, 10) >= CHECKED).length ? `<h2>Närmast satta deadlines</h2>
+<ul class="stodlista">${dated
+    .filter((o) => o.closesAt.slice(0, 10) >= CHECKED)
+    .sort((a, b) => a.closesAt.localeCompare(b.closesAt))
+    .map((o) => `<li><a href="/bidrag/${o.slug}/">${esc(anchorTitle(o))}</a><span class="sum">${esc(deadlineText(o))}</span></li>`)
+    .join('')}</ul>` : ''}
 <div class="honest">Detta är en överblick ur kunskapsbasen, inte en realtidskälla. Enskilda stöds öppet/stängt-status
 avgörs alltid hos den officiella källan, som varje bidragssida länkar till.</div>
-<p class="kalla"><strong>Senast uppdaterad ur kunskapsbasen:</strong> ${CHECKED} · <a href="/vilka-bidrag-kan-jag-fa/">Kontrollera din situation</a></p>
+<p class="kalla"><strong>Senast uppdaterad ur kunskapsbasen:</strong> ${CHECKED} · Se <a href="/oppna-bidrag/">öppna bidrag just nu</a> · <a href="/vilka-bidrag-kan-jag-fa/">Kontrollera din situation</a></p>
 `;
   return { path, html: layout({ title: title.slice(0, 70), description, canonical, crumbs, jsonld, body }) };
 }
@@ -987,7 +1053,7 @@ for (const k of KLUSTER) emit(k.path, klusterPage(k));
 
 // Flaggskeppssidorna + bidragsstatus (root). Länkas från /bidrag/-index så de
 // nås i orphan-BFS:en, och länkar tillbaka in i katalogen.
-for (const p of [flagshipHittaGratis(), flagshipVilkaBidrag(), bidragsstatusPage(), foretagsindexPage(), foretagsindexMetodikPage()]) emit(p.path.replace(/^\/|\/$/g, ''), p.html);
+for (const p of [flagshipHittaGratis(), flagshipVilkaBidrag(), bidragsstatusPage(), oppnaBidragPage(), foretagsindexPage(), foretagsindexMetodikPage()]) emit(p.path.replace(/^\/|\/$/g, ''), p.html);
 
 // Query Pages (vyer över grafen). Endast INDEX + NOINDEX_FOLLOW genereras.
 let idx = 0, noidx = 0, skipped = 0;

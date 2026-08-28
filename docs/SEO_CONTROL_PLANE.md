@@ -11,7 +11,7 @@ Googles egen data, crawler/browser-automation, egna SEO-regler och schemalagd
 
 Den kontinuerliga motorn körs genom **cronjobb och köer** och lagrar resultaten i
 **Postgres**. Claude Code / Cursor / Codex / Grok använder sedan samma
-**bidragskollen-seo-mcp** för att LÄSA resultatet, rekommendera åtgärder och
+**bidragskoll-seo-mcp** för att LÄSA resultatet, rekommendera åtgärder och
 implementera dem — bakom en uttrycklig godkännandegrind.
 
 ```
@@ -19,7 +19,7 @@ externa MCP-servrar (Semrush/Ahrefs/DataForSEO/Firecrawl…) ─┐
 Googles API:er (GSC/GA/Ads Keyword Planner) ────────────────┤→ cron/kö → Postgres
 Chrome DevTools / Playwright (teknisk QA) ──────────────────┘        │
                                                                      ▼
-                          bidragskollen-seo-mcp (read-only) ←─ agenten läser & agerar
+                          bidragskoll-seo-mcp (read-only) ←─ agenten läser & agerar
 ```
 
 ## Säkerhetsposture (obligatorisk)
@@ -54,7 +54,7 @@ Roller: **Semrush** = kontrollcentral · **Ahrefs** = länkar/konkurrenter ·
 **Firecrawl** = rent webbmaterial · **GSC** = sanningen om vår egen prestanda.
 Vi använder aldrig leverantörernas AI-svar som sanning — bara deras rådata.
 
-## bidragskollen-seo-mcp — verktygskontrakt
+## bidragskoll-seo-mcp — verktygskontrakt
 
 En liten **egen, read-only** MCP ovanpå ovanstående. Verktygen delas i två lager:
 
@@ -137,7 +137,7 @@ samma bidragsgraf:
    videor/vecka + 3–5 Shorts + ett veckosvep. Hellre 20 användbara än 300 tomma.
 2. **Partnerwidgets** (redovisningsbyråer, inkubatorer, kommunala rådgivare,
    föreningar): gratis "Vilka stöd kan ditt företag få? [org.nr]" → länk till
-   full kontroll, "Powered by Bidragskollen" (ej keyword-spam). Ger äkta verktyg
+   full kontroll, "Powered by Bidragskoll" (ej keyword-spam). Ger äkta verktyg
    + legitim extern länk + rätt målgrupp. Även förenings-, enskild-firma-,
    kalender- och deadline-widget.
 3. **Data som medier vill citera** (kvartalsvis): *Svenskt bidragsindex*,
@@ -165,7 +165,7 @@ samma bidragsgraf:
 
 - **Google:** share of search per målgrupp · queries topp 3/10 · impressions · CTR ·
   branded searches · indexerade kvalitetssidor · crawl-/indexeringsfel.
-- **AI-modeller:** andel testprompter där Bidragskollen nämns/citeras · vilka
+- **AI-modeller:** andel testprompter där Bidragskoll nämns/citeras · vilka
   källor som citeras i stället · om modellen förstår gratis discovery vs betalt
   (mäts redan lokalt av `tools/semantictest.mjs --llm`).
 - **Produkt:** **Time to Answer** · kontrollstarter från organiskt · slutförda
@@ -177,7 +177,7 @@ samma bidragsgraf:
 
 - **Dag 1–7 — kontrollplanet:** koppla Semrush/Ahrefs/DataForSEO/Firecrawl/Chrome
   DevTools/Playwright + GSC/GA/Ads; första sökordsuniversumet; rankingbaseline mot
-  kända konkurrenter; första `bidragskollen-seo-mcp`; SEO-tabeller i Postgres;
+  kända konkurrenter; första `bidragskoll-seo-mcp`; SEO-tabeller i Postgres;
   dagliga cronjobb.
 - **Dag 8–30 — ytan som ska ranka:** "vilka bidrag kan jag/mitt företag få",
   enskild firma, privatperson, förening, hitta gratis, bevaka, hjälp med ansökan,

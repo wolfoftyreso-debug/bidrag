@@ -1,5 +1,5 @@
 /**
- * content_find_cannibalization (bidragskollen-seo-mcp, lokal kapabilitet) —
+ * content_find_cannibalization (bidragskoll-seo-mcp, lokal kapabilitet) —
  * scannar den genererade publika ytan efter kannibaliseringsrisk: två
  * indexerbara sidor som tävlar om samma sökintention (kraftigt överlappande
  * titeltoken). Deterministisk, ingen extern data — den delen av SEO-

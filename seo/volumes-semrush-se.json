@@ -126,12 +126,30 @@
       "intent_code": 1
     },
     {
+      "keyword": "bidrag anställa",
+      "normalized_keyword": "bidrag anställa",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.14,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
       "keyword": "bidrag arbetslös",
       "normalized_keyword": "bidrag arbetslös",
       "volume": 320,
       "cpc": 1.11,
       "competition": 0.1,
       "difficulty": 34,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag att söka",
+      "normalized_keyword": "bidrag att söka",
+      "volume": 210,
+      "cpc": 0.77,
+      "competition": 0.05,
+      "difficulty": 35,
       "intent_code": 1
     },
     {
@@ -178,6 +196,15 @@
       "competition": 0,
       "difficulty": 18,
       "intent_code": 1
+    },
+    {
+      "keyword": "bidrag enskild firma",
+      "normalized_keyword": "bidrag enskild firma",
+      "volume": 20,
+      "cpc": 1.09,
+      "competition": 0.54,
+      "difficulty": 0,
+      "intent_code": null
     },
     {
       "keyword": "bidrag familj",
@@ -375,6 +402,15 @@
       "cpc": 1.12,
       "competition": 0.09,
       "difficulty": 42,
+      "intent_code": 1
+    },
+    {
+      "keyword": "bidrag sverige",
+      "normalized_keyword": "bidrag sverige",
+      "volume": 70,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 28,
       "intent_code": 1
     },
     {
@@ -630,6 +666,15 @@
       "intent_code": null
     },
     {
+      "keyword": "eu-stöd",
+      "normalized_keyword": "eu stöd",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.02,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
       "keyword": "eu stöd jordbruk",
       "normalized_keyword": "eu stöd jordbruk",
       "volume": 110,
@@ -709,6 +754,15 @@
       "competition": 0.03,
       "difficulty": 18,
       "intent_code": 1
+    },
+    {
+      "keyword": "företagsbidrag",
+      "normalized_keyword": "företagsbidrag",
+      "volume": 10,
+      "cpc": 1.22,
+      "competition": 0.65,
+      "difficulty": 0,
+      "intent_code": null
     },
     {
       "keyword": "företagsstöd",
@@ -873,6 +927,15 @@
       "intent_code": 1
     },
     {
+      "keyword": "investeringsstöd",
+      "normalized_keyword": "investeringsstöd",
+      "volume": 260,
+      "cpc": 0.67,
+      "competition": 0.04,
+      "difficulty": 23,
+      "intent_code": 2
+    },
+    {
       "keyword": "investeringsstöd företag",
       "normalized_keyword": "investeringsstöd företag",
       "volume": 30,
@@ -923,6 +986,15 @@
       "volume": 0,
       "cpc": 0,
       "competition": 0,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "kommunala bidrag",
+      "normalized_keyword": "kommunala bidrag",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0.02,
       "difficulty": 0,
       "intent_code": null
     },
@@ -1287,6 +1359,15 @@
       "intent_code": null
     },
     {
+      "keyword": "statliga bidrag",
+      "normalized_keyword": "statliga bidrag",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.01,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
       "keyword": "statligt stöd",
       "normalized_keyword": "statligt stöd",
       "volume": 20,
@@ -1377,12 +1458,48 @@
       "intent_code": 1
     },
     {
+      "keyword": "stöd och bidrag",
+      "normalized_keyword": "stöd och bidrag",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "svenska bidrag",
+      "normalized_keyword": "svenska bidrag",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
+      "keyword": "sök bidrag",
+      "normalized_keyword": "sök bidrag",
+      "volume": 210,
+      "cpc": 0.77,
+      "competition": 0.05,
+      "difficulty": 36,
+      "intent_code": 1
+    },
+    {
       "keyword": "söka bidrag",
       "normalized_keyword": "söka bidrag",
       "volume": 210,
       "cpc": 0.77,
       "competition": 0.05,
       "difficulty": 36,
+      "intent_code": 1
+    },
+    {
+      "keyword": "söka stipendier",
+      "normalized_keyword": "söka stipendier",
+      "volume": 260,
+      "cpc": 0.39,
+      "competition": 0.15,
+      "difficulty": 35,
       "intent_code": 1
     },
     {
@@ -1458,6 +1575,15 @@
       "intent_code": null
     },
     {
+      "keyword": "vilka bidrag kan jag söka",
+      "normalized_keyword": "vilka bidrag kan jag söka",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null
+    },
+    {
       "keyword": "vinnova bidrag",
       "normalized_keyword": "vinnova bidrag",
       "volume": 20,
@@ -1476,18 +1602,18 @@
       "intent_code": 2
     },
     {
-      "keyword": "återvandringsbidrag",
-      "normalized_keyword": "återvandringsbidrag",
-      "volume": 3600,
+      "keyword": "äldreförsörjningsstöd",
+      "normalized_keyword": "äldreförsörjningsstöd",
+      "volume": 1600,
       "cpc": 0,
       "competition": 0.33,
       "difficulty": 30,
       "intent_code": 1
     },
     {
-      "keyword": "äldreförsörjningsstöd",
-      "normalized_keyword": "äldreförsörjningsstöd",
-      "volume": 1600,
+      "keyword": "återvandringsbidrag",
+      "normalized_keyword": "återvandringsbidrag",
+      "volume": 3600,
       "cpc": 0,
       "competition": 0.33,
       "difficulty": 30,
@@ -1845,6 +1971,52 @@
         "volume": 40,
         "difficulty": 12,
         "intent_code": 1
+      }
+    ],
+    "starta eget bidrag": [
+      {
+        "question": "hur mycket får man i starta eget bidrag",
+        "volume": 30,
+        "difficulty": 20,
+        "intent_code": null
+      },
+      {
+        "question": "hur länge får man starta eget bidrag",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "vad krävs för att få starta eget bidrag",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "vem kan få starta eget bidrag",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "hur får man starta eget bidrag",
+        "volume": 10,
+        "difficulty": 0,
+        "intent_code": null
+      }
+    ],
+    "bidrag förening": [
+      {
+        "question": "hur mycket bidrag får en förening",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
+      },
+      {
+        "question": "hur söker man bidrag till förening",
+        "volume": 20,
+        "difficulty": 0,
+        "intent_code": null
       }
     ]
   },

@@ -1049,8 +1049,8 @@
    "type": "authority-term",
    "audience": "företag",
    "cluster": "starta-företag",
-   "note": "vardaglig term för stöd till start av näringsverksamhet",
-   "target": "/bidrag/af-stod-start-naringsverksamhet/"
+   "note": "vardaglig term för stöd till start av näringsverksamhet — huvudtermen ägs av klusterhubben, entity-sidan äger det officiella namnet",
+   "target": "/bidrag/starta-eget-bidrag/"
   },
   {
    "root": "startstöd unga jordbrukare",

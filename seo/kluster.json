@@ -63,6 +63,43 @@
       "childSlugs": [
         "kommun-forsorjningsstod"
       ]
+    },
+    {
+      "path": "bidrag/starta-eget-bidrag",
+      "headTerm": "starta eget-bidrag",
+      "h1": "Starta eget-bidrag",
+      "title": "Starta eget-bidrag — vad som gäller och vem kan få det",
+      "description": "Starta eget-bidrag är det vardagliga namnet på Arbetsförmedlingens stöd till start av näringsverksamhet. Se vad som gäller, vem som kan få det och andra startstöd.",
+      "svar": "Starta eget-bidrag är det vardagliga namnet på Arbetsförmedlingens stöd till start av näringsverksamhet — ett ekonomiskt stöd under uppstarten för dig som är inskriven som arbetssökande och planerar att starta företag. Namnet är inofficiellt: hos Arbetsförmedlingen heter stödet stöd till start av näringsverksamhet, och det är där ansökan görs. Beroende på din situation kan även andra startstöd vara aktuella, till exempel för unga innovativa bolag eller för den som tar över ett jordbruksföretag.",
+      "valjare": [
+        {
+          "fraga": "Är du inskriven som arbetssökande och vill starta eget?",
+          "slug": "af-stod-start-naringsverksamhet"
+        },
+        {
+          "fraga": "Driver du ett ungt aktiebolag med en nyskapande produkt eller tjänst?",
+          "slug": "vinnova-innovativa-startups"
+        },
+        {
+          "fraga": "Är du 40 år eller yngre och startar eller tar över ett jordbruksföretag?",
+          "slug": "jordbruksverket-startstod-unga"
+        }
+      ],
+      "forklaring": "Stödet till start av näringsverksamhet är inte en klumpsumma till företagets kostnader utan ett stöd till din försörjning under en begränsad uppstartsperiod — beslutet, perioden och nivån fastställs av Arbetsförmedlingen utifrån din situation och affärsidéns bärkraft, och ansökan går via din handläggare. Andra startvägar prövas hos sina respektive finansiärer: Vinnovas finansiering riktar sig till unga aktiebolag med nyskapande lösningar, och Jordbruksverkets startstöd till den som är 40 år eller yngre och startar eller tar över ett jordbruks-, trädgårds- eller rennäringsföretag. Kommuner och regioner kan därutöver ha egen nyföretagarrådgivning.",
+      "paaTerms": [
+        "starta eget bidrag"
+      ],
+      "extraFaq": [
+        {
+          "q": "Finns det ett officiellt bidrag som heter starta eget-bidrag?",
+          "a": "Nej. Starta eget-bidrag är ett vardagligt namn — det officiella stödet heter stöd till start av näringsverksamhet och söks via Arbetsförmedlingen. Det är därför du inte hittar namnet starta eget-bidrag i myndighetens egna listor."
+        }
+      ],
+      "childSlugs": [
+        "af-stod-start-naringsverksamhet",
+        "vinnova-innovativa-startups",
+        "jordbruksverket-startstod-unga"
+      ]
     }
   ]
 }

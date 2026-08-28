@@ -244,7 +244,7 @@ Arbetsströmmar (§28): 1 Core product · 2 Discovery/matching ·
   - **Blueprint** `docs/SEO_CONTROL_PLANE.md`: arkitekturprincipen (MCP =
     verktygsgränssnitt, cron/kö = motorn), leverantörsstacken (roller/endpoints/
     kostnader), säkerhetsposture (read-only, godkännandegrind, inga nycklar i
-    repot), hela `bidragskollen-seo-mcp`-verktygskontraktet (LOKALT vs EXTERNT),
+    repot), hela `bidragskoll-seo-mcp`-verktygskontraktet (LOKALT vs EXTERNT),
     cron-cadence, Postgres SEO-schema (migreras när pipelinen landar — inga
     spekulativa tomma tabeller), off-domain-strategin (YouTube-sökindex,
     partnerwidgets, publikt bidragsindex, öppet tekniskt lager, SAGA) med

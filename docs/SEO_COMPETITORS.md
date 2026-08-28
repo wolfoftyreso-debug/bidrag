@@ -58,6 +58,21 @@ konkurrenter kunde inte verifieras: DATA_UNAVAILABLE.
 ansökningsförberedelse för PRIVATPERSONER. De kommersiella specialisterna
 sitter på företagssidan eller i stipendienischen. Konsumentluckan är öppen.
 
+## B2. Uppmätt styrka (Semrush se, 2026-08-28 — verkliga tal, inte estimat)
+
+| Domän | Organiska sökord | Organisk trafik/mån | Belägg |
+|---|---|---|---|
+| svenskbidragsformedling.se | 315 | ~705 | ~all trafik från EN sida (/soka-bidrag-till-forening/) som är #1 på 12+ förenings-varianter ("bidrag till förening" 210, "söka bidrag ideell förening" 170, "bidrag ideell förening" 140 …) |
+| allabidrag.se | 14 | ~44 | #13 på "bidrag" (12 100) trots minimal yta |
+| hittabidrag.se | 12 | ~22 | #9 på "bidrag" trots 12 sökord totalt |
+| bidragskollen.app | 135 | ~10 | namngrannen är trafikmässigt försumbar |
+| bidragskoll.se | 0 | 0 | nolläge: domänen ännu inte kopplad/indexerbar (se docs/SEO_WAR_ROOM.md §2) |
+
+Slutsatsen skärps av mätningen: Google belönar redan små privata aggregatorer
+i bidrags-SERP:arna — de sökordskluster där en privat sida rankar topp-10 är
+**PRIVATE-DOMAIN-PROVEN** och prioriteras (fullständig lista i
+`docs/SEO_WAR_ROOM.md` §4).
+
 ## C. Implikationer — att äga namnet (entity-SEO)
 
 1. Google associerar "Bidragskoll" med ingenting eget idag — bygg entiteten
