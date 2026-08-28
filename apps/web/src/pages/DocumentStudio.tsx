@@ -4,12 +4,16 @@
  * Frågorna ställs en sektion i taget, dokumentet genereras server-side av
  * domänmotorn och hamnar under Mina dokument (PDF + redigerbar text).
  * Användaren skickar själv in via myndighetens kanal — Bidragskoll.se
- * beslutar aldrig.
+ * beslutar aldrig. Mallarnas titlar/frågor kommer från servern (svenska
+ * tills I18N fas B).
  */
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { PurchaseConsent } from '../components/PurchaseConsent';
 import { ApiError, formatDate, formatSek, get, post } from '../api';
+import { useT } from '../i18n';
+
+type T = ReturnType<typeof useT>;
 
 interface DocQuestion {
   key: string;
@@ -32,13 +36,14 @@ interface GeneratedDoc { id: string; title: string; opportunityTitle: string; cr
 interface LanguageFinding { kind: string; term: string; excerpt: string; suggestion: string; fieldKey: string }
 
 export default function DocumentStudioPage() {
+  const t = useT();
   const { projectId } = useParams();
   const [params] = useSearchParams();
   const opportunitySlug = params.get('stod');
   const [info, setInfo] = useState<CreditsInfo | null>(null);
   const [docs, setDocs] = useState<GeneratedDoc[]>([]);
   const [active, setActive] = useState<TemplateInfo | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
   const [langNotes, setLangNotes] = useState<LanguageFinding[]>([]);
 
   const load = useCallback(() => {
@@ -48,21 +53,17 @@ export default function DocumentStudioPage() {
   }, [projectId]);
   useEffect(load, [load]);
 
-  if (!projectId || !info) return <p>Laddar…</p>;
+  if (!projectId || !info) return <p>{t('app.loading')}</p>;
 
   return (
     <div style={{ maxWidth: 680 }}>
-      <h1>Förbered din ansökan</h1>
-      <p className="guidance">
-        Du svarar på frågor — vi skapar färdiga dokument: ansökan, ekonomisk bilaga, behovsbeskrivning och
-        förklaringar. Dokumenten sparas på ditt konto och du skickar själv in dem via myndighetens webbplats.
-      </p>
+      <h1>{t('ds.title')}</h1>
+      <p className="guidance">{t('ds.guidance')}</p>
 
       {langNotes.length > 0 && (
         <div className="alert" style={{ marginBottom: '0.8rem' }}>
-          <strong>Dokumentet är skapat.</strong> Några formuleringar kan granskas kritiskt av en handläggare —
-          de är dina ord och vi har inte ändrat något, men överväg:
-          <ul style={{ margin: '0.4rem 0 0 1.1rem' }}>
+          <strong>{t('ds.docCreated')}</strong> {t('ds.langNotes')}
+          <ul style={{ margin: '0.4rem 0 0', paddingInlineStart: '1.1rem' }}>
             {langNotes.map((f, i) => (
               <li key={i} style={{ margin: '0.25rem 0' }}>
                 <em>"{f.term}"</em> — {f.suggestion}
@@ -74,7 +75,7 @@ export default function DocumentStudioPage() {
 
       {docs.length > 0 && (
         <div className="card">
-          <h2>Mina dokument</h2>
+          <h2>{t('ds.myDocs')}</h2>
           {docs.map((d) => (
             <div className="match-row" key={d.id} style={{ alignItems: 'center' }}>
               <div style={{ flex: 1 }}>
@@ -90,19 +91,19 @@ export default function DocumentStudioPage() {
         </div>
       )}
 
-      {info.remaining <= 0 && <PackOffer projectId={projectId} prices={info.prices} onPurchased={load} />}
+      {info.remaining <= 0 && <PackOffer projectId={projectId} prices={info.prices} onPurchased={load} t={t} />}
 
       {info.remaining > 0 && !active && (
         <div className="card">
-          <h2>Välj dokument att skapa</h2>
-          <p className="guidance">Du har {info.remaining >= 99 ? 'obegränsat antal' : `${info.remaining}`} dokument kvar i ditt paket.</p>
-          {info.templates.map((t) => (
-            <div className="match-row" key={t.key} style={{ alignItems: 'center' }}>
+          <h2>{t('ds.chooseTitle')}</h2>
+          <p className="guidance">{t('ds.remaining', { antal: info.remaining >= 99 ? t('ds.remainingUnlimited') : String(info.remaining) })}</p>
+          {info.templates.map((tpl) => (
+            <div className="match-row" key={tpl.key} style={{ alignItems: 'center' }}>
               <div style={{ flex: 1 }}>
-                <strong>{t.title}</strong>
-                <div className="meta-line">{t.description}</div>
+                <strong>{tpl.title}</strong>
+                <div className="meta-line">{tpl.description}</div>
               </div>
-              <button className="secondary" onClick={() => setActive(t)}>Skapa</button>
+              <button className="secondary" onClick={() => setActive(tpl)}>{t('ds.create')}</button>
             </div>
           ))}
         </div>
@@ -116,20 +117,20 @@ export default function DocumentStudioPage() {
           prefill={info.prefill?.[active.key] ?? {}}
           onDone={(findings) => { setActive(null); setLangNotes(findings); load(); }}
           onCancel={() => setActive(null)}
+          t={t}
         />
       )}
 
       {error && <div className="alert error">{error}</div>}
       <p className="meta-line" style={{ marginTop: '1rem' }}>
-        Dokumenten bygger på dina egna uppgifter. Slutlig bedömning görs alltid av mottagande myndighet eller
-        organisation. <Link to={`/projekt/${projectId}`}>← Tillbaka till analysen</Link>
+        {t('ds.footer')} <Link to={`/projekt/${projectId}`}>{t('ds.backToAnalysis')}</Link>
       </p>
     </div>
   );
 }
 
 /** Paketerbjudandet — hjälp, inte styckdebitering. "Gör det själv" är alltid gratis. */
-function PackOffer({ projectId, prices, onPurchased }: { projectId: string; prices: CreditsInfo['prices']; onPurchased: () => void }) {
+function PackOffer({ projectId, prices, onPurchased, t }: { projectId: string; prices: CreditsInfo['prices']; onPurchased: () => void; t: T }) {
   const [busy, setBusy] = useState(false);
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -151,7 +152,7 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
       }
       setPayment(res);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Köpet kunde inte startas.');
+      setError(err instanceof ApiError ? err.message : t('o.payStartError'));
     } finally {
       setBusy(false);
     }
@@ -165,7 +166,7 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
       setConfirmedNote(true);
       onPurchased();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Bekräftelsen misslyckades.');
+      setError(err instanceof ApiError ? err.message : t('o.payConfirmError'));
     } finally {
       setBusy(false);
     }
@@ -188,22 +189,22 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
           <div style={{ textAlign: 'center' }}>
             <p className="guidance">{payment.instructions.message}</p>
             {payment.instructions.redirectUrl
-              ? <p><a className="btn" href={payment.instructions.redirectUrl}>Fortsätt till betalningen</a></p>
-              : <div className="alert error">Betalsidan kunde inte öppnas. Försök igen.</div>}
+              ? <p><a className="btn" href={payment.instructions.redirectUrl}>{t('o.payContinue')}</a></p>
+              : <div className="alert error">{t('o.payPageError')}</div>}
           </div>
         ) : payment.instructions.method === 'mock' ? (
           <div className="alert warning">
             <p style={{ fontWeight: 700 }}>{payment.instructions.message}</p>
-            <button disabled={busy} onClick={confirmMock}>Bekräfta betalning (simulerad)</button>
+            <button disabled={busy} onClick={confirmMock}>{t('o.payMockConfirm')}</button>
           </div>
         ) : (
           <div style={{ textAlign: 'center' }}>
-            <h3>Betala med Swish</h3>
+            <h3>{t('o.paySwishTitle')}</h3>
             {payment.instructions.qrAvailable && (
-              <img src={`/v1/payments/${payment.paymentId}/qr`} alt="Swish QR-kod" width={220} height={220} style={{ display: 'block', margin: '0.5rem auto' }} />
+              <img src={`/v1/payments/${payment.paymentId}/qr`} alt={t('o.paySwishQrAlt')} width={220} height={220} style={{ display: 'block', margin: '0.5rem auto' }} />
             )}
-            {payment.instructions.deepLink && <p><a className="btn" href={payment.instructions.deepLink}>Öppna Swish</a></p>}
-            <p className="meta-line">Väntar på betalning…</p>
+            {payment.instructions.deepLink && <p><a className="btn" href={payment.instructions.deepLink}>{t('o.paySwishOpen')}</a></p>}
+            <p className="meta-line">{t('o.payWaiting')}</p>
           </div>
         )}
         {error && <div className="alert error">{error}</div>}
@@ -213,19 +214,15 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
 
   return (
     <div className="card">
-      <h2>Vill du ha hjälp med dokumenten?</h2>
-      <p className="guidance">
-        Du kan alltid ansöka själv — det är gratis, och vi länkar dig direkt till rätt ansökan. Vill du att
-        systemet förbereder ansökan åt dig kostar det {formatSek(prices.application)} per ansökan — alla
-        dokument för den ansökan ingår. Kvittot hamnar under Mina köp.
-      </p>
+      <h2>{t('ds.helpTitle')}</h2>
+      <p className="guidance">{t('ds.helpGuidance', { pris: formatSek(prices.application) })}</p>
       {/* Red team RT03-T3: samtycket står FÖRE prisknappen — läsordningen
           ska vara villkor → pris → köp, inte tvärtom. */}
       <PurchaseConsent checked={consent} onChange={setConsent} idSuffix="-dokument" />
       <div className="match-row" style={{ alignItems: 'center', border: '1px solid var(--primary)', borderRadius: 8, padding: '0.6rem 0.8rem' }}>
         <div style={{ flex: 1 }}>
-          <strong>Förbered ansökan — alla dokument</strong>
-          <div className="meta-line">Ansökan, ekonomisk bilaga, behovsbeskrivning och förklaringar — allt som behövs för en ansökan.</div>
+          <strong>{t('ds.packTitle')}</strong>
+          <div className="meta-line">{t('ds.packDesc')}</div>
         </div>
         <button className="secondary" disabled={busy || !consent} onClick={buy}>{formatSek(prices.application)}</button>
       </div>
@@ -235,9 +232,9 @@ function PackOffer({ projectId, prices, onPurchased }: { projectId: string; pric
 }
 
 /** Formulär genererat ur mallens frågor — villkorade frågor visas adaptivt. */
-function DocumentForm({ projectId, template, opportunitySlug, prefill, onDone, onCancel }: {
+function DocumentForm({ projectId, template, opportunitySlug, prefill, onDone, onCancel, t }: {
   projectId: string; template: TemplateInfo; opportunitySlug: string | null;
-  prefill: Record<string, unknown>; onDone: (findings: LanguageFinding[]) => void; onCancel: () => void;
+  prefill: Record<string, unknown>; onDone: (findings: LanguageFinding[]) => void; onCancel: () => void; t: T;
 }) {
   // Färdigifyllt + autospar: formuläret börjar med allt systemet redan vet
   // från intaget (förifyllnaden), och varje rad skrivs till webbläsarens
@@ -278,7 +275,7 @@ function DocumentForm({ projectId, template, opportunitySlug, prefill, onDone, o
       try { localStorage.removeItem(draftKey); } catch { /* ofarligt */ }
       onDone(res.languageFindings ?? []);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Dokumentet kunde inte skapas.');
+      setError(err instanceof ApiError ? err.message : t('ds.formError'));
     } finally {
       setBusy(false);
     }
@@ -292,8 +289,7 @@ function DocumentForm({ projectId, template, opportunitySlug, prefill, onDone, o
       <p className="guidance">{template.description}</p>
       {prefillCount > 0 && (
         <div className="alert success" style={{ marginTop: '0.6rem' }}>
-          Vi har förifyllt {prefillCount} {prefillCount === 1 ? 'uppgift' : 'uppgifter'} från det du redan berättat —
-          kontrollera att de stämmer och komplettera resten.
+          {prefillCount === 1 ? t('ds.prefilledOne') : t('ds.prefilled', { n: prefillCount })}
         </div>
       )}
       <form onSubmit={submit}>
@@ -313,13 +309,13 @@ function DocumentForm({ projectId, template, opportunitySlug, prefill, onDone, o
             )}
             {q.type === 'boolean' && (
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
-                <button type="button" className={answers[q.key] === true ? '' : 'secondary'} onClick={() => set(q.key, true)}>Ja</button>
-                <button type="button" className={answers[q.key] === false ? '' : 'secondary'} onClick={() => set(q.key, false)}>Nej</button>
+                <button type="button" className={answers[q.key] === true ? '' : 'secondary'} onClick={() => set(q.key, true)}>{t('ob.yes')}</button>
+                <button type="button" className={answers[q.key] === false ? '' : 'secondary'} onClick={() => set(q.key, false)}>{t('ob.no')}</button>
               </div>
             )}
             {q.type === 'select' && (
               <select id={`q-${q.key}`} value={(answers[q.key] as string) ?? ''} onChange={(e) => set(q.key, e.target.value)} style={{ display: 'block', marginTop: '0.25rem' }}>
-                <option value="" disabled>Välj…</option>
+                <option value="" disabled>{t('ds.choose')}</option>
                 {q.options?.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             )}
@@ -328,8 +324,8 @@ function DocumentForm({ projectId, template, opportunitySlug, prefill, onDone, o
         ))}
         {error && <div className="alert error">{error}</div>}
         <div style={{ display: 'flex', gap: '0.6rem', marginTop: '1rem' }}>
-          <button type="submit" disabled={busy}>{busy ? 'Skapar…' : 'Skapa dokumentet'}</button>
-          <button type="button" className="secondary" onClick={onCancel}>Avbryt</button>
+          <button type="submit" disabled={busy}>{busy ? t('ds.creating') : t('ds.createDoc')}</button>
+          <button type="button" className="secondary" onClick={onCancel}>{t('in.cancel')}</button>
         </div>
       </form>
     </div>

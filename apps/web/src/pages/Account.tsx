@@ -6,18 +6,13 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ApiError, api, downloadFile, formatDate, get, post, setActiveTenant } from '../api';
 import { useSession } from '../App';
+import { useLabels, useT } from '../i18n';
 
-const ROLE_LABELS: Record<string, string> = {
-  owner: 'ägare',
-  applicant: 'sökande',
-  contributor: 'medarbetare',
-  reviewer: 'granskare',
-  finance: 'ekonomi',
-  administrator: 'administratör',
-  data_curator: 'datakurator',
-};
+/** Rollkoderna som kan väljas vid inbjudan (ägare kan inte bjudas in). */
+const INVITABLE_ROLES = ['applicant', 'contributor', 'reviewer', 'finance', 'administrator', 'data_curator'];
 
 export default function AccountPage() {
+  const t = useT();
   const { session, reload } = useSession();
   const navigate = useNavigate();
   const [confirmText, setConfirmText] = useState('');
@@ -29,19 +24,21 @@ export default function AccountPage() {
     setBusy(true);
     setError(null);
     try {
+      // OBS: bekräftelseordet RADERA är en API-kontrakt-konstant — det
+      // översätts aldrig (servern kräver exakt detta ord).
       await api('DELETE', '/v1/tenant', { confirm: confirmText });
       await post('/v1/auth/logout');
       await reload();
       navigate('/');
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Raderingen misslyckades.');
+      setError(err instanceof ApiError ? err.message : t('acc.eraseError'));
       setBusy(false);
     }
   };
 
   return (
     <div style={{ maxWidth: 640 }}>
-      <h1>Konto och data</h1>
+      <h1>{t('acc.title')}</h1>
       <p className="meta-line">{session?.user.email}</p>
 
       <PurchasesCard />
@@ -49,14 +46,11 @@ export default function AccountPage() {
       <RecoveryCodesCard />
 
       <div className="card">
-        <h2>Hämta ut din data</h2>
-        <p>
-          Ladda ner allt vi har om dig — profil, projekt, matchningar, ansökningar, korrespondens och dokumentlista — som en
-          JSON-fil. Kvitton och krypterade identifierare listas via revisionsspåret.
-        </p>
+        <h2>{t('acc.exportTitle')}</h2>
+        <p>{t('acc.exportBody')}</p>
         <p>
           <button className="secondary" onClick={() => void downloadFile('/v1/tenant/export', 'bidrag-export.json')}>
-            Ladda ner min data (JSON)
+            {t('acc.exportButton')}
           </button>
         </p>
       </div>
@@ -66,13 +60,10 @@ export default function AccountPage() {
       <CreateOrgCard />
 
       <div className="card" style={{ borderColor: 'var(--danger)' }}>
-        <h2>Radera kontot permanent</h2>
-        <p>
-          All din data raderas: profil, projekt, ansökningar, uppladdade dokument och notiser. Detta kan inte ångras.
-          Ansökningar du redan lämnat in hos myndigheter påverkas inte — de finns hos respektive myndighet.
-        </p>
-        {!isOwner && <div className="alert warning">Endast kontots ägare kan radera det.</div>}
-        <label htmlFor="confirm">Skriv <strong>RADERA</strong> för att bekräfta</label>
+        <h2>{t('acc.deleteTitle')}</h2>
+        <p>{t('acc.deleteBody')}</p>
+        {!isOwner && <div className="alert warning">{t('acc.ownerOnly')}</div>}
+        <label htmlFor="confirm">{t('acc.writePre')} <strong>RADERA</strong> {t('acc.writePost')}</label>
         <input id="confirm" value={confirmText} onChange={(e) => setConfirmText(e.target.value)} disabled={!isOwner} />
         {error && <div className="alert error">{error}</div>}
         <button
@@ -80,7 +71,7 @@ export default function AccountPage() {
           disabled={busy || !isOwner || confirmText !== 'RADERA'}
           onClick={erase}
         >
-          {busy ? 'Raderar…' : 'Radera kontot och all data'}
+          {busy ? t('acc.deleting') : t('acc.deleteButton')}
         </button>
       </div>
     </div>
@@ -101,24 +92,13 @@ interface Purchase {
   refundStatus: string | null;
 }
 
-const KIND_LABELS: Record<string, string> = {
-  analysis_unlock: 'Bidragsanalys',
-  document_pack: 'Dokumentförberedelse',
-  application_unlock: 'Förberedd ansökan',
-};
-
-const PAYMENT_STATE_LABELS: Record<string, { label: string; tone: string }> = {
-  confirmed: { label: 'Betald', tone: 'success' },
-  pending: { label: 'Ej slutförd', tone: 'warning' },
-  failed: { label: 'Misslyckad', tone: 'danger' },
-  cancelled: { label: 'Avbruten', tone: '' },
-};
-
 /**
  * Mina köp: kvittot är en förstaklassfunktion i kontot — alltid åtkomligt
  * efter inloggning, ingen e-post inblandad. Servern kontrollerar ägarskap.
  */
 function PurchasesCard() {
+  const t = useT();
+  const labels = useLabels();
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [openReceipt, setOpenReceipt] = useState<{ paymentId: string; document: string } | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -129,10 +109,10 @@ function PurchasesCard() {
 
   const emailOutcomeText = (outcome: string, sentTo?: string | null) =>
     outcome === 'sent'
-      ? `Kvittot är skickat${sentTo ? ` till ${sentTo}` : ''}.`
+      ? sentTo ? t('acc.emailSentTo', { adress: sentTo }) : t('acc.emailSent')
       : outcome === 'skipped'
-        ? 'Ingen e-postkanal är konfigurerad i den här miljön — kvittot finns alltid kvar här och kan laddas ner som PDF.'
-        : 'Utskicket misslyckades just nu — kvittot finns alltid kvar här. Försök igen om en stund.';
+        ? t('acc.emailSkipped')
+        : t('acc.emailFailed');
 
   const sendReceipt = async (paymentId: string) => {
     setEmailMsg(null);
@@ -144,7 +124,7 @@ function PurchasesCard() {
       if (err instanceof ApiError && err.status === 422) {
         setEmailPrompt(true); // ingen adress på kvittot ännu — fråga efter en
       } else {
-        setEmailMsg('Utskicket misslyckades just nu — kvittot finns alltid kvar här.');
+        setEmailMsg(t('acc.emailFailedShort'));
       }
     }
   };
@@ -156,7 +136,7 @@ function PurchasesCard() {
       setEmailPrompt(false);
       setEmailMsg(emailOutcomeText(r.emailOutcome, emailAddr));
     } catch {
-      setEmailMsg('Kunde inte spara adressen — kontrollera att den är rätt skriven.');
+      setEmailMsg(t('acc.emailSaveError'));
     }
   };
 
@@ -178,28 +158,26 @@ function PurchasesCard() {
 
   return (
     <div className="card">
-      <h2>Mina köp</h2>
-      <p className="guidance">Dina betalningar och kvitton — kvittot är alltid tillgängligt här.</p>
+      <h2>{t('m.myPurchases')}</h2>
+      <p className="guidance">{t('acc.purchasesGuidance')}</p>
       <div style={{ overflowX: 'auto' }}>
         <table className="data">
-          <thead><tr><th>Datum</th><th>Avser</th><th>Belopp</th><th>Status</th><th>Kvitto</th></tr></thead>
+          <thead><tr><th>{t('acc.thDate')}</th><th>{t('acc.thFor')}</th><th>{t('acc.thAmount')}</th><th>{t('dash.thStatus')}</th><th>{t('acc.thReceipt')}</th></tr></thead>
           <tbody>
             {purchases.map((p) => (
               <Fragment key={p.paymentId}>
                 <tr>
                   <td>{formatDate(p.confirmedAt ?? p.createdAt)}</td>
-                  <td>{KIND_LABELS[p.kind] ?? p.kind}{p.projectTitle ? ` — ${p.projectTitle}` : ''}</td>
+                  <td>{labels.kind(p.kind)}{p.projectTitle ? ` — ${p.projectTitle}` : ''}</td>
                   <td style={{ fontVariantNumeric: 'tabular-nums' }}>{(p.amountMinor / 100).toLocaleString('sv-SE')} kr</td>
                   <td>
-                    <span className={`badge ${PAYMENT_STATE_LABELS[p.state]?.tone ?? ''}`}>
-                      {PAYMENT_STATE_LABELS[p.state]?.label ?? p.state}
-                    </span>
-                    {p.refundStatus === 'refunded' && <span className="badge info"> återbetald</span>}
+                    <span className={`badge ${labels.pay(p.state).tone}`}>{labels.pay(p.state).label}</span>
+                    {p.refundStatus === 'refunded' && <span className="badge info"> {t('acc.refunded')}</span>}
                   </td>
                   <td>
                     {p.receiptNumber ? (
                       <button className="secondary" style={{ padding: '0.15rem 0.6rem', fontSize: '0.8rem' }} onClick={() => showReceipt(p.paymentId)}>
-                        {openReceipt?.paymentId === p.paymentId ? 'Dölj' : p.receiptNumber}
+                        {openReceipt?.paymentId === p.paymentId ? t('acc.hide') : p.receiptNumber}
                       </button>
                     ) : (
                       <span className="meta-line">—</span>
@@ -216,29 +194,29 @@ function PurchasesCard() {
                           style={{ padding: '0.25rem 0.7rem', fontSize: '0.85rem' }}
                           onClick={() => downloadFile(`/v1/payments/${p.paymentId}/receipt.pdf`, `kvitto-${p.receiptNumber}.pdf`)}
                         >
-                          Ladda ner kvittot (PDF)
+                          {t('acc.downloadReceipt')}
                         </button>
                         <button
                           className="secondary"
                           style={{ padding: '0.25rem 0.7rem', fontSize: '0.85rem' }}
                           onClick={() => sendReceipt(p.paymentId)}
                         >
-                          Skicka kvittot via e-post
+                          {t('acc.emailReceipt')}
                         </button>
                       </div>
                       {emailPrompt && (
                         <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                          <label htmlFor="receipt-email" className="meta-line" style={{ margin: 0 }}>Ingen adress finns på kvittot ännu — vart ska det skickas?</label>
+                          <label htmlFor="receipt-email" className="meta-line" style={{ margin: 0 }}>{t('acc.emailPrompt')}</label>
                           <input
                             id="receipt-email"
                             type="email"
                             value={emailAddr}
-                            placeholder="din@epost.se"
+                            placeholder={t('acc.emailPlaceholder')}
                             onChange={(e) => setEmailAddr(e.target.value)}
                             style={{ maxWidth: '16rem' }}
                           />
                           <button className="secondary" style={{ padding: '0.25rem 0.7rem', fontSize: '0.85rem' }} disabled={!emailAddr.includes('@')} onClick={() => sendReceiptTo(p.paymentId)}>
-                            Skicka
+                            {t('acc.send')}
                           </button>
                         </div>
                       )}
@@ -260,6 +238,7 @@ function PurchasesCard() {
  * lösenordet glöms. Koderna visas EN gång — servern sparar bara hashar.
  */
 function RecoveryCodesCard() {
+  const t = useT();
   const [status, setStatus] = useState<{ total: number; remaining: number } | null>(null);
   const [codes, setCodes] = useState<string[] | null>(null);
   const [busy, setBusy] = useState(false);
@@ -277,7 +256,7 @@ function RecoveryCodesCard() {
       setCodes(res.codes);
       setStatus({ total: res.codes.length, remaining: res.codes.length });
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Koderna kunde inte skapas. Försök igen.');
+      setError(err instanceof ApiError ? err.message : t('acc.rcError'));
     } finally {
       setBusy(false);
     }
@@ -285,41 +264,40 @@ function RecoveryCodesCard() {
 
   return (
     <div className="card">
-      <h2>Återställningskoder</h2>
-      <p className="guidance">
-        Med en återställningskod kan du välja ett nytt lösenord om du glömmer ditt — utan e-post. Varje kod fungerar en
-        gång. Förvara dem säkert, t.ex. i en lösenordshanterare.
-      </p>
+      <h2>{t('acc.rcTitle')}</h2>
+      <p className="guidance">{t('acc.rcGuidance')}</p>
       {status && status.total > 0 && !codes && (
         <p>
-          Du har <strong>{status.remaining} av {status.total}</strong> koder kvar.
-          {status.remaining <= 2 && ' Skapa nya snart — gamla koder slutar gälla när du gör det.'}
+          {t('acc.rcRemaining', { remaining: status.remaining, total: status.total })}
+          {status.remaining <= 2 && ` ${t('acc.rcCreateSoon')}`}
         </p>
       )}
       {codes && (
         <div className="alert warning">
           <p style={{ marginTop: 0 }}>
-            <strong>Spara koderna nu — de visas bara den här gången.</strong> Gamla koder har slutat gälla.
+            <strong>{t('acc.rcSaveNow')}</strong> {t('acc.rcOldInvalid')}
           </p>
           <pre style={{ background: 'var(--bg)', padding: '0.8rem', borderRadius: 8, fontSize: '0.95rem', letterSpacing: '0.04em', margin: 0 }}>
             {codes.join('\n')}
           </pre>
           <p style={{ marginBottom: 0 }}>
             <button className="secondary" onClick={() => void navigator.clipboard.writeText(codes.join('\n'))}>
-              Kopiera alla
+              {t('acc.rcCopyAll')}
             </button>
           </p>
         </div>
       )}
       {error && <div className="alert error">{error}</div>}
       <button className="secondary" disabled={busy} onClick={generate}>
-        {busy ? 'Skapar…' : status && status.total > 0 ? 'Skapa nya koder' : 'Skapa återställningskoder'}
+        {busy ? t('acc.rcCreating') : status && status.total > 0 ? t('acc.rcNew') : t('acc.rcCreate')}
       </button>
     </div>
   );
 }
 
 function TeamCard() {
+  const t = useT();
+  const labels = useLabels();
   const { session } = useSession();
   const canInvite = session?.activeTenant.role === 'owner' || session?.activeTenant.role === 'administrator';
   const [members, setMembers] = useState<{ userId: string; email: string; displayName: string; role: string }[]>([]);
@@ -348,28 +326,28 @@ function TeamCard() {
       form.reset();
       load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Inbjudan kunde inte skapas.');
+      setError(err instanceof ApiError ? err.message : t('acc.inviteError'));
     }
   };
 
   return (
     <div className="card">
-      <h2>Medlemmar</h2>
+      <h2>{t('acc.members')}</h2>
       <table className="data">
-        <thead><tr><th>Namn</th><th>E-post</th><th>Roll</th></tr></thead>
+        <thead><tr><th>{t('acc.thName')}</th><th>{t('login.email')}</th><th>{t('acc.role')}</th></tr></thead>
         <tbody>
           {members.map((m) => (
             <tr key={m.userId}>
               <td>{m.displayName}</td>
               <td>{m.email}</td>
-              <td><span className="badge">{ROLE_LABELS[m.role] ?? m.role}</span></td>
+              <td><span className="badge">{labels.role(m.role)}</span></td>
             </tr>
           ))}
         </tbody>
       </table>
       {canInvite && (
         <>
-          <h3>Bjud in medlem</h3>
+          <h3>{t('acc.inviteTitle')}</h3>
           <form
             style={{ display: 'flex', gap: '0.5rem', alignItems: 'end', flexWrap: 'wrap' }}
             onSubmit={(e) => {
@@ -378,33 +356,33 @@ function TeamCard() {
             }}
           >
             <div style={{ flex: 2, minWidth: 220 }}>
-              <label>E-post</label>
+              <label>{t('login.email')}</label>
               <input name="email" type="email" required maxLength={320} />
             </div>
             <div style={{ minWidth: 160 }}>
-              <label>Roll</label>
+              <label>{t('acc.role')}</label>
               <select name="role" defaultValue="contributor">
-                {Object.entries(ROLE_LABELS).filter(([r]) => r !== 'owner').map(([r, l]) => <option key={r} value={r}>{l}</option>)}
+                {INVITABLE_ROLES.map((r) => <option key={r} value={r}>{labels.role(r)}</option>)}
               </select>
             </div>
-            <button type="submit" className="secondary">Bjud in</button>
+            <button type="submit" className="secondary">{t('acc.inviteButton')}</button>
           </form>
           {error && <div className="alert error">{error}</div>}
           {inviteUrl && (
             <div className="alert success">
-              Inbjudan skapad — länken har mejlats om e-post är konfigurerad. Du kan också dela den direkt:{' '}
+              {t('acc.inviteCreated')}{' '}
               <code style={{ wordBreak: 'break-all' }}>{inviteUrl}</code>
             </div>
           )}
           {invitesList.length > 0 && (
             <>
-              <h3>Väntande inbjudningar</h3>
+              <h3>{t('acc.pendingInvites')}</h3>
               {invitesList.map((i) => (
                 <div className="explain-item" key={i.id}>
                   <span className="explain-icon">✉</span>
                   <span>
-                    {i.email} — {ROLE_LABELS[i.role] ?? i.role} <span className="meta-line">(giltig till {formatDate(i.expiresAt)})</span>{' '}
-                    <button className="subtle" onClick={() => void api('DELETE', `/v1/tenant/invites/${i.id}`).then(load)}>Återkalla</button>
+                    {i.email} — {labels.role(i.role)} <span className="meta-line">{t('acc.validUntil', { datum: formatDate(i.expiresAt) })}</span>{' '}
+                    <button className="subtle" onClick={() => void api('DELETE', `/v1/tenant/invites/${i.id}`).then(load)}>{t('acc.revoke')}</button>
                   </span>
                 </div>
               ))}
@@ -417,6 +395,7 @@ function TeamCard() {
 }
 
 function CreateOrgCard() {
+  const t = useT();
   const { reload } = useSession();
   const navigate = useNavigate();
   const [name, setName] = useState('');
@@ -436,17 +415,14 @@ function CreateOrgCard() {
 
   return (
     <div className="card">
-      <h2>Skapa organisation</h2>
-      <p className="guidance">
-        En organisation har egna projekt, ansökningar och dokument, och kan ha flera medlemmar med olika roller. Du blir
-        ägare.
-      </p>
+      <h2>{t('acc.orgTitle')}</h2>
+      <p className="guidance">{t('acc.orgGuidance')}</p>
       <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'end', flexWrap: 'wrap' }}>
         <div style={{ flex: 1, minWidth: 220 }}>
-          <label>Organisationens namn</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} maxLength={200} placeholder="t.ex. Kulturföreningen Rytm" />
+          <label>{t('acc.orgName')}</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} maxLength={200} placeholder={t('acc.orgPlaceholder')} />
         </div>
-        <button className="secondary" disabled={busy || name.trim().length < 2} onClick={create}>Skapa</button>
+        <button className="secondary" disabled={busy || name.trim().length < 2} onClick={create}>{t('acc.create')}</button>
       </div>
     </div>
   );

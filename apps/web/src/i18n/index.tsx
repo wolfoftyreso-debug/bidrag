@@ -135,9 +135,17 @@ export function useLabels() {
       }),
       role: (s: string) => (has(`label.role.${s}`) ? t(`label.role.${s}` as MessageKey) : s),
       doc: (s: string) => (has(`label.doc.${s}`) ? t(`label.doc.${s}` as MessageKey) : s),
+      kind: (s: string) => (has(`label.kind.${s}`) ? t(`label.kind.${s}` as MessageKey) : s),
+      pay: (s: string) => ({
+        label: has(`label.pay.${s}`) ? t(`label.pay.${s}` as MessageKey) : s,
+        tone: PAY_TONES[s] ?? '',
+      }),
+      budget: (s: string) => (has(`label.budget.${s}`) ? t(`label.budget.${s}` as MessageKey) : s),
     };
   }, [t]);
 }
+
+const PAY_TONES: Record<string, string> = { confirmed: 'success', pending: 'warning', failed: 'danger', cancelled: '' };
 
 const MSG_TONES: Record<string, string> = {
   award: 'success', rejection: 'danger', decision: 'info', clarification_request: 'warning',

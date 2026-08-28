@@ -5,7 +5,10 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ApiError, STATE_LABELS, formatDate, formatSek, get, patch, post } from '../api';
+import { ApiError, formatDate, formatSek, get, patch, post } from '../api';
+import { useLabels, useT } from '../i18n';
+
+type T = ReturnType<typeof useT>;
 
 interface FieldDef {
   key: string;
@@ -99,15 +102,6 @@ interface CaseData {
 }
 
 const BUDGET_CATEGORIES = ['travel', 'accommodation', 'personnel', 'equipment', 'subcontractor', 'overhead', 'other'];
-const CATEGORY_LABELS: Record<string, string> = {
-  travel: 'Resor',
-  accommodation: 'Boende',
-  personnel: 'Personal/arvoden',
-  equipment: 'Utrustning',
-  subcontractor: 'Underleverantörer',
-  overhead: 'Overhead',
-  other: 'Övrigt',
-};
 
 function isVisible(field: FieldDef, answers: Record<string, unknown>): boolean {
   if (!field.visibleWhen?.length) return true;
@@ -125,6 +119,8 @@ function isVisible(field: FieldDef, answers: Record<string, unknown>): boolean {
 const EDITABLE_STATES = ['SELECTED', 'PREPARING', 'READY_FOR_REVIEW', 'READY_TO_SUBMIT', 'ACTION_REQUIRED'];
 
 export default function ApplicationPage() {
+  const t = useT();
+  const labels = useLabels();
   const { id } = useParams();
   const [data, setData] = useState<CaseData | null>(null);
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
@@ -149,7 +145,8 @@ export default function ApplicationPage() {
   }, [id]);
 
   useEffect(() => {
-    load().catch(() => setMessage({ tone: 'error', text: 'Ansökan kunde inte hämtas.' }));
+    load().catch(() => setMessage({ tone: 'error', text: t('aw.loadError') }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load]);
 
   const editable = data ? EDITABLE_STATES.includes(data.application.state) : false;
@@ -159,10 +156,10 @@ export default function ApplicationPage() {
     [data],
   );
 
-  if (!data) return <p>Laddar…</p>;
+  if (!data) return <p>{t('app.loading')}</p>;
   const { application: app, schema, validation } = data;
   const opp = app.opportunitySnapshot.opportunity;
-  const stateInfo = STATE_LABELS[app.state] ?? { label: app.state, tone: '' };
+  const stateInfo = labels.state(app.state);
 
   const save = async () => {
     setBusy(true);
@@ -170,9 +167,9 @@ export default function ApplicationPage() {
     try {
       await patch(`/v1/applications/${app.id}`, { answers });
       await load();
-      setMessage({ tone: 'success', text: 'Sparat.' });
+      setMessage({ tone: 'success', text: t('aw.saved') });
     } catch (err) {
-      setMessage({ tone: 'error', text: err instanceof ApiError ? err.message : 'Kunde inte spara.' });
+      setMessage({ tone: 'error', text: err instanceof ApiError ? err.message : t('aw.saveError') });
     } finally {
       setBusy(false);
     }
@@ -186,10 +183,10 @@ export default function ApplicationPage() {
       await load();
     } catch (err) {
       if (err instanceof ApiError && err.status === 422) {
-        setMessage({ tone: 'warning', text: 'Ansökan är inte komplett ännu — se listan nedan.' });
+        setMessage({ tone: 'warning', text: t('aw.notComplete') });
         await load();
       } else {
-        setMessage({ tone: 'error', text: err instanceof ApiError ? err.message : 'Kunde inte ändra status.' });
+        setMessage({ tone: 'error', text: err instanceof ApiError ? err.message : t('aw.stateError') });
       }
     } finally {
       setBusy(false);
@@ -208,7 +205,7 @@ export default function ApplicationPage() {
       setMessage({ tone: 'info', text: res.message });
       await load();
     } catch (err) {
-      setMessage({ tone: 'error', text: err instanceof ApiError ? err.message : 'Kunde inte förbereda inlämningen.' });
+      setMessage({ tone: 'error', text: err instanceof ApiError ? err.message : t('aw.prepareError') });
     } finally {
       setBusy(false);
     }
@@ -223,9 +220,9 @@ export default function ApplicationPage() {
       });
       setSubmitPrep(null);
       await load();
-      setMessage({ tone: 'success', text: 'Kvittot är registrerat och ansökan är markerad som inlämnad.' });
+      setMessage({ tone: 'success', text: t('aw.receiptRegistered') });
     } catch (err) {
-      setMessage({ tone: 'error', text: err instanceof ApiError ? err.message : 'Kunde inte registrera kvittot.' });
+      setMessage({ tone: 'error', text: err instanceof ApiError ? err.message : t('aw.receiptError') });
     } finally {
       setBusy(false);
     }
@@ -256,51 +253,48 @@ export default function ApplicationPage() {
 
   return (
     <div style={{ maxWidth: 780 }}>
-      <p><Link to="/ansokningar">&larr; Mina ansökningar</Link></p>
+      <p><Link to="/ansokningar">{t('aw.back')}</Link></p>
       <h1>{opp.title}</h1>
       <p className="meta-line">
         <span className={`badge ${stateInfo.tone}`}>{stateInfo.label}</span>
-        {app.deadlineAt && <> · Deadline {formatDate(app.deadlineAt)}</>}
+        {app.deadlineAt && <> · {t('aw.deadline', { datum: formatDate(app.deadlineAt) })}</>}
       </p>
 
       {message && <div className={`alert ${message.tone}`}>{message.text}</div>}
 
       {/* Granskningsläget (Application Intelligence §30–31) */}
       <div className="card">
-        <h2>Granskning inför inlämning</h2>
-        <p className="guidance">
-          En samlad genomgång: behörighet, obligatoriska fält, bilagor, budgetens matematik och deadline —
-          med det viktigaste först. Ett obesvarat krav räknas aldrig som uppfyllt.
-        </p>
+        <h2>{t('aw.reviewTitle')}</h2>
+        <p className="guidance">{t('aw.reviewGuidance')}</p>
         <button
           className="secondary"
           disabled={busy}
           onClick={() => void get<{ review: CaseReview }>(`/v1/applications/${app.id}/review`).then((r) => setReview(r.review))}
         >
-          {review ? 'Granska igen' : 'Granska ansökan'}
+          {review ? t('aw.reviewAgain') : t('aw.review')}
         </button>
         {review && (
           <div style={{ marginTop: '0.8rem' }}>
             {review.overallStatus === 'READY_FOR_SUBMISSION' ? (
               <div className="alert success">
-                <strong>Klar att lämna in.</strong> Underlaget är komplett och konsekvent enligt granskningen — kontrollera varningarna nedan om några visas. Klar att lämna in betyder inte att bifall är sannolikt eller garanterat: beslutet fattas alltid av finansiären, i konkurrens med andra ansökningar.
+                <strong>{t('aw.readyStrong')}</strong> {t('aw.readyBody')}
               </div>
             ) : (
               <div className="alert warning">
-                <strong>Inte klar än.</strong> Åtgärda punkterna nedan i ordning — de allvarligaste först.
+                <strong>{t('aw.notReadyStrong')}</strong> {t('aw.notReadyBody')}
               </div>
             )}
             <div className="meta-line" style={{ margin: '0.4rem 0' }}>
-              Behörighet:{' '}
-              {review.eligibility.status === 'PASS' ? <span className="badge success">uppfylld enligt dina svar</span>
-                : review.eligibility.status === 'FAIL' ? <span className="badge danger">ej uppfylld</span>
-                : <span className="badge warning">obesvarade krav</span>}
-              {review.deadline.daysLeft !== null && !review.deadline.passed && <> · {review.deadline.daysLeft} dagar till deadline</>}
+              {t('aw.eligibility')}{' '}
+              {review.eligibility.status === 'PASS' ? <span className="badge success">{t('aw.eligPass')}</span>
+                : review.eligibility.status === 'FAIL' ? <span className="badge danger">{t('aw.eligFail')}</span>
+                : <span className="badge warning">{t('aw.eligUnknown')}</span>}
+              {review.deadline.daysLeft !== null && !review.deadline.passed && <> · {t('aw.daysToDeadline', { n: review.deadline.daysLeft })}</>}
             </div>
             {review.gaps.map((g, i) => (
               <div className="explain-item" key={`${g.id}-${i}`}>
                 <span className={`badge ${g.severity === 'CRITICAL' ? 'danger' : g.severity === 'HIGH' ? 'warning' : ''}`} style={{ flexShrink: 0 }}>
-                  {g.severity === 'CRITICAL' ? 'Kritisk' : g.severity === 'HIGH' ? 'Hög' : g.severity === 'MEDIUM' ? 'Medel' : 'Låg'}
+                  {g.severity === 'CRITICAL' ? t('aw.sevCritical') : g.severity === 'HIGH' ? t('aw.sevHigh') : g.severity === 'MEDIUM' ? t('aw.sevMedium') : t('aw.sevLow')}
                 </span>
                 <span>
                   {g.message}
@@ -308,11 +302,11 @@ export default function ApplicationPage() {
                 </span>
               </div>
             ))}
-            {review.gaps.length === 0 && <div className="explain-item"><span className="explain-icon pass">✓</span><span>Inga brister hittades.</span></div>}
+            {review.gaps.length === 0 && <div className="explain-item"><span className="explain-icon pass">✓</span><span>{t('aw.noGaps')}</span></div>}
 
             {review.likelyComplementRequests.length > 0 && (
               <details style={{ marginTop: '0.8rem' }}>
-                <summary style={{ cursor: 'pointer', fontWeight: 600 }}>Det här kan handläggaren vilja kontrollera ({review.likelyComplementRequests.length})</summary>
+                <summary style={{ cursor: 'pointer', fontWeight: 600 }}>{t('aw.complementTitle', { n: review.likelyComplementRequests.length })}</summary>
                 {review.likelyComplementRequests.map((r, i) => (
                   <div className="explain-item" key={i}><span className="explain-icon unknown">?</span><span>{r}</span></div>
                 ))}
@@ -321,11 +315,8 @@ export default function ApplicationPage() {
 
             {review.criteria.length > 0 && (
               <details style={{ marginTop: '0.6rem' }}>
-                <summary style={{ cursor: 'pointer', fontWeight: 600 }}>Bedömning per kriterium ({review.criteria.length})</summary>
-                <p className="guidance" style={{ marginTop: '0.4rem' }}>
-                  Kriterierna ur regelverket din ansökan skapades under. "Kan inte vägas upp" betyder att en brist
-                  där aldrig kompenseras av styrkor någon annanstans. E2 = styrkt av bifogat dokument, E1 = bygger på ditt eget svar, E0 = obesvarat.
-                </p>
+                <summary style={{ cursor: 'pointer', fontWeight: 600 }}>{t('aw.criteriaTitle', { n: review.criteria.length })}</summary>
+                <p className="guidance" style={{ marginTop: '0.4rem' }}>{t('aw.criteriaGuidance')}</p>
                 {review.criteria.map((c) => (
                   <div className="explain-item" key={c.criterionId}>
                     <span className={`explain-icon ${c.outcome === 'pass' ? 'pass' : c.outcome === 'fail' ? 'fail' : 'unknown'}`}>
@@ -334,13 +325,13 @@ export default function ApplicationPage() {
                     <span>
                       {c.description}{' '}
                       <span className="badge">{c.evidenceLevel}</span>
-                      {c.nonCompensatory && <span className="badge warning"> kan inte vägas upp</span>}
+                      {c.nonCompensatory && <span className="badge warning"> {t('aw.nonComp')}</span>}
                     </span>
                   </div>
                 ))}
                 {review.internalEstimate.fitScore !== null && (
                   <p className="meta-line" style={{ marginTop: '0.4rem' }}>
-                    Intern styrkeindikator: {review.internalEstimate.fitScore}/100{' '}
+                    {t('aw.internalEstimate', { poang: review.internalEstimate.fitScore })}{' '}
                     <span className="badge">{review.internalEstimate.label}</span> — {review.internalEstimate.explanation}
                   </p>
                 )}
@@ -349,7 +340,7 @@ export default function ApplicationPage() {
 
             {review.doubleFunding.status !== 'CLEAR' && (
               <div className={`alert ${review.doubleFunding.status === 'HIGH_RISK' ? 'error' : 'warning'}`} style={{ marginTop: '0.6rem' }}>
-                <strong>{review.doubleFunding.status === 'HIGH_RISK' ? 'Dubbelfinansiering — hög risk.' : 'Möjlig finansieringsöverlappning.'}</strong>{' '}
+                <strong>{review.doubleFunding.status === 'HIGH_RISK' ? t('aw.doubleHigh') : t('aw.doubleOverlap')}</strong>{' '}
                 {review.doubleFunding.notes.join(' ')}
               </div>
             )}
@@ -359,9 +350,9 @@ export default function ApplicationPage() {
 
       {/* Checklist / validation */}
       <div className="card">
-        <h2>Status</h2>
+        <h2>{t('dash.thStatus')}</h2>
         {validation.ready ? (
-          <div className="alert success">Alla obligatoriska fält och underlag är på plats.</div>
+          <div className="alert success">{t('aw.allInPlace')}</div>
         ) : (
           <>
             {validation.fieldIssues.map((i) => (
@@ -373,23 +364,23 @@ export default function ApplicationPage() {
             {validation.missingAttachments.map((a) => (
               <div className="explain-item" key={a.kind}>
                 <span className="explain-icon">✗</span>
-                <span>Bifoga: {a.description} — <Link to="/dokument">ladda upp under Dokument</Link> och bifoga nedan.</span>
+                <span>{t('aw.attachPrefix')} {a.description} — <Link to="/dokument">{t('aw.attachLink')}</Link> {t('aw.attachSuffix')}</span>
               </div>
             ))}
           </>
         )}
 
         <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.9rem', flexWrap: 'wrap' }}>
-          {app.state === 'SELECTED' && <button disabled={busy} onClick={() => transition('PREPARING')}>Börja fylla i</button>}
-          {app.state === 'PREPARING' && <button disabled={busy} onClick={() => transition('READY_FOR_REVIEW')}>Markera klar för granskning</button>}
+          {app.state === 'SELECTED' && <button disabled={busy} onClick={() => transition('PREPARING')}>{t('aw.startFilling')}</button>}
+          {app.state === 'PREPARING' && <button disabled={busy} onClick={() => transition('READY_FOR_REVIEW')}>{t('aw.markReview')}</button>}
           {app.state === 'READY_FOR_REVIEW' && (
             <>
-              <button disabled={busy} onClick={() => transition('READY_TO_SUBMIT')}>Godkänn — klar att skicka in</button>
-              <button className="secondary" disabled={busy} onClick={() => transition('PREPARING')}>Fortsätt redigera</button>
+              <button disabled={busy} onClick={() => transition('READY_TO_SUBMIT')}>{t('aw.approve')}</button>
+              <button className="secondary" disabled={busy} onClick={() => transition('PREPARING')}>{t('aw.continueEditing')}</button>
             </>
           )}
           {app.state === 'READY_TO_SUBMIT' && !submitPrep && (
-            <button disabled={busy} onClick={prepareSubmit}>Förbered inlämning</button>
+            <button disabled={busy} onClick={prepareSubmit}>{t('aw.prepareSubmission')}</button>
           )}
         </div>
       </div>
@@ -397,25 +388,22 @@ export default function ApplicationPage() {
       {/* Assisted submission */}
       {submitPrep && app.state === 'READY_TO_SUBMIT' && (
         <div className="card" style={{ borderColor: 'var(--primary)' }}>
-          <h2>Slutför inlämningen hos myndigheten</h2>
-          <p>
-            Din ansökan är komplett förberedd här. Den slutliga inlämningen gör du i den officiella tjänsten — ha dina svar
-            och bilagor från Bidragskoll.se till hands.
-          </p>
+          <h2>{t('aw.finishTitle')}</h2>
+          <p>{t('aw.finishBody')}</p>
           <p>{opp.applicationMethod}</p>
           {submitPrep.officialUrl && (
             <p>
               <a className="btn" href={submitPrep.officialUrl} target="_blank" rel="noreferrer">
-                Öppna den officiella ansökningstjänsten ↗
+                {t('aw.openOfficial')}
               </a>
             </p>
           )}
-          <label>När du är klar: klistra in referens/diarienummer från kvittot</label>
-          <input value={receiptRef} onChange={(e) => setReceiptRef(e.target.value)} placeholder="t.ex. KUR-2026-12345" />
+          <label>{t('aw.pasteRef')}</label>
+          <input value={receiptRef} onChange={(e) => setReceiptRef(e.target.value)} placeholder={t('aw.refPlaceholder')} />
           <button style={{ marginTop: '0.6rem' }} disabled={busy || !receiptRef.trim()} onClick={confirmExternal}>
-            Registrera kvitto — jag har lämnat in
+            {t('aw.registerReceipt')}
           </button>
-          <p className="guidance">Ansökan markeras som inlämnad först när kvittot är registrerat.</p>
+          <p className="guidance">{t('aw.submittedOnlyWithReceipt')}</p>
         </div>
       )}
 
@@ -434,7 +422,7 @@ export default function ApplicationPage() {
                     <label htmlFor={field.key}>
                       {field.label} {field.required && <span style={{ color: 'var(--danger)' }}>*</span>}{' '}
                       {app.answerProvenance[field.key] === 'canonical_prefill' && (
-                        <span className="badge" title="Hämtat från dina tidigare svar — kontrollera och ändra vid behov.">förifyllt</span>
+                        <span className="badge" title={t('aw.prefillTitle')}>{t('aw.prefillBadge')}</span>
                       )}
                     </label>
                     {field.guidance && <p className="guidance">{field.guidance}</p>}
@@ -468,40 +456,37 @@ export default function ApplicationPage() {
           })}
           {editable && (
             <button style={{ marginTop: '1rem' }} disabled={busy || !dirty} onClick={save}>
-              {dirty ? 'Spara svar' : 'Sparat'}
+              {dirty ? t('aw.saveAnswers') : t('aw.savedBtn')}
             </button>
           )}
         </div>
       ) : (
         <div className="card">
-          <h2>Ansökningsformulär</h2>
-          <p className="meta-line">
-            Det här stödet har inte ett digitaliserat formulär ännu — använd checklistan och budgeten här, och fyll i
-            myndighetens formulär via länken i källan.
-          </p>
+          <h2>{t('aw.formTitle')}</h2>
+          <p className="meta-line">{t('aw.noSchema')}</p>
         </div>
       )}
 
       {/* Budget */}
       <div className="card">
-        <h2>Budget</h2>
+        <h2>{t('aw.budget')}</h2>
         {data.budgetLines.length > 0 && (
           <table className="data">
-            <thead><tr><th>Kategori</th><th>Beskrivning</th><th>Antal</th><th>À-pris</th><th>Summa</th></tr></thead>
+            <thead><tr><th>{t('aw.thCategory')}</th><th>{t('aw.thDescription')}</th><th>{t('aw.thQty')}</th><th>{t('aw.thUnit')}</th><th>{t('aw.thSum')}</th></tr></thead>
             <tbody>
               {data.budgetLines.map((l) => (
                 <tr key={l.id}>
-                  <td>{CATEGORY_LABELS[l.category] ?? l.category}</td>
+                  <td>{labels.budget(l.category)}</td>
                   <td>
                     {l.description}
-                    {l.activity && <div className="meta-line">Aktivitet: {l.activity}</div>}
+                    {l.activity && <div className="meta-line">{t('aw.activityLine', { aktivitet: l.activity })}</div>}
                   </td>
                   <td>{l.quantity}</td>
                   <td>{formatSek(l.unitCostMinor)}</td>
                   <td>{formatSek(l.quantity * l.unitCostMinor)}</td>
                 </tr>
               ))}
-              <tr><td colSpan={4} style={{ fontWeight: 700 }}>Totalt</td><td style={{ fontWeight: 700 }}>{formatSek(budgetTotal)}</td></tr>
+              <tr><td colSpan={4} style={{ fontWeight: 700 }}>{t('aw.total')}</td><td style={{ fontWeight: 700 }}>{formatSek(budgetTotal)}</td></tr>
             </tbody>
           </table>
         )}
@@ -514,27 +499,27 @@ export default function ApplicationPage() {
             }}
           >
             <div>
-              <label>Kategori</label>
-              <select name="category">{BUDGET_CATEGORIES.map((c) => <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>)}</select>
+              <label>{t('aw.thCategory')}</label>
+              <select name="category">{BUDGET_CATEGORIES.map((c) => <option key={c} value={c}>{labels.budget(c)}</option>)}</select>
             </div>
-            <div><label>Beskrivning</label><input name="description" required maxLength={200} /></div>
-            <div><label>Aktivitet (vilken del av projektet?)</label><input name="activity" maxLength={200} placeholder="t.ex. Öppna klasser" /></div>
-            <div><label>Antal</label><input name="quantity" type="number" min={1} defaultValue={1} required /></div>
-            <div><label>À-pris (kr)</label><input name="unitCost" type="number" min={0} step="0.01" required /></div>
-            <button type="submit">Lägg till</button>
+            <div><label>{t('aw.thDescription')}</label><input name="description" required maxLength={200} /></div>
+            <div><label>{t('aw.activityLabel')}</label><input name="activity" maxLength={200} placeholder={t('aw.activityPlaceholder')} /></div>
+            <div><label>{t('aw.thQty')}</label><input name="quantity" type="number" min={1} defaultValue={1} required /></div>
+            <div><label>{t('aw.unitKr')}</label><input name="unitCost" type="number" min={0} step="0.01" required /></div>
+            <button type="submit">{t('aw.add')}</button>
           </form>
         )}
-        <FinancingEditor app={app} editable={editable} budgetTotal={budgetTotal} onSaved={load} />
+        <FinancingEditor app={app} editable={editable} budgetTotal={budgetTotal} onSaved={load} t={t} />
       </div>
 
       {/* Post-award (§49): beslut och redovisningskrav */}
       {(data.decisions.length > 0 || data.reportingRequirements.length > 0 || app.state === 'AWARDED') && (
         <div className="card">
-          <h2>Beslut och redovisning</h2>
+          <h2>{t('aw.decisionsTitle')}</h2>
           {data.decisions.map((d) => (
             <p key={d.id}>
               <span className={`badge ${d.outcome === 'rejected' ? 'danger' : 'success'}`}>
-                {d.outcome === 'awarded' ? 'Beviljat' : d.outcome === 'partially_awarded' ? 'Delvis beviljat' : 'Avslag'}
+                {d.outcome === 'awarded' ? t('label.msg.award') : d.outcome === 'partially_awarded' ? t('aw.partiallyAwarded') : t('label.msg.rejection')}
               </span>{' '}
               {d.amountMinor != null && <strong>{formatSek(d.amountMinor)}</strong>}
               {d.reference && <> · {d.reference}</>} · {formatDate(d.decidedAt)}
@@ -543,14 +528,14 @@ export default function ApplicationPage() {
           ))}
           {data.reportingRequirements.length > 0 && (
             <>
-              <h3>Redovisningskrav</h3>
+              <h3>{t('aw.reportingTitle')}</h3>
               {data.reportingRequirements.map((r) => (
                 <div className="explain-item" key={r.id}>
                   <span className="explain-icon">{r.status === 'accepted' ? '✓' : '•'}</span>
                   <span>
-                    {r.title} {r.dueAt && <span className="meta-line">— senast {formatDate(r.dueAt)}</span>}{' '}
+                    {r.title} {r.dueAt && <span className="meta-line">{t('aw.dueBy', { datum: formatDate(r.dueAt) })}</span>}{' '}
                     <span className={`badge ${r.status === 'accepted' ? 'success' : r.status === 'submitted' ? 'info' : 'warning'}`}>
-                      {r.status === 'accepted' ? 'godkänd' : r.status === 'submitted' ? 'inskickad' : 'väntar'}
+                      {r.status === 'accepted' ? t('aw.repAccepted') : r.status === 'submitted' ? t('aw.repSubmitted') : t('aw.repPending')}
                     </span>
                   </span>
                 </div>
@@ -571,22 +556,21 @@ export default function ApplicationPage() {
               }}
             >
               <div style={{ flex: 2, minWidth: 200 }}>
-                <label>Lägg till redovisningskrav</label>
-                <input name="title" required maxLength={300} placeholder="t.ex. Slutrapport" />
+                <label>{t('aw.addReporting')}</label>
+                <input name="title" required maxLength={300} placeholder={t('aw.repPlaceholder')} />
               </div>
-              <div><label>Senast</label><input name="dueAt" type="date" /></div>
-              <button type="submit" className="secondary">Lägg till</button>
+              <div><label>{t('aw.dueLabel')}</label><input name="dueAt" type="date" /></div>
+              <button type="submit" className="secondary">{t('aw.add')}</button>
             </form>
           )}
         </div>
       )}
 
       {/* Documents */}
-      <AttachmentsCard caseId={app.id} documents={data.documents} editable={editable} onChanged={load} />
+      <AttachmentsCard caseId={app.id} documents={data.documents} editable={editable} onChanged={load} t={t} />
 
       <div className="source-line">
-        <strong>Källa:</strong> <a href={opp.sourceUrl} target="_blank" rel="noreferrer">{opp.sourceUrl}</a> — villkoren i din
-        ansökan utgår från reglerna som gällde när ansökan skapades; väsentliga ändringar meddelas.
+        <strong>{t('o.source')}</strong> <a href={opp.sourceUrl} target="_blank" rel="noreferrer">{opp.sourceUrl}</a> {t('aw.sourceNote')}
       </div>
     </div>
   );
@@ -603,6 +587,7 @@ function FieldInput({
   disabled: boolean;
   onChange: (v: unknown) => void;
 }) {
+  const t = useT();
   switch (field.type) {
     case 'long_text':
     case 'rich_text':
@@ -645,7 +630,7 @@ function FieldInput({
     case 'select':
       return (
         <select id={field.key} disabled={disabled} value={(value as string) ?? ''} onChange={(e) => onChange(e.target.value)}>
-          <option value="">Välj…</option>
+          <option value="">{t('ds.choose')}</option>
           {field.options?.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
       );
@@ -661,7 +646,7 @@ function FieldInput({
             checked={value === true}
             onChange={(e) => onChange(e.target.checked)}
           />
-          <label htmlFor={field.key}>{field.type === 'boolean' ? 'Ja' : 'Jag bekräftar'}</label>
+          <label htmlFor={field.key}>{field.type === 'boolean' ? t('ob.yes') : t('aw.confirm')}</label>
         </div>
       );
     default:
@@ -682,11 +667,13 @@ function FinancingEditor({
   editable,
   budgetTotal,
   onSaved,
+  t,
 }: {
   app: CaseData['application'];
   editable: boolean;
   budgetTotal: number;
   onSaved: () => Promise<void>;
+  t: T;
 }) {
   const f = app.financing ?? { requestedMinor: 0, ownContributionMinor: 0, otherFundingMinor: 0, inKindMinor: 0 };
   const [requested, setRequested] = useState(String(f.requestedMinor / 100));
@@ -715,19 +702,19 @@ function FinancingEditor({
 
   return (
     <div style={{ marginTop: '1.2rem' }}>
-      <h3>Finansiering</h3>
+      <h3>{t('aw.financing')}</h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.6rem' }}>
-        <div><label>Sökt bidrag (kr)</label><input type="number" disabled={!editable} value={requested} onChange={(e) => setRequested(e.target.value)} /></div>
-        <div><label>Egen insats (kr)</label><input type="number" disabled={!editable} value={own} onChange={(e) => setOwn(e.target.value)} /></div>
-        <div><label>Annan finansiering (kr)</label><input type="number" disabled={!editable} value={other} onChange={(e) => setOther(e.target.value)} /></div>
+        <div><label>{t('aw.requested')}</label><input type="number" disabled={!editable} value={requested} onChange={(e) => setRequested(e.target.value)} /></div>
+        <div><label>{t('m.ownContribution')}</label><input type="number" disabled={!editable} value={own} onChange={(e) => setOwn(e.target.value)} /></div>
+        <div><label>{t('aw.otherFunding')}</label><input type="number" disabled={!editable} value={other} onChange={(e) => setOther(e.target.value)} /></div>
       </div>
       <p className="meta-line" style={{ marginTop: '0.4rem' }}>
-        Finansiering totalt {formatSek(finTotal)} · Budget totalt {formatSek(budgetTotal)}
+        {t('aw.finTotals', { fin: formatSek(finTotal), budget: formatSek(budgetTotal) })}
         {budgetTotal > 0 && finTotal !== budgetTotal && (
-          <span style={{ color: 'var(--warning)' }}> — behöver gå jämnt ut</span>
+          <span style={{ color: 'var(--warning)' }}> {t('aw.mustBalance')}</span>
         )}
       </p>
-      {editable && <button className="secondary" disabled={busy} onClick={save}>Spara finansiering</button>}
+      {editable && <button className="secondary" disabled={busy} onClick={save}>{t('aw.saveFinancing')}</button>}
     </div>
   );
 }
@@ -737,11 +724,13 @@ function AttachmentsCard({
   documents,
   editable,
   onChanged,
+  t,
 }: {
   caseId: string;
   documents: CaseDoc[];
   editable: boolean;
   onChanged: () => Promise<void>;
+  t: T;
 }) {
   const [available, setAvailable] = useState<{ id: string; filename: string; kind: string }[]>([]);
   const [selected, setSelected] = useState('');
@@ -770,8 +759,8 @@ function AttachmentsCard({
 
   return (
     <div className="card">
-      <h2>Bilagor och underlag</h2>
-      {documents.length === 0 && <p className="meta-line">Inga bilagor ännu.</p>}
+      <h2>{t('aw.attachmentsTitle')}</h2>
+      {documents.length === 0 && <p className="meta-line">{t('aw.noAttachments')}</p>}
       {documents.map((d) => (
         <div className="explain-item" key={d.linkId}>
           <span className="explain-icon">📎</span>
@@ -781,11 +770,11 @@ function AttachmentsCard({
       {editable && (
         <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.8rem', alignItems: 'center' }}>
           <select value={selected} onChange={(e) => setSelected(e.target.value)} style={{ maxWidth: 340 }}>
-            <option value="">Välj dokument från valvet…</option>
+            <option value="">{t('aw.chooseFromVault')}</option>
             {attachable.map((d) => <option key={d.id} value={d.id}>{d.filename} ({d.kind})</option>)}
           </select>
-          <button className="secondary" disabled={busy || !selected} onClick={attach}>Bifoga</button>
-          <Link to="/dokument">Ladda upp nytt ↗</Link>
+          <button className="secondary" disabled={busy || !selected} onClick={attach}>{t('aw.attachBtn')}</button>
+          <Link to="/dokument">{t('aw.uploadNew')}</Link>
         </div>
       )}
     </div>
@@ -799,6 +788,7 @@ function AttachmentsCard({
  * formuläret, och sökanden sparar själv. Vakterna har redan granskat det.
  */
 function SuggestImprovement({ caseId, fieldKey, onAccept }: { caseId: string; fieldKey: string; onAccept: (text: string) => void }) {
+  const t = useT();
   const [state, setState] = useState<{ busy: boolean; suggestion?: { before: string; suggestion: string; reason: string }; error?: string }>({ busy: false });
   const fetchSuggestion = async () => {
     setState({ busy: true });
@@ -806,20 +796,20 @@ function SuggestImprovement({ caseId, fieldKey, onAccept }: { caseId: string; fi
       const res = await post<{ before: string; suggestion: string; reason: string }>(`/v1/applications/${caseId}/suggest-field`, { fieldKey });
       setState({ busy: false, suggestion: res });
     } catch (err) {
-      setState({ busy: false, error: err instanceof ApiError ? err.message : 'Kunde inte hämta förslag.' });
+      setState({ busy: false, error: err instanceof ApiError ? err.message : t('aw.suggestError') });
     }
   };
   if (state.suggestion) {
     return (
       <div className="alert" style={{ marginTop: '0.4rem' }}>
-        <strong>Förslag (inget är sparat):</strong>
+        <strong>{t('aw.suggestionTitle')}</strong>
         <p style={{ margin: '0.3rem 0', whiteSpace: 'pre-wrap' }}>{state.suggestion.suggestion}</p>
         <p className="meta-line">{state.suggestion.reason}</p>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button type="button" className="secondary" onClick={() => { onAccept(state.suggestion!.suggestion); setState({ busy: false }); }}>
-            Använd förslaget
+            {t('aw.useSuggestion')}
           </button>
-          <button type="button" className="secondary" onClick={() => setState({ busy: false })}>Behåll min text</button>
+          <button type="button" className="secondary" onClick={() => setState({ busy: false })}>{t('aw.keepMine')}</button>
         </div>
       </div>
     );
@@ -827,9 +817,9 @@ function SuggestImprovement({ caseId, fieldKey, onAccept }: { caseId: string; fi
   return (
     <div style={{ marginTop: '0.3rem' }}>
       <button type="button" className="secondary" style={{ fontSize: '0.82rem', padding: '0.2rem 0.6rem' }} disabled={state.busy} onClick={() => void fetchSuggestion()}>
-        {state.busy ? 'Hämtar förslag…' : 'Föreslå språklig förbättring'}
+        {state.busy ? t('aw.fetching') : t('aw.suggest')}
       </button>
-      {state.error && <span className="meta-line" style={{ marginLeft: '0.5rem', color: 'var(--danger)' }}>{state.error}</span>}
+      {state.error && <span className="meta-line" style={{ marginInlineStart: '0.5rem', color: 'var(--danger)' }}>{state.error}</span>}
     </div>
   );
 }
