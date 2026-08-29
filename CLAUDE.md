@@ -267,10 +267,16 @@ miljön och handboken fördjupas då skärm för skärm.
    `seo/beviljade-projekt.schema.json` + `seo/erfarenheter.schema.json`) →
    **F3** länkbara tillgångar. Öppna beslut: CONTENT_ENGINE §11. Efter deploy:
    GSC-verifiering + `docs/SEO_BASELINE.md`-loopen.
-4. **Mänsklig gransknings-kö** — arbetsflöde som lyfter stöd från
+4. **Google Preferred Sources** — rekognoserat 2026-08-29, EJ byggt.
+   `docs/PREFERRED_SOURCES.md` är beslutsunderlaget: domänen är inte
+   indexerad (DNS pekar på parkering, hela ytan noindex), Googles
+   dokumentation gick inte att nå från sandlådan, och projektet saknar
+   analytics helt. Verifieringsordning och sömmen finns dokumenterade —
+   börja med frågan om Sverige/svenska alls stöds. Blockeras av deployn (#1).
+5. **Mänsklig gransknings-kö** — arbetsflöde som lyfter stöd från
    `ai_curated` till `human_verified` mot levande källor (motförhörets A-fynd).
-4. **Full WCAG-genomgång + riktiga användartester** (motförhörets B-fynd).
-5. **Produktkontroller i CI** — kör verify:ui/demo:check i CI med
+6. **Full WCAG-genomgång + riktiga användartester** (motförhörets B-fynd).
+7. **Produktkontroller i CI** — kör verify:ui/demo:check i CI med
    tjänstecontainrar (Postgres + Chromium).
 
 ## Regler för agenter i detta repo
