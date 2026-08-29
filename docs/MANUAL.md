@@ -411,7 +411,7 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | `npm run manual` | Regenererar denna handbok ur källorna (tools/genmanual.mjs). |
 | `npm run seo:keywords` | Bygger master keyword-databasen seo/keywords.json ur seeden + seo/roots-manual.json (aldrig påhittade volymer — se docs/SEO_STRATEGY.md). |
 | `npm run seo:build` | Genererar den publika, indexerbara ytan (/bidrag/… + sitemap + robots) ur kunskapsbasen — samma sanningsmodell som produkten. |
-| `npm run seo:check` | SEO-QA-crawlen: titlar, canonical, JSON-LD, intern länkgraf, orphans och sitemap-täckning för den genererade ytan. |
+| `npm run seo:check` | SEO-QA-crawlen: titlar, canonical, JSON-LD, intern länkgraf, orphans och sitemap-täckning för den genererade ytan, plus entitetsgrafens vakt (utgivare, geografi, målgrupp, ärliga datum mot seeden). |
 | `npm run demand:model` | Lanseringsscenariomodellen (docs/LAUNCH_DEMAND_INTELLIGENCE.md): fördelar scenariotrafik (INPUT, aldrig prognos) över klustren, räknar tratt, myndighetsbelastning och teknisk last → artifacts/demand-model.json. |
 | `npm run gate:0` | Zero-Compromise Gate, deterministiska blocken (docs/ZERO_COMPROMISE_GATE.md): teknisk totalcrawl, bildinventering, intern länkgraf/PageRank, innehållsmatris → artifacts/gate0-report.json. Failar på CRITICAL/HIGH. |
 | `npm run gate:ux` | Gatens UX-block: alla publika sidor i 320 px + 1280 px — overflow, H1, tomma ankare, återvändsgränder + bevis-skärmdumpar. Kräver byggd yta + Chromium. |

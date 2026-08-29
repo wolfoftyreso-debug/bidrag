@@ -30,7 +30,7 @@
     "verify:relevans": "node tools/audit-relevans.mjs",
     "seo:keywords": "node --experimental-strip-types tools/seokeywords.mjs",
     "seo:build": "node --experimental-strip-types tools/genseo.mjs",
-    "seo:check": "node --experimental-strip-types tools/genseo.mjs && node tools/seocheck.mjs",
+    "seo:check": "node --experimental-strip-types tools/genseo.mjs && node tools/seocheck.mjs && node --experimental-strip-types tools/schemacheck-seo.mjs",
     "demand:model": "node --experimental-strip-types tools/demandmodel.mjs",
     "gate:0": "node --experimental-strip-types tools/genseo.mjs && node --experimental-strip-types tools/gate0.mjs",
     "gate:ux": "node tools/gate0-ux.mjs",

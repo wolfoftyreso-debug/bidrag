@@ -359,7 +359,85 @@ function entityPage(o) {
 
   const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, pageTitle(o), crumbs) };
   const webPageNode = jsonld['@graph'].find((n) => n['@type'] === 'WebPage');
-  webPageNode.about = { '@type': 'Thing', name: short, sameAs: o.sourceUrl };
+
+  // ── Entitetsgrafen (SCHEMA-ENTITET) ────────────────────────────────────────
+  // Sidan sa tidigare bara "den här sidan handlar om en Thing". Kunskapsbasen
+  // vet mycket mer än så, och den vetskapen ska stå i markupen: VEM som ger
+  // stödet, VAR det gäller, VEM det riktar sig till och NÄR det går att söka.
+  //
+  // Tre järnregler (samma som resten av produkten):
+  //  1. Bara fält som finns i seeden. Ingen egenskap uppfinns för schemats
+  //     skull — saknas uppgiften utelämnas den, den gissas aldrig.
+  //  2. Bara det som ALSO syns på sidan. Markup som beskriver osynligt
+  //     innehåll är policybrott, inte finess.
+  //  3. Inga datum som inte är kurerade. Endast 3 av 85 stöd har verkliga
+  //     opensAt/closesAt; för övriga uttrycks ansökningsläget som text ur
+  //     deadlineModel i stället för ett påhittat intervall.
+  // Kartan följer seedens FAKTISKA authority.kind-värden (state_agency,
+  // foundation, association, municipality, region, eu) — inte påhittade
+  // nycklar. En okänd typ faller tillbaka på neutrala Organization.
+  const AKTORSTYP = {
+    state_agency: 'GovernmentOrganization',
+    municipality: 'GovernmentOrganization',
+    region: 'GovernmentOrganization',
+    eu: 'GovernmentOrganization',
+    foundation: 'Organization',
+    association: 'Organization',
+  };
+  const providerNod = auth
+    ? {
+        '@type': AKTORSTYP[auth.kind] ?? 'Organization',
+        '@id': `${BASE}/#aktor-${auth.key}`,
+        name: auth.name,
+        ...(auth.website ? { url: auth.website, sameAs: auth.website } : {}),
+        ...(auth.country ? { areaServed: { '@type': 'Country', name: auth.country === 'SE' ? 'Sverige' : auth.country } } : {}),
+      }
+    : null;
+
+  const MALGRUPP = { individual: 'Privatperson', company: 'Företag', economic_association: 'Ekonomisk förening', association: 'Ideell förening', foundation: 'Stiftelse', municipality: 'Kommun', region: 'Region', school: 'Skolhuvudman' };
+  const malgrupper = (o.applicantTypes ?? []).map((t) => MALGRUPP[t]).filter(Boolean);
+  const lander = (o.countries ?? []).map((c) => (c === 'SE' ? 'Sverige' : c));
+
+  // Stödet som EGEN nod — inte bara ett namn i WebPage.about. Typen är
+  // GovernmentService när det är en myndighets rättighet/ersättning, annars
+  // den neutrala Service: båda är sanna beskrivningar av "något man ansöker
+  // om hos en aktör", till skillnad från Article som skulle påstå att sidan
+  // är en artikel (se docs/PREFERRED_SOURCES.md §6).
+  const MYNDIGHETSTYPER = new Set(['GovernmentOrganization']);
+  const stodNod = {
+    '@type': providerNod && MYNDIGHETSTYPER.has(providerNod['@type']) ? 'GovernmentService' : 'Service',
+    '@id': `${canonical}#stod`,
+    name: short,
+    description: o.summary,
+    inLanguage: 'sv',
+    ...(providerNod ? { provider: { '@id': providerNod['@id'] } } : {}),
+    ...(lander.length ? { areaServed: lander.map((n) => ({ '@type': 'Country', name: n })) } : {}),
+    ...(malgrupper.length ? { audience: { '@type': 'Audience', audienceType: malgrupper.join(', ') } } : {}),
+    // Källan är myndighetens egen sida om stödet — den auktoritativa
+    // beskrivningen av samma entitet.
+    ...(o.sourceUrl ? { sameAs: o.sourceUrl } : {}),
+    ...(o.applicationUrl ? { serviceUrl: o.applicationUrl } : {}),
+    ...(o.amountNote ? { termsOfService: o.amountSourceUrl ?? o.sourceUrl } : {}),
+    isPartOf: { '@id': `${BASE}/#website` },
+  };
+  // Ansökningsperiod: BARA när seeden har kurerade datum (3 av 85). Övriga
+  // stöd får ingen startDate/endDate — hellre tyst än ett uppdiktat fönster.
+  if (o.opensAt || o.closesAt) {
+    stodNod.hoursAvailable = {
+      '@type': 'OpeningHoursSpecification',
+      ...(o.opensAt ? { validFrom: o.opensAt.slice(0, 10) } : {}),
+      ...(o.closesAt ? { validThrough: o.closesAt.slice(0, 10) } : {}),
+    };
+  }
+  if (providerNod) jsonld['@graph'].push(providerNod);
+  jsonld['@graph'].push(stodNod);
+
+  webPageNode.about = { '@id': stodNod['@id'] };
+  // Relaterade stöd: grafens kanter mellan stödsidorna, samma lista som syns
+  // i "Relaterat" längre ned på sidan.
+  if (rel.length) {
+    webPageNode.relatedLink = rel.map((r) => `${BASE}/bidrag/${r.slug}/`);
+  }
   jsonld['@graph'].push({
     '@type': 'FAQPage',
     mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
