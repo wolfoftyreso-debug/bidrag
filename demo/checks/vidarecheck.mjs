@@ -102,18 +102,35 @@ console.log('4. Inaktuell fråga står kvar med "behövdes inte längre"-märkni
   if (rubrik === 0) { console.log('FEL: guidat läge visar ingen fråga som rubrik'); process.exit(1); }
   const raknare = await page.locator('.card.accent .guidance').first().innerText();
   if (!/Fråga \d+ av \d+/.test(raknare)) { console.log(`FEL: guidat läge saknar räknare ("${raknare}")`); process.exit(1); }
+  if (await page.locator('.card.accent .progress-steps span').count() === 0) {
+    console.log('FEL: guidat läge saknar progress-indikator'); process.exit(1);
+  }
   const fore = await page.locator('.card.accent h1').first().innerText();
   await page.locator('.card.accent button:has-text("Hoppa över den här")').click();
   await page.waitForTimeout(200);
   const efter = await page.locator('.card.accent h1').first().innerText();
   if (efter === fore) { console.log('FEL: "Hoppa över" gick inte vidare till nästa fråga'); process.exit(1); }
+  const innanSvar = await page.locator('.card.accent h1').first().innerText();
   await page.locator('.card.accent button:has-text("Nej")').first().click();
   await page.waitForTimeout(250);
+  // Bakåt är wizard-konvention (Mobbin: Zillow, OKX, Hims, Remote) — och
+  // svaret man gav ska stå markerat när man backar.
+  await page.locator('button:has-text("Föregående")').click();
+  await page.waitForTimeout(250);
+  if ((await page.locator('.card.accent h1').first().innerText()) !== innanSvar) {
+    console.log('FEL: "Föregående" gick inte tillbaka till frågan man just svarade på'); process.exit(1);
+  }
+  if (await page.locator('.card.accent .row button.primary').count() === 0) {
+    console.log('FEL: det givna svaret är inte markerat när man backar'); process.exit(1);
+  }
   await page.click('button:has-text("Visa alla i lista")');
   await page.waitForSelector('text=Några frågor kvar (');
   const kvar = await page.locator(`text=${JSON.stringify(fore).slice(1, -1)}`).count();
   if (kvar === 0) { console.log('FEL: den överhoppade frågan försvann ur listan (bryter F-STABIL)'); process.exit(1); }
-  console.log('5b. Listan är både översikt och ingång till en-fråga-per-skärm — överhoppad fråga står kvar ✓');
+  if ((await page.locator('.card.accent').first().innerText()).includes('besvarade') === false) {
+    console.log('FEL: listan visar ingen progress ("N av M besvarade")'); process.exit(1);
+  }
+  console.log('5b. Guidat läge med progress, bakåt och hoppa över — överhoppad fråga står kvar i listan ✓');
 }
 
 // 6. F-VIDARE: markera ett stöd och gå vidare till planen.

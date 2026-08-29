@@ -513,33 +513,38 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
   // förklaring och utan väg tillbaka till rytmen. Nu är listan översikten OCH
   // ingången till samma en-fråga-per-skärm-läge som intaget.
   const obesvarade = qOrder.filter((p) => facts[p] === undefined && questions.has(p));
-  const [guidad, setGuidad] = useState(false);
-  // Hoppade frågor lämnar det guidade läget men STÅR KVAR i listan (F-STABIL).
-  const [hoppade, setHoppade] = useState<string[]>([]);
-  const iTur = obesvarade.filter((p) => !hoppade.includes(p));
-  const guidadPath = guidad ? iTur[0] ?? null : null;
+  const besvaradeIListan = qOrder.filter((p) => facts[p] !== undefined).length;
+  // Kön fryses när det guidade läget startar: nya frågor som dyker upp under
+  // tiden hamnar i listan, inte mitt i en pågående genomgång.
+  const [ko, setKo] = useState<string[]>([]);
+  const [pos, setPos] = useState(0);
+  const guidadPath = ko[pos] ?? null;
   const guidadMeta = guidadPath ? qMeta.current.get(guidadPath) : null;
-  useEffect(() => { if (guidad && iTur.length === 0) setGuidad(false); }, [guidad, iTur.length]);
+  const stangGuidad = () => { setKo([]); setPos(0); };
 
   if (guidadPath && guidadMeta) {
     const gäller = `Gäller ${guidadMeta.titles.slice(0, 2).join(' och ')}${guidadMeta.titles.length > 2 ? ` + ${guidadMeta.titles.length - 2} till` : ''}`;
-    const nr = obesvarade.length - iTur.length + 1;
+    const svar = facts[guidadPath];
+    const framat = () => (pos + 1 >= ko.length ? stangGuidad() : setPos(pos + 1));
     return (
       <div>
         <div className="card accent">
+          {/* Segmenterad progress ur designsystemet — samma konvention som
+              wizard-mönstret i övrigt (Mobbin: Zillow, Semrush, OKX, Remote). */}
+          <div className="progress-steps" aria-hidden="true">
+            {ko.map((k, i) => <span key={k} className={i <= pos ? 'done' : ''} />)}
+          </div>
           <p className="q-context">{gäller}</p>
           <h1>{guidadMeta.q}</h1>
-          <p className="guidance">Fråga {nr} av {obesvarade.length} · svaren räknas om direkt</p>
-          <div style={{ marginTop: '1rem' }}>
-            <YesNo on={(v) => onFact(guidadPath, v)} />
+          <p className="guidance">Fråga {pos + 1} av {ko.length} · svaren räknas om direkt</p>
+          <div className="row" style={{ marginTop: '1rem' }}>
+            <button className={`btn grow${svar === true ? ' primary' : ''}`} onClick={() => { onFact(guidadPath, true); framat(); }}>Ja</button>
+            <button className={`btn grow${svar === false ? ' primary' : ''}`} onClick={() => { onFact(guidadPath, false); framat(); }}>Nej</button>
           </div>
           <div className="row" style={{ marginTop: '0.8rem' }}>
-            {iTur.length > 1 && (
-              <button className="btn small" onClick={() => setHoppade((h) => [...h, guidadPath])}>
-                Hoppa över den här
-              </button>
-            )}
-            <button className="btn subtle" onClick={() => setGuidad(false)}>Visa alla i lista</button>
+            {pos > 0 && <button className="btn small" onClick={() => setPos(pos - 1)}>← Föregående</button>}
+            {pos + 1 < ko.length && <button className="btn small" onClick={framat}>Hoppa över den här</button>}
+            <button className="btn subtle" onClick={stangGuidad}>Visa alla i lista</button>
           </div>
           {infoRuta(guidadMeta.details)}
         </div>
@@ -552,6 +557,11 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
       {qOrder.length > 0 && (
         <div className="card accent">
           <h2 style={{ marginBottom: '0.15rem' }}>Några frågor kvar ({allOpen.length})</h2>
+          {besvaradeIListan > 0 && (
+            <p className="meta" style={{ margin: '0 0 0.3rem' }}>
+              {besvaradeIListan} av {besvaradeIListan + allOpen.length} besvarade
+            </p>
+          )}
           <p className="meta" style={{ margin: '0 0 0.4rem' }}>
             Svara i vilken ordning du vill, eller låt oss ta dem en i taget · Svaren räknas om direkt · Besvarade frågor
             står kvar nedtonade och kan ändras — inget försvinner eller byter plats
@@ -559,7 +569,7 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
           </p>
           {obesvarade.length > 0 && (
             <div className="row" style={{ margin: '0 0 0.8rem' }}>
-              <button className="btn primary" onClick={() => { setHoppade([]); setGuidad(true); }}>
+              <button className="btn primary" onClick={() => { setKo(obesvarade); setPos(0); }}>
                 Ta dem en i taget ({obesvarade.length}) →
               </button>
             </div>

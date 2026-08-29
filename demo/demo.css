@@ -231,3 +231,9 @@ a:not(.btn) { overflow-wrap: anywhere; }
 .meta.forifyllt { margin: 0 0 -0.2rem; color: var(--success); }
 .underlag { margin: 0.35rem 0 0.6rem; padding-inline-start: 1.15rem; }
 .underlag li { margin-bottom: 0.3rem; }
+
+/* Segmenterad progress (designsystemet): en stapel per steg, fylld bakåt.
+   Används i det guidade frågeläget — samma konvention som wizard-mönstret. */
+.progress-steps { display: flex; gap: 0.35rem; margin-bottom: 1rem; }
+.progress-steps span { flex: 1; height: 4px; border-radius: 2px; background: var(--border-strong); transition: background 200ms ease; }
+.progress-steps span.done { background: var(--primary); }
