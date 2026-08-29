@@ -56,6 +56,33 @@ if (!body.includes('hög sannolikhet')) throw new Error('sannolikhet saknas');
 if (!body.includes('Uppfyller inte kraven')) throw new Error('uteslutningar saknas');
 console.log('OK: personligt spår');
 
+// F-VAD (mönsterkontroll mot Mobbin): varje resultatrad ska säga VAD stödet är
+// utan att man klickar. Referenserna framhäver beloppet, men bara 1 av 85 stöd
+// har ett kurerat maxbelopp — sammanfattningen är det vi ärligt kan visa.
+{
+  const rader = await page.locator('.match-sammanfattning').count();
+  if (rader === 0) throw new Error('resultatraderna saknar sammanfattning — man måste klicka för att veta vad stödet är');
+  const forsta = (await page.locator('.match-sammanfattning').first().innerText()).trim();
+  if (forsta.length < 20) throw new Error(`sammanfattningen är tom eller stympad: "${forsta}"`);
+  console.log(`OK: ${rader} resultatrader bär stödets sammanfattning`);
+}
+
+// F-VAL: den primära handlingen får inte kräva att man scrollar förbi hela
+// listan. Valraden dyker upp när något valts och följer med nedtill.
+{
+  if (await page.locator('.valrad').count() !== 0) throw new Error('valraden visas innan något är valt');
+  await page.locator('button:has-text("Vill ansöka")').first().click();
+  await page.waitForSelector('.valrad');
+  if (!(await page.locator('.valrad').isVisible())) throw new Error('valraden syns inte utan att man scrollar');
+  const text = await page.locator('.valrad').innerText();
+  if (!/1 stöd valt/.test(text)) throw new Error(`valraden räknar fel: "${text.replace(/\n/g, ' | ')}"`);
+  if (await page.locator('.valrad button:has-text("Nästa")').count() === 0) throw new Error('valraden saknar Nästa-knappen');
+  await page.locator('button:has-text("Vald — ingår i din plan")').first().click();
+  await page.waitForTimeout(200);
+  if (await page.locator('.valrad').count() !== 0) throw new Error('valraden ligger kvar när inget är valt');
+  console.log('OK: valraden följer med nedtill och försvinner när inget är valt');
+}
+
 // Följdfråga: svara Ja på underhållsfrågan → underhållsstöd uppgraderas live
 const before = (body.match(/hög sannolikhet/g) || []).length;
 await page.locator('.q-row', { hasText: 'Betalar den andra föräldern' }).locator('button:has-text("Ja")').click();

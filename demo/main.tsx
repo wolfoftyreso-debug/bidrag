@@ -356,6 +356,11 @@ function MatchRow({ opp, m, facts, showScore, selected, onToggle }: { opp: Opp; 
           {' · '}
           {opp.closesAt ? `stänger ${fmtDate(opp.closesAt)}` : opp.deadlineModel === 'rolling' ? 'löpande ansökan' : 'kommande omgång'}
         </div>
+        {/* F-VAD (mönsterkontroll mot Mobbin: varje resultatrad bär det som
+            avgör valet). Beloppet är det referenserna framhäver — men bara
+            1 av 85 stöd har ett kurerat maxbelopp, så vi visar det som finns:
+            vad stödet ÄR, i en rad. Att gissa belopp är förbjudet. */}
+        <div className="match-sammanfattning">{opp.summary}</div>
         {m.missingFacts.length > 0 && (
           <div className="meta warn">För att veta säkert: {m.missingFacts.slice(0, 2).map((f) => f.question).join(' · ')}</div>
         )}
@@ -629,7 +634,7 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
       {personal.length > 0 && (
         <div className="card">
           <h2>Det här ser du ut att kunna ha rätt till</h2>
-          <p className="guidance">En bedömning utifrån dina svar — slutligt beslut fattas alltid av myndigheten. Markera ”Vill ansöka” på de stöd du vill gå vidare med, och tryck sedan Nästa längre ner.</p>
+          <p className="guidance">En bedömning utifrån dina svar — slutligt beslut fattas alltid av myndigheten. Markera ”Vill ansöka” på de stöd du vill gå vidare med — knappen Nästa följer med nedtill så fort du valt något.</p>
           {personal.map((r) => <MatchRow key={r.opp.slug} opp={r.opp} m={r.m} facts={facts} showScore={false} selected={chosen.has(r.opp.slug)} onToggle={() => onToggle(r.opp.slug)} />)}
         </div>
       )}
@@ -682,6 +687,17 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
           {chosen.size === 0 ? 'Nästa — markera först minst ett stöd' : `Nästa — gå vidare med ${chosen.size} ${chosen.size === 1 ? 'valt stöd' : 'valda stöd'} →`}
         </button>
       </div>
+
+      {/* F-VAL (mönsterkontroll mot Mobbin: den primära handlingen hålls synlig
+          i stället för att ligga under en lång lista). Guidningen sa "tryck
+          Nästa längre ner" — en scrolljakt förbi 20+ rader. Raden visas först
+          när något är valt, så den aldrig ligger i vägen i onödan. */}
+      {chosen.size > 0 && (
+        <div className="valrad" role="region" aria-label="Dina valda stöd">
+          <span>{chosen.size} {chosen.size === 1 ? 'stöd valt' : 'stöd valda'}</span>
+          <button className="btn primary" onClick={onNext}>Nästa — förbered ansökan →</button>
+        </div>
+      )}
 
       <div className="card">
         <h2>Uppfyller inte kraven ({excludedShown.length})</h2>

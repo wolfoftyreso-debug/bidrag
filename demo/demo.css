@@ -237,3 +237,15 @@ a:not(.btn) { overflow-wrap: anywhere; }
 .progress-steps { display: flex; gap: 0.35rem; margin-bottom: 1rem; }
 .progress-steps span { flex: 1; height: 4px; border-radius: 2px; background: var(--border-strong); transition: background 200ms ease; }
 .progress-steps span.done { background: var(--primary); }
+
+/* F-VAD: sammanfattningen i resultatraden — vad stödet ÄR, utan att klicka. */
+.match-sammanfattning { margin-top: 0.3rem; color: var(--text); font-size: 0.94rem; line-height: 1.45; }
+
+/* F-VAL: klistrad handlingsrad. Den primära handlingen ska aldrig kräva att
+   man scrollar förbi hela resultatlistan för att hitta den. */
+.valrad { position: sticky; bottom: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 0.75rem;
+  align-items: center; justify-content: space-between; margin: 0 -0.2rem;
+  padding: 0.7rem 0.9rem; border-radius: 12px; background: var(--surface);
+  border: 1px solid var(--border-strong); box-shadow: var(--shadow-lift); }
+.valrad span { font-weight: 650; }
+@media (max-width: 420px) { .valrad .btn { flex: 1; } }
