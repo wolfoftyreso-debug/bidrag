@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { and, eq, ilike, or, sql } from 'drizzle-orm';
 import { db } from '../db/client.ts';
 import { applicationSchemas, fundingAuthorities, fundingOpportunities, ruleVersions } from '../db/schema.ts';
-import { kbTranslator, resolveKbLocale, translateCriteria } from '../services/kbI18n.ts';
+import { kbTranslator, resolveKbLocale, translateCriteria, translateEvidence } from '../services/kbI18n.ts';
 
 /**
  * Public funding knowledge — readable by any authenticated user; shared across
@@ -140,12 +140,19 @@ export async function opportunityRoutes(app: FastifyInstance) {
         .orderBy(sql`${applicationSchemas.version} DESC`)
         .limit(1);
 
-      // I18N fas B: summary + kriteriernas intakefrågor på användarens språk.
-      // Beskrivningar, villkorstexter och officiella namn förblir svenska
-      // (bindande omfattning i docs/I18N_PROGRAM.md; ärlig notis i webben).
+      // I18N fas B+D: sammanfattning, intakefrågor, villkorstexter,
+      // ansökningssätt, beloppsmeningen och underlagslistan på användarens
+      // språk. Officiella namn (title, authority) och beloppets siffror
+      // översätts aldrig; källänken pekar fortsatt på myndighetens svenska
+      // sida (docs/I18N_PROGRAM.md; ärlig notis i webben).
       const tr = await kbTranslator(resolveKbLocale(request.headers['accept-language']));
       return {
-        opportunity: { ...opp, summary: tr(opp.summary) },
+        opportunity: {
+          ...opp,
+          summary: tr(opp.summary),
+          applicationMethod: tr(opp.applicationMethod),
+          amountNote: opp.amountNote ? tr(opp.amountNote) : opp.amountNote,
+        },
         authority,
         ruleVersion: rv
           ? {
@@ -153,7 +160,7 @@ export async function opportunityRoutes(app: FastifyInstance) {
               version: rv.version,
               criteria: translateCriteria(rv.criteria, tr),
               budgetRules: rv.budgetRules,
-              evidenceRequirements: rv.evidenceRequirements,
+              evidenceRequirements: translateEvidence(rv.evidenceRequirements, tr),
               effectiveFrom: rv.effectiveFrom,
               changeNote: rv.changeNote,
             }

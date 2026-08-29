@@ -290,11 +290,12 @@ exposure is low: registering a source URL requires the `data_curator` role,
 which is not self-service (RT03-S1), so only a compromised legitimate source
 could trigger it. Tracked as backlog M14.
 
-## 14. Translations are AI-made and unreviewed (I18N fas A–C)
+## 14. Translations are AI-made and unreviewed (I18N fas A–D)
 
 The web app is available in 11 languages, and as of fas B (2026-08-28) the
 knowledge base's user-facing texts — benefit summaries and intake questions
-(223 source strings × 10 languages) — are also delivered in the user's chosen
+(223 source strings × 10 languages at the time; extended to 1141 in fas D)
+— are also delivered in the user's chosen
 language via the API (docs/I18N_PROGRAM.md). Every non-Swedish string was
 translated by AI and has NOT been reviewed by a native speaker. The UI says so
 honestly on every non-Swedish view (same doctrine as the `ai_curated` label).
@@ -311,15 +312,14 @@ back to Swedish for that string (honest fallback; the verify guard blocks
 pushes with missing translations). Official benefit/authority names are never
 translated by design.
 
-**Measured coverage (2026-08-29, `npm run i18n:cov`):** only **15 %** of the
-knowledge base's user-facing text (266 of 1725 occurrences) has an entry in
-the translation memory. Summaries and intake questions are at 100 %; the
-application schemas' field labels and guidance (876 occurrences), the
-`applicationMethod` sentences, the evidence lists and the criteria condition
-texts are at 0 %. The practical consequence: **discovery is translated, the
-preparation step is not** — a Somali-speaking user gets the intake dialogue
-and the match summaries in Somali, then a Swedish application form. This is
-the largest remaining language gap and is scoped as fas D in
-docs/I18N_PROGRAM.md. Note that the finished document sent to the authority
-stays Swedish by design — fas D translates the guidance up to the
-application, not the application itself.
+**Measured coverage (2026-08-29, `npm run i18n:cov`): 100 %** — all 1725
+occurrences of user-facing knowledge-base text (1141 source strings × 10
+languages) are in the translation memory and delivered by the API. Fas D
+closed the gap that fas B left open: the application schemas' field labels
+and guidance, the `applicationMethod` sentences, the evidence lists, the
+criteria condition texts and the curated amount notes. Discovery **and**
+preparation are now translated. Note the deliberate boundary: only the
+presentation layer is translated — validation, prefill, text suggestions and
+the rendered document all run against the Swedish schema, so **the
+application submitted to the authority stays Swedish**, field keys are never
+translated, and an amount's digits and source URL are never touched.

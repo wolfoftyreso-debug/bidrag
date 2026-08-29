@@ -71,12 +71,59 @@ export function translateMatchRows<T extends { result: MatchResultish }>(rows: T
   );
 }
 
-/** Översätt kriteriers intakeQuestion i en regelversions kriterielista. */
+/** Översätt kriteriers intakeQuestion OCH villkorstext (fas D). */
 export function translateCriteria<T>(criteria: T, tr: KbTranslate): T {
   if (!Array.isArray(criteria)) return criteria;
-  return criteria.map((c) =>
-    c && typeof c === 'object' && typeof (c as { intakeQuestion?: unknown }).intakeQuestion === 'string'
-      ? { ...c, intakeQuestion: tr((c as { intakeQuestion: string }).intakeQuestion) }
-      : c,
+  return criteria.map((c) => {
+    if (!c || typeof c !== 'object') return c;
+    const row = c as { intakeQuestion?: unknown; description?: unknown };
+    const out: Record<string, unknown> = { ...(c as object) };
+    if (typeof row.intakeQuestion === 'string') out.intakeQuestion = tr(row.intakeQuestion);
+    if (typeof row.description === 'string') out.description = tr(row.description);
+    return out;
+  }) as T;
+}
+
+/** Översätt underlagslistans beskrivningar (fas D). Bilagetypen (kind) rörs inte. */
+export function translateEvidence<T>(evidence: T, tr: KbTranslate): T {
+  if (!Array.isArray(evidence)) return evidence;
+  return evidence.map((e) =>
+    e && typeof e === 'object' && typeof (e as { description?: unknown }).description === 'string'
+      ? { ...e, description: tr((e as { description: string }).description) }
+      : e,
   ) as T;
+}
+
+/**
+ * Översätt ett ansökningsschemas VISADE text (fas D): formulärets titel,
+ * sektionsrubriker, fältetiketter och vägledning.
+ *
+ * Rör aldrig key, canonicalKey, type, validering eller villkorslogik — och
+ * används ENDAST på presentationsvägen. Motorn (validering, förifyllnad,
+ * dokumentrendering) och textförslagen kör alltid mot det svenska schemat:
+ * ansökan som lämnas till myndigheten förblir svensk (I18N_PROGRAM §3).
+ */
+export function translateSchemaDef<T>(def: T, tr: KbTranslate): T {
+  if (!def || typeof def !== 'object') return def;
+  const d = def as { title?: unknown; sections?: unknown; fields?: unknown };
+  const out: Record<string, unknown> = { ...(def as object) };
+  if (typeof d.title === 'string') out.title = tr(d.title);
+  if (Array.isArray(d.sections)) {
+    out.sections = d.sections.map((s) =>
+      s && typeof s === 'object' && typeof (s as { title?: unknown }).title === 'string'
+        ? { ...s, title: tr((s as { title: string }).title) }
+        : s,
+    );
+  }
+  if (Array.isArray(d.fields)) {
+    out.fields = d.fields.map((f) => {
+      if (!f || typeof f !== 'object') return f;
+      const row = f as { label?: unknown; guidance?: unknown };
+      const field: Record<string, unknown> = { ...(f as object) };
+      if (typeof row.label === 'string') field.label = tr(row.label);
+      if (typeof row.guidance === 'string') field.guidance = tr(row.guidance);
+      return field;
+    });
+  }
+  return out as T;
 }

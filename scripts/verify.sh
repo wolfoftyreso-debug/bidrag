@@ -79,16 +79,17 @@ if [ "$db_up" = 1 ]; then
   BOOT_DB="verify_boot_$$"
   MIG_DB="verify_mig_$$"
   MIG_COUNT="$(ls apps/api/drizzle/*.sql | wc -l | tr -d ' ')"
-  # Fas B: förväntat antal rader i kb_translations = antal källtexter × språk,
-  # härlett ur seeden (aldrig hårdkodat). Utan denna räkning kan bootstrap.sql
-  # resa schemat UTAN översättningarna och alla icke-svenska vyer faller tyst
-  # tillbaka till svenska i produktion.
+  # Fas B+D: förväntat antal rader i kb_translations = översättningsminnets
+  # egen storlek × språk, härlett ur språkfilerna (aldrig hårdkodat, och
+  # aldrig en kopia av seedens källmängd — att minnet TÄCKER seeden är
+  # i18ncheck.mjs jobb). Utan denna räkning kan bootstrap.sql resa schemat
+  # UTAN översättningarna och alla icke-svenska vyer faller tyst tillbaka
+  # till svenska i produktion.
   KB_ROWS="$(node --experimental-strip-types -e '
-    const { opportunities } = await import("./apps/api/src/seed/data.ts");
-    const { KB_LOCALES } = await import("./apps/api/src/seed/i18n/index.ts");
-    const s = new Set();
-    for (const o of opportunities) { s.add(o.summary); for (const c of o.criteria ?? []) if (c.intakeQuestion) s.add(c.intakeQuestion); }
-    process.stdout.write(String(s.size * KB_LOCALES.length));
+    const { KB_LOCALES, KB_TRANSLATIONS } = await import("./apps/api/src/seed/i18n/index.ts");
+    const per = KB_LOCALES.map((l) => Object.keys(KB_TRANSLATIONS[l]).length);
+    if (new Set(per).size !== 1) { console.error("språkfilerna har olika storlek: " + per.join("/")); process.exit(1); }
+    process.stdout.write(String(per[0] * KB_LOCALES.length));
   ')"
 
   bootstrap_roundtrip() {

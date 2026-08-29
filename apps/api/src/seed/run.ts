@@ -3,7 +3,7 @@
  * Safe to run repeatedly: keyed on slugs/keys, existing rows are updated
  * with a new rule version only when content changed.
  */
-import { desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { fileURLToPath } from 'node:url';
 import { db, pool } from '../db/client.ts';
 import {
@@ -226,15 +226,47 @@ export async function runSeed(): Promise<{ opportunities: number; rulesUpdated: 
     }
   }
 
-  // I18N fas B: synka översättningsminnet (kb_translations) mot seedens
-  // språkfiler. Full ersättning per språk — deterministiskt och idempotent;
-  // föråldrade rader (ändrad källtext) försvinner i samma svep.
+  // I18N fas B+D: synka översättningsminnet (kb_translations) mot seedens
+  // språkfiler. Skillnadssynk, inte full ersättning: läs in språkets rader,
+  // skriv bara det som saknas, ändrats eller blivit föräldralöst. En redan
+  // synkad databas kostar en SELECT per språk och noll skrivningar — med
+  // 1141 källtexter × 10 språk gjorde delete-alla-och-skriv-om annars varje
+  // testfils seed märkbart långsam. Resultatet är detsamma: efter körningen
+  // innehåller tabellen exakt språkfilernas mängd.
   for (const locale of KB_LOCALES) {
-    const entries = Object.entries(KB_TRANSLATIONS[locale]);
-    await db.delete(kbTranslations).where(eq(kbTranslations.locale, locale));
-    for (let i = 0; i < entries.length; i += 200) {
+    const onskad = new Map(Object.entries(KB_TRANSLATIONS[locale]));
+    const befintliga = await db
+      .select({ sourceText: kbTranslations.sourceText, translatedText: kbTranslations.translatedText })
+      .from(kbTranslations)
+      .where(eq(kbTranslations.locale, locale));
+
+    const foraldralosa: string[] = [];
+    const oforandrade = new Set<string>();
+    const finnsRedan = new Set<string>();
+    for (const rad of befintliga) {
+      finnsRedan.add(rad.sourceText);
+      const onskadText = onskad.get(rad.sourceText);
+      if (onskadText === undefined) foraldralosa.push(rad.sourceText);
+      else if (onskadText === rad.translatedText) oforandrade.add(rad.sourceText);
+    }
+
+    for (let i = 0; i < foraldralosa.length; i += 200) {
+      await db
+        .delete(kbTranslations)
+        .where(and(eq(kbTranslations.locale, locale), inArray(kbTranslations.sourceText, foraldralosa.slice(i, i + 200))));
+    }
+
+    // Ändrad översättning = ta bort den gamla raden och skriv den nya.
+    const attSkriva = [...onskad].filter(([sourceText]) => !oforandrade.has(sourceText));
+    const attRensa = attSkriva.map(([sourceText]) => sourceText).filter((t) => finnsRedan.has(t));
+    for (let i = 0; i < attRensa.length; i += 200) {
+      await db
+        .delete(kbTranslations)
+        .where(and(eq(kbTranslations.locale, locale), inArray(kbTranslations.sourceText, attRensa.slice(i, i + 200))));
+    }
+    for (let i = 0; i < attSkriva.length; i += 200) {
       await db.insert(kbTranslations).values(
-        entries.slice(i, i + 200).map(([sourceText, translatedText]) => ({ locale, sourceText, translatedText })),
+        attSkriva.slice(i, i + 200).map(([sourceText, translatedText]) => ({ locale, sourceText, translatedText })),
       );
     }
   }

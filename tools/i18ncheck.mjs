@@ -61,16 +61,31 @@ for (const code of LOCALES) {
   }
 }
 
-// ── Fas B: kunskapsbasens översättningsminne (apps/api/src/seed/i18n/) ──────
-// Källmängden = alla summaries + alla unika intakefrågor i seeden. Varje
-// KB-språkfil måste täcka EXAKT den mängden: en ny/ändrad källtext utan
-// översättning fäller bygget (annars visas tyst svenska på det språket),
-// och en föräldralös nyckel avslöjar en källtext som ändrats i seeden.
-const { opportunities } = await import(join(ROOT, 'apps/api/src/seed/data.ts'));
+// ── Fas B+D: kunskapsbasens översättningsminne (apps/api/src/seed/i18n/) ────
+// Källmängden = HELA den användarvända kunskapsbasen: upptäcktslagret
+// (fas B — sammanfattningar och intakefrågor) OCH förberedelselagret
+// (fas D — villkorstexter, ansökningssätt, underlag, belopp samt
+// ansökningsschemanas titlar, sektioner, fältetiketter och vägledning).
+// Varje KB-språkfil måste täcka EXAKT den mängden: en ny/ändrad källtext
+// utan översättning fäller bygget (annars visas tyst svenska på det
+// språket), och en föräldralös nyckel avslöjar en källtext som ändrats i
+// seeden. Andelen av kunskapsbasen som ingår mäts av tools/i18ncov.mjs.
+const { opportunities, applicationSchemaDefs } = await import(join(ROOT, 'apps/api/src/seed/data.ts'));
 const { KB_LOCALES, KB_TRANSLATIONS } = await import(join(ROOT, 'apps/api/src/seed/i18n/index.ts'));
 const kbSources = new Set();
-for (const o of opportunities) kbSources.add(o.summary);
-for (const o of opportunities) for (const c of o.criteria ?? []) if (c.intakeQuestion) kbSources.add(c.intakeQuestion);
+const kbAdd = (t) => { if (typeof t === 'string' && t.trim()) kbSources.add(t); };
+for (const o of opportunities) {
+  kbAdd(o.summary);
+  kbAdd(o.applicationMethod);
+  kbAdd(o.amountNote);
+  for (const c of o.criteria ?? []) { kbAdd(c.intakeQuestion); kbAdd(c.description); }
+  for (const e of o.evidenceRequirements ?? []) kbAdd(e.description);
+}
+for (const { def } of applicationSchemaDefs ?? []) {
+  kbAdd(def.title);
+  for (const s of def.sections ?? []) kbAdd(s.title);
+  for (const f of def.fields ?? []) { kbAdd(f.label); kbAdd(f.guidance); }
+}
 
 for (const code of KB_LOCALES) {
   const dict = KB_TRANSLATIONS[code];

@@ -1,5 +1,5 @@
 /**
- * I18N fas B — kunskapsbasens texter på användarens språk.
+ * I18N fas B+D — kunskapsbasens texter på användarens språk.
  *
  * Kontraktet som testas:
  *  1. Accept-Language med en produktspråkkod ger översatt summary i
@@ -8,6 +8,8 @@
  *  3. Fallbacken är ÄRLIG: mekanismen är exakt träff på källtexten — en text
  *     utan översättning levereras på svenska i stället för att gissas.
  *  4. Officiella namn (titeln) översätts aldrig.
+ *  5. Fas D: villkorstext, ansökningssätt och underlagslista levereras också
+ *     översatta — men beloppets SIFFROR och källänken rörs aldrig.
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
@@ -83,5 +85,72 @@ describe('I18N fas B: kunskapsbasens texter per Accept-Language', () => {
     const svRow = (await fetchList()).find((o) => o.slug === SLUG)!;
     const ukRow = (await fetchList('uk-UA,uk;q=0.9,en;q=0.8')).find((o) => o.slug === SLUG)!;
     expect(ukRow.summary).toBe(KB_TRANSLATIONS.uk[svRow.summary]);
+  });
+});
+
+describe('I18N fas D: förberedelselagret per Accept-Language', () => {
+  async function detalj(acceptLanguage?: string) {
+    const res = await app.inject({
+      method: 'GET',
+      url: `/v1/funding-opportunities/${SLUG}`,
+      headers: { cookie: user.cookie, ...(acceptLanguage ? { 'accept-language': acceptLanguage } : {}) },
+    });
+    expect(res.statusCode).toBe(200);
+    return res.json() as {
+      opportunity: { applicationMethod: string; amountNote: string | null; amountSourceUrl: string | null };
+      ruleVersion: { criteria: { description?: string }[]; evidenceRequirements: { description?: string }[] } | null;
+    };
+  }
+
+  it('översätter ansökningssättet (så ansöker du) — so', async () => {
+    const sv = await detalj();
+    const so = await detalj('so');
+    expect(sv.opportunity.applicationMethod).toBeTruthy();
+    expect(so.opportunity.applicationMethod).toBe(KB_TRANSLATIONS.so[sv.opportunity.applicationMethod]);
+    expect(so.opportunity.applicationMethod).not.toBe(sv.opportunity.applicationMethod);
+  });
+
+  it('översätter villkorstexterna i kriterierna — ti', async () => {
+    const sv = await detalj();
+    const ti = await detalj('ti');
+    const svBeskrivningar = (sv.ruleVersion?.criteria ?? [])
+      .map((c) => c.description)
+      .filter((d): d is string => typeof d === 'string' && d.trim().length > 0);
+    expect(svBeskrivningar.length).toBeGreaterThan(0);
+    const tiBeskrivningar = (ti.ruleVersion?.criteria ?? []).map((c) => c.description);
+    svBeskrivningar.forEach((svText, i) => {
+      expect(tiBeskrivningar[i]).toBe(KB_TRANSLATIONS.ti[svText]);
+    });
+  });
+
+  it('beloppets siffror och källänken rörs aldrig av översättningen', async () => {
+    const sv = await detalj();
+    const fa = await detalj('fa');
+    // Källänken är myndighetens egen — den är identisk på alla språk.
+    expect(fa.opportunity.amountSourceUrl).toBe(sv.opportunity.amountSourceUrl);
+    if (sv.opportunity.amountNote) {
+      const siffror = (t: string) => (t.match(/\d[\d\u00a0 ]*/g) ?? []).map((x) => x.replace(/[^\d]/g, ''));
+      // Samma sifferuppgifter i samma ordning — bara meningen runt dem är översatt.
+      expect(siffror(fa.opportunity.amountNote!)).toEqual(siffror(sv.opportunity.amountNote));
+      expect(fa.opportunity.amountNote).not.toBe(sv.opportunity.amountNote);
+    }
+  });
+
+  it('ansökningsschemat levereras översatt utan att fältnycklarna ändras — es', async () => {
+    const { translateSchemaDef } = await import('../src/services/kbI18n.ts');
+    const { kbTranslator } = await import('../src/services/kbI18n.ts');
+    const { applicationSchemaDefs } = await import('../src/seed/data.ts');
+    const def = applicationSchemaDefs.find((d) => d.opportunitySlug === SLUG)?.def as
+      | { title: string; fields: { key: string; label: string }[] }
+      | undefined;
+    if (!def) return; // stödet saknar kurerat schema — inget att prova
+    const tr = await kbTranslator('es');
+    const ut = translateSchemaDef(def, tr);
+    expect(ut.title).toBe(KB_TRANSLATIONS.es[def.title]);
+    ut.fields.forEach((f, i) => {
+      // Nyckeln — motorns kontrakt — är oförändrad; etiketten är översatt.
+      expect(f.key).toBe(def.fields[i].key);
+      expect(f.label).toBe(KB_TRANSLATIONS.es[def.fields[i].label]);
+    });
   });
 });

@@ -41,7 +41,7 @@ en connector saknas eller saknar en förmåga.
    anslutningen, aldrig via poolern.
 4. **Verifiera räkningarna** — allt annat är ett fel:
    `funding_opportunities=85, funding_authorities=36,
-   application_schemas=71, sources=37, kb_translations=2230,
+   application_schemas=71, sources=37, kb_translations=11410,
    drizzle.__drizzle_migrations=14`.
 5. **Objektlagring**: ingen bucket. `STORAGE_DRIVER=postgres` lägger
    dokument/uppladdningar i tabellen `storage_objects` i Neon — privat, åtkomst

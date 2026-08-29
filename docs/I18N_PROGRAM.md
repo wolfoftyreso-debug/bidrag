@@ -1,7 +1,6 @@
 # I18N-programmet — flerspråkig Bidragskoll
 
-**Status: fas A, A2, B och C v1 levererade; fas D (förberedelselagret)
-är identifierad men inte påbörjad — se §Täckningen i siffror.** Styrande dokument för allt
+**Status: fas A, A2, B, C v1 och D levererade.** Styrande dokument för allt
 språkarbete. Beslut 2026-08-28: Bidragskoll ska finnas fullt utbyggd på samma
 språkpalett som informationsverige.se.
 
@@ -72,7 +71,8 @@ Interna koden `prs` renderas som `lang="fa-AF"` i dokumentroten (BCP 47).
   Kuratorsverktygen (Admin, RuleEditor) förblir svenska — intern yta.
 - **Fas B — LEVERERAD 2026-08-28**: kunskapsbasens innehåll — översättnings-
   minne i databasen (tabell `kb_translations`, migrering 0014) för stöd-
-  sammanfattningar och intakefrågor (223 källtexter × 10 språk, seedade ur
+  sammanfattningar och intakefrågor (223 källtexter × 10 språk vid leverans;
+  utökat till 1141 i fas D nedan, seedade ur
   `apps/api/src/seed/i18n/`). Levereras via API:t per `Accept-Language`
   (webben skickar användarens språkval ur språkväljaren). Nyckeln är den
   EXAKTA svenska källtexten: ändras källan (t.ex. kuratorsredigering) missar
@@ -105,59 +105,63 @@ Interna koden `prs` renderas som `lang="fa-AF"` i dokumentroten (BCP 47).
 
   Demon: efter fas B/C (bundlar samma innehåll) — ej påbörjad.
 
-## Täckningen i siffror (mätt 2026-08-29)
+## Täckningen i siffror (mätt 2026-08-29, efter fas D)
 
-`tools/i18ncheck.mjs` vaktar att översättningsminnet är **komplett mot sin
-egen källmängd** — men säger ingenting om hur stor del av kunskapsbasen den
-mängden utgör. Den andelen sjunker varje gång ny svensk text kureras in.
-`npm run i18n:cov` mäter just det, per innehållstyp:
+`npm run i18n:cov` mäter hur stor del av kunskapsbasens användarvända text
+som finns i översättningsminnet — alltså vad som faktiskt levereras på de tio
+språken, inte bara att minnet är internt komplett:
 
 | Innehållstyp | Översatt | Andel |
 |---|---|---|
 | `summary` — stödets sammanfattning | 85/85 | **100 %** |
 | `criteria.intakeQuestion` — intagsfråga | 179/179 | **100 %** |
-| `criteria.description` — villkorstext | 0/348 | 0 % |
-| `schema.fieldLabel` — fältetikett | 2/473 | 0 % |
-| `schema.sectionTitle` — formulärsektion | 0/246 | 0 % |
-| `schema.fieldGuidance` — fältvägledning | 0/157 | 0 % |
-| `applicationMethod` — så ansöker du | 0/85 | 0 % |
-| `evidence.description` — underlag | 0/74 | 0 % |
-| `schema.title` — formulärets titel | 0/71 | 0 % |
-| `amountNote` — belopp | 0/7 | 0 % |
-| **Totalt** | **266/1725** | **15 %** |
+| `criteria.description` — villkorstext | 348/348 | **100 %** |
+| `applicationMethod` — så ansöker du | 85/85 | **100 %** |
+| `evidence.description` — underlag | 74/74 | **100 %** |
+| `amountNote` — belopp | 7/7 | **100 %** |
+| `schema.title` — formulärets titel | 71/71 | **100 %** |
+| `schema.sectionTitle` — formulärsektion | 246/246 | **100 %** |
+| `schema.fieldLabel` — fältetikett | 473/473 | **100 %** |
+| `schema.fieldGuidance` — fältvägledning | 157/157 | **100 %** |
+| **Totalt** | **1725/1725** | **100 %** |
 
-Bilden är inte att fas B är halvgjord — fas B levererade exakt det den
-lovade. Bilden är att **allt som kurerats in efteråt är enspråkigt**:
-F-SPECIFIKs ansökningsscheman (473 fält), underlagslistorna, ansökningssätten
-och F-BELOPPs sju belopp tillkom efter fas B och ligger utanför minnet.
+Före fas D var siffran 15 % (266/1725): fas B levererade upptäckten, medan
+allt som kurerats in efteråt — F-SPECIFIKs ansökningsscheman, underlags-
+listorna, ansökningssätten och F-BELOPPs sju belopp — var enspråkigt. En
+somalisktalande användare fick intagsdialogen på somaliska och sedan ett
+svenskt ansökningsformulär. Den luckan är stängd.
 
-**Konsekvensen i produkten, konkret:** en somalisktalande användare får
-intagsdialogen och matchningarnas sammanfattningar på somaliska — och sedan
-ett ansökningsformulär på svenska. Upptäckten är översatt, förberedelsen är
-det inte. Det är den enskilt största återstående luckan i språkarbetet.
+## Fas D — förberedelselagret (LEVERERAD 2026-08-29)
 
-## Fas D — förberedelselagret (EJ PÅBÖRJAD)
+918 nya källtexter × 10 språk (översättningsminnet: 223 → 1141 poster).
+Omfattning: ansökningsschemanas titlar, sektionsrubriker, fältetiketter och
+vägledning; `applicationMethod`; underlagslistorna; villkorstexterna; de sju
+kurerade beloppsmeningarna.
 
-Omfattning i prioritetsordning, störst nytta först:
+**Leveransen** (samma `kb_translations`, samma källtextsnyckel, samma ärliga
+svenska fallback):
 
-1. **Ansökningsschemanas fältetiketter och vägledning** (876 förekomster,
-   462 unika källtexter) — det användaren faktiskt fyller i.
-2. **`applicationMethod`** (63 unika) — meningen "så ansöker du".
-3. **`evidence.description`** (54 unika) — underlagslistan före utklicket.
-4. **`criteria.description`** (263 unika) — villkorstexten. Störst volym,
-   minst brådska: intagsfrågan bär redan innebörden på valt språk.
-5. **`amountNote`** (7) — beloppet självt är siffror; meningen runt det
-   översätts, aldrig talen eller källan.
+- `GET /v1/funding-opportunities/:id` — `summary`, `applicationMethod`,
+  `amountNote`, kriteriernas `intakeQuestion` **och** `description`, samt
+  underlagslistans `description`.
+- `GET /v1/applications/:id` — hela ansökningsschemat via
+  `translateSchemaDef`: titel, sektionsrubriker, fältetiketter, vägledning.
 
-Ärlighetsgränserna gäller oförändrat: officiella namn står kvar på svenska,
-det **färdiga dokumentet till myndigheten förblir svenskt** (§3), och
-etiketten säger det. Fas D översätter alltså *vägledningen fram till*
-ansökan — inte ansökan.
+**Gränserna, oförändrade och testade** (`apps/api/test/kbI18n.test.ts`):
 
-Arkitekturen räcker som den är: samma `kb_translations`-tabell, samma
-källtextsnyckel, samma självreglerande fallback. Det som krävs är kurering,
-inte kod — plus en utvidgning av `translateCriteria`-motsvarigheten till
-schema- och underlagsleveransen i `apps/api/src/routes/`.
+1. **Ansökan till myndigheten förblir svensk.** Översättningen sker enbart
+   på presentationsvägen. Validering, förifyllnad, textförslag och
+   dokumentrenderingen kör mot det svenska schemat — det som lämnas in är
+   svenskt, och etiketten säger det.
+2. **Fältnycklar rörs aldrig.** `key`, `canonicalKey`, `type`, gränsvärden
+   och villkorslogik är motorns kontrakt och passerar oöversatta.
+3. **Beloppets siffror och källänken rörs aldrig.** Bara meningen runt talen
+   översätts; `amountSourceUrl` pekar fortsatt på myndighetens svenska sida.
+4. **Officiella namn står kvar på svenska** inne i den översatta meningen
+   (Försäkringskassan, CSN, Mina sidor, e-legitimation, barnbidraget …).
+
+Vakten `tools/i18ncheck.mjs` täcker nu hela den mängden: en ny eller ändrad
+källtext var som helst i förberedelselagret utan översättning fäller bygget.
 
 ## Granskningsprotokollet
 

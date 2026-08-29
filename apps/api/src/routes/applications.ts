@@ -19,6 +19,7 @@ import { config } from '../config.ts';
 import { WRITER_ROLES } from '../plugins/auth.ts';
 import { applicationCredits } from './payments.ts';
 import { createCase, getCaseSchema, reviewCase, saveAnswers, transitionCase, validateCase } from '../services/applications.ts';
+import { kbTranslator, resolveKbLocale, translateSchemaDef } from '../services/kbI18n.ts';
 import { activeGenerationProvider } from '../services/generation.ts';
 import { findAdapter, hashPayload, type SubmissionPayload } from '../services/submission.ts';
 
@@ -161,9 +162,16 @@ export async function applicationRoutes(app: FastifyInstance) {
     const reporting = await db.select().from(reportingRequirements).where(eq(reportingRequirements.caseId, caseRow.id));
     const validation = await validateCase(caseRow);
 
+    // I18N fas D: formulärets titel, sektionsrubriker, fältetiketter och
+    // vägledning på användarens språk. Endast presentationen översätts —
+    // validering, förifyllnad, textförslag och det färdiga dokumentet kör
+    // mot det svenska schemat, för ansökan till myndigheten är svensk
+    // (docs/I18N_PROGRAM.md §3).
+    const tr = await kbTranslator(resolveKbLocale(request.headers['accept-language']));
+
     return {
       application: caseRow,
-      schema,
+      schema: translateSchemaDef(schema, tr),
       budgetLines: lines,
       documents: docs,
       submissions: subs,
