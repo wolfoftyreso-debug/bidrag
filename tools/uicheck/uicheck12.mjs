@@ -52,11 +52,22 @@ if (await page.locator('.blurred-name').count() > 0) { console.log('FEL: blurrad
 if (/Lås upp din bidragsanalys|låser du upp rapporten/i.test(report)) { console.log('FEL: betalvägg-CTA framför resultatet'); process.exit(1); }
 console.log('2. Open Discovery: rapporten visas gratis (inga blurrade namn, ingen upplåsnings-CTA) ✓');
 
-// 3. Funktionsnedsättningsspårets följdfrågor finns direkt i rapporten.
-for (const probe of ['omvårdnad', 'hot mot livet']) {
-  if (!report.includes(probe)) { console.log(`FEL: förväntad följdfråga saknas ("${probe}")`); process.exit(1); }
+// 3. Funktionsnedsättningsspårets STÖD finns i rapporten.
+//    OBS: kontrollen får INTE leta efter en enskild följdfråga i DOM:en.
+//    F-STABIL visar högst sex obesvarade frågor åt gången, sorterade efter
+//    informationsvärde (§7) — med ~55 öppna frågor för den här personan
+//    hamnar en enskild fråga med rätta utanför listan. Det som ska bevisas
+//    är att spårets stöd faktiskt syns gratis, och att frågelistan är
+//    kapad och räknad i stället för oändlig.
+const spar = ['Omvårdnadsbidrag', 'Merkostnadsersättning', 'Närståendepenning', 'Bilstöd', 'Aktivitetsersättning'];
+for (const stod of spar) {
+  if (!report.includes(stod)) { console.log(`FEL: funktionsnedsättningsstödet saknas i rapporten ("${stod}")`); process.exit(1); }
 }
-console.log('3. Funktionsnedsättningsspårets följdfrågor i rapporten ✓');
+const raknare = report.match(/Några frågor kvar \((\d+)\)/);
+if (!raknare) { console.log('FEL: frågeräknaren saknas — F-STABIL ska visa hur många frågor som återstår'); process.exit(1); }
+const synliga = await page.locator('.q-open, .fraga-oppen, [data-open-question]').count();
+if (synliga > 6) { console.log(`FEL: ${synliga} obesvarade frågor visas — F-STABIL tillåter högst 6`); process.exit(1); }
+console.log(`3. Funktionsnedsättningsstöden syns gratis; frågelistan kapad (räknare: ${raknare[1]}) ✓`);
 
 await browser.close();
 console.log('UICHECK12 KLAR');

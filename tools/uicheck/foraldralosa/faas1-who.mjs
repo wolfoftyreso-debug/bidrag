@@ -2,7 +2,7 @@
  * FAS 1 (Master Control Prompt) — bevis för hybrid-ingången "Vem gäller det?"
  * + enskild firma-dubbelkontexten. Kräver körande api (3100, mock) + web (5173).
  */
-import { launchChromium, artifactsDir } from '../lib/browser.mjs';
+import { launchChromium, artifactsDir } from '../../lib/browser.mjs';
 
 const BASE = 'http://localhost:5173';
 const SHOT = artifactsDir;

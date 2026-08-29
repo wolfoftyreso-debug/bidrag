@@ -1,10 +1,10 @@
 /**
  * 30 simulerade användare genom HELA flödet mot riktiga API:t:
  * konto → situationsprofil (exakt intagets härledningar) → matchning → teaser
- * → 39 kr-upplåsning (mock) → full analys → ev. följdfrågor → ev. dokumentköp
+ * → analys (gratis, Open Discovery) → ev. följdfrågor → ev. ansökningsköp
  * → dokument → PDF → kvitton. Loggar allt till JSON för utvärdering, inklusive
  * automatiska rimlighetskontroller (fel frågor till fel personer, tomma
- * resultat, teaser-läckage, kvittosummor).
+ * resultat, betalvägg före värde, kvittosummor).
  */
 import { artifactsDir } from './lib/browser.mjs';
 import { writeFile } from 'node:fs/promises';
@@ -201,21 +201,37 @@ for (const p of PERSONAS) {
     const projectId = proj.json.project.id;
     await call(cookie, 'POST', `/v1/projects/${projectId}/matches`, {});
 
-    // 3. Teaser (gratis upptäckt)
-    const teaser = await call(cookie, 'GET', `/v1/projects/${projectId}/matches`);
-    r.teaser = { total: teaser.json.total, counts: teaser.json.counts, excluded: teaser.json.excludedCount };
-    const teaserRaw = JSON.stringify(teaser.json);
-    for (const leak of ['Försäkringskassan', 'Bostadsbidrag', 'Majblomman', 'sourceUrl']) {
-      if (teaserRaw.includes(leak)) anomalies.push(`${p.id}: TEASERLÄCKA "${leak}"`);
+    // 3. Open Discovery — den fria upptäckten.
+    //
+    // Kontrollen var tidigare INVERTERAD: den flaggade myndighetsnamn,
+    // stödnamn och sourceUrl som "TEASERLÄCKA", ett arv från den borttagna
+    // 39 kr-betalväggen. Under Open Discovery är det tvärtom KRAVET att de
+    // syns gratis (docs/PRODUCT_DOCTRINE.md; tools/doctrine.mjs vaktar det).
+    // Nu kontrolleras rätt sak: att den fria vyn faktiskt bär värdet.
+    const oppen = await call(cookie, 'GET', `/v1/projects/${projectId}/matches`);
+    r.teaser = { total: oppen.json.total, counts: oppen.json.counts, excluded: oppen.json.excludedCount };
+    const oppenRaw = JSON.stringify(oppen.json);
+    const rader = oppen.json.matches ?? [];
+    if (rader.length > 0) {
+      if (!rader.some((m) => typeof m.title === 'string' && m.title.length > 0)) {
+        anomalies.push(`${p.id}: OPEN DISCOVERY — matchning utan stödnamn`);
+      }
+      if (!rader.some((m) => typeof m.sourceUrl === 'string' && m.sourceUrl.startsWith('https://'))) {
+        anomalies.push(`${p.id}: OPEN DISCOVERY — ingen officiell källänk i den fria vyn`);
+      }
+    }
+    for (const betalvagg of ['Lås upp din bidragsanalys', 'analysis-unlock', '39 kr']) {
+      if (oppenRaw.includes(betalvagg)) anomalies.push(`${p.id}: BETALVÄGG FÖRE VÄRDE "${betalvagg}"`);
     }
 
-    // 4. 39 kr-upplåsning
-    const unlock = await call(cookie, 'POST', `/v1/projects/${projectId}/analysis-unlock`, { immediateDeliveryConsent: true });
-    await call(cookie, 'POST', `/v1/payments/${unlock.json.paymentId}/mock-confirm`);
-
-    // 5. Full analys
-    const full = await call(cookie, 'GET', `/v1/projects/${projectId}/matches`);
-    const matches = full.json.matches ?? [];
+    // 4. Analysen — SAMMA vy som den fria upptäckten.
+    //
+    // Här låg tidigare ett anrop till POST /v1/projects/:id/analysis-unlock
+    // följt av en mock-betalning. Den endpointen finns inte längre (404):
+    // 39 kr-upplåsningen togs bort med Open Discovery. Anropet misslyckades
+    // tyst och simuleringen påstod ändå att den mätte en "upplåst" analys.
+    // Under Open Discovery ÄR den fria vyn analysen — inget steg emellan.
+    const matches = rader;
     // Speglar serverns kalibrerade likelihoodOf: viktat kriterium som fallerar ⇒ "möjlig".
     const lik = (m) => {
       if (m.eligibilityStatus !== 'eligible') return m.eligibilityStatus === 'unknown' ? 'utreds' : 'utesluten';

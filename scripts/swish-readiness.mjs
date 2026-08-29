@@ -14,7 +14,7 @@
  * Skriptet skapar konto/fixture via publika API:t, startar en riktig
  * Swish-betalning och pollar tills betalningen bekräftats eller timeout.
  * Mot MSS bekräftas betalningen automatiskt av simulatorn; i produktion
- * betalar en människa 39 kr på riktigt (och bör därefter återbetalas
+ * betalar en människa 19 kr på riktigt (och bör därefter återbetalas
  * manuellt i Swish-portalen — noteras i utskriften).
  */
 const BASE = process.env.BASE_URL ?? 'http://localhost:3000';
@@ -96,4 +96,4 @@ if (r.amountNetMinor + r.vatAmountMinor !== r.amountGrossMinor) fail('momsmatten
 ok(`kvitto ${r.receiptNumber}: ${r.amountGrossMinor} öre varav moms ${r.vatAmountMinor} öre · mailstatus: ${r.emailStatus}`);
 
 console.log('\nSWISH PRODUCTION-READINESS: PASSED');
-console.log('OBS: om detta var en riktig betalning — återbetala 39 kr i Swish-portalen och verifiera kvittomailet i inkorgen.');
+console.log('OBS: om detta var en riktig betalning — återbetala 19 kr i Swish-portalen och verifiera kvittomailet i inkorgen.');

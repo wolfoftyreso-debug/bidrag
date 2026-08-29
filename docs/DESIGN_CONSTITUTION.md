@@ -39,7 +39,7 @@ CTA-skuggan), knappar (primär/sekundär/subtil med medveten lyft-hierarki),
 svarsval (.choice + .ikon + framhävd nyckelfråga med illustrationsscen),
 fält, badges, alerts, matchrad + förklaring, tabeller, kv-listor, progress,
 frågelistans tre lägen (F-STABIL), inforutan (F-INFO), betalyta, blurmask,
-den inbundna låsta rapporten (F-EXKLUSIV), illustrationsbibliotek 22 figurer
+den inbundna låsta rapporten (F-EXKLUSIV), illustrationsbibliotek 30 figurer
 med regler (max 3 färger, kontur i deep, varm markrad, aldrig ren dekor, en
 figur per skärm, alltid tom alt).
 

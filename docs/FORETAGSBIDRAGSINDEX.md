@@ -10,7 +10,9 @@ rapporten, nyhetsbrevet, API:t, sociala datapunkter, widgets och medieunderlag
 
 Modulen ska "börja från befintlig databas". Den är:
 
-- **72 kurerade stöd**, varav **25 riktar sig till företag/ekonomisk förening**.
+- **85 kurerade stöd**, varav **27 riktar sig till företag/ekonomisk förening**
+  (siffrorna beräknas av `computeFundingIndex` ur seeden — kontrollera dem med
+  `npm run seo:build` i stället för att lita på den här raden).
 - **Verifierat maxbelopp känt för 1 av 25** (4 % täckning). "4,82 miljarder"
   vore ren fabrikation — publiceras aldrig.
 - **Ingen tidsserie, inga dagliga snapshots, inga change-events, inga

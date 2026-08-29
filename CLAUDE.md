@@ -29,14 +29,14 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
   (`docs/APPLICATION-INTELLIGENCE.md`). 90 enhetstester.
 - **`apps/api`** — Fastify 5 + Drizzle + PostgreSQL 16, modulär monolit:
   auth/tenancy, kunskapsgraf (85 stöd, 36 finansiärer, 71 ansökningsscheman,
-  37 källor), matchning, ansökningar, dokumentvalv, betalningar (Stripe Checkout
+  38 källor), matchning, ansökningar, dokumentvalv, betalningar (Stripe Checkout
   + Swish Handel-adaptrar + mock), kvitton med moms, GDPR-självservice, kurators-API,
   bakgrundsjobb. 213 integrationstester.
 - **`apps/web`** — svensk React-SPA (Vite): onboarding en-fråga-per-skärm,
   analys/teaser, köpflöden med ångerrättssamtycke, ansökningsarbetsyta,
   dokumentstudio, Mina köp/kvitton, admin.
 - **`demo/`** — fristående demo som kör den riktiga motorn i webbläsaren
-  (ingen server), med 7 automatiska webbläsarkontroller.
+  (ingen server), med 10 automatiska webbläsarkontroller.
 - **Deploy-beredskap** — Vercel serverless-ingång (`api/index.ts`),
   `vercel.json` (bygge, SPA-routning, 5 cron-jobb), `deploy/bootstrap.sql`,
   Dockerfile + `deploy/k8s/` som alternativ väg, CI grön.
@@ -128,8 +128,8 @@ npm test                      # core + api; api-tester kör mot TEST_DATABASE_UR
 npm run lint                  # = tsc --noEmit (ingen separat linter är konfigurerad)
 npm run typecheck             # kräver att core är byggt
 npm run demo:build            # bygger demon → artifacts/demo/demo.html (ingen databas)
-npm run demo:check            # 7 webbläsarkontroller av demon (kräver Chromium + byggd demo)
-npm run verify:ui             # 13 genomklickningar — kräver KÖRANDE api (PORT=3100,
+npm run demo:check            # 10 webbläsarkontroller av demon (kräver Chromium + byggd demo)
+npm run verify:ui             # 5 genomklickningar — kräver KÖRANDE api (PORT=3100,
                               # PAYMENTS_MOCK_ENABLED=true) + dev:web + Chromium
 npm run verify:sim30          # 30 simulerade användare — kräver körande api som ovan
 npm run openapi -w apps/api   # regenererar docs/openapi.json efter API-ändringar

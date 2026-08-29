@@ -1,5 +1,5 @@
 /**
- * uicheck13 — prismodellen i riktiga webbappen (39 kr analys + 19 kr/ansökan):
+ * uicheck13 — prismodellen i riktiga webbappen (Open Discovery: gratis analys + 19 kr/ansökan):
  *  1. stödsidans knapp heter "Förbered ansökan i systemet"
  *  2. utan betald kredit visas köpflödet med priset — inte ett felmeddelande
  *  3. simulerad betalning → ansökan skapas → vi hamnar på ansökningssidan

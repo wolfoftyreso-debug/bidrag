@@ -3,7 +3,7 @@
  * prioriterade luckor) → komplettera via API → Granska igen (READY med
  * kriteriematris, evidensnivåer, INTERNAL_ESTIMATE och diligence).
  */
-import { launchChromium, artifactsDir } from '../lib/browser.mjs';
+import { launchChromium, artifactsDir } from '../../lib/browser.mjs';
 
 const BASE = 'http://localhost:5173';
 const S = artifactsDir;

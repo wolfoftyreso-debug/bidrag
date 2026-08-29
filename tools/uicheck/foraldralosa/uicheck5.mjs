@@ -3,7 +3,7 @@
  * hämta token ur databasen (mailet är 'skipped' i dev), byt lösenord på
  * /aterstall/:token, verifiera att gamla lösenordet är dött och nya funkar.
  */
-import { launchChromium, artifactsDir } from '../lib/browser.mjs';
+import { launchChromium, artifactsDir } from '../../lib/browser.mjs';
 import { execSync } from 'node:child_process';
 
 const BASE = 'http://localhost:5173';

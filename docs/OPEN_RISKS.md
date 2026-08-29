@@ -45,8 +45,8 @@ Skala: BLOCKER (extern, hindrar produktion) · HIGH · MEDIUM · LOW.
 
 | Id | Risk | Prio |
 |---|---|---|
-| T1 | Delad rate-limit-store saknas i serverless (per-instans-räknare) — LIMITATIONS §12 | MEDIUM |
-| T2 | SSRF DNS-rebinding-residual — LIMITATIONS §13 (låg exponering, data_curator-gated) | LOW |
+| T1 | Delad rate-limit-store saknas i serverless (per-instans-räknare) — LIMITATIONS §13 | MEDIUM |
+| T2 | SSRF DNS-rebinding-residual — LIMITATIONS §14 (låg exponering, data_curator-gated) | LOW |
 | T3 | Fyra måttliga dev-beroendesårbarheter i drizzle-kits kedja — LIMITATIONS §11 | LOW (medvetet accepterat) |
 | T4 | Innehållet AI-kurerat i väntan på mänsklig granskning (`ai_curated`-stämpel) | MEDIUM (ärligt exponerat) |
 | T5 | DPIA/juristgranskning återstår | MEDIUM (dokumenterat) |

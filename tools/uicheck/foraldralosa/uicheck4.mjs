@@ -2,7 +2,7 @@
  * Betalväggsflödet i webappen: teaser (utan läckage) → simulerad betalning →
  * full analys med disclaimer.
  */
-import { launchChromium, artifactsDir } from '../lib/browser.mjs';
+import { launchChromium, artifactsDir } from '../../lib/browser.mjs';
 
 const BASE = 'http://localhost:5173';
 const SHOT = artifactsDir;

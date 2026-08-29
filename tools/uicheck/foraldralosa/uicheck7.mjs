@@ -3,7 +3,7 @@
  * dokumentstudio → paketköp (49 kr, simulerat) → formulär → färdigt dokument →
  * PDF-nedladdning → kvitto för paketet under Mina köp.
  */
-import { launchChromium, artifactsDir } from '../lib/browser.mjs';
+import { launchChromium, artifactsDir } from '../../lib/browser.mjs';
 
 const BASE = 'http://localhost:5173';
 const SHOT = artifactsDir;

@@ -132,7 +132,7 @@ httpOnly+secure+SameSite=Lax-cookies + `originGuard` (CSRF), CRON_SECRET-bearer,
 storage server-side service-nyckel (aldrig i klient), RLS deny-all (0005),
 scrypt, roterande refresh (32 slumpbyte + SHA-256), rate-limit (registrering
 ~10/min). Adversariell svit + red team-pass 03 körda (tasks #79–80). Kända
-residualer: LIMITATIONS §12 (delad rate-limit-store i serverless), §13 (SSRF
+residualer: LIMITATIONS §13 (delad rate-limit-store i serverless), §14 (SSRF
 DNS-rebinding-residual) — dokumenterade, låg exponering.
 
 ## 9. SEO-rendering (§8/§17) — VERIFIERAD

@@ -401,9 +401,9 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | `npm run db:migrate` | Applicerar migreringarna i apps/api/drizzle/ (idempotent). |
 | `npm run db:seed` | Seedar kunskapsbasen (72 stöd; idempotent, append-only regelversioner). |
 | `npm run demo:build` | Bygger den fristående demon → artifacts/demo/demo.html (ingen databas). |
-| `npm run demo:check` | Demons 7 webbläsarkontroller (kräver Chromium + byggd demo). |
+| `npm run demo:check` | Demons 10 webbläsarkontroller (kräver Chromium + byggd demo). |
 | `npm run verify:sim30` | 30 simulerade användare genom hela flödet — kräver körande API (:3100, mock på). |
-| `npm run verify:ui` | 13 UI-genomklickningar — kräver körande API + dev:web + Chromium. |
+| `npm run verify:ui` | 5 UI-genomklickningar (uicheck2/8/9/12/13) — kräver körande API + dev:web + Chromium. Föräldralösa skript ligger i tools/uicheck/foraldralosa/ med orsak per skript. |
 | `npm run verify:schemas` | Ansökningsschemanas täckning mot stöden — kräver körande API. |
 | `npm run verify:relevans` | Relevansrevisionen: 10 personor mot alla stöd — inga sektorsgrindade stöd utanför personens situation, inga överexkluderingar (F-RELEVANS). Ingen server krävs. |
 | `npm run verify:smoke` | Prismodellens kedja (402 → 19 kr → ansökan) — kräver körande API. |

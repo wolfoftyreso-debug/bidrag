@@ -94,13 +94,16 @@ path, deploy the ClamAV daemon alongside the API; the Vercel path has no
 ClamAV equivalent — uploads there are honestly marked `scan_unavailable`
 (open item).
 
-## 6. Object storage: Supabase Storage in the primary path
+## 6. Object storage: in-house Postgres in the primary path
 
-Resolved for the Vercel + Supabase path: documents live in a private
-Supabase Storage bucket (`STORAGE_DRIVER=supabase`, `services/storage.ts` is
-the driver boundary). In the container path documents live on a volume
-(`UPLOAD_DIR`); move to S3-compatible storage if that path ever needs
-multi-node.
+Resolved for the primary Vercel + Neon path: documents live in the database
+itself (`STORAGE_DRIVER=postgres`, table `storage_objects` — private, no
+bucket, nothing exposed publicly). `services/storage.ts` is the driver
+boundary; `supabase` remains as an alternative driver, and in the container
+path documents live on a volume (`UPLOAD_DIR`) — move that to S3-compatible
+storage if it ever needs multi-node. Storing binaries in Postgres is a
+deliberate trade: one fewer vendor and one fewer credential, at the cost of
+database size and egress. Revisit if document volume grows past a few GB.
 
 ## 7. GDPR self-service — closed (operator's DPIA remains)
 
@@ -260,7 +263,7 @@ shipped: focus management in the one-question intake, progressbar semantics,
 aria-live on payment status — the rest of the app is unreviewed); external
 user testing beyond one session; commercial validation with real customers.
 
-## 12. Rate limiting is per-instance in the serverless model (red team RT03)
+## 13. Rate limiting is per-instance in the serverless model (red team RT03)
 
 The API's rate limits (10/min register/login, 5/min password-reset, 300/min
 global — `apps/api/src/server.ts`, `routes/auth.ts`) use `@fastify/rate-limit`
@@ -277,7 +280,7 @@ into `@fastify/rate-limit` — tracked as backlog M13. Until then the limits are
 best-effort per instance, and this is the accurate statement (SECURITY.md
 corrected accordingly).
 
-## 13. SSRF residual: DNS rebinding on source fetch (red team RT03)
+## 14. SSRF residual: DNS rebinding on source fetch (red team RT03)
 
 Source fetching (`apps/api/src/services/ingestion.ts`) validates the URL and
 now re-validates every redirect hop against private-address blocklists
@@ -290,7 +293,7 @@ exposure is low: registering a source URL requires the `data_curator` role,
 which is not self-service (RT03-S1), so only a compromised legitimate source
 could trigger it. Tracked as backlog M14.
 
-## 14. Translations are AI-made and unreviewed (I18N fas A–D)
+## 15. Translations are AI-made and unreviewed (I18N fas A–D)
 
 The web app is available in 11 languages, and as of fas B (2026-08-28) the
 knowledge base's user-facing texts — benefit summaries and intake questions

@@ -3,7 +3,7 @@
  * betalvägg utan mailfält/mail-löften, Mina köp med kvittodokument,
  * och ärligt fail-closed när lösenordsåterställning saknar kanal.
  */
-import { launchChromium, artifactsDir } from '../lib/browser.mjs';
+import { launchChromium, artifactsDir } from '../../lib/browser.mjs';
 
 const BASE = 'http://localhost:5173';
 const SHOT = artifactsDir;

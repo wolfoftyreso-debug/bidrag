@@ -1,5 +1,5 @@
 /** Företagarspåret i RIKTIGA webbappen: intag → driftsform → rapportsektion. */
-import { launchChromium } from '../lib/browser.mjs';
+import { launchChromium } from '../../lib/browser.mjs';
 const stamp = Date.now();
 const browser = await launchChromium();
 const page = await browser.newPage({ viewport: { width: 1100, height: 950 } });
