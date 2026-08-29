@@ -416,6 +416,7 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | `npm run gate:0` | Zero-Compromise Gate, deterministiska blocken (docs/ZERO_COMPROMISE_GATE.md): teknisk totalcrawl, bildinventering, intern länkgraf/PageRank, innehållsmatris → artifacts/gate0-report.json. Failar på CRITICAL/HIGH. |
 | `npm run gate:ux` | Gatens UX-block: alla publika sidor i 320 px + 1280 px — overflow, H1, tomma ankare, återvändsgränder + bevis-skärmdumpar. Kräver byggd yta + Chromium. |
 | `npm run gate:keywords` | Gatens block A: statusregistret seo/gate0-keywords.json (GREEN/YELLOW/RED/GREY per keyword-rot mot SERP-observationerna). |
+| `npm run i18n:cov` | Mäter hur stor del av kunskapsbasens användarvända text som finns i översättningsminnet, per innehållstyp (docs/I18N_PROGRAM.md §Täckningen i siffror). Fäller inget bygge — otolkad text är ett kureringsläge, inte ett fel. |
 | `npm run gate:links` | Extern länkhälsa för myndighetslänkarna på publika ytan — körs från nätansluten maskin (t.ex. efter deploy); sandlådan saknar utgående nät. |
 
 ## 10. Drift, deploy och gränser

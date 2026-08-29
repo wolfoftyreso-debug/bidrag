@@ -35,7 +35,8 @@
     "gate:0": "node --experimental-strip-types tools/genseo.mjs && node --experimental-strip-types tools/gate0.mjs",
     "gate:ux": "node tools/gate0-ux.mjs",
     "gate:keywords": "node --experimental-strip-types tools/gatekeywords.mjs",
-    "gate:links": "node tools/linkhealth.mjs"
+    "gate:links": "node tools/linkhealth.mjs",
+    "i18n:cov": "node --experimental-strip-types tools/i18ncov.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.25.12",

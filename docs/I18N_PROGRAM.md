@@ -1,6 +1,7 @@
 # I18N-programmet — flerspråkig Bidragskoll
 
-**Status: fas A, A2, B och C v1 levererade.** Styrande dokument för allt
+**Status: fas A, A2, B och C v1 levererade; fas D (förberedelselagret)
+är identifierad men inte påbörjad — se §Täckningen i siffror.** Styrande dokument för allt
 språkarbete. Beslut 2026-08-28: Bidragskoll ska finnas fullt utbyggd på samma
 språkpalett som informationsverige.se.
 
@@ -103,6 +104,60 @@ Interna koden `prs` renderas som `lang="fa-AF"` i dokumentroten (BCP 47).
   passerat granskningsprotokollet nedan.
 
   Demon: efter fas B/C (bundlar samma innehåll) — ej påbörjad.
+
+## Täckningen i siffror (mätt 2026-08-29)
+
+`tools/i18ncheck.mjs` vaktar att översättningsminnet är **komplett mot sin
+egen källmängd** — men säger ingenting om hur stor del av kunskapsbasen den
+mängden utgör. Den andelen sjunker varje gång ny svensk text kureras in.
+`npm run i18n:cov` mäter just det, per innehållstyp:
+
+| Innehållstyp | Översatt | Andel |
+|---|---|---|
+| `summary` — stödets sammanfattning | 85/85 | **100 %** |
+| `criteria.intakeQuestion` — intagsfråga | 179/179 | **100 %** |
+| `criteria.description` — villkorstext | 0/348 | 0 % |
+| `schema.fieldLabel` — fältetikett | 2/473 | 0 % |
+| `schema.sectionTitle` — formulärsektion | 0/246 | 0 % |
+| `schema.fieldGuidance` — fältvägledning | 0/157 | 0 % |
+| `applicationMethod` — så ansöker du | 0/85 | 0 % |
+| `evidence.description` — underlag | 0/74 | 0 % |
+| `schema.title` — formulärets titel | 0/71 | 0 % |
+| `amountNote` — belopp | 0/7 | 0 % |
+| **Totalt** | **266/1725** | **15 %** |
+
+Bilden är inte att fas B är halvgjord — fas B levererade exakt det den
+lovade. Bilden är att **allt som kurerats in efteråt är enspråkigt**:
+F-SPECIFIKs ansökningsscheman (473 fält), underlagslistorna, ansökningssätten
+och F-BELOPPs sju belopp tillkom efter fas B och ligger utanför minnet.
+
+**Konsekvensen i produkten, konkret:** en somalisktalande användare får
+intagsdialogen och matchningarnas sammanfattningar på somaliska — och sedan
+ett ansökningsformulär på svenska. Upptäckten är översatt, förberedelsen är
+det inte. Det är den enskilt största återstående luckan i språkarbetet.
+
+## Fas D — förberedelselagret (EJ PÅBÖRJAD)
+
+Omfattning i prioritetsordning, störst nytta först:
+
+1. **Ansökningsschemanas fältetiketter och vägledning** (876 förekomster,
+   462 unika källtexter) — det användaren faktiskt fyller i.
+2. **`applicationMethod`** (63 unika) — meningen "så ansöker du".
+3. **`evidence.description`** (54 unika) — underlagslistan före utklicket.
+4. **`criteria.description`** (263 unika) — villkorstexten. Störst volym,
+   minst brådska: intagsfrågan bär redan innebörden på valt språk.
+5. **`amountNote`** (7) — beloppet självt är siffror; meningen runt det
+   översätts, aldrig talen eller källan.
+
+Ärlighetsgränserna gäller oförändrat: officiella namn står kvar på svenska,
+det **färdiga dokumentet till myndigheten förblir svenskt** (§3), och
+etiketten säger det. Fas D översätter alltså *vägledningen fram till*
+ansökan — inte ansökan.
+
+Arkitekturen räcker som den är: samma `kb_translations`-tabell, samma
+källtextsnyckel, samma självreglerande fallback. Det som krävs är kurering,
+inte kod — plus en utvidgning av `translateCriteria`-motsvarigheten till
+schema- och underlagsleveransen i `apps/api/src/routes/`.
 
 ## Granskningsprotokollet
 

@@ -310,3 +310,16 @@ Swedish source text changes without an updated translation, the API falls
 back to Swedish for that string (honest fallback; the verify guard blocks
 pushes with missing translations). Official benefit/authority names are never
 translated by design.
+
+**Measured coverage (2026-08-29, `npm run i18n:cov`):** only **15 %** of the
+knowledge base's user-facing text (266 of 1725 occurrences) has an entry in
+the translation memory. Summaries and intake questions are at 100 %; the
+application schemas' field labels and guidance (876 occurrences), the
+`applicationMethod` sentences, the evidence lists and the criteria condition
+texts are at 0 %. The practical consequence: **discovery is translated, the
+preparation step is not** — a Somali-speaking user gets the intake dialogue
+and the match summaries in Somali, then a Swedish application form. This is
+the largest remaining language gap and is scoped as fas D in
+docs/I18N_PROGRAM.md. Note that the finished document sent to the authority
+stays Swedish by design — fas D translates the guidance up to the
+application, not the application itself.
