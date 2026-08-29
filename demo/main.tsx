@@ -505,15 +505,65 @@ function Results({ facts, track, onFact, onRestart, chosen, onToggle, onNext }: 
       title="Varför ställs frågan?" onClick={() => setOpenInfo(openInfo === id ? null : id)}>i</button>
   );
 
+  // F-RYTM (användarfynd 2026-08-29: "vissa frågor i nästa-nästa-struktur och
+  // vissa i formulär — det känns inkonsekvent"). Båda lägena behövs och båda
+  // kom ur användarfynd: intaget är en guidad väg (en fråga per skärm, F-EN-
+  // FRÅGA), listan är kartan över vad som återstår (F-STABIL: en visad fråga
+  // får aldrig försvinna eller byta plats). Felet var att bytet skedde utan
+  // förklaring och utan väg tillbaka till rytmen. Nu är listan översikten OCH
+  // ingången till samma en-fråga-per-skärm-läge som intaget.
+  const obesvarade = qOrder.filter((p) => facts[p] === undefined && questions.has(p));
+  const [guidad, setGuidad] = useState(false);
+  // Hoppade frågor lämnar det guidade läget men STÅR KVAR i listan (F-STABIL).
+  const [hoppade, setHoppade] = useState<string[]>([]);
+  const iTur = obesvarade.filter((p) => !hoppade.includes(p));
+  const guidadPath = guidad ? iTur[0] ?? null : null;
+  const guidadMeta = guidadPath ? qMeta.current.get(guidadPath) : null;
+  useEffect(() => { if (guidad && iTur.length === 0) setGuidad(false); }, [guidad, iTur.length]);
+
+  if (guidadPath && guidadMeta) {
+    const gäller = `Gäller ${guidadMeta.titles.slice(0, 2).join(' och ')}${guidadMeta.titles.length > 2 ? ` + ${guidadMeta.titles.length - 2} till` : ''}`;
+    const nr = obesvarade.length - iTur.length + 1;
+    return (
+      <div>
+        <div className="card accent">
+          <p className="q-context">{gäller}</p>
+          <h1>{guidadMeta.q}</h1>
+          <p className="guidance">Fråga {nr} av {obesvarade.length} · svaren räknas om direkt</p>
+          <div style={{ marginTop: '1rem' }}>
+            <YesNo on={(v) => onFact(guidadPath, v)} />
+          </div>
+          <div className="row" style={{ marginTop: '0.8rem' }}>
+            {iTur.length > 1 && (
+              <button className="btn small" onClick={() => setHoppade((h) => [...h, guidadPath])}>
+                Hoppa över den här
+              </button>
+            )}
+            <button className="btn subtle" onClick={() => setGuidad(false)}>Visa alla i lista</button>
+          </div>
+          {infoRuta(guidadMeta.details)}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       {qOrder.length > 0 && (
         <div className="card accent">
           <h2 style={{ marginBottom: '0.15rem' }}>Några frågor kvar ({allOpen.length})</h2>
           <p className="meta" style={{ margin: '0 0 0.4rem' }}>
-            Svaren räknas om direkt · Besvarade frågor står kvar nedtonade och kan ändras — inget försvinner eller byter plats
+            Svara i vilken ordning du vill, eller låt oss ta dem en i taget · Svaren räknas om direkt · Besvarade frågor
+            står kvar nedtonade och kan ändras — inget försvinner eller byter plats
             {allOpen.some(([k]) => !qOrder.includes(k)) ? ' · Fler frågor läggs till längst ner allteftersom' : ''}
           </p>
+          {obesvarade.length > 0 && (
+            <div className="row" style={{ margin: '0 0 0.8rem' }}>
+              <button className="btn primary" onClick={() => { setHoppade([]); setGuidad(true); }}>
+                Ta dem en i taget ({obesvarade.length}) →
+              </button>
+            </div>
+          )}
           {qOrder.map((path) => {
             const meta = qMeta.current.get(path);
             if (!meta) return null;

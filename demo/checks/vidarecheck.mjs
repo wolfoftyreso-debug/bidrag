@@ -88,6 +88,34 @@ for (let i = 0; i < 12; i++) {
 if (!noteSeen) { console.log('FEL: ingen kvarstående märkning för fråga som blev inaktuell'); process.exit(1); }
 console.log('4. Inaktuell fråga står kvar med "behövdes inte längre"-märkning ✓');
 
+// 5b. F-RYTM (användarfynd 2026-08-29: "vissa frågor i nästa-nästa-struktur
+//     och vissa i formulär — det känns inkonsekvent"). Listan ska vara både
+//     översikt OCH ingång till samma en-fråga-per-skärm-rytm som intaget.
+{
+  const ingang = page.locator('button:has-text("Ta dem en i taget")');
+  if (await ingang.count() === 0) {
+    console.log('FEL: listan saknar ingång till en-fråga-per-skärm-läget'); process.exit(1);
+  }
+  await ingang.click();
+  await page.waitForTimeout(250);
+  const rubrik = await page.locator('.card.accent h1').count();
+  if (rubrik === 0) { console.log('FEL: guidat läge visar ingen fråga som rubrik'); process.exit(1); }
+  const raknare = await page.locator('.card.accent .guidance').first().innerText();
+  if (!/Fråga \d+ av \d+/.test(raknare)) { console.log(`FEL: guidat läge saknar räknare ("${raknare}")`); process.exit(1); }
+  const fore = await page.locator('.card.accent h1').first().innerText();
+  await page.locator('.card.accent button:has-text("Hoppa över den här")').click();
+  await page.waitForTimeout(200);
+  const efter = await page.locator('.card.accent h1').first().innerText();
+  if (efter === fore) { console.log('FEL: "Hoppa över" gick inte vidare till nästa fråga'); process.exit(1); }
+  await page.locator('.card.accent button:has-text("Nej")').first().click();
+  await page.waitForTimeout(250);
+  await page.click('button:has-text("Visa alla i lista")');
+  await page.waitForSelector('text=Några frågor kvar (');
+  const kvar = await page.locator(`text=${JSON.stringify(fore).slice(1, -1)}`).count();
+  if (kvar === 0) { console.log('FEL: den överhoppade frågan försvann ur listan (bryter F-STABIL)'); process.exit(1); }
+  console.log('5b. Listan är både översikt och ingång till en-fråga-per-skärm — överhoppad fråga står kvar ✓');
+}
+
 // 6. F-VIDARE: markera ett stöd och gå vidare till planen.
 await page.locator('button:has-text("Vill ansöka")').first().click();
 await page.waitForSelector('text=Vald — ingår i din plan');
