@@ -28,6 +28,8 @@ interface OpportunityDetail {
     applicantTypes: string[];
     minAmountMinor: number | null;
     maxAmountMinor: number | null;
+    amountNote: string | null;
+    amountSourceUrl: string | null;
     maxFundingSharePercent: number | null;
     deadlineModel: string;
     opensAt: string | null;
@@ -110,7 +112,7 @@ export default function OpportunityPage() {
         <dl className="kv" style={{ marginTop: '1rem' }}>
           <dt>{t('o.amount')}</dt>
           <dd>
-            {opp.maxAmountMinor ? t('o.amountUpTo', { belopp: formatSek(opp.maxAmountMinor) }) : t('o.amountVaries')}
+            {opp.amountNote ? opp.amountNote : opp.maxAmountMinor ? t('o.amountUpTo', { belopp: formatSek(opp.maxAmountMinor) }) : t('o.amountVaries')}
             {opp.maxFundingSharePercent ? t('o.amountShare', { procent: opp.maxFundingSharePercent }) : ''}
           </dd>
           <dt>{t('o.closes')}</dt>

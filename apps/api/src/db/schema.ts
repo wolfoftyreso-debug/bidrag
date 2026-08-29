@@ -253,6 +253,14 @@ export const fundingOpportunities = pgTable(
     sectors: jsonb('sectors').notNull().default([]),
     minAmountMinor: integer('min_amount_minor'),
     maxAmountMinor: integer('max_amount_minor'),
+    // De flesta bidrag har inget enskilt maxbelopp: barnbidraget är ett belopp
+    // per barn och månad, underhållsstödet en trappa efter barnets ålder,
+    // bostadsbidraget beror på inkomst och boendekostnad. amountNote bär den
+    // kurerade, korta sanningen och amountSourceUrl den sida beloppet FAKTISKT
+    // står på — ofta en annan än stödets sourceUrl (t.ex. "Aktuella belopp").
+    // Ett belopp utan källa får inte finnas: vakten i verify fäller bygget.
+    amountNote: text('amount_note'),
+    amountSourceUrl: text('amount_source_url'),
     currency: text('currency').notNull().default('SEK'),
     maxFundingSharePercent: integer('max_funding_share_percent'),
     excludesOtherPublicFunding: boolean('excludes_other_public_funding').notNull().default(false),

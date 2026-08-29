@@ -113,6 +113,8 @@ export async function runSeed(): Promise<{ opportunities: number; rulesUpdated: 
       sectors: o.sectors,
       minAmountMinor: o.minAmountMinor,
       maxAmountMinor: o.maxAmountMinor,
+      amountNote: o.amountNote ?? null,
+      amountSourceUrl: o.amountSourceUrl ?? null,
       currency: 'SEK',
       maxFundingSharePercent: o.maxFundingSharePercent,
       excludesOtherPublicFunding: o.excludesOtherPublicFunding,

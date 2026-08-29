@@ -128,6 +128,15 @@ export interface SeedOpportunity {
   sectors: string[];
   minAmountMinor: number | null;
   maxAmountMinor: number | null;
+  /**
+   * Kurerad kort beloppssanning. De flesta bidrag har inget enskilt maxbelopp:
+   * barnbidraget är ett belopp per barn och månad, underhållsstödet en trappa
+   * efter ålder, bostadsbidraget beror på inkomst. Skriv exakt det källan
+   * säger — aldrig ett ungefär, aldrig en gissning (red team F1).
+   */
+  amountNote?: string;
+  /** Sidan beloppet FAKTISKT står på. Obligatorisk när amountNote är satt. */
+  amountSourceUrl?: string;
   maxFundingSharePercent: number | null;
   excludesOtherPublicFunding: boolean;
   deadlineModel: 'one_time' | 'recurring' | 'rolling' | 'upcoming_round';
@@ -1177,6 +1186,10 @@ export const opportunities: SeedOpportunity[] = [
     applicationMethod: 'Ansökan görs på Mina sidor hos Försäkringskassan (kräver e-legitimation).',
     applicationUrl: 'https://www.forsakringskassan.se/privatperson',
     sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    amountNote:
+      'Beror på inkomst, boendekostnad och antal barn. Bostadskostnad räknas upp till 6 800 kr/mån vid 1 barn, 7 900 kr vid 2 barn och 8 600 kr vid 3 eller fler.',
+    amountSourceUrl:
+      'https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer',
     authenticationMethod: 'eid',
     estimatedEffortDays: 1,
     criteria: [
@@ -1320,6 +1333,10 @@ export const opportunities: SeedOpportunity[] = [
     applicationMethod: 'Ansökan görs på Mina sidor hos Försäkringskassan (kräver e-legitimation).',
     applicationUrl: 'https://www.forsakringskassan.se/privatperson',
     sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    amountNote:
+      'Högst 1 300 kr/mån. Kräver att årsinkomsten är högst 86 720 kr (103 720 kr tillsammans med make eller sambo) och att boendet kostar mer än 1 800 kr/mån.',
+    amountSourceUrl:
+      'https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar',
     authenticationMethod: 'eid',
     estimatedEffortDays: 1,
     criteria: [
@@ -1432,6 +1449,10 @@ export const opportunities: SeedOpportunity[] = [
     applicationMethod: 'Ansökan görs på Mina sidor hos Försäkringskassan.',
     applicationUrl: 'https://www.forsakringskassan.se/privatperson',
     sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    amountNote:
+      '1 673 kr/mån till och med månaden barnet fyller 7 år, 1 823 kr till och med 15 år, därefter 2 223 kr/mån. Avser fullt underhållsstöd.',
+    amountSourceUrl:
+      'https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala',
     authenticationMethod: 'eid',
     estimatedEffortDays: 1,
     criteria: [
@@ -2015,6 +2036,10 @@ export const opportunities: SeedOpportunity[] = [
     applicationMethod: 'Ansökan görs på Mina sidor hos Försäkringskassan (kräver e-legitimation); läkarutlåtande bifogas.',
     applicationUrl: 'https://www.forsakringskassan.se/privatperson',
     sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    amountNote:
+      'Helt bidrag 12 333 kr/mån före skatt. Tre fjärdedels 9 250 kr, halvt 6 167 kr, en fjärdedels 3 083 kr.',
+    amountSourceUrl:
+      'https://www.forsakringskassan.se/privatperson/e-tjanster-blanketter-och-informationsmaterial/aktuella-belopp',
     authenticationMethod: 'eid',
     estimatedEffortDays: 2,
     criteria: [
@@ -2402,6 +2427,10 @@ export const opportunities: SeedOpportunity[] = [
     applicationMethod: 'Betalas normalt ut automatiskt; ansökan i särskilda fall på Mina sidor hos Försäkringskassan.',
     applicationUrl: 'https://www.forsakringskassan.se/privatperson',
     sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    amountNote:
+      '1 250 kr per barn och månad, delat mellan vårdnadshavarna.',
+    amountSourceUrl:
+      'https://www.forsakringskassan.se/privatperson/familj-och-barn/barnbidrag-och-flerbarnstillagg/barnbidrag-och-flerbarnstillagg-sa-funkar-det',
     authenticationMethod: 'eid',
     estimatedEffortDays: 1,
     criteria: [
@@ -2427,6 +2456,10 @@ export const opportunities: SeedOpportunity[] = [
     applicationMethod: 'Betalas normalt ut automatiskt tillsammans med barnbidraget.',
     applicationUrl: 'https://www.forsakringskassan.se/privatperson',
     sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    amountNote:
+      'Utöver barnbidraget: 150 kr/mån vid 2 barn, 730 kr vid 3 barn, 1 740 kr vid 4 barn. Från femte barnet ytterligare 1 250 kr per barn och månad.',
+    amountSourceUrl:
+      'https://www.forsakringskassan.se/privatperson/e-tjanster-blanketter-och-informationsmaterial/aktuella-belopp',
     authenticationMethod: 'eid',
     estimatedEffortDays: 1,
     criteria: [
@@ -2451,6 +2484,10 @@ export const opportunities: SeedOpportunity[] = [
     applicationMethod: 'Ansökan görs på Mina sidor hos Försäkringskassan.',
     applicationUrl: 'https://www.forsakringskassan.se/privatperson',
     sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    amountNote:
+      'Högst 1 259 kr/dag på sjukpenningnivå, lägst 250 kr/dag. Lägstanivådagar ger 180 kr/dag.',
+    amountSourceUrl:
+      'https://www.forsakringskassan.se/privatperson/e-tjanster-blanketter-och-informationsmaterial/aktuella-belopp',
     authenticationMethod: 'eid',
     estimatedEffortDays: 1,
     criteria: [

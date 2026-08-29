@@ -249,3 +249,9 @@ a:not(.btn) { overflow-wrap: anywhere; }
   border: 1px solid var(--border-strong); box-shadow: var(--shadow-lift); }
 .valrad span { font-weight: 650; }
 @media (max-width: 420px) { .valrad .btn { flex: 1; } }
+
+/* Kurerat belopp i resultatraden. Visas bara när det verifierats mot källan —
+   noten bär källänken så påståendet alltid går att kontrollera. */
+.match-belopp { margin-top: 0.3rem; padding: 0.4rem 0.6rem; border-radius: 8px;
+  background: var(--primary-soft); font-size: 0.92rem; line-height: 1.45; }
+.match-belopp strong { color: var(--primary-deep); }

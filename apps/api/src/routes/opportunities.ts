@@ -79,6 +79,8 @@ export async function opportunityRoutes(app: FastifyInstance) {
           countries: fundingOpportunities.countries,
           minAmountMinor: fundingOpportunities.minAmountMinor,
           maxAmountMinor: fundingOpportunities.maxAmountMinor,
+          amountNote: fundingOpportunities.amountNote,
+          amountSourceUrl: fundingOpportunities.amountSourceUrl,
           currency: fundingOpportunities.currency,
           deadlineModel: fundingOpportunities.deadlineModel,
           opensAt: fundingOpportunities.opensAt,

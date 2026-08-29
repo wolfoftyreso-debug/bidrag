@@ -41,6 +41,7 @@ interface MatchRow {
   verificationStatus: string;
   lastVerifiedAt: string | null;
   maxAmountMinor: number | null;
+  amountNote?: string | null;
   submissionLevel: string;
   result: {
     missingFacts: MissingFact[];
@@ -495,7 +496,7 @@ export default function MatchesPage() {
                 <span className={`badge ${labels.elig(m.eligibilityStatus).tone}`}>
                   {labels.elig(m.eligibilityStatus).label}
                 </span>
-                {m.maxAmountMinor && <> · {t('m.upTo', { belopp: formatSek(m.maxAmountMinor) })}</>}
+                {m.amountNote ? <> · {m.amountNote}</> : m.maxAmountMinor ? <> · {t('m.upTo', { belopp: formatSek(m.maxAmountMinor) })}</> : null}
               </div>
               <div className="meta-line">
                 {m.closesAt

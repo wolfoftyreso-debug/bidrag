@@ -15,6 +15,8 @@ import OPPORTUNITIES from './demo-opportunities.json';
 type Facts = Record<string, unknown>;
 
 interface Opp {
+  amountNote?: string | null;
+  amountSourceUrl?: string | null;
   applicationSchema?: ApplicationSchemaDef | null;
   evidenceRequirements?: { id: string; kind: string; description: string; mandatory: boolean }[];
   slug: string;
@@ -361,6 +363,15 @@ function MatchRow({ opp, m, facts, showScore, selected, onToggle }: { opp: Opp; 
             1 av 85 stöd har ett kurerat maxbelopp, så vi visar det som finns:
             vad stödet ÄR, i en rad. Att gissa belopp är förbjudet. */}
         <div className="match-sammanfattning">{opp.summary}</div>
+        {/* Beloppet är radens viktigaste uppgift (mönsterkontroll mot Mobbin),
+            men bara när det är kurerat mot källan. Saknas det står ingenting —
+            hellre tyst än en gissning (red team F1). */}
+        {opp.amountNote && (
+          <div className="match-belopp">
+            <strong>Belopp:</strong> {opp.amountNote}{' '}
+            {opp.amountSourceUrl && <UtLank href={opp.amountSourceUrl}>(källa)</UtLank>}
+          </div>
+        )}
         {m.missingFacts.length > 0 && (
           <div className="meta warn">För att veta säkert: {m.missingFacts.slice(0, 2).map((f) => f.question).join(' · ')}</div>
         )}

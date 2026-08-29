@@ -15,6 +15,8 @@ const out = opportunities.map((o) => ({
   instrumentType: o.instrumentType,
   applicantTypes: o.applicantTypes,
   maxAmountMinor: o.maxAmountMinor,
+  amountNote: o.amountNote ?? null,
+  amountSourceUrl: o.amountSourceUrl ?? null,
   deadlineModel: o.deadlineModel,
   closesAt: o.closesAt,
   applicationUrl: o.applicationUrl,
