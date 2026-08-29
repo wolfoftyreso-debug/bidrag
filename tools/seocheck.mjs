@@ -123,7 +123,10 @@ for (const [path, html] of pages) {
   else {
     try {
       const parsed = JSON.parse(ld);
-      const types = (parsed['@graph'] ?? []).map((n) => n['@type']);
+      // Multi-typning är giltig JSON-LD: en katalogsida bär ['WebPage',
+      // 'CollectionPage'] så att WebPage-kravet nedan förblir bokstavligt
+      // sant samtidigt som sidans roll framgår. Platta ut listan.
+      const types = (parsed['@graph'] ?? []).flatMap((n) => (Array.isArray(n['@type']) ? n['@type'] : [n['@type']]));
       for (const need of ['Organization', 'BreadcrumbList', 'WebPage']) {
         if (!types.includes(need)) err(`${path}: JSON-LD saknar ${need}`);
       }

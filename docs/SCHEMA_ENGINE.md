@@ -15,43 +15,72 @@ Google själv sätter för structured data: markup som beskriver osynligt eller
 påhittat innehåll är ett policybrott, inte en finess.
 
 Vakten `tools/schemacheck-seo.mjs` (i verify och `npm run seo:check`) kontrollerar
-båda leden per stödsida: att provider-noden finns och heter det seeden säger,
+båda leden på 85 stödsidor och 36 aktörssidor. Per stödsida: att provider-noden finns och heter det seeden säger,
 att `description` ÄR seedens `summary`, att `sameAs` pekar på seedens `sourceUrl`,
 att myndighetens namn faktiskt förekommer i sidans text — och att en
 ansökningsperiod finns i markupen **om och endast om** seeden har kurerade datum.
+
+Per aktörssida: att aktörsnoden finns med rätt `@id` (så `provider` inte pekar i
+tomma luften) och rätt typ ur `authority.kind` — en stiftelse får inte stämplas
+som myndighet. Och för varje `ItemList`, oavsett sida: att `numberOfItems`
+stämmer och att **varje post faktiskt länkas i sidans HTML**.
 
 ## Vad som emitteras (uppmätt 2026-08-29, 157 sidor)
 
 | @type | Antal | Var |
 |---|---|---|
-| `Organization` | 166 | utgivaren + Bidragskoll självt |
-| `GovernmentOrganization` | 76 | myndighet/kommun/region/EU-organ som utgivare |
+| `Organization` | 175 | Bidragskoll + stiftelser/föreningar som utgivare |
+| `GovernmentOrganization` | 103 | myndighet/kommun/region/EU-organ som utgivare |
 | `GovernmentService` | 76 | stödet, när utgivaren är offentlig |
 | `Service` | 9 | stödet, när utgivaren är stiftelse eller förening |
-| `WebSite` / `WebApplication` / `WebPage` / `BreadcrumbList` | 157 vardera | hela ytan |
+| `WebSite` / `WebApplication` / `BreadcrumbList` | 157 vardera | hela ytan |
+| `WebPage` | 157 | varav 6 multi-typade `['WebPage','CollectionPage']` |
 | `FAQPage` | 102 | sidor med synliga frågor och svar |
-| `ItemList` | 4 | hubbar och kataloger |
+| `ItemList` | 46 | varje synlig lista av stöd eller aktörer |
 | `Dataset` | 1 | företagsbidragsindexet |
+
+Multi-typningen är avsiktlig: `CollectionPage` är en subtyp av `WebPage`, och
+genom att bära båda förblir vaktens `WebPage`-krav bokstavligt sant samtidigt
+som sidans roll framgår. `tools/seocheck.mjs` plattar ut typlistan.
 
 ## Relationen som nu står i markupen
 
 ```
 Bidragskoll (Organization)
    └── publisher av WebSite / WebApplication
-          └── WebPage  ──about──►  Stödet (GovernmentService | Service)
-                                      ├── provider ──► Utgivaren (GovernmentOrganization | Organization)
-                                      │                   ├── url / sameAs = myndighetens webbplats
-                                      │                   └── areaServed = land
-                                      ├── areaServed = countries ur seeden
-                                      ├── audience  = applicantTypes ur seeden
-                                      ├── sameAs    = officiell källa (sourceUrl)
-                                      ├── serviceUrl = ansökningssidan
-                                      └── hoursAvailable = ENDAST kurerade datum (3 av 85)
-                     └── relatedLink ──► relaterade stödsidor (samma lista som syns på sidan)
+          │
+          ├── /bidrag/ + hubbar  (WebPage+CollectionPage)
+          │      └── ItemList ──► stödsidorna som listas synligt
+          │
+          ├── /bidrag/<stöd>/  (WebPage)
+          │      └── about ──► Stödet (GovernmentService | Service)
+          │                      ├── provider ────────┐
+          │                      ├── areaServed = countries ur seeden
+          │                      ├── audience   = applicantTypes ur seeden
+          │                      ├── sameAs     = officiell källa (sourceUrl)
+          │                      ├── serviceUrl = ansökningssidan
+          │                      └── hoursAvailable = ENDAST kurerade datum (3 av 85)
+          │                                           │
+          └── /finansiarer/<aktör>/  (WebPage)        │
+                 ├── about ──► Aktören ◄──────────────┘  SAMMA @id
+                 │              (GovernmentOrganization | Organization)
+                 │               ├── url / sameAs = officiell webbplats
+                 │               └── areaServed   = land
+                 └── ItemList ──► aktörens stöd, som listas synligt
 ```
+
+Det är delningen av `@id` (`#aktor-<key>`) som gör det till en graf i stället
+för 85 lösta påståenden: `provider` på en stödsida och entiteten på
+finansiärssidan är **samma nod**, och den noden har en egen sida på sajten.
 
 ## Medvetna avgränsningar
 
+- **Inga Wikidata-`sameAs`.** Att peka ut en myndighet med ett QID vore
+  värdefullt för entitetsupplösning, men `wikidata.org` är blockerad av
+  sandlådans egress-proxy och ett QID ur minnet är påhittad identitetsdata:
+  fel QID påstår att Försäkringskassan är någon annan. `sameAs` pekar därför
+  på aktörens **egen officiella webbplats**, som är verifierbar ur seeden.
+  Wikidata kan läggas till när uppslagen går att verifiera.
 - **Ingen `Article`/`NewsArticle`/`BlogPosting`.** Sidorna är referens- och
   entitetssidor, inte artiklar. Att stämpla dem som artiklar vore samma sorts
   osanning som en påhittad författare. Vakten fäller det aktivt.

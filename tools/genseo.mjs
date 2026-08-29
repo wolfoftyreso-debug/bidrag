@@ -373,26 +373,7 @@ function entityPage(o) {
   //  3. Inga datum som inte är kurerade. Endast 3 av 85 stöd har verkliga
   //     opensAt/closesAt; för övriga uttrycks ansökningsläget som text ur
   //     deadlineModel i stället för ett påhittat intervall.
-  // Kartan följer seedens FAKTISKA authority.kind-värden (state_agency,
-  // foundation, association, municipality, region, eu) — inte påhittade
-  // nycklar. En okänd typ faller tillbaka på neutrala Organization.
-  const AKTORSTYP = {
-    state_agency: 'GovernmentOrganization',
-    municipality: 'GovernmentOrganization',
-    region: 'GovernmentOrganization',
-    eu: 'GovernmentOrganization',
-    foundation: 'Organization',
-    association: 'Organization',
-  };
-  const providerNod = auth
-    ? {
-        '@type': AKTORSTYP[auth.kind] ?? 'Organization',
-        '@id': `${BASE}/#aktor-${auth.key}`,
-        name: auth.name,
-        ...(auth.website ? { url: auth.website, sameAs: auth.website } : {}),
-        ...(auth.country ? { areaServed: { '@type': 'Country', name: auth.country === 'SE' ? 'Sverige' : auth.country } } : {}),
-      }
-    : null;
+  const providerNod = auth ? aktorNod(auth) : null;
 
   const MALGRUPP = { individual: 'Privatperson', company: 'Företag', economic_association: 'Ekonomisk förening', association: 'Ideell förening', foundation: 'Stiftelse', municipality: 'Kommun', region: 'Region', school: 'Skolhuvudman' };
   const malgrupper = (o.applicantTypes ?? []).map((t) => MALGRUPP[t]).filter(Boolean);
@@ -519,6 +500,14 @@ function hubPage(hub, entries, queryLinks = []) {
     byInstrument.get(key).push(o);
   }
   const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title, crumbs) };
+  // Hubben är en katalogsida över stöd som listas synligt nedan.
+  const wpHub = jsonld['@graph'].find((n) => n['@type'] === 'WebPage');
+  wpHub['@type'] = ['WebPage', 'CollectionPage'];
+  jsonld['@graph'].push(listaNod(
+    `${canonical}#stodlista`,
+    hub.title,
+    entries.map((o) => ({ name: anchorTitle(o), url: `${BASE}/bidrag/${o.slug}/` })),
+  ));
   if (hub.faq?.length) jsonld['@graph'].push(faqJsonld(hub.faq));
   const body = `
 <h1>${esc(hub.title)}</h1>
@@ -550,6 +539,16 @@ function indexPage(hubEntries) {
   const title = 'Bidrag och stöd i Sverige – hela katalogen | Bidragskoll';
   const description = `${opportunities.length} bidrag, ersättningar och stöd från ${authorities.length} myndigheter och finansiärer — samlade med villkor, belopp, deadlines och officiella källor.`;
   const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title, crumbs) };
+  // Katalogindexet: hela kunskapsbasen som en maskinläsbar lista, i samma
+  // ordning som stöden räknas upp på sidan.
+  const wpKat = jsonld['@graph'].find((n) => n['@type'] === 'WebPage');
+  wpKat['@type'] = ['WebPage', 'CollectionPage'];
+  jsonld['@graph'].push(listaNod(
+    `${canonical}#katalog`,
+    'Bidrag och stöd i Sverige',
+    [...opportunities].sort((a, b) => shortTitle(a).localeCompare(shortTitle(b), 'sv'))
+      .map((o) => ({ name: anchorTitle(o), url: `${BASE}/bidrag/${o.slug}/` })),
+  ));
   const alternates = hreflangTags() + '\n';
   const body = `
 <h1>Bidrag och stöd i Sverige</h1>
@@ -978,10 +977,44 @@ ${m.formula ? `<tr><th scope="row">Formel</th><td><code>${esc(m.formula)}</code>
   return { path, html: layout({ title, description, canonical, crumbs, jsonld, body }) };
 }
 
+// Aktörstyp → schema.org-typ. Kartan följer seedens FAKTISKA authority.kind
+// (state_agency, foundation, association, municipality, region, eu) — inte
+// påhittade nycklar. En stiftelse är INTE en GovernmentOrganization; okänd typ
+// faller tillbaka på neutrala Organization.
+const AKTORSTYP = {
+  state_agency: 'GovernmentOrganization',
+  municipality: 'GovernmentOrganization',
+  region: 'GovernmentOrganization',
+  eu: 'GovernmentOrganization',
+  foundation: 'Organization',
+  association: 'Organization',
+};
+/** Aktörens nod i grafen. Samma @id på ALLA sidor där aktören nämns, så att
+ *  provider på en stödsida och entiteten på finansiärssidan är samma sak. */
+function aktorNod(auth) {
+  return {
+    '@type': AKTORSTYP[auth.kind] ?? 'Organization',
+    '@id': `${BASE}/#aktor-${auth.key}`,
+    name: auth.name,
+    ...(auth.website ? { url: auth.website, sameAs: auth.website } : {}),
+    ...(auth.country ? { areaServed: { '@type': 'Country', name: auth.country === 'SE' ? 'Sverige' : auth.country } } : {}),
+  };
+}
+/** ItemList som speglar EXAKT den synliga listan på sidan (samma ordning). */
+function listaNod(id, namn, poster) {
+  return {
+    '@type': 'ItemList', '@id': id, name: namn, numberOfItems: poster.length,
+    itemListElement: poster.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.name, url: p.url })),
+  };
+}
+
 // ── Finansiärssidor (SEO-063): entiteter i grafen, en sida per finansiär ─────
+// Etiketterna följer seedens authority.kind. eu och association fanns inte i
+// kartan tidigare och föll igenom till "Finansiär" på tre sidor.
 const KIND_LABEL = {
   state_agency: 'Statlig myndighet', municipality: 'Kommun', region: 'Region',
-  foundation: 'Stiftelse', eu_body: 'EU-organ', ngo: 'Organisation', other: 'Finansiär',
+  foundation: 'Stiftelse', eu: 'EU-organ', association: 'Ideell organisation',
+  eu_body: 'EU-organ', ngo: 'Organisation', other: 'Finansiär',
 };
 function funderPage(auth, grants) {
   const path = `/finansiarer/${auth.key}/`;
@@ -993,7 +1026,19 @@ function funderPage(auth, grants) {
   const sorted = [...grants].sort((a, b) => shortTitle(a).localeCompare(shortTitle(b), 'sv'));
   const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title, crumbs) };
   const wp = jsonld['@graph'].find((n) => n['@type'] === 'WebPage');
-  wp.about = { '@type': 'GovernmentOrganization', name: auth.name, url: auth.website ?? undefined };
+  // Sidan ÄR aktörens entitetssida. Samma @id som provider-noden på varje
+  // stödsida aktören står bakom — det är det som gör grafen till en graf i
+  // stället för 85 lösa påståenden. Typen kommer ur seedens kind: en stiftelse
+  // stämplas inte som myndighet (tidigare var alla 36 GovernmentOrganization).
+  const aktor = aktorNod(auth);
+  jsonld['@graph'].push(aktor);
+  wp.about = { '@id': aktor['@id'] };
+  // ItemList speglar exakt <ul class="stodlista"> nedan, i samma ordning.
+  jsonld['@graph'].push(listaNod(
+    `${canonical}#stodlista`,
+    `Stöd från ${auth.name}`,
+    sorted.map((o) => ({ name: anchorTitle(o), url: `${BASE}/bidrag/${o.slug}/` })),
+  ));
   const body = `
 <p class="eyebrow">${esc(KIND_LABEL[auth.kind] ?? 'Finansiär')}</p>
 <h1>${esc(auth.name)}</h1>
@@ -1018,6 +1063,14 @@ function funderIndexPage(funders) {
   const description = `${funders.length} myndigheter, kommuner, regioner och stiftelser som finansierar bidrag och stöd — med aktuella utlysningar, deadlines och officiella källor.`.slice(0, 168);
   const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title.slice(0, 70), crumbs) };
   const sorted = [...funders].sort((a, b) => a.auth.name.localeCompare(b.auth.name, 'sv'));
+  // Katalogsida: WebPage → CollectionPage, plus listan som faktiskt visas.
+  const wpIdx = jsonld['@graph'].find((n) => n['@type'] === 'WebPage');
+  wpIdx['@type'] = ['WebPage', 'CollectionPage'];
+  jsonld['@graph'].push(listaNod(
+    `${canonical}#finansiarer`,
+    'Finansiärer bakom bidragen',
+    sorted.map(({ auth }) => ({ name: auth.name, url: `${BASE}/finansiarer/${auth.key}/` })),
+  ));
   const body = `
 <h1>Finansiärer bakom bidragen</h1>
 <p class="lead">${funders.length} myndigheter, kommuner, regioner och stiftelser finansierar de stöd som finns i

@@ -70,7 +70,41 @@ for (const o of opportunities) {
   }
 }
 
-// 6. Ingen Article/NewsArticle: sidorna är referenssidor, inte artiklar
+// 6. Finansiärssidorna: aktören som EGEN nod med rätt typ, och samma @id som
+//    provider-noderna på stödsidorna — annars pekar provider i tomma luften.
+const KIND_TYP = { state_agency: 'GovernmentOrganization', municipality: 'GovernmentOrganization', region: 'GovernmentOrganization', eu: 'GovernmentOrganization', foundation: 'Organization', association: 'Organization' };
+let aktorsidor = 0;
+for (const auth of authorities) {
+  const f = join(SITE, 'finansiarer', auth.key, 'index.html');
+  const noder = grafPer.get(f);
+  if (!noder) continue; // finansiärer utan stöd får ingen sida
+  aktorsidor++;
+  const id = `https://bidragskoll.se/#aktor-${auth.key}`;
+  const nod = noder.find((n) => n['@id'] === id);
+  if (!nod) { fel.push(`finansiarer/${auth.key}: aktörsnoden saknas (@id ${id}) — provider på stödsidorna pekar då ingenstans`); continue; }
+  const vantad = KIND_TYP[auth.kind] ?? 'Organization';
+  if (nod['@type'] !== vantad) fel.push(`finansiarer/${auth.key}: typad ${nod['@type']} men kind="${auth.kind}" ⇒ ${vantad}`);
+  if (nod.name !== auth.name) fel.push(`finansiarer/${auth.key}: heter "${nod.name}" i grafen men "${auth.name}" i seeden`);
+}
+
+// 7. Varje ItemList måste spegla en LISTA SOM FAKTISKT SYNS: alla dess
+//    poster ska förekomma som länkar i sidans HTML. En lista i markupen som
+//    inte finns i texten är påhittat innehåll.
+for (const [f, noder] of grafPer) {
+  const html = readFileSync(f, 'utf8');
+  for (const n of noder) {
+    const t = Array.isArray(n['@type']) ? n['@type'] : [n['@type']];
+    if (!t.includes('ItemList')) continue;
+    const poster = n.itemListElement ?? [];
+    if (n.numberOfItems !== undefined && n.numberOfItems !== poster.length) {
+      fel.push(`${f}: ItemList säger ${n.numberOfItems} poster men har ${poster.length}`);
+    }
+    const saknas = poster.filter((p) => p.url && !html.includes(p.url.replace('https://bidragskoll.se', '')));
+    if (saknas.length) fel.push(`${f}: ${saknas.length} ItemList-poster länkas inte på sidan (t.ex. ${saknas[0].url})`);
+  }
+}
+
+// 8. Ingen Article/NewsArticle: sidorna är referenssidor, inte artiklar
 //    (docs/PREFERRED_SOURCES.md §6 — schema får bara beskriva det som finns).
 for (const [f, noder] of grafPer) {
   for (const n of noder) {
@@ -87,4 +121,4 @@ if (fel.length) {
   if (fel.length > 25) console.error(`  … och ${fel.length - 25} till`);
   process.exit(1);
 }
-console.log(`Schema-entitetsvakten: ${kontrollerade} stödsidor med utgivare, geografi, målgrupp och ärliga datum — grafen stämmer med seeden.`);
+console.log(`Schema-entitetsvakten: ${kontrollerade} stödsidor + ${aktorsidor} aktörssidor — utgivare, geografi, målgrupp, listor och datum stämmer med seeden och med sidans synliga innehåll.`);
