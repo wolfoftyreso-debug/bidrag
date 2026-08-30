@@ -10,6 +10,41 @@ Bakgrund: repot är produktionsklart (CI grön, serverless-ingången röktestad)
 Manuell klickordning finns i `docs/DEPLOY-NU.md` — den är reservvägen om
 en connector saknas eller saknar en förmåga.
 
+## Vad Vercel-connectorn FAKTISKT kan (kontrollerat 2026-08-30)
+
+Hela connectorns verktygsyta genomsökt. Spara tid: den **kan inte** göra de
+två steg som blockerar deployn.
+
+| Behov | Finns i connectorn? |
+|---|---|
+| Lista team/projekt/deployer, läsa projektinställningar | ja |
+| Läsa byggloggar, runtime-loggar och felkluster | ja (`get_runtime_logs`, `get_runtime_errors`) |
+| Hämta en deployad URL trots att sandlådans proxy blockerar den | ja (`web_fetch_vercel_url`) — **använd den, inte curl** |
+| Skapa projekt från git-repo, deploya, pausa, domänköp | ja |
+| **Skriva miljövariabler** | **NEJ** |
+| **Skapa Neon/Postgres-store (Storage-integrationen)** | **NEJ** |
+
+Steg 1 och steg 3 nedan är därför **operatörssteg**, inte agentsteg. Agenten
+förbereder hemligheter och env-blocket; användaren klistrar in.
+
+## Nulägesdiagnos (2026-08-30, mätt via connectorn)
+
+Projektet `bidragskoll` (`prj_7tNuXcIfB39QjwAwltyLmkt4WJ1C`, team `hypbit`)
+är länkat till `wolfoftyreso-debug/bidragskoll` och **bygger grönt vid varje
+push** — den statiska ytan är live och korrekt routad. Men API-funktionen
+kraschar på varje anrop:
+
+```
+GET /readyz → 500 FUNCTION_INVOCATION_FAILED
+Error: Missing required environment variable DATABASE_URL
+    at required (file:///var/task/apps/api/dist/config.js:14:15)
+```
+
+Ingen databas är alltså kopplad ännu; ingen env är inklistrad. Cron-jobben
+fallerar av samma skäl var 15:e minut. Detta är väntat och ärligt beteende
+(config kastar hellre än att starta halvt), inte en regression — och det är
+exakt vad steg 1 och 3 åtgärdar.
+
 ## Steg 0 — förutsättningar
 
 1. Kör `ToolSearch` efter `vercel` (och `neon` om en Neon-connector finns).
@@ -96,20 +131,26 @@ behövs). Ge användaren blocket och exakt dessa instruktioner:
 4. **Deployments → Redeploy** (eller pusha till `main`).
 
 `PUBLIC_BASE_URL`/`CORS_ORIGIN` kan behöva justeras efter första deployn
-när den faktiska `*.vercel.app`-adressen är känd — gör det via
-Vercel-connectorn om den kan skriva env-variabler, annars be användaren.
+när den faktiska `*.vercel.app`-adressen är känd. **Connectorn kan inte
+skriva env-variabler** (se tabellen högst upp) — be alltid användaren.
+Produktionsadressen är i dag `https://bidragskoll.vercel.app`.
 
 ## Steg 4 — verifiera (via connectorerna + deploy-smoke)
 
 1. Vercel-connectorn: bekräfta att deployn är klar; läs byggloggen vid fel.
+   Vid 500 på API-vägarna: `get_runtime_errors` visar inget för krascher som
+   sker vid modulinläsning (appen hinner aldrig logga) — använd
+   `get_runtime_logs`, som fångar dem.
 2. Readiness: `GET https://<projekt>.vercel.app/v1/internal/readiness?probe=true`
    med `Authorization: Bearer <CRON_SECRET>`. Förväntat ärligt svar med Neon +
    Postgres-lagring + Stripe: `database: ready`, `storage: ready` (postgres),
    `payments: ready` (Stripe konfigurerat) — och `email_resend`/
    `generation_anthropic` som kvarvarande blockerare tills de aktiveras enligt
    `docs/ACTIVATION.md`. Utan Stripe-nycklar blir `payments` en blockerare (mock).
-   Obs: sandlådans proxy kan blockera utgående anrop — går det inte att
-   nå URL:en själv, ge användaren det färdiga curl-kommandot.
+   Obs: sandlådans proxy blockerar `*.vercel.app` för curl (CONNECT 403).
+   Använd connectorns `web_fetch_vercel_url` i stället — den når deployen.
+   Kräver anropet en egen `Authorization`-header (readiness-proben gör det)
+   kan connectorn inte sätta den; ge då användaren det färdiga curl-kommandot.
 3. Kör fjärr-röktestet om nätet tillåter (annars ge användaren kommandot):
    `BASE_URL=https://<preview-url> CRON_SECRET=<värdet> node tools/deploy-smoke.mjs`
    — i preview verifierar det HELA kedjan (konto → intag → matchningar GRATIS

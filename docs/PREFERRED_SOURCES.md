@@ -1,6 +1,9 @@
 # Google Preferred Sources — beslutsunderlag och implementationsgrind
 
-**Status 2026-08-29: EJ IMPLEMENTERAT. Blockerat uppströms, inte av kod.**
+**Status 2026-08-30: EJ IMPLEMENTERAT — men inte längre blockerat av okunskap.**
+Dokumentationen är nu läst och §1.1 är omskriven med källbelagda svar
+(Firecrawl-connectorn når Googles domäner som sandlådans proxy blockerar).
+Kvarvarande blockerare är **deployn**, inte kunskap.
 
 Detta dokument är resultatet av rekognoseringen enligt masterprompten
 "Google Preferred Sources — full production implementation". Prompten säger
@@ -15,25 +18,45 @@ den kan aktiveras med minimal kodändring när blockerarna är lösta.
 
 ## 1. Varför ingen kod skrevs
 
-### 1.1 Googles dokumentation gick inte att nå (§1)
+### 1.1 Dokumentationen — LÄST 2026-08-30 (var blockerad, är det inte längre)
 
-Sessionens egress-proxy blockerar Googles domäner:
+Sandlådans egress-proxy blockerar fortfarande Googles domäner direkt
+(`developers.google.com` → CONNECT tunnel failed, 403). Firecrawl-connectorn
+hämtar däremot serverside och når dem. Följande är läst ur Googles egen
+dokumentation, inte ur minnet.
 
-```
-developers.google.com   → CONNECT tunnel failed, 403
-support.google.com      → CONNECT tunnel failed, 403
-```
+| Fråga | Svar | Källa |
+|---|---|---|
+| Stöds svenska/Sverige? | **JA.** "Expanding preferred sources to all languages where Google Search is available" | developers.google.com/search/updates, post 23 april 2026 |
+| Vilka söksurfaces? | Top Stories, och sedan 20 maj 2026 även **AI Mode och AI Overviews** | samma sida, post 20 maj 2026 |
+| Krävs registrering hos Google? | Ingen registrering, ingen Search Console-inställning och inget Publisher Center-steg nämns i dokumentationen. Funktionen är **läsarstyrd**: användaren väljer sina källor | developers.google.com/search/docs/appearance/preferred-sources (uppdaterad 2026-08-20) |
+| Vilken mekanism? | Tre alternativ: standard-JS-knapp, avancerad JS med egna designassets, eller **deeplink utan JavaScript** | samma sida |
+| Deeplink-format | `https://www.google.com/preferences/source?q=<domän>` — fungerar som vanlig textlänk eller klickbar bild, och även i nyhetsbrev och sociala inlägg | samma sida |
+| JS-format | `<script async src="https://news.google.com/swg/js/v1/publisher.js"></script>` + `<div google-add-preferred-source-btn data-theme="dark"></div>`; avancerat läge importerar `preferredSource` från `https://news.google.com/swg/js/v1/publisher.mjs` | samma sida |
 
-Firecrawl-connectorn, som annars når externa sidor via sin egen tjänst, föll
-bort vid en containeromstart samma dag.
+**Det avgörande fyndet: deeplinken kräver ingen JavaScript.** Den löser
+arkitekturkrockarna (a) och (b) i §1.4 — den scriptfria ytan förblir scriptfri
+och CSP:n behöver inte utvidgas alls. Vi ska alltså **inte** ta in Googles
+publisher-script.
 
-Det gick alltså inte att verifiera något av det §1 kräver: aktuell
-behörighet, stödda länder, stödda språk, stödda söksurfaces, publisher-script,
-komponentsyntax, deeplink-format, callbacks, stylingregler, domänbeteende.
+**Kvarstående osäkerheter, ärligt märkta:**
 
-Att skriva integrationen ändå hade betytt att gissa Googles mekanism ur
-minnet. Det är precis det prompten förbjuder — och samma kategori av fel som
-red team-fyndet F1 i kunskapsbasen (hellre tomt än ett påhittat belopp).
+- **Bekräftelse-callback (§11).** Det avancerade JS-läget exponerar ett
+  programmatiskt API (`preferredSource.init` / `addPreferredSource`) och
+  "standard script callback queues". Om något av det rapporterar *bekräftat
+  val* framgår inte av det jag kunnat läsa. För deeplink-vägen finns ingen
+  callback alls, så regeln **klick ≠ bekräftat** gäller oförändrat.
+- **Är funktionen meningsfull för oss?** Dokumentationen heter "Guide to
+  Preferred Sources in Google Search for **Web Publishers**", och ett svar i
+  Googles hjälpforum (EJ officiell dokumentation — behandla som obekräftat)
+  beskriver funktionen som "tied to Top Stories personalization". Bidragskoll
+  är ingen nyhetsutgivare. Att svenska stöds betyder alltså **inte** att
+  funktionen ger oss värde; utvidgningen till AI Mode och AI Overviews är det
+  som skulle kunna göra den relevant, och den kopplingen är inte bevisad för
+  en icke-nyhetssajt. Detta är nästa sak att avgöra — efter deployn.
+- **Rapporterad bugg.** En tråd i Googles webmaster-forum (2026-08, obekräftad)
+  beskriver att deeplinken `?q=` fallerar på en intern CSP-överträdelse hos
+  Google. Testa deeplinken innan den exponeras publikt.
 
 ### 1.2 Domänen är inte behörig — den finns inte i Google (§3)
 
@@ -59,25 +82,25 @@ or unsupported Google flow is NOT an acceptable implementation."*
 Blockeraren är **deployn** (uppgift #99): koppla bidragskoll.se till Vercel +
 Neon och ta bort noindex. Ingen mängd kod här löser det.
 
-### 1.3 Regionen är osäker och kunde inte kontrolleras
+### 1.3 ~~Regionen är osäker~~ — BESVARAD 2026-08-30: svenska stöds
 
-Preferred Sources lanserades begränsat till vissa marknader och språk. Om
-Sverige och svenska inte stöds är hela funktionen irrelevant för produkten.
-Detta är den **första** frågan att besvara när dokumentationen går att nå —
-den avgör om resten av arbetet ska göras alls.
+Frågan som §2 kallade den första att besvara är besvarad: funktionen är
+utrullad till **alla språk där Google Sök finns** (23 april 2026), alltså
+även svenska. Regionen är inte längre en blockerare. Kvar är i stället
+värdefrågan i §1.1: om funktionen betyder något för en icke-nyhetssajt.
 
 ### 1.4 Tre arkitekturkrockar som måste beslutas, inte smygas förbi
 
-**a) Ytan är avsiktligt scriptfri.** Hela den publika SEO-ytan (157 sidor,
-`tools/genseo.mjs`) innehåller exakt **ett** `<script>`: JSON-LD-blocket. Noll
-JavaScript. Det är en medveten egenskap som bär sidornas prestanda och
-GATE 0-profil. Googles publisher-script vore det första skriptet någonsin på
-den ytan.
+**a) Ytan är avsiktligt scriptfri — LÖST 2026-08-30.** Hela den publika
+SEO-ytan (170 sidor, `tools/genseo.mjs`) innehåller exakt **ett** `<script>`:
+JSON-LD-blocket. Noll JavaScript. Det är en medveten egenskap som bär sidornas
+prestanda och GATE 0-profil. **Deeplink-varianten kräver ingen JavaScript**
+(§1.1), så krocken uppstår aldrig: vi tar inte in Googles publisher-script.
 
-**b) CSP är strikt.** `apps/api/src/server.ts` sätter
-`scriptSrc: ["'self'"]`. Googles script kräver en utvidgning. Prompten §5:
-utvidga snävt, aldrig `script-src *`. Vilken exakt origin som ska tillåtas
-går inte att veta utan dokumentationen.
+**b) CSP är strikt — LÖST av samma skäl.** `apps/api/src/server.ts` sätter
+`scriptSrc: ["'self'"]`. Med deeplinken behöver den inte röras alls. Skulle
+JS-knappen någon gång väljas är originet `https://news.google.com` — men det
+valet ska då fattas medvetet mot §1.4a, inte glida in.
 
 **c) Det finns ingen analytics.** Projektet har **inget** analysverktyg alls —
 inte gtag, inte Plausible, inget. Prompten §11 kräver instrumentering och
@@ -92,19 +115,25 @@ smygas in som en bieffekt av en Google-knapp.
 
 Kör i den här ordningen. Avbryt vid första nej.
 
-1. **Stöds Sverige och svenska?** Läs Googles aktuella dokumentation för
-   Preferred Sources. Om nej: avsluta, dokumentera datum, ompröva senare.
-2. **Är domänen deployad och indexerbar?** `bidragskoll.se` ska peka på
-   Vercel, `x-robots-tag: noindex` ska vara borta, och sidor ska finnas i
-   Search Console.
-3. **Vilken publisher-mekanism gäller?** Script, komponent, deeplink eller
-   kombination. Notera exakt syntax och origin för CSP.
-4. **Finns bekräftelse-callback?** Avgör om `preferred_source_confirmed` går
-   att mäta. Utan callback gäller strikt: **klick ≠ bekräftat** (§11).
-5. **Krävs separat publisher-behörighet?** Search Console-koppling eller
-   Google Publisher Center.
+1. ~~**Stöds Sverige och svenska?**~~ **BESVARAD 2026-08-30: JA** — alla språk
+   där Google Sök finns (§1.1).
+2. **Är domänen deployad och indexerbar?** ❌ **NEJ, fortfarande.** Mätt
+   2026-08-30: produktionsfunktionen svarar `FUNCTION_INVOCATION_FAILED`
+   (`DATABASE_URL` saknas i Vercel) och hela ytan bär `x-robots-tag: noindex`
+   eftersom värden är `*.vercel.app`. Detta är den enda kvarvarande hårda
+   blockeraren. Uppgift #99.
+3. ~~**Vilken publisher-mekanism gäller?**~~ **BESVARAD** — tre varianter,
+   varav deeplinken är JS-fri och därför vår väg (§1.1).
+4. **Finns bekräftelse-callback?** Delvis besvarad: JS-läget har ett
+   programmatiskt API, deeplinken har ingen callback. Så länge vi kör deeplink
+   gäller **klick ≠ bekräftat** (§11) — mät aldrig annat än utgående klick.
+5. ~~**Krävs separat publisher-behörighet?**~~ **BESVARAD: nej** — ingen
+   registrering nämns i dokumentationen (§1.1).
 
-Först när 1–3 är gröna får CTA:n exponeras publikt.
+Kvar att avgöra **efter** deployn, i den ordningen: (i) testa att deeplinken
+faktiskt fungerar för domänen (rapporterad CSP-bugg, §1.1), (ii) avgör om
+funktionen ger en icke-nyhetssajt något värde alls — det är nu den öppna
+frågan, inte tillgängligheten.
 
 ---
 

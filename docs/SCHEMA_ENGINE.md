@@ -105,20 +105,47 @@ finansiärssidan är **samma nod**, och den noden har en egen sida på sajten.
   datum. Hellre tyst än ett uppdiktat ansökningsfönster.
 - **`datePublished` saknas.** Sätts när sidorna faktiskt publicerats, alltså
   vid deploy — inte innan (docs/PREFERRED_SOURCES.md §6).
-- **`FAQPage` behålls** trots att den, enligt uppgift, inte längre ger rich
-  results hos Google. Markupen beskriver frågor och svar som faktiskt står i
-  sidans synliga text; den är sann oavsett vilka rich results Google för
+- **`FAQPage` behålls** trots att rich-resultatet är borta sedan 7 maj 2026
+  (verifierat, se nedan). Markupen beskriver frågor och svar som faktiskt står
+  i sidans synliga text; den är sann oavsett vilka rich results Google för
   tillfället renderar, och andra konsumenter läser den. Den byggdes aldrig för
-  ett SERP-utseende. **Ej verifierad mot Googles dokumentation** — se nedan.
+  ett SERP-utseende.
 
-## Vad som INTE går att avgöra härifrån
+## Verifierat mot Googles dokumentation (2026-08-30)
 
-Sandlådans egress-proxy blockerar `developers.google.com` och
-`support.google.com` (samma blockerare som stoppade Preferred Sources, se
-`docs/PREFERRED_SOURCES.md` §1.1). Allt som beror på **vad Google stödjer just
-nu** — vilka rich results som finns kvar, vilka structured-data-funktioner som
-pensionerats, hur AI-ytorna använder markup — går därför inte att verifiera i
-den här miljön.
+Sandlådans egress-proxy blockerar `developers.google.com` direkt, men
+Firecrawl-connectorn hämtar serverside och når den. Tre saker som tidigare
+stod som "ej verifierat" är nu lästa ur källan:
+
+| Påstående | Utfall | Källa |
+|---|---|---|
+| Schema måste motsvara det som syns på sidan | **BEKRÄFTAT** — "Make sure structured data matches the visible content" är en egen rubrik i Googles vägledning för AI-ytorna, och upprepas i *AI features and your website*: "Making sure your structured data matches the visible text on the page" | developers.google.com/search/blog/2025/05/succeeding-in-ai-search; .../docs/appearance/ai-features |
+| FAQ rich results är borttagna | **BEKRÄFTAT** — deprecationsnotis maj 2026, funktionen slutade visas **7 maj 2026**, och dokumentationssidan togs bort i juni 2026 | developers.google.com/search/updates |
+| Oanvänd markup skadar inte | **BEKRÄFTAT** — "Structured data that's not being used does not cause problems for Search, but also has no visible effects in Google Search" | developers.google.com/search/blog/2023/08/howto-faq-changes |
+
+Den bärande regeln högst upp i det här dokumentet är alltså inte vår egen
+uppfinning utan sammanfaller ordagrant med Googles egen formulering. Det är
+det starkaste stödet regeln kan få.
+
+**Konsekvens för `FAQPage`:** avgränsningen nedan står kvar, men nu på
+verifierad grund i stället för "enligt uppgift". Markupen ger inga rich
+results längre och kommer inte att göra det. Den behålls därför bara på den
+grund som faktiskt bär: den beskriver sant det som står i sidans synliga text,
+och andra konsumenter än Googles rich results läser den. Skulle den
+motiveringen falla ska markupen tas bort — inte behållas av vana.
+
+**Ny officiell källa att följa:** Google publicerade i maj 2026 en samlad
+vägledning, *optimizing your website for generative AI features on Google
+Search* (`developers.google.com/search/docs/fundamentals/ai-optimization-guide`).
+Den är inte genomgången rad för rad här; det är nästa steg i GEO-spåret.
+
+## Vad som fortfarande inte går att avgöra härifrån
+
+Vad markupen faktiskt gör i en riktig SERP går inte att mäta härifrån:
+Rich Results Test och Search Console kräver en **indexerad, levande URL**, och
+domänen är varken deployad eller indexerbar (`docs/PREFERRED_SOURCES.md` §2,
+punkt 2). Det gäller alltså inte längre dokumentationen — den är läst — utan
+utfallet.
 
 Arbetet ovan är medvetet valt för att **inte** bero på det: `provider`,
 `areaServed`, `audience` och `sameAs` är sanna beskrivningar av verkligt
