@@ -37,6 +37,11 @@ Motorn arbetar internt i D6; **sökaren** uttrycker sig i D1–D5. Ontologins jo
 
 ## 2. Situationsnoderna (kandidat-URL:er)
 
+> **Läsanvisning (2026-08-30):** det här avsnittet är den ursprungliga
+> kandidatlistan — hypoteser, inte byggda sidor. Vad som faktiskt finns, med
+> slugar och domar, står i **§3**. Kandidaterna nedan behålls som karta över
+> ontologins bredd och som kö för kommande noder.
+
 Namnrymd: `/situationer/<slug>/`. Varje nod ankras till minst en persona och
 till konkreta stöd som **redan finns** i kunskapsbasen (inga påhittade stöd).
 Noden informerar och leder till utredningen; den avgör aldrig behörighet själv.
@@ -85,38 +90,85 @@ Principen kvarstår för framtida noder: situationsnoder får **inte** byggas
 som indexerbara sidor förrän stöden är kurerade — annars blir de tunna sidor
 utan motoruppbackning (bryter SEO Release Gate). Kurering före sida.
 
-## 3. Gap-map mot dagens publika yta
+## 3. Byggd status — situationslagret finns (2026-08-30)
 
-Dagens 77 sidor (`tools/genseo.mjs`): `/bidrag/` (1 hubb) + 4 målgruppshubbar +
-72 entity-sidor + sitemap + robots. **Fördelning per lager:**
+Situationslagret är **byggt** och genereras av `tools/genseo.mjs` (funktionerna
+`situationPage` / `situationIndexPage`) ur `seo/situationer.json` +
+`tools/lib/situationer.mjs`. Namnrymden är `/situationer/<slug>/` med
+katalogsidan `/situationer/`.
 
-| Doktrinlager | Sidtyp idag | Antal | Täckning |
+**Den bärande mekaniken:** en nod skriver aldrig sin egen stödlista. Noden
+deklarerar en **faktaprofil** i samma faktavägar som kunskapsbasens kriterier,
+och **motorn** (`packages/core`, samma kriterie-DSL som produkten kör) avgör
+vilka stöd profilen för framåt. Ankarregeln är avsiktligt strängare än
+"matchar filtret": inget hårt eller obligatoriskt kriterium får fallera, och
+minst ett obligatoriskt/viktat kriterium måste passera — hårda kriterier
+(sökandetyp, land) räknas alltså inte som träff, annars skulle noden dra in
+hela målgruppshubben. Varje rad i listan bär sitt **skäl**: seedens egen
+kriteriebeskrivning, inte ny copy.
+
+Profilen får bara innehålla fakta som är **definitionsmässigt sanna** för
+situationen. "Förälder med barn hemma" vet vi; "låg inkomst" vet vi inte — det
+är en fråga motorn ställer, inte något sidan får anta. Frågorna sidan visar är
+dessutom **ordagranna intagsfrågor ur seeden** vars kriterium faktiskt passerar
+på profilen; `tools/schemacheck-seo.mjs` fäller bygget annars.
+
+| Nod | Målgrupp | Stöd | Dom |
 |---|---|---|---|
-| Lager 2–3 (namn/kategori) | entity `/bidrag/<stöd>/` | 72 | STARK |
-| Lager 1 (målgrupp, grov) | hubbar `/bidrag/<målgrupp>/` | 4 | TUNN |
-| **Lager 1 (situation, fin)** | `/situationer/<slug>/` | **0** | **SAKNAS** |
+| `/situationer/foralder-med-barn-hemma/` | privatperson | 12 | INDEX |
+| `/situationer/arbetslos/` | privatperson | 5 | INDEX |
+| `/situationer/funktionsnedsattning-i-familjen/` | privatperson | 5 | INDEX |
+| `/situationer/yrkesverksam-konstnar/` | privatperson | 5 | INDEX |
+| `/situationer/ideell-forening/` | förening | 5 | INDEX |
+| `/situationer/hoga-boendekostnader/` | privatperson | 4 | INDEX |
+| `/situationer/studera-som-vuxen/` | privatperson | 3 | INDEX |
+| `/situationer/flytta-utomlands/` | privatperson | 3 | INDEX |
+| `/situationer/ny-i-sverige/` | privatperson | 2 | NOINDEX_FOLLOW |
+| `/situationer/pensionar/` | privatperson | 1 | NOINDEX_FOLLOW |
+| `/situationer/ekonomin-racker-inte/` | privatperson | 1 | NOINDEX_FOLLOW |
+| `/situationer/nedsatt-arbetsformaga/` | privatperson | 1 | NOINDEX_FOLLOW |
 
-**Gapet:** hela situationslagret (§2 ovan) — 12 privatpersonsnoder, 6
-företagsnoder (varav 5 blockerade av kurering), 3 föreningsnoder — saknar
-landningsyta. Det är precis den vallgrav doktrinen §7 pekar ut och som
-GATE0_REPORT flaggar som CONTENT-RED (0 av 332 sökområden GREEN; offsite fryst
-tills gaten är grön).
+Domen är samma indexerbarhetsdoktrin som Query Pages (§29,
+`tools/lib/intents.mjs`): ≥3 stöd → INDEX, 1–2 → NOINDEX_FOLLOW (genereras och
+länkas, står utanför sitemapen), 0 → DO_NOT_GENERATE. De fyra NOINDEX-noderna
+är alltså inte misslyckanden utan **kureringssignaler**: sidan finns för
+människor, tävlar inte i Google, och blir indexerbar av sig själv när fler stöd
+kurerats. Ingen tunn sida publiceras.
 
-**Internlänkning som redan finns att haka i:** entity-sidorna routar in i
-motorn (`genseo.mjs:295`). Situationsnoderna ska korslänka **nedåt** till
-relevanta entity-sidor och **in** i utredningen — aldrig vara återvändsgränder.
+**Nära-dubbletter fäller bygget.** Två noder som resolverar till exakt samma
+stöduppsättning är samma sida med olika rubrik. Det stoppade tre kandidater
+under bygget: `efter-separation` och `barn-i-skolan` gav identiskt resultat med
+`foralder-med-barn-hemma` (att lägga till fakta kan bara utöka en lista, aldrig
+smalna av den), och `forening-med-ungdomsverksamhet` gav identiskt resultat med
+`ideell-forening`.
+
+**Kvar av §2-ontologin, och varför:**
+
+- **Företagsnoderna (2b)** är inte byggda. Utöver kureringsblockeraren finns
+  ett nyupptäckt hinder: `project.*`-fakta kan i dag inte bära en ärlig fråga
+  (`docs/PERFECTION_BACKLOG.md` M16 — sex kriterier prövar
+  `project.sector eq "culture"` med olika breda frågor, från "Är projektet ett
+  kulturprojekt?" till "Är projektet ett filmprojekt?"). Situationsnoder får
+  därför inte byggas på `project.*` förrän frågorna är exakt lika breda som
+  sina kriterier. Klusterhubbarna `/bidrag/starta-eget-bidrag/` och
+  `/bidrag/lonebidrag/` täcker de två starkaste företagsintentionerna redan.
+- **`ung-vuxen`** stoppades av samma klass av fynd: `person.ageUnder29` är
+  överlastad — två stöd delar faktavägen men prövar 18–28 respektive 19–29
+  (M15). Noden byggs när faktavägen delats.
 
 ## 4. Byggordning (haka i innehållsmotorn, bygg inte en ny pipeline)
 
 Situationsnoderna är innehållsmotorns F0→F1-leverabler (`docs/CONTENT_ENGINE.md`:
 `/situationer/`, interaktiv behörighetskontroll, bevispaket). Ordning:
 
-1. **Avblockera** där kurering krävs (2b-noterna ¹) — kurera stöden först.
-2. **Bygg de SERP-DERIVED privatpersonsnoderna** (2a) — starkast belägg, minst
-   risk för tunt innehåll.
-3. **Föreningsnoderna** (2c) — tydliga ankar-stöd finns redan (LOK, Boverket,
-   Arvsfonden).
-4. **Företagsnoderna** (2b) i takt med kurering.
+1. ~~**Bygg privatpersonsnoderna** (2a)~~ — **LEVERERAT 2026-08-30**, 8 noder
+   (7 INDEX + 4 NOINDEX, se §3).
+2. ~~**Föreningsnoderna** (2c)~~ — **LEVERERAT**: `/situationer/ideell-forening/`.
+   De två finare föreningsnoderna föll på dubblettregeln (samma stöduppsättning)
+   och byggs när kunskapsbasen skiljer dem åt.
+3. **Dela de överlastade faktavägarna** (`docs/PERFECTION_BACKLOG.md` M15–M16)
+   — det är den enda blockeraren för `ung-vuxen` och för hela företagslagret.
+4. **Företagsnoderna** (2b) i takt med kurering *och* M16.
 5. Varje nod passerar SEO Release Gate (`docs/SEO_RELEASE_GATE.md`) +
    gate0/gatekeywords innan publik. Ingen tunn sida.
 

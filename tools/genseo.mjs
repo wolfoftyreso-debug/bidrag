@@ -24,6 +24,7 @@ import { mkdirSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadIntents, resolveIntent, indexabilityVerdict, parentOverlapVerdict } from './lib/intents.mjs';
+import { loadSituations, resolveSituation, situationVerdict, duplicateSituations, validateSituationQuestions } from './lib/situationer.mjs';
 import { computeFundingIndex } from './lib/foretagsindex.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -560,7 +561,8 @@ Myndigheterna beskriver sina egna stöd var för sig; här får du överblicken,
 <div class="path"><strong>Vilka bidrag kan jag få?</strong>Det beror på vem du är. Kontrollera gratis — du behöver inte veta vad bidraget heter.<br><a class="knapp" href="/vilka-bidrag-kan-jag-fa/">Kontrollera din situation</a></div>
 <div class="path"><strong>Hitta bidrag gratis</strong>Upptäckten och resultaten är kostnadsfria och inte låsta. Ansök själv hos källan.<br><a class="knapp sekundar" href="/hitta-bidrag-gratis/">Så fungerar det</a></div>
 </div>
-<p class="lead" style="margin-top:.4rem">Se också <a href="/oppna-bidrag/">öppna bidrag just nu</a>, <a href="/bidragsstatus/">bidragsstatus</a>, <a href="/finansiarer/">finansiärerna</a> bakom bidragen, och <a href="/foretagsbidragsindex/">Företagsbidragsindex</a> — Sveriges företagsstöd i öppna, citerbara siffror.</p>
+<p class="lead" style="margin-top:.4rem">Vet du inte vad stödet heter? Börja i stället i din egen situation — <a href="/situationer/">alla situationer</a>.</p>
+<p class="lead">Se också <a href="/oppna-bidrag/">öppna bidrag just nu</a>, <a href="/bidragsstatus/">bidragsstatus</a>, <a href="/finansiarer/">finansiärerna</a> bakom bidragen, och <a href="/foretagsbidragsindex/">Företagsbidragsindex</a> — Sveriges företagsstöd i öppna, citerbara siffror.</p>
 <p class="lead">Ämnesöversikter: ${KLUSTER.map((k) => `<a href="/${k.path}/">${esc(k.h1)}</a>`).join(' · ')}.</p>
 ${langPickerHtml()}
 ${hubEntries
@@ -1082,6 +1084,118 @@ rätt stöd — <a href="/vilka-bidrag-kan-jag-fa/">kontrollera din situation</a
   return { path, html: layout({ title: title.slice(0, 70), description, canonical, crumbs, jsonld, body }) };
 }
 
+
+// ── Situationslagret (docs/SEO_SITUATION_ONTOLOGY.md §2) ─────────────────────
+// Doktrinens vallgrav: sökaren beskriver SIG SJÄLV, inte ett bidrag. Noden
+// deklarerar en faktaprofil; MOTORN (packages/core, samma kriterie-DSL som
+// produkten) avgör vilka stöd profilen för framåt och VARFÖR. Listan skrivs
+// alltså aldrig för hand och kan aldrig divergera från kunskapsbasen — och
+// "därför visas det" är seedens egen kriteriebeskrivning, inte ny copy.
+const MALGRUPPSETIKETT = { individual: 'Privatperson', association: 'Förening' };
+const MALGRUPPSPLURAL = { individual: 'privatpersoner', association: 'föreningar' };
+const MALGRUPPSHUBB = { individual: '/bidrag/privatpersoner/', association: '/bidrag/foreningar/' };
+
+function situationPage(sit, traffar, verdict) {
+  const path = `/situationer/${sit.slug}/`;
+  const canonical = `${BASE}${path}`;
+  const crumbs = [
+    { name: 'Bidrag', url: '/bidrag/' },
+    { name: 'Situationer', url: '/situationer/' },
+    { name: sit.h1, url: path },
+  ];
+  const noindex = verdict.verdict !== 'INDEX';
+  const title = `${sit.title} | Bidragskoll`;
+  const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title, crumbs) };
+  const wp = jsonld['@graph'].find((n) => n['@type'] === 'WebPage');
+  // Multi-typning: sidan ÄR en samlingssida över stöd, och WebPage-kravet i
+  // seocheck förblir bokstavligt uppfyllt.
+  wp['@type'] = ['WebPage', 'CollectionPage'];
+  // audienceType är ingen SEO-uppfinning: det är exakt den situation sidans
+  // H1 och frågelista beskriver, och inget annat.
+  wp.audience = {
+    '@type': sit.malgrupp === 'individual' ? 'PeopleAudience' : 'Audience',
+    audienceType: sit.h1,
+  };
+  jsonld['@graph'].push(listaNod(
+    `${canonical}#stod`,
+    `Stöd som situationen för framåt: ${sit.h1}`,
+    traffar.map((t) => ({ name: anchorTitle(t.opportunity), url: `${BASE}/bidrag/${t.opportunity.slug}/` })),
+  ));
+
+  const kallor = traffar.map((t) => t.opportunity);
+  const body = `
+<p class="eyebrow">Situation · ${esc(MALGRUPPSETIKETT[sit.malgrupp] ?? 'Situation')}</p>
+<h1>${esc(sit.h1)}</h1>
+<p class="lead">${esc(sit.ingress)}</p>
+
+<h2>Stämmer det här?</h2>
+<ul>${sit.fragor.map((q) => `<li>${esc(q)}</li>`).join('')}</ul>
+<p>Svarar du ja på frågorna ovan är det den här sidan som gäller dig. Frågorna är hämtade ordagrant ur de villkor
+som stöden nedan faktiskt prövas mot — vi hittar inte på egna kriterier, och vi frågar aldrig efter personnummer.</p>
+
+<p><a class="bigcta" href="/">Gå igenom din situation — gratis</a></p>
+
+<h2>Stöd som situationen för framåt (${traffar.length})</h2>
+<ul class="stodlista">${traffar.map((t) => {
+  const o = t.opportunity;
+  const auth = authorityByKey.get(o.authorityKey);
+  return `<li><a href="/bidrag/${o.slug}/">${esc(anchorTitle(o))}</a><span class="sum">${esc(o.summary)}
+<em>· ${esc(auth?.name ?? 'Se källan')} · ${esc(deadlineText(o))}</em><br>Därför visas det: ${esc(t.skal.join('; '))}.</span></li>`;
+}).join('')}</ul>
+<p>Listan är inte en rangordning av hur mycket pengar du kan få — den visar vilka stöd situationen för framåt, med
+det mest situationsspecifika först. Varje stöd prövas för sig, och de flesta har fler villkor än de som framgår här.</p>
+
+<h2>Så hänger det ihop</h2>
+<p>${esc(sit.ordning)}</p>
+
+<div class="honest">Det här är en bedömning, inte ett beslut. Beslut fattas alltid av den myndighet eller finansiär
+som ansvarar för stödet, och att ansöka själv direkt hos dem är alltid gratis. Bidragskoll är gratis att upptäcka
+med; du betalar bara om du väljer att låta systemet förbereda en ansökan.</div>
+
+<p class="relaterade">Se även <a href="${MALGRUPPSHUBB[sit.malgrupp] ?? '/bidrag/'}">alla stöd för ${esc(MALGRUPPSPLURAL[sit.malgrupp] ?? 'sökande')}</a>
+· <a href="/situationer/">andra situationer</a></p>
+
+<p class="kalla"><strong>Officiella källor:</strong> ${kallor.map((o) => `<a href="${esc(o.sourceUrl)}" rel="noopener">${esc(anchorTitle(o))}</a>`).join(' · ')}.
+<br><strong>Senast kontrollerad:</strong> ${CHECKED}</p>
+`;
+  let html = layout({ title, description: sit.description, canonical, crumbs, jsonld, body });
+  if (noindex) html = html.replace('</title>', '</title>\n<meta name="robots" content="noindex,follow">');
+  return { path, html, noindex };
+}
+
+function situationIndexPage(resolved) {
+  const path = '/situationer/';
+  const canonical = `${BASE}${path}`;
+  const crumbs = [{ name: 'Bidrag', url: '/bidrag/' }, { name: 'Situationer', url: path }];
+  const title = 'Situationer – hitta stöd utifrån din situation | Bidragskoll';
+  const description = `${resolved.length} livssituationer, var och en kopplad till de stöd i kunskapsbasen som situationen faktiskt för framåt. Du behöver inte veta vad stödet heter.`.slice(0, 168);
+  const jsonld = { '@context': 'https://schema.org', '@graph': baseGraph(canonical, title.slice(0, 70), crumbs) };
+  const wp = jsonld['@graph'].find((n) => n['@type'] === 'WebPage');
+  wp['@type'] = ['WebPage', 'CollectionPage'];
+  jsonld['@graph'].push(listaNod(
+    `${canonical}#situationer`,
+    'Situationer',
+    resolved.map(({ sit }) => ({ name: sit.h1, url: `${BASE}/situationer/${sit.slug}/` })),
+  ));
+  const grupper = [
+    ['Privatpersoner och hushåll', resolved.filter((r) => r.sit.malgrupp === 'individual')],
+    ['Föreningar', resolved.filter((r) => r.sit.malgrupp === 'association')],
+  ].filter(([, rader]) => rader.length);
+  const body = `
+<h1>Hitta stöd utifrån din situation</h1>
+<p class="lead">Du ska inte behöva veta vad stödet heter, vilken myndighet som äger det eller vilken kategori det
+tillhör. Börja i stället i din egen situation. Varje sida nedan utgår från något vi vet om dig — och visar vilka
+stöd i kunskapsbasen den situationen faktiskt för framåt, och varför.</p>
+${grupper.map(([rubrik, rader]) => `
+<h2>${esc(rubrik)}</h2>
+<ul class="stodlista">${rader.map(({ sit, traffar }) => `<li><a href="/situationer/${sit.slug}/">${esc(sit.h1)}</a><span class="sum">${esc(sit.description)} <em>· ${traffar.length} ${traffar.length === 1 ? 'stöd' : 'stöd'}</em></span></li>`).join('')}</ul>`).join('')}
+<p>Passar ingen av dem? Situationerna här är de som kunskapsbasen har kurerade stöd bakom — vi bygger ingen sida
+utan stöd att visa. <a href="/">Genomgången</a> täcker fler situationer än den här listan, och är gratis.</p>
+<p class="kalla"><strong>Senast kontrollerad:</strong> ${CHECKED}</p>
+`;
+  return { path, html: layout({ title: title.slice(0, 70), description, canonical, crumbs, jsonld, body }) };
+}
+
 // ── Bygg ─────────────────────────────────────────────────────────────────────
 if (outFlag === -1) rmSync(OUT, { recursive: true, force: true });
 mkdirSync(join(OUT, 'bidrag'), { recursive: true });
@@ -1323,6 +1437,27 @@ for (const { auth, grants } of funders) {
   if (p.noindex) fNo++; else fIdx++;
 }
 
+// Situationslagret: motorn avgör listorna, doktrinen avgör om sidan får finnas.
+// Två noder som resolverar till exakt samma stöduppsättning är samma sida med
+// olika rubrik — det fäller bygget i stället för att publiceras som dubblett.
+const SITUATIONER = loadSituations(ROOT);
+for (const sit of SITUATIONER) validateSituationQuestions(sit, opportunities);
+const situationer = SITUATIONER
+  .map((sit) => ({ sit, traffar: resolveSituation(sit, opportunities) }))
+  .map((r) => ({ ...r, dom: situationVerdict(r.traffar) }))
+  .filter((r) => r.dom.verdict !== 'DO_NOT_GENERATE');
+const situationsKrockar = duplicateSituations(situationer);
+if (situationsKrockar.length) {
+  throw new Error(`situationsnoder med identisk stöduppsättning (nära-dubbletter): ${situationsKrockar.map((p) => p.join(' = ')).join(', ')}`);
+}
+emit('situationer', situationIndexPage(situationer).html);
+let sIdx = 0, sNo = 0;
+for (const r of situationer) {
+  const p = situationPage(r.sit, r.traffar, r.dom);
+  emit(p.path.replace(/^\/|\/$/g, ''), p.html, { noindex: p.noindex });
+  if (p.noindex) sNo++; else sIdx++;
+}
+
 // Sitemap + robots. NOINDEX_FOLLOW-sidor genereras men står UTANFÖR sitemapen.
 const sitemapUrls = pages.filter((p) => !noindexPaths.has(p));
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -1357,4 +1492,4 @@ const notFound = layout({
 }).replace('</title>', '</title>\n<meta name="robots" content="noindex">');
 writeFileSync(join(OUT, '404.html'), notFound);
 
-console.log(`Genererade ${pages.length} publika sidor (query: ${idx} INDEX/${noidx} NOINDEX/${skipped} DO_NOT_GENERATE · finansiärer: ${fIdx} INDEX/${fNo} NOINDEX) + 404.html + sitemap.xml + robots.txt → ${OUT}`);
+console.log(`Genererade ${pages.length} publika sidor (query: ${idx} INDEX/${noidx} NOINDEX/${skipped} DO_NOT_GENERATE · finansiärer: ${fIdx} INDEX/${fNo} NOINDEX · situationer: ${sIdx} INDEX/${sNo} NOINDEX) + 404.html + sitemap.xml + robots.txt → ${OUT}`);

@@ -40,11 +40,24 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
 - **Deploy-beredskap** — Vercel serverless-ingång (`api/index.ts`),
   `vercel.json` (bygge, SPA-routning, 5 cron-jobb), `deploy/bootstrap.sql`,
   Dockerfile + `deploy/k8s/` som alternativ väg, CI grön.
-- **Publik SEO-yta** — `tools/genseo.mjs` genererar den statiska publika ytan
-  (`/bidrag/` + 4 målgruppshubbar + en entity-sida per stöd + sitemap + robots) ur
-  seeden vid varje Vercel-bygge; QA-crawlas av `tools/seocheck.mjs` i verify.
+- **Publik SEO-yta** — `tools/genseo.mjs` genererar 170 statiska sidor ur seeden
+  vid varje Vercel-bygge: `/bidrag/` + 4 målgruppshubbar + 4 klusterhubbar + en
+  entity-sida per stöd + `/finansiarer/` + Query Pages + 11 språklandningssidor +
+  **situationslagret** (`/situationer/`) + sitemap + robots. QA-crawlas av
+  `tools/seocheck.mjs` och `tools/schemacheck-seo.mjs` i verify.
   Strategi/research i `docs/SEO_*.md`; keyword-databas i `seo/`
   (332 rötter, inga påhittade volymer — allt källmärkt).
+- **Situationslagret** — `/situationer/<slug>/` (12 noder + katalogsida). En nod
+  skriver aldrig sin egen stödlista: den deklarerar en **faktaprofil** i
+  `seo/situationer.json` och **motorn** (`packages/core`, samma kriterie-DSL som
+  produkten) avgör vilka stöd profilen för framåt — varje rad bär seedens egen
+  kriteriebeskrivning som skäl. Profilen får bara innehålla definitionsmässigt
+  sanna fakta, och frågorna sidan visar måste stå ordagrant i seeden. Doktrin +
+  domar: `docs/SEO_SITUATION_ONTOLOGY.md` §3. Vakt: `tools/lib/situationer.mjs`
+  + `tools/schemacheck-seo.mjs`.
+- **Schema Engine** — entitetsgrafen (JSON-LD) genereras ur samma seed;
+  `docs/SCHEMA_ENGINE.md` är styrdokumentet. Regeln: schema får bara påstå det
+  som står i seeden OCH syns på sidan.
 - **Launch & Demand Intelligence** — `docs/LAUNCH_DEMAND_INTELLIGENCE.md`
   (fyra spår + QSDR/ARR-måtten), scenariomodellen `tools/demandmodel.mjs`
   (`npm run demand:model`; trafik är INPUT i scenarier, aldrig prognos; alla
@@ -256,7 +269,8 @@ miljön och handboken fördjupas då skärm för skärm.
    belastningstest** — produktbeviset (`docs/LAUNCH_DEMAND_INTELLIGENCE.md`
    §8) och det som stänger GATE 0:s CONTENT-RED (`docs/GATE0_REPORT.md` —
    0 av 332 sökområden GREEN; offsite fryst tills gaten är grön). Innehåller innehållsmotorns F0→F1 (`docs/CONTENT_ENGINE.md`:
-   interaktiv behörighetskontroll, ändringshistorik, `/situationer/`,
+   interaktiv behörighetskontroll, ändringshistorik, ~~`/situationer/`~~
+   (LEVERERAT 2026-08-30 — 12 noder, `docs/SEO_SITUATION_ONTOLOGY.md` §3),
    bevispaketet; `seo/questions-tier1.json` + `docs/SEO_ANSWER_CLUSTERS.md`
    styr) **plus** pre-check-vyn (grundvillkor + underlagslista före utklick),
    instrumenteringseventen för QSDR/ARR, och belastningstest mot modellens

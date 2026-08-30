@@ -18,6 +18,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = join(ROOT, 'artifacts', 'seo-site');
 const { opportunities, authorities } = await import(join(ROOT, 'apps/api/src/seed/data.ts'));
 const authByKey = Object.fromEntries(authorities.map((a) => [a.key, a]));
+const { loadSituations, resolveSituation, situationVerdict, validateSituationQuestions } = await import(join(ROOT, 'tools/lib/situationer.mjs'));
 
 const fel = [];
 const filer = execSync(`find ${SITE} -name index.html`, { encoding: 'utf8' }).trim().split('\n');
@@ -104,7 +105,55 @@ for (const [f, noder] of grafPer) {
   }
 }
 
-// 8. Ingen Article/NewsArticle: sidorna är referenssidor, inte artiklar
+// 8. Situationssidorna: listan MÅSTE vara motorns utdata, inte en handlista.
+//    Vakten kör om resolveringen mot seeden och jämför med både markupen och
+//    sidans synliga länkar — och kontrollerar att frågorna står ordagrant i
+//    seeden och att indexerbarheten följer doktrinens tröskel.
+const situationer = loadSituations(ROOT);
+let situationssidor = 0;
+for (const sit of situationer) {
+  try { validateSituationQuestions(sit, opportunities); } catch (e) { fel.push(e.message); }
+  const traffar = resolveSituation(sit, opportunities);
+  const dom = situationVerdict(traffar);
+  const f = join(SITE, 'situationer', sit.slug, 'index.html');
+  if (dom.verdict === 'DO_NOT_GENERATE') {
+    if (grafPer.has(f)) fel.push(`situation ${sit.slug}: genererad trots att inget stöd förs framåt`);
+    continue;
+  }
+  const noder = grafPer.get(f);
+  if (!noder) { fel.push(`situation ${sit.slug}: sidan saknas i den byggda ytan`); continue; }
+  situationssidor++;
+  const html = readFileSync(f, 'utf8');
+
+  const lista = noder.find((n) => String(n['@id'] ?? '').endsWith('#stod'));
+  if (!lista) { fel.push(`situation ${sit.slug}: ingen ItemList (#stod) i grafen`); continue; }
+  const iMarkup = (lista.itemListElement ?? []).map((p) => p.url);
+  const iMotorn = traffar.map((t) => `https://bidragskoll.se/bidrag/${t.opportunity.slug}/`);
+  if (iMarkup.join('|') !== iMotorn.join('|')) {
+    fel.push(`situation ${sit.slug}: ItemList (${iMarkup.length}) matchar inte motorns resolvering (${iMotorn.length}) eller har annan ordning`);
+  }
+
+  // Målgruppen i markupen är sidans H1 — ingen påhittad audience-etikett.
+  const wp = noder.find((n) => (Array.isArray(n['@type']) ? n['@type'] : [n['@type']]).includes('WebPage'));
+  if (wp?.audience?.audienceType !== sit.h1) {
+    fel.push(`situation ${sit.slug}: audienceType "${wp?.audience?.audienceType}" är inte sidans H1 "${sit.h1}"`);
+  }
+
+  // Indexerbarhet: NOINDEX exakt när doktrinens tröskel inte nås.
+  const harNoindex = /name="robots" content="noindex/.test(html);
+  if (harNoindex !== (dom.verdict !== 'INDEX')) {
+    fel.push(`situation ${sit.slug}: noindex=${harNoindex} men domen är ${dom.verdict} (${traffar.length} stöd)`);
+  }
+
+  // Varje fråga sidan ställer ska stå ordagrant på sidan (och i seeden, ovan).
+  for (const q of sit.fragor) {
+    if (!html.includes(q.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))) {
+      fel.push(`situation ${sit.slug}: frågan "${q}" står i datat men inte på sidan`);
+    }
+  }
+}
+
+// 9. Ingen Article/NewsArticle: sidorna är referenssidor, inte artiklar
 //    (docs/PREFERRED_SOURCES.md §6 — schema får bara beskriva det som finns).
 for (const [f, noder] of grafPer) {
   for (const n of noder) {
@@ -121,4 +170,4 @@ if (fel.length) {
   if (fel.length > 25) console.error(`  … och ${fel.length - 25} till`);
   process.exit(1);
 }
-console.log(`Schema-entitetsvakten: ${kontrollerade} stödsidor + ${aktorsidor} aktörssidor — utgivare, geografi, målgrupp, listor och datum stämmer med seeden och med sidans synliga innehåll.`);
+console.log(`Schema-entitetsvakten: ${kontrollerade} stödsidor + ${aktorsidor} aktörssidor + ${situationssidor} situationssidor — utgivare, geografi, målgrupp, listor, frågornas proveniens och datum stämmer med seeden och med sidans synliga innehåll.`);

@@ -91,7 +91,7 @@ arkitektur — genseo bygger 77 sidor ur seeden i dag.
 | 3. **Processlagret** | Ansökan, bilagor, budget, beslut, redovisning | **FINNS delvis**: 71 ansökningsscheman + dokumentmallar + deterministisk granskning (`docs/APPLICATION-INTELLIGENCE.md`); publika processmanualer saknas |
 | 4. **Erfarenhetslagret** | Beviljade projekt, avslag, intervjuer, lärdomar | **NYTT**: datakontrakt i `seo/beviljade-projekt.schema.json` + `seo/erfarenheter.schema.json` (denna körning); data = nästa fas |
 | 5. **Verktygslagret** | Kalkylatorer, mallar, scorecards, jämförelser | **FINNS som motor**: core körs redan i webbläsaren (demon bundlar den) — behörighetskontroll/frågeträd/granskning kan exponeras publikt utan ny motor |
-| 6. **Innehållsgrafen** | Relationer stöd↔situation↔fråga | **FINNS delvis**: `tools/genseo.mjs` (77 noder, länkgraf QA-crawlas), `docs/SEO_INFORMATION_ARCHITECTURE.md`, `docs/SEO_INTERNAL_LINKING.md`; nodtyperna i §7 utökar den |
+| 6. **Innehållsgrafen** | Relationer stöd↔situation↔fråga | **FINNS**: `tools/genseo.mjs` (170 sidor, länkgraf QA-crawlas), `docs/SEO_INFORMATION_ARCHITECTURE.md`, `docs/SEO_INTERNAL_LINKING.md`. Situationskanten stöd↔situation finns nu som körbar kod (`tools/lib/situationer.mjs`), inte bara som dokument; entitetskanterna som JSON-LD-graf (`docs/SCHEMA_ENGINE.md`) |
 | 7. **Feedbacklagret** | GSC, användarbeteende, ändringar | **VÄNTAR PÅ DEPLOY**: `docs/SEO_BASELINE.md`-loopen; ändringsdetektering finns (source-fetch snapshot/diff) |
 
 Konsekvens: när en källa ändras uppdateras stödsidan, situationsmanualen,
@@ -104,7 +104,7 @@ inte lagra egna kopior av fakta.
 | Typ | Kärna | Doktrin | Status |
 |---|---|---|---|
 | 4.1 Kanonisk bidragssida | Levande produktsida för kunskap: vad/vem/vem inte/belopp/datum/ansökan/underlag/efteråt/relaterat/källa/kontrolldatum/ändringar | alla | **FINNS v1** (72 entity-sidor via genseo); gap: se §5 |
-| 4.2 Situationsmanualer | Utgår från problemet, inte bidragsnamnet ("nyseparerad", "hyran för hög") | A/B | PLANERAD — viktigaste organiska tillväxtlagret (ledare C i atlasen) |
+| 4.2 Situationsmanualer | Utgår från problemet, inte bidragsnamnet ("nyseparerad", "hyran för hög") | A/B | **FINNS v1** (2026-08-30): 12 noder under `/situationer/` + katalogsida, genererade ur faktaprofiler som **motorn** resolverar mot seeden — listan skrivs aldrig för hand och varje rad bär sitt skäl (seedens kriteriebeskrivning). Se `docs/SEO_SITUATION_ONTOLOGY.md` §3. Gap: fler noder kräver att överlastade faktavägar delas (PERFECTION_BACKLOG M15–M16) |
 | 4.3 Målgruppshandböcker | Hubbar med ordning: vanligaste situationer → relevanta stöd → kontrollordning → överlapp → nästa steg | alla | **FINNS embryo** (4 målgruppshubbar); ska bli handböcker, inte länklistor |
 | 4.4 Ansökningsmanualer | Per större konkurrensutsatt program: förberedelse → kriterieläsning → logik → QA → handläggning → beslut | C/D | PLANERAD |
 | 4.5 Bedömarens perspektiv | Strukturera **publicerade** kriterier: "vad måste handläggaren kunna verifiera?" (MUCF:s tre grunder = pilotfall, VERIFIED) | C | PLANERAD — motorn har redan granskningslogiken |

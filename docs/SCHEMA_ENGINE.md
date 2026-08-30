@@ -15,28 +15,36 @@ Google själv sätter för structured data: markup som beskriver osynligt eller
 påhittat innehåll är ett policybrott, inte en finess.
 
 Vakten `tools/schemacheck-seo.mjs` (i verify och `npm run seo:check`) kontrollerar
-båda leden på 85 stödsidor och 36 aktörssidor. Per stödsida: att provider-noden finns och heter det seeden säger,
+båda leden på 85 stödsidor, 36 aktörssidor och 12 situationssidor. Per stödsida: att provider-noden finns och heter det seeden säger,
 att `description` ÄR seedens `summary`, att `sameAs` pekar på seedens `sourceUrl`,
 att myndighetens namn faktiskt förekommer i sidans text — och att en
 ansökningsperiod finns i markupen **om och endast om** seeden har kurerade datum.
 
 Per aktörssida: att aktörsnoden finns med rätt `@id` (så `provider` inte pekar i
 tomma luften) och rätt typ ur `authority.kind` — en stiftelse får inte stämplas
-som myndighet. Och för varje `ItemList`, oavsett sida: att `numberOfItems`
+som myndighet.
+
+Per situationssida: att `ItemList` är **exakt motorns utdata** (vakten kör om
+resolveringen mot seeden och jämför både innehåll och ordning), att
+`audienceType` är sidans egen H1 och ingen påhittad målgruppsetikett, att
+noindex sätts exakt när stödtröskeln inte nås, och att varje fråga sidan
+ställer står ordagrant både i seeden och i sidans synliga text.
+
+Och för varje `ItemList`, oavsett sida: att `numberOfItems`
 stämmer och att **varje post faktiskt länkas i sidans HTML**.
 
-## Vad som emitteras (uppmätt 2026-08-29, 157 sidor)
+## Vad som emitteras (uppmätt 2026-08-30, 170 sidor)
 
 | @type | Antal | Var |
 |---|---|---|
-| `Organization` | 175 | Bidragskoll + stiftelser/föreningar som utgivare |
+| `Organization` | 188 | Bidragskoll + stiftelser/föreningar som utgivare |
 | `GovernmentOrganization` | 103 | myndighet/kommun/region/EU-organ som utgivare |
 | `GovernmentService` | 76 | stödet, när utgivaren är offentlig |
 | `Service` | 9 | stödet, när utgivaren är stiftelse eller förening |
-| `WebSite` / `WebApplication` / `BreadcrumbList` | 157 vardera | hela ytan |
-| `WebPage` | 157 | varav 6 multi-typade `['WebPage','CollectionPage']` |
+| `WebSite` / `WebApplication` / `BreadcrumbList` | 170 vardera | hela ytan |
+| `WebPage` | 170 | varav 19 multi-typade `['WebPage','CollectionPage']` |
 | `FAQPage` | 102 | sidor med synliga frågor och svar |
-| `ItemList` | 46 | varje synlig lista av stöd eller aktörer |
+| `ItemList` | 59 | varje synlig lista av stöd, aktörer eller situationer |
 | `Dataset` | 1 | företagsbidragsindexet |
 
 Multi-typningen är avsiktlig: `CollectionPage` är en subtyp av `WebPage`, och
@@ -51,6 +59,10 @@ Bidragskoll (Organization)
           │
           ├── /bidrag/ + hubbar  (WebPage+CollectionPage)
           │      └── ItemList ──► stödsidorna som listas synligt
+          │
+          ├── /situationer/<situation>/  (WebPage+CollectionPage)
+          │      ├── audience  = PeopleAudience | Audience, audienceType = sidans H1
+          │      └── ItemList ──► stöden MOTORN för framåt, i motorns ordning
           │
           ├── /bidrag/<stöd>/  (WebPage)
           │      └── about ──► Stödet (GovernmentService | Service)
@@ -75,6 +87,10 @@ finansiärssidan är **samma nod**, och den noden har en egen sida på sajten.
 
 ## Medvetna avgränsningar
 
+- **Ingen `Question`/`Answer` på situationssidornas frågelista.** Frågorna
+  ("Har du barn som bor hos dig?") är ett behörighetsfilter, inte ett
+  fråga-svar-innehåll: sidan ställer dem och besvarar dem inte. `FAQPage` där
+  vore markup som beskriver något annat än det som står.
 - **Inga Wikidata-`sameAs`.** Att peka ut en myndighet med ett QID vore
   värdefullt för entitetsupplösning, men `wikidata.org` är blockerad av
   sandlådans egress-proxy och ett QID ur minnet är påhittad identitetsdata:

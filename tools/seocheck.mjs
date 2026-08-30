@@ -51,7 +51,7 @@ const SEO_LOCALES = [
   { code: 'ru', hreflang: 'ru', dir: 'ltr' }, { code: 'uk', hreflang: 'uk', dir: 'ltr' },
   { code: 'so', hreflang: 'so', dir: 'ltr' }, { code: 'ti', hreflang: 'ti', dir: 'ltr' },
 ];
-const STATIC = [...SEO_LOCALES.map((l) => `/${l.code}/bidrag/`), '/bidrag/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/', '/bidragsstatus/', '/oppna-bidrag/', '/finansiarer/', '/foretagsbidragsindex/', '/foretag/', '/privatperson/', '/forening/', '/enskild-firma/'];
+const STATIC = [...SEO_LOCALES.map((l) => `/${l.code}/bidrag/`), '/bidrag/', '/situationer/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/', '/bidragsstatus/', '/oppna-bidrag/', '/finansiarer/', '/foretagsbidragsindex/', '/foretag/', '/privatperson/', '/forening/', '/enskild-firma/'];
 // Toppnivåingångar för orphan-BFS (faktiska sidor, länkade från appens nav /
 // katalogindex). Query Pages + finansiärssidor nås därifrån via index-/hubblänkar.
 const BFS_SEEDS = ['/bidrag/', '/hitta-bidrag-gratis/', '/vilka-bidrag-kan-jag-fa/', '/bidragsstatus/', '/finansiarer/', '/foretagsbidragsindex/'];
@@ -173,6 +173,25 @@ else {
   const nf = readFileSync(nfPath, 'utf8');
   if (!nf.includes('name="robots" content="noindex"')) err('404.html är inte noindex');
   if (!/hjälpa dig/.test(nf)) err('404.html saknar den hjälpsamma texten (§40)');
+}
+
+// SPA-rewriten i vercel.json måste undanta VARJE genererad toppnivåkatalog —
+// annars serveras appens index.html i stället för den statiska sidan i
+// produktion, och sidan finns bara lokalt. (Fyndet: /situationer/ saknades när
+// situationslagret byggdes; ingen vakt hade fångat det.)
+const vercelPath = join(ROOT, 'vercel.json');
+if (existsSync(vercelPath)) {
+  const rewrites = JSON.parse(readFileSync(vercelPath, 'utf8')).rewrites ?? [];
+  const spa = rewrites.find((r) => r.destination === '/index.html');
+  if (!spa) err('vercel.json saknar SPA-rewriten till /index.html');
+  else {
+    const toppniva = new Set([...pages.keys()].map((p) => p.split('/')[1]).filter(Boolean));
+    for (const seg of [...toppniva].sort()) {
+      if (!spa.source.includes(`${seg}/`)) {
+        err(`vercel.json: SPA-rewriten undantar inte /${seg}/ — sidorna där skulle serveras som appen i produktion`);
+      }
+    }
+  }
 }
 
 // Robots.

@@ -1,0 +1,137 @@
+{
+  "_kontrakt": "Situationslagret (docs/SEO_SITUATION_ONTOLOGY.md §2). Varje nod deklarerar en FAKTAPROFIL i samma faktavägar som kunskapsbasens kriterier — motorn (packages/core) avgör vilka stöd situationen för framåt, listan skrivs aldrig för hand. Profilen får bara innehålla fakta som är definitionsmässigt sanna för situationen; allt annat är en fråga motorn ställer, inte något sidan får anta. 'fragor' måste vara ORDAGRANNA intagsfrågor ur seeden för profilens egna faktavägar — tools/genseo.mjs och tools/schemacheck-seo.mjs fäller bygget annars. Curated prose (ingress, ordning) beskriver process och ansvarsfördelning, ALDRIG belopp, nivåer eller villkor: de ägs av källan.",
+  "situationer": [
+    {
+      "slug": "foralder-med-barn-hemma",
+      "malgrupp": "individual",
+      "h1": "Du har barn som bor hos dig",
+      "title": "Bidrag och ersättningar när du har barn hemma",
+      "description": "Har du barn som bor hos dig helt eller växelvis? Se vilka stöd som kan bli aktuella hos Försäkringskassan, CSN, kommunen och regionen — gratis.",
+      "ingress": "Att ha barn hemma öppnar för fler stöd än de flesta känner till, och de ligger hos olika aktörer: Försäkringskassan, CSN, kommunen och regionen. Den här sidan utgår från ett enda faktum om dig — att du har barn som bor hos dig — och visar vilka stöd det faktiskt för framåt, och varför. Det är en bedömning, inte ett beslut.",
+      "ordning": "Börja med de stöd som gäller barnfamiljer brett och gå sedan vidare till dem som beror på inkomst, boende eller barnets situation. Det finns ingen gemensam ansökan: varje stöd söks för sig, hos den aktör som beslutar om det. Kommunala och regionala stöd beslutas där du bor och kan därför skilja sig mellan kommuner och regioner.",
+      "fakta": { "applicant.type": "individual", "applicant.country": "SE", "person.hasChildrenAtHome": true },
+      "fragor": ["Har du barn som bor hos dig, helt eller växelvis?"]
+    },
+    {
+      "slug": "arbetslos",
+      "malgrupp": "individual",
+      "h1": "Du är inskriven som arbetssökande",
+      "title": "Bidrag och ersättningar när du är arbetslös",
+      "description": "Inskriven hos Arbetsförmedlingen? Se vilka ersättningar och stöd som kan bli aktuella, vem som beslutar om vad och vad du behöver ha klart först.",
+      "ingress": "Vid arbetslöshet delas ansvaret mellan flera aktörer: a-kassan prövar arbetslöshetsersättning, Arbetsförmedlingen anvisar program, Försäkringskassan betalar ut ersättning under program och CSN hanterar studiestöd. Sidan utgår från att du är inskriven som arbetssökande och visar vad det för framåt.",
+      "ordning": "Inskrivningen hos Arbetsförmedlingen är i praktiken första steget — flera av stöden förutsätter den. Därefter skiljer sig vägarna åt beroende på om du har rätt till ersättning från en a-kassa, deltar i ett program eller vill studera eller starta eget. Villkoren avgörs av respektive aktör; genomgången ställer följdfrågorna som skiljer spåren åt.",
+      "fakta": { "applicant.type": "individual", "applicant.country": "SE", "person.registeredUnemployed": true },
+      "fragor": ["Är du inskriven som arbetssökande hos Arbetsförmedlingen?"]
+    },
+    {
+      "slug": "funktionsnedsattning-i-familjen",
+      "malgrupp": "individual",
+      "h1": "Funktionsnedsättning eller långvarig sjukdom i familjen",
+      "title": "Bidrag vid funktionsnedsättning i familjen",
+      "description": "Har du eller en nära anhörig en funktionsnedsättning eller långvarig sjukdom? Se vilka stöd det kan föra framåt — hos Försäkringskassan och kommunen.",
+      "ingress": "Stöden vid funktionsnedsättning och långvarig sjukdom ligger dels hos Försäkringskassan, dels hos kommunen — och de täcker olika saker: merkostnader, omvårdnad, anpassning av bostaden och ersättning vid nedsatt arbetsförmåga. Sidan utgår från att funktionsnedsättning eller långvarig sjukdom finns i familjen och visar vad det för framåt.",
+      "ordning": "Stöden prövas var för sig och utesluter inte varandra, men de bedöms utifrån olika saker: några utgår från merkostnader, andra från omvårdnadsbehov, arbetsförmåga eller bostadens utformning. Ett läkarutlåtande eller motsvarande underlag krävs ofta — det är oftast det som tar längst tid att få fram, så börja där.",
+      "fakta": { "applicant.type": "individual", "applicant.country": "SE", "person.disabilityOrLongTermIllnessInFamily": true },
+      "fragor": ["Har du eller någon nära anhörig en funktionsnedsättning eller en långvarig eller allvarlig sjukdom?"]
+    },
+    {
+      "slug": "yrkesverksam-konstnar",
+      "malgrupp": "individual",
+      "h1": "Du är yrkesverksam konstnär",
+      "title": "Stipendier och bidrag för yrkesverksamma konstnärer",
+      "description": "Arbetar du professionellt inom konst, musik eller scenkonst? Se vilka stipendier och projektbidrag som kan bli aktuella och vem som beslutar.",
+      "ingress": "För yrkesverksamma konstnärer finns en egen stödvärld: arbetsstipendier, projektbidrag och rese- och utbytesbidrag, fördelade av Konstnärsnämnden, Kulturrådet och Musikverket. Sidan utgår från att du är yrkesverksam — inte amatör eller under grundutbildning — och visar vad det för framåt.",
+      "ordning": "De här stöden är konkurrensutsatta: de fördelas mellan sökande efter bedömning, inte efter uppfyllda villkor. Ansökningsomgångarna är därför tidsbundna och besluten fattas i omgångar. Läs alltid bedömningskriterierna hos den som utlyser innan du skriver, och räkna med att samma underlag — meritförteckning, arbetsprover, budget — kan återanvändas mellan ansökningar.",
+      "fakta": { "applicant.type": "individual", "applicant.country": "SE", "person.professionalArtist": true },
+      "fragor": ["Är du yrkesverksam konstnär?"]
+    },
+    {
+      "slug": "ideell-forening",
+      "malgrupp": "association",
+      "h1": "Din förening vill söka bidrag",
+      "title": "Bidrag till ideella föreningar med stadgar och styrelse",
+      "description": "Har föreningen stadgar, årsmöte och en vald styrelse? Se vilka bidrag det för framåt — organisationsbidrag, projektstöd och kommunala föreningsbidrag.",
+      "ingress": "Nästan alla föreningsbidrag har samma grundkrav: en demokratisk uppbyggnad med stadgar, årsmöte och en vald styrelse. Sidan utgår från det och visar vilka bidrag som kan bli aktuella — från kommunens föreningsbidrag till nationella organisations- och projektbidrag.",
+      "ordning": "Skilj på organisationsbidrag, som stöder föreningens löpande verksamhet, och projektbidrag, som söks för en avgränsad insats med egna mål och egen budget. De prövas olika: organisationsbidrag mot medlemskrav och struktur, projektbidrag i konkurrens mot andra ansökningar. Kommunens föreningsbidrag beslutas lokalt och skiljer sig mellan kommuner.",
+      "fakta": { "applicant.type": "association", "applicant.country": "SE", "organisation.democraticStructure": true },
+      "fragor": ["Har föreningen en demokratisk uppbyggnad (stadgar, årsmöte, styrelse)?"]
+    },
+    {
+      "slug": "hoga-boendekostnader",
+      "malgrupp": "individual",
+      "h1": "Boendekostnaden är hög i förhållande till inkomsten",
+      "title": "Bidrag när boendekostnaden är för hög",
+      "description": "Går för mycket av inkomsten till boendet? Se vilka bostadsstöd som kan bli aktuella hos Försäkringskassan och Pensionsmyndigheten — gratis att se.",
+      "ingress": "Bostadsstöden i Sverige har olika namn och olika beslutsfattare beroende på vem du är: bostadsbidrag hos Försäkringskassan, bostadstillägg hos Pensionsmyndigheten. Sidan utgår från att boendekostnaden är hög i förhållande till hushållets inkomst och visar vilka stöd det för framåt.",
+      "ordning": "Kontrollera först vilket av stöden som är rätt spår för dig — det avgörs av ålder, pension och om du har barn, inte av boendekostnaden i sig. Bostadsstöd är dessutom ofta preliminära och stäms av mot din faktiska årsinkomst i efterhand, så en inkomständring bör anmälas direkt. Aktuella gränser och belopp finns alltid hos den aktör som beslutar.",
+      "fakta": { "applicant.type": "individual", "applicant.country": "SE", "person.lowHouseholdIncome": true, "person.paysHousingCost": true },
+      "fragor": ["Är hushållets inkomster låga i förhållande till boendekostnaden?", "Betalar du hyra eller andra boendekostnader?"]
+    },
+    {
+      "slug": "studera-som-vuxen",
+      "malgrupp": "individual",
+      "h1": "Du studerar eller planerar att börja studera",
+      "title": "Studiestöd och bidrag när du studerar som vuxen",
+      "description": "Studerar du, eller planerar du att börja? Se vilka studiestöd som kan bli aktuella hos CSN — inklusive studier utomlands.",
+      "ingress": "Studiestöden hanteras av CSN men är flera olika stöd med olika syften: studiemedel för studier på eftergymnasial nivå, omställningsstudiestöd för dig som vill byta bana mitt i arbetslivet och särskilda regler för studier utomlands. Sidan utgår från att du studerar eller planerar att studera.",
+      "ordning": "Avgör först vilket spår som gäller: ordinarie studiemedel, omställningsstudiestöd eller utlandsstudier. De har olika ansökningsperioder och olika underlag. Studiemedel består dessutom av både bidrag och lån — lånedelen är frivillig men söks i samma ansökan. Aktuella belopp, veckogränser och perioder finns hos CSN.",
+      "fakta": { "applicant.type": "individual", "applicant.country": "SE", "person.isOrPlansStudying": true },
+      "fragor": ["Studerar du, eller planerar du att börja studera?"]
+    },
+    {
+      "slug": "flytta-utomlands",
+      "malgrupp": "individual",
+      "h1": "Du funderar på att flytta utomlands",
+      "title": "Stöd när du funderar på att flytta utomlands",
+      "description": "Ska du arbeta, studera eller återvandra? Se vilka stöd som kan bli aktuella hos CSN, Arbetsförmedlingen och Migrationsverket.",
+      "ingress": "En flytt utomlands kan handla om arbete, studier eller återvandring — och stöden skiljer sig helt åt beroende på vilket. Sidan utgår från att du funderar på att flytta och visar vilka stöd det för framåt, hos vilken aktör och på vilka grunder.",
+      "ordning": "Bestäm först vilket spår som gäller, för de utesluter i praktiken varandra: arbete inom EU/EES, studier utomlands, eller återvandring till ett tidigare hemland. Flera av stöden måste sökas innan flytten — en ansökan i efterhand är ofta för sent. Kontrollera tidsordningen hos den aktör som beslutar innan du bokar något.",
+      "fakta": { "applicant.type": "individual", "applicant.country": "SE", "person.consideringMovingAbroad": true },
+      "fragor": ["Funderar du på att flytta utomlands (för jobb, studier eller återvandring)?"]
+    },
+    {
+      "slug": "ny-i-sverige",
+      "malgrupp": "individual",
+      "h1": "Du har nyligen fått uppehållstillstånd",
+      "title": "Stöd när du är ny i Sverige",
+      "description": "Har du fått uppehållstillstånd de senaste åren? Se vilka stöd som kan bli aktuella under etableringen — hos Arbetsförmedlingen och CSN.",
+      "ingress": "Under de första åren i Sverige finns särskilda stöd knutna till etableringen. Sidan utgår från att du fått uppehållstillstånd de senaste åren och visar vilka stöd i vår kunskapsbas det för framåt. Kunskapsbasen täcker ännu få stöd på det här området — sidan är därför ärligt kort och kompletteras allt eftersom fler stöd kureras.",
+      "ordning": "Etableringsstöden är tidsbegränsade och knutna till när du fick uppehållstillstånd, så börja med att kontrollera om du fortfarande är inom perioden. Kontakta i övrigt kommunen där du bor: mycket av det praktiska stödet är kommunalt och beslutas lokalt.",
+      "fakta": { "applicant.type": "individual", "applicant.country": "SE", "person.newlyArrivedWithResidencePermit": true },
+      "fragor": ["Har du under de senaste åren fått uppehållstillstånd i Sverige, t.ex. som skyddsbehövande eller som anhörig?"]
+    },
+    {
+      "slug": "pensionar",
+      "malgrupp": "individual",
+      "h1": "Du tar ut hel allmän pension",
+      "title": "Bidrag och tillägg när du är pensionär",
+      "description": "Tar du ut hel allmän pension? Se vilket stöd i vår kunskapsbas det för framåt, och vem som beslutar om det.",
+      "ingress": "För pensionärer ligger det inkomstprövade stödet hos Pensionsmyndigheten, inte hos Försäkringskassan. Sidan utgår från att du tar ut hel allmän pension. Kunskapsbasen täcker ännu ett stöd på det här området — sidan är därför kort, och kompletteras när fler pensionärsstöd kurerats mot officiell källa.",
+      "ordning": "Bostadstillägg söks hos Pensionsmyndigheten och prövas mot inkomst, tillgångar och boendekostnad. Har du inte fyllt 65 år och tar ut pension på annan grund kan ett annat stöd vara rätt spår — den kostnadsfria genomgången ställer följdfrågorna som avgör vilket.",
+      "fakta": { "applicant.type": "individual", "applicant.country": "SE", "person.receivesPension": true },
+      "fragor": ["Tar du ut hel allmän pension?"]
+    },
+    {
+      "slug": "ekonomin-racker-inte",
+      "malgrupp": "individual",
+      "h1": "Pengarna räcker inte till det nödvändigaste",
+      "title": "Stöd när pengarna inte räcker till det nödvändiga",
+      "description": "Har hushållet svårt att klara mat, boende och det mest nödvändiga? Se vad som gäller för ekonomiskt bistånd och vem som beslutar.",
+      "ingress": "Ekonomiskt bistånd (försörjningsstöd) är samhällets yttersta skyddsnät och söks hos kommunen där du bor. Det prövas efter andra möjligheter — inkomster, ersättningar och tillgångar räknas först. Sidan utgår från att pengarna inte räcker till det nödvändigaste och att sparade medel saknas.",
+      "ordning": "Ansökan görs hos socialtjänsten i din kommun, och bedömningen görs individuellt utifrån hushållets hela situation. Kontrollera först om du har rätt till andra ersättningar — de prövas före ekonomiskt bistånd. Behöver du en samlad bild av vilka bidrag och ersättningar som finns i det här läget är den kostnadsfria genomgången en snabbare väg än att ringa runt.",
+      "fakta": { "applicant.type": "individual", "applicant.country": "SE", "person.incomeInsufficientForBasicNeeds": true, "person.limitedSavings": true },
+      "fragor": ["Har hushållet svårt att klara kostnaderna för mat, boende och det mest nödvändiga?", "Saknar du sparpengar eller tillgångar som kan täcka utgifterna?"]
+    },
+    {
+      "slug": "nedsatt-arbetsformaga",
+      "malgrupp": "individual",
+      "h1": "Din arbetsförmåga är nedsatt under lång tid",
+      "title": "Ersättning vid långvarigt nedsatt arbetsförmåga",
+      "description": "Är arbetsförmågan nedsatt i minst ett år på grund av sjukdom eller funktionsnedsättning? Se vad som gäller och vem som beslutar.",
+      "ingress": "När arbetsförmågan är nedsatt under lång tid prövar Försäkringskassan rätten till ersättning, och vilken ersättning som är aktuell beror bland annat på din ålder och på hur varaktig nedsättningen bedöms vara. Sidan utgår från att nedsättningen väntas vara i minst ett år.",
+      "ordning": "Bedömningen vilar på medicinskt underlag, så ett läkarutlåtande är utgångspunkten. Försäkringskassan prövar arbetsförmågan mot hela arbetsmarknaden, inte bara mot ditt nuvarande arbete. Har du en långvarig sjukdom eller funktionsnedsättning i familjen kan fler stöd vara aktuella parallellt — se sidan om funktionsnedsättning i familjen.",
+      "fakta": { "applicant.type": "individual", "applicant.country": "SE", "person.reducedWorkCapacityLongTerm": true },
+      "fragor": ["Bedömer du att din arbetsförmåga är nedsatt under minst ett år på grund av sjukdom eller funktionsnedsättning?"]
+    }
+  ]
+}
