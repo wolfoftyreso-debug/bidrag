@@ -118,7 +118,7 @@ PRIVACY.md).
 
 ## 8. Coverage is wave-1 (expanded)
 
-72 curated opportunities across 35 financiers — state agencies, foundations,
+85 curated opportunities across 36 financiers — state agencies, foundations,
 the sports federation, EU programmes, and personal entitlements
 (Försäkringskassan, CSN, Pensionsmyndigheten, municipal social services) —
 exercise the data patterns: recurring and rolling deadlines, upcoming rounds,
@@ -142,11 +142,13 @@ cluster's monitoring stack, plus a rehearsed on-call path.
 
 ## 10. Payments — generic layer built, Swish awaits merchant agreement
 
-The commercial model is a one-time 39 kr unlock of the personal analysis
-(`ANALYSIS_PRICE_MINOR`, default 3900 öre) plus 19 kr per application
-prepared in the system (`APPLICATION_PRICE_MINOR`, default 1900 öre — all
-documents for that application included) — never a subscription, and never
-"buying a grant". The generic layer (payment → confirmation → unlock) is
+The commercial model is 19 kr per application prepared in the system
+(`APPLICATION_PRICE_MINOR`, default 1900 öre — all documents for that
+application included). Discovery is free and never gated: matches, reasons,
+conditions, deadline, source and the "apply yourself" link are all visible
+without paying (Open Discovery, docs/PRODUCT_DOCTRINE.md). Never a
+subscription, and never "buying a grant". The earlier 39 kr analysis unlock
+and its `ANALYSIS_PRICE_MINOR` setting are removed from the code entirely. The generic layer (payment → confirmation → unlock) is
 implemented and tested end to end: a `payments` table with per-project state,
 a provider registry, teaser gating of match results (counts and categories
 visible, names/sources/questions withheld until a confirmed payment), 402 on
@@ -180,10 +182,9 @@ required), including a forged-callback attack test.
 What is honestly missing: the merchant agreement and bank-issued
 certificates, and a run of `scripts/swish-readiness.mjs` against MSS
 (`SWISH_API_BASE=https://mss.cpc.getswish.net`) and then against production
-with one real 39 kr payment. VAT is fixed at the Swedish standard rate of
-25 % — both products (analysis unlock, document preparation) are
-electronically supplied services to consumers in Sweden, which carry the
-standard rate; the rate is deliberately not configurable so a bad
+with one real 19 kr payment. VAT is fixed at the Swedish standard rate of
+25 % — document preparation is an electronically supplied service to
+consumers in Sweden, which carries the standard rate; the rate is deliberately not configurable so a bad
 environment variable can never produce incorrect receipts. Seller identity
 on receipts defaults to the real operating company — Landvex AB, org.nr
 559141-7042, Antennvägen 2, 135 48 Tyresö, VAT no SE559141704201 — and can
@@ -234,7 +235,7 @@ The adversarial counter-audit ("Motförhöret", docs/reports/motforhoret.html)
 found three A-class gaps. What is now implemented in code, and what remains:
 
 **A1 Withdrawal right (distansavtalslagen)** — implemented: every purchase
-(analysis 39 kr, application 19 kr) requires an explicit
+(19 kr per prepared application) requires an explicit
 checkbox consenting to immediate delivery and acknowledging that the 14-day
 withdrawal right thereby lapses. The server rejects purchases without it
 (400 `consent_required`); the consent timestamp is stored on the payment,
@@ -254,7 +255,7 @@ now understood as mandatory (Art. 9 at scale), is a launch condition.
 människa") — the previous blanket `human_curated` stamp was untrue and has
 been removed. The curator flow in admin is the only path to `human_curated`/
 `human_verified`. The demo says the same thing. **Remaining**: a human must
-actually review all 72 opportunities against live sources before launch;
+actually review all 85 opportunities against live sources before launch;
 until then every rule value (amounts, thresholds, dates) is AI-knowledge,
 not verified fact.
 

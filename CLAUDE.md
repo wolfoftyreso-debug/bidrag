@@ -323,3 +323,10 @@ miljön och handboken fördjupas då skärm för skärm.
    `rm -f /home/user/pgdata/postmaster.pid && su postgres -c "/usr/lib/postgresql/16/bin/pg_ctl -D /home/user/pgdata -o '-k /tmp -p 5432' -l /home/user/pgdata/log start"`.
    API:ts registrerings-rate-limit är ~10/min — vänta ~75 s efter simuleringar
    innan nya kontoflöden.
+   **Känd sandlådeflakighet:** den FÖRSTA `npm run verify` efter en
+   Postgres-omstart fäller ofta steget "API-tester" på en 30 s-timeout
+   (oftast `gdpr.test.ts > metrics endpoint`). Verifierat tre gånger
+   2026-08-29/30: sviten är grön både fristående (`npm test -w apps/api`,
+   225/225) och i nästa verify-körning. Det är kall databas + kall
+   modulinläsning, inte en regression — kör om verify en gång innan du
+   felsöker vidare.
