@@ -74,10 +74,23 @@ exakt vad steg 1 och 3 åtgärdar.
    (15 migreringar, RLS-policyer, drizzles migrationstabell) + hela kunskapsbasen
    som INSERT-satser (inkl. fas B:s översättningsminne), inga psql-metakommandon. ~1,0 MB. Kör mot den DIREKTA
    anslutningen, aldrig via poolern.
-4. **Verifiera räkningarna** — allt annat är ett fel:
-   `funding_opportunities=85, funding_authorities=36,
-   application_schemas=71, sources=37, kb_translations=11410,
-   drizzle.__drizzle_migrations=14`.
+4. **Verifiera räkningarna** — allt annat är ett fel. Kör detta mot databasen
+   efter laddningen:
+
+   ```sql
+   select (select count(*) from public.funding_opportunities)  -- 85
+        , (select count(*) from public.funding_authorities)    -- 36
+        , (select count(*) from public.application_schemas)    -- 71
+        , (select count(*) from public.sources)                -- 37
+        , (select count(*) from public.kb_translations)        -- 11410
+        , (select count(*) from drizzle.__drizzle_migrations); -- 15
+   ```
+
+   **Rättat 2026-08-30:** raden ovan sa tidigare `drizzle.__drizzle_migrations=14`.
+   Rätt tal är **15**, bevisat genom att ladda `deploy/bootstrap.sql` i en tom
+   databas och räkna. `scripts/verify.sh` har hela tiden hävdat rätt tal (det
+   räknar `apps/api/drizzle/*.sql`); det var körboken som var fel, och en
+   operatör som följde den hade trott att laddningen misslyckades.
 5. **Objektlagring**: ingen bucket. `STORAGE_DRIVER=postgres` lägger
    dokument/uppladdningar i tabellen `storage_objects` i Neon — privat, åtkomst
    bara genom API:ts tenantkontroll. Migreringen skapade tabellen; inget mer görs.
@@ -115,6 +128,29 @@ PUBLIC_BASE_URL=https://<projekt>.vercel.app
 CORS_ORIGIN=https://<projekt>.vercel.app
 PAYMENTS_MOCK_ENABLED=true         # valfritt i preview; utelämna för att tvinga skarp Stripe
 ```
+
+### Vad varje variabel gör, och vad som går sönder utan den
+
+Härlett ur `apps/api/src/config.ts` och `apps/api/src/db/`, inte ur den här
+körboken — så listan kan inte drifta ifrån koden utan att någon märker det.
+
+| Variabel | Utan den | Klass |
+|---|---|---|
+| `DATABASE_URL` | Funktionen **kraschar vid start** i produktion (`Missing required environment variable`) — hela API:t 500:ar | HÅRD |
+| `AUTH_SECRET` | Samma krasch | HÅRD |
+| `FIELD_ENCRYPTION_KEY` | Samma krasch | HÅRD |
+| `STORAGE_DRIVER=postgres` | Faller tillbaka på `disk` — filer skrivs till serverless-instansens **flyktiga** filsystem och försvinner | TYST FEL |
+| `CORS_ORIGIN` | Faller tillbaka på `http://localhost:5173` — webben blockeras av CORS mot sitt eget API | TYST FEL |
+| `PUBLIC_BASE_URL` | Samma localhost-fallback — länkar i kvitton och mejl pekar fel | TYST FEL |
+| `CRON_SECRET` | `internal.ts` avvisar varje anrop utan giltig Bearer → **alla fem cron-jobb slutar fungera** | TYST FEL |
+| `DIRECT_DATABASE_URL` | Migreringar körs via pooleren, vilket är en känd felkälla (`db/migrate.ts`) | RISK |
+| `PG_POOL_MAX=2` | Default är 10 per instans — serverless multiplicerar det och kan slå i Neons anslutningstak | RISK |
+| `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | Köpytan vägrar ärligt 503 (`no_payment_provider`) — allt annat fungerar | AVSIKTLIG |
+| `ANTHROPIC_API_KEY` | Språkförslag svarar ärligt 503 | AVSIKTLIG |
+
+De tre HÅRDA syns direkt. De fyra TYSTA är farligast: appen startar och ser
+frisk ut, men lagring, CORS, länkar eller cron är trasiga. `deploy-smoke`
+fångar CORS och lagring; cron-hålet syns bara i loggarna.
 
 Projektet **`bidragskoll`** är redan skapat och länkat i Vercel (ingen import
 behövs). Ge användaren blocket och exakt dessa instruktioner:
