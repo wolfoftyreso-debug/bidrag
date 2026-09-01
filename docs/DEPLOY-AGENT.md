@@ -97,6 +97,31 @@ exakt vad steg 1 och 3 åtgärdar.
    Filen regenereras med `bash scripts/make-bootstrap.sh` efter varje migrerings-
    eller seedändring (skriptet rundtursverifierar själv).
 
+### ⚠ RLS-fällan: körtidsrollen MÅSTE äga tabellerna
+
+Uppmätt 2026-09-01 i en bootstrap-laddad databas: **alla 39 tabeller har
+`relrowsecurity = true` och `relforcerowsecurity = false`.** Det är
+deny-all-policyerna från migrering 0005, medvetet djupförsvar.
+
+Konsekvensen är subtil och farlig. PostgreSQL låter **tabellägaren** gå förbi
+RLS när FORCE inte är satt. Alltså:
+
+- Kör runtime med **samma roll** som laddade `bootstrap.sql` → allt fungerar.
+- Kör runtime med en **annan roll** (t.ex. om Vercels Storage-integration
+  skapar en separat applikationsroll) → varje `select` returnerar **noll
+  rader, utan felmeddelande**. API:t startar, `/readyz` svarar `{"ok":true}`,
+  och produkten hittar inga stöd alls. Ingenting i loggarna säger varför.
+
+Verifiera därför direkt efter env-inklistringen, med `DATABASE_URL`:s egen
+roll:
+
+```sql
+select current_user,
+       (select count(*) from public.funding_opportunities) as syns;
+-- syns måste vara 85. Är den 0 är rollen inte ägare — ladda om bootstrap
+-- med rätt roll, eller kör: alter table <tabell> owner to <körtidsroll>;
+```
+
 ## Steg 2 — hemligheter (lokalt i din sandlåda)
 
 ```sh
@@ -195,6 +220,23 @@ Produktionsadressen är i dag `https://bidragskoll.vercel.app`.
 4. Be användaren öppna **preview-URL:en** (varje push till en gren får en)
    och köra samma flöde med ögonen. Mockbetalningarna fungerar ENDAST i
    preview — aldrig i produktion.
+
+## Produktionsartefakten är genomtestad lokalt (2026-09-01)
+
+Innan dina två steg kördes hela produktionskedjan mot **produktionsbygget**
+(`apps/api/dist`) med `NODE_ENV=production` och den **bootstrap-laddade**
+databasen — alltså exakt den artefakt och exakt de data som hamnar på Neon.
+
+| Kontroll | Utfall |
+|---|---|
+| `deploy-smoke` i produktionsläge (utan betalprovider) | ALLT OK — 49 gratis matchningar, 402-grind med 1900 öre, köp vägrar ärligt 503 `no_payment_provider` |
+| `deploy-smoke` i previewläge (`VERCEL_ENV=preview` + mock) | ALLT OK — hela köpkedjan, kvitto `BS-2026-000001`, ansökan `SELECTED`, Mina köp listar köpet |
+| Cron utan `CRON_SECRET` | 401 — vakten håller |
+| Alla fem cron-jobb med token | 200; `source-fetch` hämtade **37 av 37 källor, 0 fel** |
+| `STORAGE_DRIVER=postgres` | Bevisad: 38 byte uppladdade, byte-identiskt tillbakalästa, 1 rad i `storage_objects` |
+
+Slutsatsen: går något fel efter dina steg sitter felet i **konfigurationen
+eller i Neon**, inte i artefakten. Börja då med RLS-kontrollen ovan.
 
 ## Steg 5 — efterarbete
 
