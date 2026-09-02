@@ -113,7 +113,7 @@ katalogen är därmed också webbens funktionskarta.
 | `POST /v1/projects/:id/document-pack` | Köp dokumentpaket i dokumentstudion (samtyckeskrav + 503-ärlighet som övriga köp). |
 | `POST /v1/projects/:id/funding-stack` | Bygg finansieringsplan av valda stöd; kontrollerar kombinerbarhet och dubbelfinansiering. |
 | `POST /v1/projects/:id/generated-documents` | Generera ett dokument ur en mall: svar valideras, förifylls ur projektet och renderas deterministiskt. |
-| `POST /v1/projects/:id/matches` | Räkna om matchningarna mot alla 72 stöd (idempotent, deterministisk). |
+| `POST /v1/projects/:id/matches` | Räkna om matchningarna mot alla 85 stöd (idempotent, deterministisk). |
 
 ### Stödkatalogen
 
@@ -399,7 +399,7 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | `npm run dev:api` | API:t i utvecklingsläge (läser .env i roten; sätt PORT=3100). |
 | `npm run dev:web` | Vite-devservern på :5173, proxar /v1 till API_URL (default :3100). |
 | `npm run db:migrate` | Applicerar migreringarna i apps/api/drizzle/ (idempotent). |
-| `npm run db:seed` | Seedar kunskapsbasen (72 stöd; idempotent, append-only regelversioner). |
+| `npm run db:seed` | Seedar kunskapsbasen (85 stöd; idempotent, append-only regelversioner). |
 | `npm run demo:build` | Bygger den fristående demon → artifacts/demo/demo.html (ingen databas). |
 | `npm run demo:check` | Demons 10 webbläsarkontroller (kräver Chromium + byggd demo). |
 | `npm run verify:sim30` | 30 simulerade användare genom hela flödet — kräver körande API (:3100, mock på). |
@@ -416,6 +416,7 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | `npm run gate:0` | Zero-Compromise Gate, deterministiska blocken (docs/ZERO_COMPROMISE_GATE.md): teknisk totalcrawl, bildinventering, intern länkgraf/PageRank, innehållsmatris → artifacts/gate0-report.json. Failar på CRITICAL/HIGH. |
 | `npm run gate:ux` | Gatens UX-block: alla publika sidor i 320 px + 1280 px — overflow, H1, tomma ankare, återvändsgränder + bevis-skärmdumpar. Kräver byggd yta + Chromium. |
 | `npm run gate:keywords` | Gatens block A: statusregistret seo/gate0-keywords.json (GREEN/YELLOW/RED/GREY per keyword-rot mot SERP-observationerna). |
+| `npm run seed:integrity` | Seedens integritet: överlastade faktavägar, döda fakta, motsägelser, delade källor, schemafel (rapporterar; --strict fäller på klass C/G). |
 | `npm run i18n:cov` | Mäter hur stor del av kunskapsbasens användarvända text som finns i översättningsminnet, per innehållstyp (docs/I18N_PROGRAM.md §Täckningen i siffror). Fäller inget bygge — otolkad text är ett kureringsläge, inte ett fel. |
 | `npm run gate:links` | Extern länkhälsa för myndighetslänkarna på publika ytan — körs från nätansluten maskin (t.ex. efter deploy); sandlådan saknar utgående nät. |
 

@@ -2,6 +2,12 @@
  * Hand-rolled load test (no dependencies): logs in once, then drives
  * concurrent traffic against the hot read paths and one write path.
  * Usage: node scripts/loadtest.mjs [baseUrl] [seconds] [concurrency]
+ *
+ * OBS (revision 2026-09-01): all trafik kommer från EN IP, så API:ts per-IP-
+ * rate-limit (RATE_LIMIT_MAX, default 300/min) slår till efter några sekunder
+ * och nästan allt får 429 — då mäter du vakten, inte kapaciteten. Starta API:t
+ * med t.ex. RATE_LIMIT_MAX=1000000 för ett kapacitetstal. 429 räknas som fel
+ * med flit: mot en riktig deploy är 429 ett verkligt fel för användaren.
  */
 const BASE = process.argv[2] ?? 'http://localhost:3100';
 const SECONDS = Number(process.argv[3] ?? 20);

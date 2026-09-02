@@ -119,7 +119,7 @@ curl -s https://bidragskoll.se/v1/internal/cron/retention  # 404 (hemlighet krä
    `BASE_URL=https://<preview> node scripts/swish-readiness.mjs`
    — verifierar mTLS-handskakningen, payment request, QR, verifierad status,
    kvitto och upplåsning.
-4. **Produktionstest med en riktig 39 kr-betalning**: samma skript mot
+4. **Produktionstest med en riktig 19 kr-betalning**: samma skript mot
    produktionsdomänen, betala med Swish-appen, verifiera kvittot under
    Mina köp (och kvittomailet om Resend är aktiverat — e-post är inget
    produktionskrav), återbetala i Swish-portalen.

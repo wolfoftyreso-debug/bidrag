@@ -14,21 +14,37 @@ import { notify } from '../services/notifications.ts';
 import { runDeadlineScan } from '../services/reminders.ts';
 import { runRetention } from '../services/retention.ts';
 
-/** Hämta alla aktiva källor sekventiellt; varje källa felisoleras. */
-export async function runSourceFetchAll(): Promise<{ fetched: number; failed: number }> {
+/**
+ * Hämta alla aktiva källor sekventiellt; varje källa felisoleras.
+ *
+ * Räknarna skiljer på tre utfall (revision 2026-09-01, fynd F13):
+ *   fetched     — källan svarade med innehåll (2xx) och en snapshot skrevs
+ *   httpErrors  — källan svarade men med fel (t.ex. 403/404/5xx); snapshot med
+ *                 changeStatus 'error' och sources.last_error är satt
+ *   failed      — hämtningen kastade (DNS, timeout, SSRF-vakt, okänd källa)
+ * Tidigare räknades httpErrors som fetched, så jobbet rapporterade
+ * "37 hämtade, 0 fel" när samtliga 37 var HTTP 403.
+ */
+export async function runSourceFetchAll(): Promise<{ fetched: number; httpErrors: number; failed: number }> {
   const rows = await db.select({ id: sources.id }).from(sources).where(eq(sources.active, true));
   let fetched = 0;
+  let httpErrors = 0;
   let failed = 0;
   for (const row of rows) {
     try {
-      await fetchSource(row.id);
-      fetched++;
+      const outcome = await fetchSource(row.id);
+      if (outcome.changeStatus === 'error') {
+        httpErrors++;
+        console.error(`source fetch http error for ${row.id}: ${outcome.httpStatus ?? 'no status'} ${outcome.error ?? ''}`.trim());
+      } else {
+        fetched++;
+      }
     } catch (err) {
       failed++;
       console.error(`source fetch failed for ${row.id}:`, (err as Error).message);
     }
   }
-  return { fetched, failed };
+  return { fetched, httpErrors, failed };
 }
 
 /** Räkna om matchningar som flaggats stale efter regeländringar (§22, §65). */

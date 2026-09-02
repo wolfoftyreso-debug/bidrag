@@ -26,12 +26,12 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
 - **`packages/core`** — ren domänmotor (noll I/O): kriterie-DSL, matchpoäng,
   ansökans tillståndsmaskin, budgetmotor, schemadrivna formulär,
   dokumentmallar + rendering, deterministisk ansökningsgranskning
-  (`docs/APPLICATION-INTELLIGENCE.md`). 90 enhetstester.
+  (`docs/APPLICATION-INTELLIGENCE.md`). 100 enhetstester.
 - **`apps/api`** — Fastify 5 + Drizzle + PostgreSQL 16, modulär monolit:
   auth/tenancy, kunskapsgraf (85 stöd, 36 finansiärer, 71 ansökningsscheman,
   38 källor), matchning, ansökningar, dokumentvalv, betalningar (Stripe Checkout
   + Swish Handel-adaptrar + mock), kvitton med moms, GDPR-självservice, kurators-API,
-  bakgrundsjobb. 213 integrationstester.
+  bakgrundsjobb. 225 integrationstester.
 - **`apps/web`** — svensk React-SPA (Vite): onboarding en-fråga-per-skärm,
   analys/teaser, köpflöden med ångerrättssamtycke, ansökningsarbetsyta,
   dokumentstudio, Mina köp/kvitton, admin.

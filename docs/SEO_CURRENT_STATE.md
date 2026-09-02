@@ -9,7 +9,7 @@ inför lansering.
 **Bidragskoll.se har idag noll publik, indexerbar innehållsyta.** Produkten
 är en inloggnings-SPA (Vite + React, klientrenderad). För en sökmotor består
 hela sajten av ett tomt `<div id="root">` med EN statisk title/description.
-Kunskapsbasen — 72 kurerade stöd med villkor, belopp, källor och färskhet —
+Kunskapsbasen — 85 kurerade stöd med villkor, belopp, källor och färskhet —
 är exakt det innehåll som skulle kunna ranka, men den exponeras idag enbart
 bakom inloggning via API:t. SEO-arbetet börjar alltså inte med optimering
 utan med att **skapa den publika ytan**, genererad ur samma sanningsmodell

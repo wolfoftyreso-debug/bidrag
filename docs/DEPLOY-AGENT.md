@@ -232,7 +232,7 @@ databasen — alltså exakt den artefakt och exakt de data som hamnar på Neon.
 | `deploy-smoke` i produktionsläge (utan betalprovider) | ALLT OK — 49 gratis matchningar, 402-grind med 1900 öre, köp vägrar ärligt 503 `no_payment_provider` |
 | `deploy-smoke` i previewläge (`VERCEL_ENV=preview` + mock) | ALLT OK — hela köpkedjan, kvitto `BS-2026-000001`, ansökan `SELECTED`, Mina köp listar köpet |
 | Cron utan `CRON_SECRET` | 401 — vakten håller |
-| Alla fem cron-jobb med token | 200; `source-fetch` hämtade **37 av 37 källor, 0 fel** |
+| Alla fem cron-jobb med token | 200. `source-fetch` rapporterade `fetched: 37, failed: 0` — **vilket var falskt**: alla 37 fick `HTTP 403` från sandlådans proxy, men jobbet räknade bara transportfel som `failed`. Räknaren är rättad (revision 2026-09-01, se docs/reports/REVISION_2026-09-01.md). Källornas verkliga nåbarhet mäts först efter deploy, utanför proxyn. |
 | `STORAGE_DRIVER=postgres` | Bevisad: 38 byte uppladdade, byte-identiskt tillbakalästa, 1 rad i `storage_objects` |
 
 Slutsatsen: går något fel efter dina steg sitter felet i **konfigurationen

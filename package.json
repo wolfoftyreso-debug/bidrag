@@ -36,6 +36,7 @@
     "gate:ux": "node tools/gate0-ux.mjs",
     "gate:keywords": "node --experimental-strip-types tools/gatekeywords.mjs",
     "gate:links": "node tools/linkhealth.mjs",
+    "seed:integrity": "node --experimental-strip-types tools/seedintegrity.mjs --strict",
     "i18n:cov": "node --experimental-strip-types tools/i18ncov.mjs"
   },
   "devDependencies": {

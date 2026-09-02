@@ -13,7 +13,7 @@ handläggningsdata. Faktiska handläggningstider per myndighet:
 
 ## §1 Grundfakta ur seeden (VERIFIED)
 
-- **Alla 72 stöd har digital ansökningsväg** (`applicationUrl` finns på
+- **Alla 85 stöd har digital ansökningsväg** (`applicationUrl` finns på
   samtliga) — ingen myndighet i kunskapsbasen är blankett-enbart, men flera
   kommunala vägar är "e-tjänst *eller* blankett" och socialtjänstens
   försörjningsstöd kan kräva bokat besök (enligt respektive `applicationMethod`).

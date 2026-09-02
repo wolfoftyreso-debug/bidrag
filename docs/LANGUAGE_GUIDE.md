@@ -36,7 +36,7 @@ ingen oförklarad jargong någonsin.
   "du får", "chans att beviljas" (utan publicerad statistik), "berättigad".
 - **Beslut**: "Slutligt beslut fattas alltid av myndigheten" — ordagrant,
   på varje yta där en bedömning visas.
-- **CTA:er** är verb + vad som händer: "Lås upp din bidragsanalys — 39 kr",
+- **CTA:er** är verb + vad som händer: "Förbered ansökan — 19 kr",
   "Starta genomgången", "Till Försäkringskassans ansökan". Aldrig "Klicka
   här", "Läs mer" som ensam ankartext.
 - **Felmeddelanden**: lugnt språk, vad hände, vad du kan göra, ingen teknisk

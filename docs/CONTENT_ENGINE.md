@@ -82,11 +82,11 @@ indikativ.
 
 Kärnprincipen: **samma fakta skrivs aldrig manuellt på 40 sidor.** Fakta bor i
 strukturerade lager; sidor genereras/uppdateras därifrån. Detta är redan husets
-arkitektur — genseo bygger 77 sidor ur seeden i dag.
+arkitektur — genseo bygger 170 sidor ur seeden i dag.
 
 | Lager | Innehåll | Status i kodbasen |
 |---|---|---|
-| 1. **Faktalagret** | Regler, belopp, datum, ansvarig aktör | **FINNS**: `apps/api/src/seed/` (72 stöd, 35 finansiärer, 36 källor, CURATED_AT, källänkar); källbevakning via source-fetch-jobbet |
+| 1. **Faktalagret** | Regler, belopp, datum, ansvarig aktör | **FINNS**: `apps/api/src/seed/` (85 stöd, 36 finansiärer, 37 källor, CURATED_AT, källänkar); källbevakning via source-fetch-jobbet |
 | 2. **Bedömningslagret** | Behörighetskrav, diskvalificerande villkor, kriterier | **FINNS**: kriterie-DSL:en i `packages/core` (criteria + descriptions driver redan F-INFO-inforutorna och matchpoängen) |
 | 3. **Processlagret** | Ansökan, bilagor, budget, beslut, redovisning | **FINNS delvis**: 71 ansökningsscheman + dokumentmallar + deterministisk granskning (`docs/APPLICATION-INTELLIGENCE.md`); publika processmanualer saknas |
 | 4. **Erfarenhetslagret** | Beviljade projekt, avslag, intervjuer, lärdomar | **NYTT**: datakontrakt i `seo/beviljade-projekt.schema.json` + `seo/erfarenheter.schema.json` (denna körning); data = nästa fas |

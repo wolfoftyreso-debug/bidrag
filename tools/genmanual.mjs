@@ -49,7 +49,7 @@ const OPS = {
   'POST /v1/projects': 'Skapa projekt: profil + intention (fritext) + fakta. Detta är intagets slutresultat.',
   'GET /v1/projects/:id': 'Hämta projektet med status och fakta.',
   'PATCH /v1/projects/:id': 'Uppdatera projektets fakta/intention; svar på öppna följdfrågor sparas hit.',
-  'POST /v1/projects/:id/matches': 'Räkna om matchningarna mot alla 72 stöd (idempotent, deterministisk).',
+  'POST /v1/projects/:id/matches': 'Räkna om matchningarna mot alla {{ANTAL_STOD}} stöd (idempotent, deterministisk).',
   'GET /v1/projects/:id/matches': 'Hämta analysen — alltid fullständig och gratis (Open Discovery): varje stöd med förklaring per kriterium, källa och färskhet. Ingen betalvägg framför resultaten.',
   'POST /v1/projects/:id/funding-stack': 'Bygg finansieringsplan av valda stöd; kontrollerar kombinerbarhet och dubbelfinansiering.',
   'POST /v1/projects/:id/application-purchase': 'Köp en ansökningsförberedelse (19 kr — alla dokument för den ansökan ingår). Kräver `immediateDeliveryConsent: true` (ångerrätten) — annars 400. Utan betalprovider: ärlig 503.',
@@ -138,7 +138,7 @@ const SCRIPTS = {
   'dev:api': 'API:t i utvecklingsläge (läser .env i roten; sätt PORT=3100).',
   'dev:web': 'Vite-devservern på :5173, proxar /v1 till API_URL (default :3100).',
   'db:migrate': 'Applicerar migreringarna i apps/api/drizzle/ (idempotent).',
-  'db:seed': 'Seedar kunskapsbasen (72 stöd; idempotent, append-only regelversioner).',
+  'db:seed': 'Seedar kunskapsbasen ({{ANTAL_STOD}} stöd; idempotent, append-only regelversioner).',
   'demo:build': 'Bygger den fristående demon → artifacts/demo/demo.html (ingen databas).',
   'demo:check': 'Demons 10 webbläsarkontroller (kräver Chromium + byggd demo).',
   'verify:sim30': '30 simulerade användare genom hela flödet — kräver körande API (:3100, mock på).',
@@ -155,6 +155,7 @@ const SCRIPTS = {
   'gate:0': 'Zero-Compromise Gate, deterministiska blocken (docs/ZERO_COMPROMISE_GATE.md): teknisk totalcrawl, bildinventering, intern länkgraf/PageRank, innehållsmatris → artifacts/gate0-report.json. Failar på CRITICAL/HIGH.',
   'gate:ux': 'Gatens UX-block: alla publika sidor i 320 px + 1280 px — overflow, H1, tomma ankare, återvändsgränder + bevis-skärmdumpar. Kräver byggd yta + Chromium.',
   'gate:keywords': 'Gatens block A: statusregistret seo/gate0-keywords.json (GREEN/YELLOW/RED/GREY per keyword-rot mot SERP-observationerna).',
+  'seed:integrity': 'Seedens integritet: överlastade faktavägar, döda fakta, motsägelser, delade källor, schemafel (rapporterar; --strict fäller på klass C/G).',
   'i18n:cov': 'Mäter hur stor del av kunskapsbasens användarvända text som finns i översättningsminnet, per innehållstyp (docs/I18N_PROGRAM.md §Täckningen i siffror). Fäller inget bygge — otolkad text är ett kureringsläge, inte ett fel.',
   'gate:links': 'Extern länkhälsa för myndighetslänkarna på publika ytan — körs från nätansluten maskin (t.ex. efter deploy); sandlådan saknar utgående nät.',
 };
@@ -409,7 +410,9 @@ p('eller ett nytt kommando saknar instruktion. En ny funktion kan alltså inte')
 p('nå `main` utan sin rad i handboken.');
 p();
 
-const content = L.join('\n');
+// Reaktivt antal: instruktionskartorna skrivs före seeden laddas, så talet
+// substitueras här. Ett hårdkodat "72" överlevde annars tre kureringspass.
+const content = L.join('\n').replaceAll('{{ANTAL_STOD}}', String(seed.opportunities.length));
 if (CHECK) {
   let existing = null;
   try { existing = readFileSync(OUT, 'utf8'); } catch { /* saknas */ }

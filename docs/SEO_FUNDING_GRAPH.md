@@ -67,7 +67,7 @@ Delad motor: `tools/lib/intents.mjs` (genseo + rapporten). Full domtabell:
 ## 4. Kontrollrapport SEO-3 (aktuell dom)
 
 **Knowledge Graph:** 5 nodtyper (stöd, finansiär, målgrupp, kriterium, intention)
-+ deadline/källa som attribut · 72 stöd, 35 finansiärer, 100 kriterier ·
++ deadline/källa som attribut · 85 stöd, 36 finansiärer, 348 kriterier ·
 relationer utan källa: 0 (varje stöd bär sourceUrl).
 
 **Query Pages:** 13 kandidater → **9 INDEX · 1 NOINDEX_FOLLOW · 3 DO_NOT_GENERATE**
