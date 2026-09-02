@@ -94,7 +94,8 @@ const matches = matchesRes.json?.matches;
 check('Open Discovery: matchningar visas gratis (inga låsta/teaser)',
   matchesRes.status === 200 && Array.isArray(matches) && matches.length > 0,
   `${matches?.length ?? 0} matchningar`);
-const opp = matches?.[0];
+// F-INGEN-ANSÖKAN: välj ett stöd som faktiskt har en ansökan (stöd utan ansökan vägras ärligt med 409).
+const opp = matches?.find((m) => m.requiresApplication !== false);
 if (!opp) process.exit(1);
 
 // 6. 402-gaten: att förbereda en ansökan kräver kredit (priset i kroppen).

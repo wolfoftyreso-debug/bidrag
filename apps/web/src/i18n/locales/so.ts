@@ -86,6 +86,8 @@ export const so: Record<keyof typeof sv, string> = {
 
   'ob.progressLabel': 'Inta aad ka gaartay suʼaalaha',
   'ob.resumed': 'Jawaabahaaga si joogto ah ayaa loo kaydiyaa — waxaad ka sii wadataa halkii aad joogtay.',
+  'ob.stepOf': 'Suʼaal {n} ka mid ah qiyaastii {m}',
+  'ob.autosave': 'Jawaabahaaga si toos ah ayaa loo kaydiyaa — waad xidhi kartaa oo hadhow sii wadan kartaa.',
   'ob.restart': 'Bilowga ka bilow',
   'ob.back': '← Dib u noqo',
   'ob.workingTitle': 'Waxaanu ogaanaynaa waxa xaq kuu noqon kara…',
@@ -329,6 +331,7 @@ export const so: Record<keyof typeof sv, string> = {
     'Marka loo eego jawaabahaaga, kaalmadan waxay noqon kartaa mid khusaysa. Hubi shuruudaha ka hor inta aadan codsan. Maxaad rabtaa inaad samayso?',
   'm.applyYourself': 'Adigu codso — bilaash ↗',
   'm.prepareApplication': 'Diyaari codsigayga',
+  'm.noApplicationNeeded': 'Codsi looma baahna — taageerada si toos ah ayaa loo adeegsadaa. Sida ka akhri bogga taageerada.',
   'm.businessTitle': 'Kaalmooyin khuseeya ganacsigaaga ({n})',
   'm.bizSole': 'Ganacsiga gaarka ah waxaad kaalmooyinka ganacsiga u codsataa qof ahaan — halkan ayay ku jiraan baaritaankaaga.',
   'm.bizAb':
@@ -410,6 +413,8 @@ export const so: Record<keyof typeof sv, string> = {
   'o.payGuidance':
     'Diyaarinta codsi nidaamka gudihiisa waxay ku kacdaa {pris} codsigiiba — dhammaan dukumentiyada codsigaas way ku jiraan. Mar walba waad iska codsan kartaa si toos ah hayʼadda, waa bilaash.',
   'o.payButton': 'Diyaari codsiga — {pris}',
+  'o.noApplicationBody': 'Taageeradan si toos ah ayaa loo adeegsadaa — wax la diyaariyo ma jiro, sidaas darteedna wax la bixiyo ma jiro. Sidan ayay u shaqaysaa:',
+  'o.noApplicationTitle': 'Codsi looma baahna',
   'o.payStartError': 'Iibka lama bilaabi karin.',
   'o.payConfirmError': 'Xaqiijintu way fashilantay.',
   'o.payConfirmed': 'Lacag-bixinta waa la xaqiijiyay — codsiga ayaa la abuurayaa…',
@@ -657,6 +662,9 @@ export const so: Record<keyof typeof sv, string> = {
 
   'aw.loadError': 'Codsiga lama soo qaadi karin.',
   'aw.back': '← Codsiyadayda',
+  'aw.paidReceiptLink': 'Muuji rasiidka',
+  'aw.paidReceipt': 'Rasiidka {nr} waxaa laga helayaa Akoonka iyo xogta → Iibsashadayda.',
+  'aw.paidBanner': 'Lacag-bixintu waa dhammaatay — codsigu waa diyaar oo dhammaan dukumentiyadiisu way ku jiraan.',
   'aw.deadline': 'Waqtiga kama dambaysta {datum}',
   'aw.saved': 'Waa la kaydiyay.',
   'aw.saveError': 'Lama kaydin karin.',

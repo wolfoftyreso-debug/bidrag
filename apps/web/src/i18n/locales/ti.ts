@@ -86,6 +86,8 @@ export const ti: Record<keyof typeof sv, string> = {
 
   'ob.progressLabel': 'ኣብቶም ሕቶታት ክሳብ ክንደይ ከም ዝበጻሕካ',
   'ob.resumed': 'መልስታትካ ቀጻሊ ይዕቀቡ — ካብቲ ዝነበርካዮ ትቕጽል።',
+  'ob.stepOf': 'ሕቶ {n} ካብ ኣስታት {m}',
+  'ob.autosave': 'መልስታትካ ብቐጥታ ይዕቀብ — ክትዓጽዎን ድሒርካ ክትቅጽልን ትኽእል።',
   'ob.restart': 'ካብ መጀመርታ ጀምር',
   'ob.back': '← ተመለስ',
   'ob.workingTitle': 'እንታይ መሰል ክህልወካ ከም ዝኽእል ንፈልጥ ኣለና…',
@@ -329,6 +331,7 @@ export const ti: Record<keyof typeof sv, string> = {
     'ብመሰረት መልስታትካ እዚ ደገፍ ክምልከተካ ይኽእል። ቅድሚ ምምልካትካ ነቶም ኩነታት መርምር። እንታይ ክትገብር ትደሊ?',
   'm.applyYourself': 'ባዕልኻ ኣመልክት — ብነጻ ↗',
   'm.prepareApplication': 'ምልክታይ ኣዳሉ',
+  'm.noApplicationNeeded': 'ምልክታ ኣየድልን — እቲ ደገፍ ብቐጥታ ይትግበር። ብኸመይ ከም ዝኾነ ኣብ ገጽ እቲ ደገፍ ኣንብብ።',
   'm.businessTitle': 'ንንግድኻ ዝምልከቱ ደገፋት ({n})',
   'm.bizSole': 'ብውልቃዊ ትካል ንደገፋት ንግዲ ከም ሰብ ኢኻ እተመልክት — ኣብዚ ኣብ ምርመራኻ ተሓዊሶም ኣለዉ።',
   'm.bizAb':
@@ -410,6 +413,8 @@ export const ti: Record<keyof typeof sv, string> = {
   'o.payGuidance':
     'ምድላው ሓደ ምልክታ ኣብቲ ሲስተም ንነፍሲ ወከፍ ምልክታ {pris} የውጽእ — ኩሎም ሰነዳት ናይቲ ምልክታ ተሓዊሶም እዮም። ኩሉ ግዜ ባዕልኻ ብቐጥታ ኣብቲ ቤት-ስልጣን ከተመልክት ትኽእል፣ ብነጻ እዩ።',
   'o.payButton': 'ምልክታ ኣዳሉ — {pris}',
+  'o.noApplicationBody': 'እዚ ደገፍ ብቐጥታ ይትግበር — ዝዳሎ ነገር የለን፣ ስለዚ ዝኽፈል ነገር እውን የለን። ከምዚ ይሰርሕ፦',
+  'o.noApplicationTitle': 'ምልክታ ኣየድልን',
   'o.payStartError': 'እቲ ዕድጊ ክጅምር ኣይተኻእለን።',
   'o.payConfirmError': 'እቲ ምርግጋጽ ኣይተዓወተን።',
   'o.payConfirmed': 'ክፍሊት ተረጋጊጹ — ምልክታ ይፍጠር ኣሎ…',
@@ -657,6 +662,9 @@ export const ti: Record<keyof typeof sv, string> = {
 
   'aw.loadError': 'እቲ ማመልከቻ ክምጻእ ኣይተኻእለን።',
   'aw.back': '← ማመልከቻታተይ',
+  'aw.paidReceiptLink': 'ቅብሊት ርአ',
+  'aw.paidReceipt': 'ቅብሊት {nr} ኣብ ሕሳብን ዳታን → ዕድጊታተይ ይርከብ።',
+  'aw.paidBanner': 'ክፍሊት ተፈጺሙ — እቲ ምልክታ ተዳልዩ ኣሎ፣ ኩሎም ሰነዳቱ እውን ተኻቲቶም ኣለዉ።',
   'aw.deadline': 'ናይ መወዳእታ ዕለት {datum}',
   'aw.saved': 'ተዓቂቡ።',
   'aw.saveError': 'ክዕቀብ ኣይተኻእለን።',

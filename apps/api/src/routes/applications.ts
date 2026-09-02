@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+import { requiresApplication } from '../services/applicationNeed.ts';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { InvalidTransitionError, generationGuards, type ApplicationState } from '@bidrag/core';
 import { db } from '../db/client.ts';
@@ -90,6 +91,22 @@ export async function applicationRoutes(app: FastifyInstance) {
         .where(and(eq(projects.id, projectId), eq(projects.tenantId, tenantId)))
         .limit(1);
       if (!project) return reply.code(404).send({ error: 'project_not_found' });
+
+      // F-INGEN-ANSÖKAN (UX-genomgången 2026-09-02): ett stöd som inte kräver
+      // någon ansökan (dras/registreras automatiskt) har inget att förbereda —
+      // och får aldrig kosta 19 kr. Kontrollen ligger FÖRE kreditgaten så att
+      // ingen kredit förbrukas och ingen 402 lockar till köp.
+      const [oppRow] = await db
+        .select({ applicationMethod: fundingOpportunities.applicationMethod })
+        .from(fundingOpportunities)
+        .where(eq(fundingOpportunities.id, opportunityId))
+        .limit(1);
+      if (oppRow && !requiresApplication(oppRow.applicationMethod)) {
+        return reply.code(409).send({
+          error: 'no_application_needed',
+          message: 'Det här stödet kräver ingen ansökan — det används automatiskt. Det finns inget att förbereda.',
+        });
+      }
 
       // Prismodellen: att förbereda en ansökan i systemet kostar 19 kr per
       // ansökan. Gaten ligger efter roll- (403) och ägarskapskontrollen (404)

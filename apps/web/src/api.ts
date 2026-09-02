@@ -46,12 +46,19 @@ export async function api<T = unknown>(
   // formulärets etiketter och vägledning). API:t faller ärligt tillbaka till
   // svenska för allt som saknar översättning, och ansökan som lämnas till
   // myndigheten förblir svensk.
+  //
+  // Skicka ALLTID det valda språket — även svenska. Utan uttrycklig header
+  // använder webbläsaren sin egen språklista (t.ex. en-US hos den som kör
+  // engelskt operativsystem), och API:t skulle då leverera kunskapsbasen på
+  // engelska trots att gränssnittet står på svenska (UX-genomgången 2026-09-02,
+  // F-SPRÅK). Gränssnittets språk och kunskapsbasens språk ska alltid vara samma.
+  let locale = 'sv';
   try {
-    const locale = localStorage.getItem('bidrag.sprak.v1');
-    if (locale && locale !== 'sv') headers['Accept-Language'] = locale;
+    locale = localStorage.getItem('bidrag.sprak.v1') ?? 'sv';
   } catch {
     /* localStorage kan saknas (t.ex. vissa inbäddningar) — svenska gäller då */
   }
+  headers['Accept-Language'] = locale;
   const init: RequestInit = {
     method,
     credentials: 'include',

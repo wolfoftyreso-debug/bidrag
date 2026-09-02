@@ -85,6 +85,8 @@ export const ar: Record<keyof typeof sv, string> = {
 
   'ob.progressLabel': 'مدى تقدمك في الأسئلة',
   'ob.resumed': 'تُحفظ إجاباتك باستمرار — تُكمل من حيث توقفت.',
+  'ob.stepOf': 'السؤال {n} من حوالي {m}',
+  'ob.autosave': 'تُحفظ إجاباتك تلقائيًا — يمكنك الإغلاق والمتابعة لاحقًا.',
   'ob.restart': 'ابدأ من جديد',
   'ob.back': '→ رجوع',
   'ob.workingTitle': 'نكتشف ما قد يحق لك…',
@@ -328,6 +330,7 @@ export const ar: Record<keyof typeof sv, string> = {
     'بناءً على إجاباتك قد تكون هذه الإعانة مناسبة. تحقق من الشروط قبل التقديم. ماذا تريد أن تفعل؟',
   'm.applyYourself': 'قدّم بنفسك — مجانًا ↗',
   'm.prepareApplication': 'حضّر طلبي',
+  'm.noApplicationNeeded': 'لا حاجة إلى طلب — يُطبَّق الدعم تلقائيًا. اقرأ كيف في صفحة الدعم.',
   'm.businessTitle': 'دعم يخص نشاطك التجاري ({n})',
   'm.bizSole': 'مع المؤسسة الفردية تقدّم طلبات دعم الأعمال كشخص — وهي مشمولة في مراجعتك هنا.',
   'm.bizAb':
@@ -409,6 +412,8 @@ export const ar: Record<keyof typeof sv, string> = {
   'o.payGuidance':
     'تحضير طلب في النظام يكلف {pris} لكل طلب — وكل مستندات ذلك الطلب مشمولة. يمكنك دائمًا التقديم بنفسك مباشرة لدى الجهة الحكومية، وهو مجاني.',
   'o.payButton': 'حضّر الطلب — {pris}',
+  'o.noApplicationBody': 'يُطبَّق هذا الدعم تلقائيًا — لا يوجد ما يُحضَّر، وبالتالي لا يوجد ما يُدفع مقابله. هكذا يعمل:',
+  'o.noApplicationTitle': 'لا حاجة إلى طلب',
   'o.payStartError': 'تعذّر بدء عملية الشراء.',
   'o.payConfirmError': 'فشل التأكيد.',
   'o.payConfirmed': 'تم تأكيد الدفع — يُنشأ الطلب…',
@@ -654,6 +659,9 @@ export const ar: Record<keyof typeof sv, string> = {
 
   'aw.loadError': 'تعذّر تحميل الطلب.',
   'aw.back': '→ طلباتي',
+  'aw.paidReceiptLink': 'عرض الإيصال',
+  'aw.paidReceipt': 'الإيصال {nr} متاح تحت الحساب والبيانات ← مشترياتي.',
+  'aw.paidBanner': 'تم الدفع — الطلب مُحضَّر وجميع مستنداته مشمولة.',
   'aw.deadline': 'الموعد النهائي {datum}',
   'aw.saved': 'حُفظ.',
   'aw.saveError': 'تعذّر الحفظ.',

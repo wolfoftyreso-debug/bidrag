@@ -1102,7 +1102,11 @@ function PlanView({ slugs, facts, onBack, onToggle, onForbered }: { slugs: strin
               {/* Förberedelsen är produktens arbetslager och därför huvudvägen;
                   myndighetslänken står kvar intill som den alltid gratis
                   självbetjäningsvägen (PRODUCT_DOCTRINE, Open Discovery). */}
-              <button className="btn primary" onClick={() => onForbered(r.opp.slug)}>Förbered ansökan →</button>
+              {/^\s*ingen ansökan\b/i.test(r.opp.applicationMethod) ? (
+                <span className="meta">Ingen ansökan behövs — stödet används automatiskt.</span>
+              ) : (
+                <button className="btn primary" onClick={() => onForbered(r.opp.slug)}>Förbered ansökan →</button>
+              )}
               <UtLank className="btn small" href={r.opp.applicationUrl}>Ansök själv hos {r.opp.authority}</UtLank>
               <button className="btn small" onClick={() => onToggle(r.opp.slug)}>Ta bort ur planen</button>
             </div>

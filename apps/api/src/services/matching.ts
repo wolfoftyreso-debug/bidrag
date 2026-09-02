@@ -5,6 +5,7 @@
  * and can be marked stale when rules change (§22).
  */
 import { and, eq, inArray, sql } from 'drizzle-orm';
+import { requiresApplication } from './applicationNeed.ts';
 import {
   computeMatch,
   type CriterionDef,
@@ -37,6 +38,8 @@ export interface MatchRow {
   deadlineModel: string;
   sourceUrl: string;
   applicationUrl: string | null;
+  /** false = stödet kräver ingen ansökan (dras/registreras automatiskt) — inget att förbereda eller sälja. */
+  requiresApplication: boolean;
   sourceQuality: string;
   verificationStatus: string;
   lastVerifiedAt: string | null;
@@ -165,6 +168,7 @@ export async function listMatchesForProject(tenantId: string, projectId: string)
       deadlineModel: fundingOpportunities.deadlineModel,
       sourceUrl: fundingOpportunities.sourceUrl,
       applicationUrl: fundingOpportunities.applicationUrl,
+      applicationMethod: fundingOpportunities.applicationMethod,
       sourceQuality: fundingOpportunities.sourceQuality,
       verificationStatus: fundingOpportunities.verificationStatus,
       lastVerifiedAt: fundingOpportunities.lastVerifiedAt,
@@ -178,8 +182,9 @@ export async function listMatchesForProject(tenantId: string, projectId: string)
     .where(and(eq(matches.tenantId, tenantId), eq(matches.projectId, projectId)));
 
   return rows
-    .map((r) => ({
+    .map(({ applicationMethod, ...r }) => ({
       ...r,
+      requiresApplication: requiresApplication(applicationMethod),
       result: r.result as MatchResultComputed,
       closesAt: r.closesAt?.toISOString() ?? null,
       lastVerifiedAt: r.lastVerifiedAt?.toISOString() ?? null,

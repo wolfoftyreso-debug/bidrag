@@ -51,8 +51,10 @@ if (/Lås upp din bidragsanalys/i.test(rep)) fail('betalvägg framför resultate
 console.log('1. Intaget genomfört — namngivna stöd visas GRATIS (Open Discovery) ✓');
 
 // Öppna ett stöd.
-const opp = page.locator('a[href*="/stod/"]').first();
-if (!(await opp.count())) fail('hittade inget stöd att öppna i rapporten');
+// F-INGEN-ANSÖKAN (UX-genomgången 2026-09-02): stöd utan ansökan (tandvårdsbidraget,
+// högkostnadsskyddet) har ingen köpknapp — öppna ett stöd som faktiskt kan förberedas.
+const opp = page.locator('a[href*="/stod/"]:not([href*="tandvardsbidrag"]):not([href*="hogkostnadsskydd"])').first();
+if (!(await opp.count())) fail('hittade inget stöd med ansökan att öppna i rapporten');
 await opp.click();
 await page.waitForSelector('text=Redo att börja?', { timeout: 30000 });
 const prepare = page.locator('button:has-text("Förbered ansökan i systemet")');

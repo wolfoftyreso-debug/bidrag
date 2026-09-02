@@ -86,6 +86,8 @@ export const es: Record<keyof typeof sv, string> = {
 
   'ob.progressLabel': 'Tu avance en las preguntas',
   'ob.resumed': 'Tus respuestas se guardan continuamente: continúas donde estabas.',
+  'ob.stepOf': 'Pregunta {n} de aproximadamente {m}',
+  'ob.autosave': 'Tus respuestas se guardan automáticamente — puedes cerrar y continuar más tarde.',
   'ob.restart': 'Empezar de nuevo',
   'ob.back': '← Atrás',
   'ob.workingTitle': 'Averiguando a qué puedes tener derecho…',
@@ -330,6 +332,7 @@ export const es: Record<keyof typeof sv, string> = {
     'Según tus respuestas, esta ayuda puede ser relevante. Comprueba las condiciones antes de solicitar. ¿Qué quieres hacer?',
   'm.applyYourself': 'Solicítalo tú mismo — gratis ↗',
   'm.prepareApplication': 'Preparar mi solicitud',
+  'm.noApplicationNeeded': 'No se necesita solicitud: la ayuda se aplica automáticamente. Lee cómo en la página de la ayuda.',
   'm.businessTitle': 'Ayudas relacionadas con tu negocio ({n})',
   'm.bizSole': 'Con una empresa individual solicitas las ayudas empresariales como persona — se incluyen en tu revisión aquí.',
   'm.bizAb':
@@ -411,6 +414,8 @@ export const es: Record<keyof typeof sv, string> = {
   'o.payGuidance':
     'Preparar una solicitud en el sistema cuesta {pris} por solicitud — todos los documentos de esa solicitud están incluidos. Siempre puedes solicitar tú mismo directamente ante la autoridad, es gratis.',
   'o.payButton': 'Preparar solicitud — {pris}',
+  'o.noApplicationBody': 'Esta ayuda se aplica automáticamente: no hay nada que preparar y, por tanto, nada que pagar. Así funciona:',
+  'o.noApplicationTitle': 'No se necesita solicitud',
   'o.payStartError': 'No se pudo iniciar la compra.',
   'o.payConfirmError': 'La confirmación falló.',
   'o.payConfirmed': 'Pago confirmado — creando la solicitud…',
@@ -658,6 +663,9 @@ export const es: Record<keyof typeof sv, string> = {
 
   'aw.loadError': 'No se pudo cargar la solicitud.',
   'aw.back': '← Mis solicitudes',
+  'aw.paidReceiptLink': 'Ver el recibo',
+  'aw.paidReceipt': 'El recibo {nr} está disponible en Cuenta y datos → Mis compras.',
+  'aw.paidBanner': 'Pago completado: la solicitud está preparada y todos sus documentos están incluidos.',
   'aw.deadline': 'Fecha límite {datum}',
   'aw.saved': 'Guardado.',
   'aw.saveError': 'No se pudo guardar.',

@@ -54,7 +54,9 @@ if (!Array.isArray(matches.json.matches) || matches.json.matches.length === 0) t
 console.log(`OK: Open Discovery — ${matches.json.matches.length} gratis matchningar genom handlern`);
 
 // Den enda betalytan: förbered en ansökan (19 kr) → mock-confirm → kvitto med moms.
-const opp = matches.json.matches[0];
+// F-INGEN-ANSÖKAN: välj ett stöd som faktiskt har en ansökan (tandvårdsbidraget m.fl. vägras ärligt med 409).
+const opp = matches.json.matches.find((m) => m.requiresApplication !== false);
+if (!opp) throw new Error('ingen matchning med ansökan att förbereda');
 const gate = await call('POST', '/v1/applications', { projectId: pid, opportunityId: opp.opportunityId });
 if (gate.status !== 402 || gate.json.priceMinor !== 1900) throw new Error(`402-gate: ${gate.status} ${gate.json.priceMinor}`);
 const pur = await call('POST', `/v1/projects/${pid}/application-purchase`, { email: 'sv@test.example', immediateDeliveryConsent: true });

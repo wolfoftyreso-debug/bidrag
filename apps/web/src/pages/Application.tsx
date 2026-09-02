@@ -4,7 +4,7 @@
  * flow — the case is only SUBMITTED once a receipt is recorded.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { ApiError, formatDate, formatSek, get, patch, post } from '../api';
 import { useLabels, useT } from '../i18n';
 
@@ -122,6 +122,10 @@ export default function ApplicationPage() {
   const t = useT();
   const labels = useLabels();
   const { id } = useParams();
+  // Köpbekräftelsen (UX-genomgången 2026-09-02): stödsidan skickar med kvittot när
+  // ansökan skapades direkt efter en betalning — visas en gång, försvinner vid omladdning.
+  const locState = useLocation().state as { justPaid?: boolean; receiptNumber?: string } | null;
+  const justPaid = locState?.justPaid ? locState : null;
   const [data, setData] = useState<CaseData | null>(null);
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -259,6 +263,16 @@ export default function ApplicationPage() {
         <span className={`badge ${stateInfo.tone}`}>{stateInfo.label}</span>
         {app.deadlineAt && <> · {t('aw.deadline', { datum: formatDate(app.deadlineAt) })}</>}
       </p>
+      {justPaid && (
+        <div className="alert success" role="status">
+          <strong>{t('aw.paidBanner')}</strong>
+          {justPaid.receiptNumber && (
+            <>
+              {' '}{t('aw.paidReceipt', { nr: justPaid.receiptNumber })} <Link to="/konto">{t('aw.paidReceiptLink')}</Link>
+            </>
+          )}
+        </div>
+      )}
 
       {message && <div className={`alert ${message.tone}`}>{message.text}</div>}
 

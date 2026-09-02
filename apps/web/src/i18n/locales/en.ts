@@ -86,6 +86,8 @@ export const en: Record<keyof typeof sv, string> = {
 
   'ob.progressLabel': 'How far you have come in the questions',
   'ob.resumed': 'Your answers are saved as you go — you continue where you were.',
+  'ob.stepOf': 'Question {n} of about {m}',
+  'ob.autosave': 'Your answers are saved automatically — you can close and continue later.',
   'ob.restart': 'Start over from the beginning',
   'ob.back': '← Back',
   'ob.workingTitle': 'Finding out what you may be entitled to…',
@@ -329,6 +331,7 @@ export const en: Record<keyof typeof sv, string> = {
     'Based on your answers, this benefit may be relevant. Check the conditions before you apply. What would you like to do?',
   'm.applyYourself': 'Apply yourself — free ↗',
   'm.prepareApplication': 'Prepare my application',
+  'm.noApplicationNeeded': 'No application needed — the support is applied automatically. See how on the support page.',
   'm.businessTitle': 'Support related to your business ({n})',
   'm.bizSole': 'With a sole proprietorship you apply for business support as a person — it is included in your review here.',
   'm.bizAb':
@@ -410,6 +413,8 @@ export const en: Record<keyof typeof sv, string> = {
   'o.payGuidance':
     'Preparing an application in the system costs {pris} per application — all documents for that application are included. You can always apply yourself directly with the authority, free of charge.',
   'o.payButton': 'Prepare application — {pris}',
+  'o.noApplicationBody': 'This support is applied automatically — there is nothing to prepare, and therefore nothing to pay for. This is how it works:',
+  'o.noApplicationTitle': 'No application needed',
   'o.payStartError': 'The purchase could not be started.',
   'o.payConfirmError': 'The confirmation failed.',
   'o.payConfirmed': 'The payment is confirmed — creating the application…',
@@ -657,6 +662,9 @@ export const en: Record<keyof typeof sv, string> = {
 
   'aw.loadError': 'The application could not be loaded.',
   'aw.back': '← My applications',
+  'aw.paidReceiptLink': 'View receipt',
+  'aw.paidReceipt': 'Receipt {nr} is available under Account & data → My purchases.',
+  'aw.paidBanner': 'Payment completed — the application is prepared and all its documents are included.',
   'aw.deadline': 'Deadline {datum}',
   'aw.saved': 'Saved.',
   'aw.saveError': 'Could not save.',

@@ -47,7 +47,8 @@ async function rawProject(user: TestUser): Promise<{ projectId: string; profileI
 async function firstOpportunityId(user: TestUser, projectId: string): Promise<string> {
   await api(app, user, 'POST', `/v1/projects/${projectId}/matches`, {});
   const m = await api(app, user, 'GET', `/v1/projects/${projectId}/matches`);
-  const matches = (m.json() as { matches: { opportunityId: string }[] }).matches;
+  // F-INGEN-ANSÖKAN: ett stöd utan ansökan (t.ex. tandvårdsbidraget) kan inte förberedas — välj ett som kan.
+  const matches = (m.json() as { matches: { opportunityId: string; requiresApplication: boolean }[] }).matches.filter((x) => x.requiresApplication !== false);
   return matches[0]!.opportunityId;
 }
 

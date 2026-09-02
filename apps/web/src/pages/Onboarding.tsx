@@ -387,6 +387,14 @@ export default function OnboardingPage() {
         <span className="done" style={{ flex: progress }} />
         <span style={{ flex: 1 - progress }} />
       </div>
+      {/* UX-genomgången 2026-09-02 (Mobbin: Laravel Cloud "Question 1 of 3",
+          Monarch "Save & Exit"): en synlig räknare bredvid stapeln, och
+          autosparandet sägs rakt ut i stället för att bara ske i tysthet.
+          "ungefär" är ärligt — antalet frågor beror på svaren. */}
+      <p className="progress-text" aria-live="polite">
+        <span>{t('ob.stepOf', { n: Math.min(stepNumber, totalEstimate), m: totalEstimate })}</span>
+        {!resumed && <span className="progress-autosave">{t('ob.autosave')}</span>}
+      </p>
       {resumed && (
         <div className="alert success" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
           <span>{t('ob.resumed')}</span>

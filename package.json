@@ -22,7 +22,7 @@
     "demo:build": "node demo/build.mjs",
     "demo:check": "node demo/checks/check.mjs && node demo/checks/bizcheck.mjs && node demo/checks/backcheck.mjs && node demo/checks/savecheck.mjs && node demo/checks/alderscheck.mjs && node demo/checks/lankcheck.mjs && node demo/checks/forberedcheck.mjs && node demo/checks/kontocheck.mjs && node demo/checks/vidarecheck.mjs && node demo/checks/ctxcheck.mjs",
     "verify:sim30": "node tools/simulate30.mjs",
-    "verify:ui": "node tools/uicheck/uicheck2.mjs && node tools/uicheck/uicheck8.mjs && node tools/uicheck/uicheck9.mjs && node tools/uicheck/uicheck12.mjs && node tools/uicheck/uicheck13.mjs",
+    "verify:ui": "node tools/uicheck/uicheck2.mjs && node tools/uicheck/uicheck8.mjs && node tools/uicheck/uicheck9.mjs && node tools/uicheck/uicheck12.mjs && node tools/uicheck/uicheck13.mjs && node tools/uicheck/uicheck14.mjs",
     "verify:schemas": "node tools/schemacheck.mjs",
     "verify:smoke": "node tools/smoke-appfee.mjs",
     "verify": "bash scripts/verify.sh",

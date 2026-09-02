@@ -88,6 +88,8 @@ export const fr: Record<keyof typeof sv, string> = {
 
   'ob.progressLabel': 'Votre progression dans les questions',
   'ob.resumed': 'Vos réponses sont enregistrées au fur et à mesure — vous reprenez là où vous étiez.',
+  'ob.stepOf': 'Question {n} sur environ {m}',
+  'ob.autosave': 'Vos réponses sont enregistrées automatiquement — vous pouvez fermer et continuer plus tard.',
   'ob.restart': 'Recommencer depuis le début',
   'ob.back': '← Retour',
   'ob.workingTitle': 'Nous découvrons ce à quoi vous pouvez avoir droit…',
@@ -333,6 +335,7 @@ export const fr: Record<keyof typeof sv, string> = {
     'D’après vos réponses, cette aide peut être pertinente. Vérifiez les conditions avant de demander. Que voulez-vous faire ?',
   'm.applyYourself': 'Demander vous-même — gratuit ↗',
   'm.prepareApplication': 'Préparer ma demande',
+  'm.noApplicationNeeded': 'Aucune demande nécessaire — l’aide s’applique automatiquement. Voyez comment sur la page de l’aide.',
   'm.businessTitle': 'Aides liées à votre activité ({n})',
   'm.bizSole': 'Avec une entreprise individuelle, vous demandez les aides aux entreprises en tant que personne — elles sont incluses dans votre examen ici.',
   'm.bizAb':
@@ -414,6 +417,8 @@ export const fr: Record<keyof typeof sv, string> = {
   'o.payGuidance':
     'Préparer une demande dans le système coûte {pris} par demande — tous les documents de cette demande sont inclus. Vous pouvez toujours demander vous-même directement auprès de l’autorité, c’est gratuit.',
   'o.payButton': 'Préparer la demande — {pris}',
+  'o.noApplicationBody': 'Cette aide s’applique automatiquement — il n’y a rien à préparer, et donc rien à payer. Voici comment cela fonctionne :',
+  'o.noApplicationTitle': 'Aucune demande nécessaire',
   'o.payStartError': 'L’achat n’a pas pu démarrer.',
   'o.payConfirmError': 'La confirmation a échoué.',
   'o.payConfirmed': 'Paiement confirmé — création de la demande…',
@@ -661,6 +666,9 @@ export const fr: Record<keyof typeof sv, string> = {
 
   'aw.loadError': 'La demande n’a pas pu être chargée.',
   'aw.back': '← Mes demandes',
+  'aw.paidReceipt': 'Le reçu {nr} est disponible sous Compte et données → Mes achats.',
+  'aw.paidReceiptLink': 'Voir le reçu',
+  'aw.paidBanner': 'Paiement effectué — la demande est préparée et tous ses documents sont inclus.',
   'aw.deadline': 'Échéance {datum}',
   'aw.saved': 'Enregistré.',
   'aw.saveError': 'Impossible d’enregistrer.',

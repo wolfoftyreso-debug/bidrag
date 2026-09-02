@@ -142,7 +142,7 @@ npm run lint                  # = tsc --noEmit (ingen separat linter är konfigu
 npm run typecheck             # kräver att core är byggt
 npm run demo:build            # bygger demon → artifacts/demo/demo.html (ingen databas)
 npm run demo:check            # 10 webbläsarkontroller av demon (kräver Chromium + byggd demo)
-npm run verify:ui             # 5 genomklickningar — kräver KÖRANDE api (PORT=3100,
+npm run verify:ui             # 6 genomklickningar — kräver KÖRANDE api (PORT=3100,
                               # PAYMENTS_MOCK_ENABLED=true) + dev:web + Chromium
 npm run verify:sim30          # 30 simulerade användare — kräver körande api som ovan
 npm run openapi -w apps/api   # regenererar docs/openapi.json efter API-ändringar

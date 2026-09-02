@@ -212,6 +212,8 @@ table.data tr:hover td { background: var(--bg); }
 .progress-steps { display: flex; gap: 0.35rem; margin-bottom: 1.25rem; }
 .progress-steps span { flex: 1; height: 4px; border-radius: 2px; background: #ddd8cc; transition: background 200ms ease; }
 .progress-steps span.done { background: var(--primary); }
+.progress-text { display: flex; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin: -0.75rem 0 1rem; font-size: 0.85rem; color: var(--text-muted); }
+.progress-text .progress-autosave { text-align: end; }
 
 .source-line { border-top: 1px solid var(--border); margin-top: 1rem; padding-top: 0.8rem; font-size: 0.85rem; color: var(--text-muted); }
 

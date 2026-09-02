@@ -35,6 +35,8 @@ interface OpportunityDetail {
     opensAt: string | null;
     closesAt: string | null;
     applicationMethod: string;
+    /** false = stödet används automatiskt: inget att förbereda, inget att köpa (F-INGEN-ANSÖKAN). */
+    requiresApplication: boolean;
     applicationUrl: string | null;
     submissionLevel: string;
     estimatedEffortDays: number;
@@ -75,7 +77,7 @@ export default function OpportunityPage() {
 
   const { opportunity: opp, authority, ruleVersion } = data;
 
-  const startApplication = async () => {
+  const startApplication = async (receiptNumber?: string) => {
     if (!projectId) return;
     setBusy(true);
     setError(null);
@@ -84,7 +86,10 @@ export default function OpportunityPage() {
         projectId,
         opportunityId: opp.id,
       });
-      navigate(`/ansokningar/${application.id}`);
+      // UX-genomgången 2026-09-02 (Mobbin/Etsy: orderbekräftelse med kvitto):
+      // efter ett köp får arbetsytan veta det, så att den kan visa
+      // bekräftelsen och kvittonumret i stället för att bara "bara stå där".
+      navigate(`/ansokningar/${application.id}`, receiptNumber ? { state: { justPaid: true, receiptNumber } } : undefined);
     } catch (err) {
       // Prismodellen: 19 kr per ansökan — 402 startar köpflödet i stället för
       // att visas som ett fel. När betalningen bekräftats skapas ansökan.
@@ -169,12 +174,21 @@ export default function OpportunityPage() {
         </div>
       )}
 
-      {projectId && (
+      {projectId && opp.requiresApplication === false && (
+        // F-INGEN-ANSÖKAN: stödet används automatiskt — vi säljer aldrig en
+        // "förberedd ansökan" för något som inte har någon ansökan.
+        <div className="card">
+          <h2>{t('o.noApplicationTitle')}</h2>
+          <p>{t('o.noApplicationBody')}</p>
+          <p><strong>{opp.applicationMethod}</strong></p>
+        </div>
+      )}
+      {projectId && opp.requiresApplication !== false && (
         <div className="card">
           <h2>{t('o.readyTitle')}</h2>
           <p>{t('o.readyBody')}</p>
           {priceMinor === null ? (
-            <button disabled={busy} onClick={startApplication}>{t('o.prepareInSystem')}</button>
+            <button disabled={busy} onClick={() => startApplication()}>{t('o.prepareInSystem')}</button>
           ) : (
             <ApplicationPurchase projectId={projectId} priceMinor={priceMinor} onPaid={startApplication} t={t} />
           )}
@@ -200,7 +214,7 @@ export default function OpportunityPage() {
  * OBS: ångerrättssamtycket (PurchaseConsent) har bindande svensk lydelse —
  * det översätts inte i fas A (I18N_PROGRAM §gränser).
  */
-function ApplicationPurchase({ projectId, priceMinor, onPaid, t }: { projectId: string; priceMinor: number; onPaid: () => void; t: T }) {
+function ApplicationPurchase({ projectId, priceMinor, onPaid, t }: { projectId: string; priceMinor: number; onPaid: (receiptNumber?: string) => void; t: T }) {
   const [busy, setBusy] = useState(false);
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -236,9 +250,9 @@ function ApplicationPurchase({ projectId, priceMinor, onPaid, t }: { projectId: 
     if (!payment) return;
     setBusy(true);
     try {
-      await post(`/v1/payments/${payment.paymentId}/mock-confirm`);
+      const res = await post<{ receipt?: { receiptNumber?: string } }>(`/v1/payments/${payment.paymentId}/mock-confirm`);
       setConfirmed(true);
-      onPaid();
+      onPaid(res.receipt?.receiptNumber);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('o.payConfirmError'));
       setBusy(false);

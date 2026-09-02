@@ -38,6 +38,8 @@ interface MatchRow {
   deadlineModel: string;
   sourceUrl: string;
   applicationUrl: string | null;
+  /** false = används automatiskt, inget att förbereda (F-INGEN-ANSÖKAN). */
+  requiresApplication?: boolean;
   verificationStatus: string;
   lastVerifiedAt: string | null;
   maxAmountMinor: number | null;
@@ -407,9 +409,13 @@ export default function MatchesPage() {
                           {t('m.applyYourself')}
                         </a>
                       )}
-                      <Link className="btn secondary" style={{ fontSize: '0.85rem', padding: '0.25rem 0.7rem' }} to={`/dokument/${projectId}?stod=${m.slug}`}>
-                        {t('m.prepareApplication')}
-                      </Link>
+                      {m.requiresApplication === false ? (
+                        <span className="meta-line">{t('m.noApplicationNeeded')}</span>
+                      ) : (
+                        <Link className="btn secondary" style={{ fontSize: '0.85rem', padding: '0.25rem 0.7rem' }} to={`/dokument/${projectId}?stod=${m.slug}`}>
+                          {t('m.prepareApplication')}
+                        </Link>
+                      )}
                     </div>
                   </div>
                 )}

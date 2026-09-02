@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+import { requiresApplication } from '../services/applicationNeed.ts';
 import { and, eq, ilike, or, sql } from 'drizzle-orm';
 import { db } from '../db/client.ts';
 import { applicationSchemas, fundingAuthorities, fundingOpportunities, ruleVersions } from '../db/schema.ts';
@@ -151,6 +152,7 @@ export async function opportunityRoutes(app: FastifyInstance) {
           ...opp,
           summary: tr(opp.summary),
           applicationMethod: tr(opp.applicationMethod),
+          requiresApplication: requiresApplication(opp.applicationMethod),
           amountNote: opp.amountNote ? tr(opp.amountNote) : opp.amountNote,
         },
         authority,

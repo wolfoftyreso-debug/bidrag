@@ -104,7 +104,8 @@ async function projectWithMatch(): Promise<{ projectId: string; opportunityId: s
   const { project } = await createProfileAndProject(app, user);
   await api(app, user, 'POST', `/v1/projects/${project.id}/matches`, {});
   const m = await api(app, user, 'GET', `/v1/projects/${project.id}/matches`);
-  const matches = (m.json() as { matches: { opportunityId: string }[] }).matches;
+  // F-INGEN-ANSÖKAN: ett stöd utan ansökan (t.ex. tandvårdsbidraget) kan inte förberedas — välj ett som kan.
+  const matches = (m.json() as { matches: { opportunityId: string; requiresApplication: boolean }[] }).matches.filter((x) => x.requiresApplication !== false);
   return { projectId: project.id, opportunityId: matches[0]!.opportunityId };
 }
 

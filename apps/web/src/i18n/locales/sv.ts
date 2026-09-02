@@ -90,6 +90,8 @@ export const sv = {
   // ── Intaget: gemensamt ───────────────────────────────────────────────────
   'ob.progressLabel': 'Så långt har du kommit i frågorna',
   'ob.resumed': 'Dina svar sparas löpande — du fortsätter där du var.',
+  'ob.stepOf': 'Fråga {n} av ungefär {m}',
+  'ob.autosave': 'Dina svar sparas automatiskt — du kan stänga och fortsätta senare.',
   'ob.restart': 'Börja om från början',
   'ob.back': '← Tillbaka',
   'ob.workingTitle': 'Tar reda på vad du kan ha rätt till…',
@@ -337,6 +339,7 @@ export const sv = {
     'Utifrån dina svar kan det här stödet vara aktuellt. Kontrollera villkoren innan du ansöker. Vad vill du göra?',
   'm.applyYourself': 'Ansök själv — gratis ↗',
   'm.prepareApplication': 'Förbered min ansökan',
+  'm.noApplicationNeeded': 'Ingen ansökan behövs — stödet används automatiskt. Läs hur på stödsidan.',
   'm.businessTitle': 'Stöd som rör ditt företagande ({n})',
   'm.bizSole': 'Med enskild firma söker du företagsstöden som person — de ingår i din genomlysning här.',
   'm.bizAb':
@@ -419,6 +422,8 @@ export const sv = {
   'o.payGuidance':
     'Att förbereda en ansökan i systemet kostar {pris} per ansökan — alla dokument för den ansökan ingår. Du kan alltid ansöka själv direkt hos myndigheten, det är gratis.',
   'o.payButton': 'Förbered ansökan — {pris}',
+  'o.noApplicationBody': 'Det här stödet används automatiskt — det finns inget att förbereda, och därför inget att betala för. Så här fungerar det:',
+  'o.noApplicationTitle': 'Ingen ansökan behövs',
   'o.payStartError': 'Köpet kunde inte startas.',
   'o.payConfirmError': 'Bekräftelsen misslyckades.',
   'o.payConfirmed': 'Betalningen är bekräftad — ansökan skapas…',
@@ -679,6 +684,9 @@ export const sv = {
   // ── FAS A2b: Ansökningsarbetsytan ────────────────────────────────────────
   'aw.loadError': 'Ansökan kunde inte hämtas.',
   'aw.back': '← Mina ansökningar',
+  'aw.paidReceiptLink': 'Visa kvittot',
+  'aw.paidReceipt': 'Kvitto {nr} finns under Konto & data → Mina köp.',
+  'aw.paidBanner': 'Betalningen är genomförd — ansökan är förberedd och alla dokument för den ingår.',
   'aw.deadline': 'Deadline {datum}',
   'aw.saved': 'Sparat.',
   'aw.saveError': 'Kunde inte spara.',
