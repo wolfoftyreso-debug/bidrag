@@ -66,6 +66,7 @@ step "I18N: alla 11 språk kompletta och konsistenta (I18N_PROGRAM)" node --expe
 step "SVG-vakten: välformade märken/illustrationer + härledd favicon (DESIGN_CONSTITUTION §3)" node tools/svgcheck.mjs
 step "Beloppsvakten: kurerat belopp kräver källa och exakt uppgift (red team F1)" node --experimental-strip-types tools/beloppcheck.mjs
 step "Seed-integritet: motsägelser och okända aktörer fäller; överlastade faktavägar rapporteras (revision 2026-09-01)" node --experimental-strip-types tools/seedintegrity.mjs --strict
+step "Motorsimulering: ~11 000 personor × alla stöd mot core — DÖD/LÄCKA fäller (revision 2026-09-01)" node --experimental-strip-types tools/simulate-engine.mjs --n=2000 --strict
 if [ "$db_up" = 1 ]; then
   psql "$ADMIN_URL" -Atc "select 1 from pg_database where datname='bidrag_test'" | grep -q 1 \
     || psql "$ADMIN_URL" -c 'CREATE DATABASE bidrag_test' >/dev/null

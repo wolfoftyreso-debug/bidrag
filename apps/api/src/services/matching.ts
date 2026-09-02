@@ -112,6 +112,7 @@ export async function recomputeMatchesForProject(
       availableEvidenceKinds,
       referenceDate: referenceDate.toISOString(),
       deadline: opp.closesAt?.toISOString() ?? null,
+      deadlineModel: opp.deadlineModel as 'one_time' | 'recurring' | 'rolling' | 'upcoming_round',
       estimatedEffortDays: opp.estimatedEffortDays,
       lastVerifiedAt: opp.lastVerifiedAt?.toISOString() ?? null,
     });

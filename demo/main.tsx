@@ -9,7 +9,7 @@ import { DOCUMENT_TEMPLATES, PERSONAL_INSTRUMENTS, businessRelevantSlugs, comput
   prefillAnswers, prefillFromCanonical, renderDocument, validateAnswers, validateDocumentAnswers,
   visibleFields, visibleQuestions,
   type AnswerValue, type Answers, type ApplicationFieldDef, type ApplicationSchemaDef,
-  type DocAnswers, type DocQuestion, type DocumentTemplate } from '@bidrag/core';
+  type DocAnswers, type DocQuestion, type DocumentTemplate, deriveAgeFacts, ageFromBirthYear } from '@bidrag/core';
 import OPPORTUNITIES from './demo-opportunities.json';
 
 type Facts = Record<string, unknown>;
@@ -123,16 +123,8 @@ function buildFacts(a: A): Facts {
     if (a.children) f['person.hasChildrenAtHome'] = a.children !== 'no';
     if (a.separated !== undefined) f['person.separatedParent'] = a.separated;
     if (a.birthYear) {
-      const age = new Date().getFullYear() - (a.birthYear as number);
-      f['person.ageYears'] = age;
-      f['person.ageUnder29'] = age <= 28;
-      f['person.age24Plus'] = age >= 24;
-      f['person.age40OrYounger'] = age <= 40;
-      f['person.age60Plus'] = age >= 60;
-      f['person.age62Plus'] = age >= 62;
-      f['person.age66Plus'] = age >= 66;
-      f['person.age67Plus'] = age >= 67;
-      f['person.ageBand'] = age < 20 ? 'under20' : age <= 28 ? '20-28' : age <= 65 ? '29-65' : '66plus';
+      // EN källa för åldersfakta (packages/core/src/facts.ts, M15) — ingen kopia här.
+      Object.assign(f, deriveAgeFacts(ageFromBirthYear(a.birthYear as number)));
     }
     if (a.childSchool) {
       f['person.childInCompulsorySchool'] = a.childSchool === 'grundskola' || a.childSchool === 'both';
@@ -212,6 +204,7 @@ function runEngine(facts: Facts) {
       availableEvidenceKinds: [],
       referenceDate: now,
       deadline: o.closesAt,
+      deadlineModel: o.deadlineModel,
       estimatedEffortDays: o.estimatedEffortDays,
     }),
   })).sort((x, y) => y.m.score - x.m.score);

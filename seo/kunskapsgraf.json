@@ -1,11 +1,11 @@
 {
  "_kontrakt": "Kunskapsgrafen v1 — genererad av tools/genkgraf.mjs ur seeden + seo/intents-100.json; redigera ALDRIG för hand. Grafen är lager 6 i docs/CONTENT_ENGINE.md: internlänkning, relaterade stöd och situationsnoder hämtar härifrån. 'relaterad'-kanter = delar ≥2 kriteriefält och minst en målgruppshubb (deterministisk heuristik v1 — redaktionell kurering kan skärpa den senare, i generatorn, inte i filen). Regenerera vid seed-/intentändring; verify kör --check.",
  "genererad_ur_seed": "2026-08-13T00:00:00Z",
- "antal_noder": 273,
+ "antal_noder": 274,
  "antal_kanter": 1422,
  "noder_per_typ": {
   "intent": 42,
-  "kriterium": 106,
+  "kriterium": 107,
   "malgrupp": 4,
   "myndighet": 36,
   "stod": 85
@@ -490,6 +490,16 @@
    "label": "organisation.youthMembersShareOver60"
   },
   {
+   "id": "kriterium:person.age18to28",
+   "type": "kriterium",
+   "label": "person.age18to28"
+  },
+  {
+   "id": "kriterium:person.age19to29",
+   "type": "kriterium",
+   "label": "person.age19to29"
+  },
+  {
    "id": "kriterium:person.age24Plus",
    "type": "kriterium",
    "label": "person.age24Plus"
@@ -523,11 +533,6 @@
    "id": "kriterium:person.age67Plus",
    "type": "kriterium",
    "label": "person.age67Plus"
-  },
-  {
-   "id": "kriterium:person.ageUnder29",
-   "type": "kriterium",
-   "label": "person.ageUnder29"
   },
   {
    "id": "kriterium:person.caringForSeriouslyIllRelative",
@@ -4449,7 +4454,7 @@
   {
    "from": "stod:fk-aktivitetsersattning",
    "rel": "kraver",
-   "to": "kriterium:person.ageUnder29"
+   "to": "kriterium:person.age19to29"
   },
   {
    "from": "stod:fk-aktivitetsersattning",
@@ -5014,7 +5019,7 @@
   {
    "from": "stod:fk-bostadsbidrag-unga",
    "rel": "kraver",
-   "to": "kriterium:person.ageUnder29"
+   "to": "kriterium:person.age18to28"
   },
   {
    "from": "stod:fk-bostadsbidrag-unga",

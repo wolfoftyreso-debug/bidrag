@@ -7,6 +7,7 @@
  * resultat, betalvägg före värde, kvittosummor).
  */
 import { artifactsDir } from './lib/browser.mjs';
+import { deriveAgeFacts } from '../packages/core/dist/index.js';
 import { writeFile } from 'node:fs/promises';
 
 const BASE = 'http://localhost:3100';
@@ -37,12 +38,7 @@ function personalFacts(a) {
     const repAge = a.age === 'under20' ? 18 : a.age === '20-28' ? 24 : a.age === '29-65' ? 45 : 68;
     f['person.ageYears'] = repAge;
     f['person.ageBand'] = a.age;
-    f['person.ageUnder29'] = repAge <= 28;
-    f['person.age40OrYounger'] = repAge <= 40;
-    f['person.age60Plus'] = repAge >= 60;
-    f['person.age62Plus'] = repAge >= 62;
-    f['person.age66Plus'] = repAge >= 66;
-    f['person.age67Plus'] = repAge >= 67;
+    Object.assign(f, deriveAgeFacts(repAge)); // EN källa (core/facts.ts, M15)
   }
   if (a.employment) {
     f['person.employmentStatus'] = a.employment;

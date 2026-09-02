@@ -1342,7 +1342,7 @@ export const opportunities: SeedOpportunity[] = [
     criteria: [
       c('fk-bbu-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Bidraget söks av privatpersoner'),
       c('fk-bbu-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Du ska bo i Sverige'),
-      c('fk-bbu-m1', 'mandatory', 'person.ageUnder29', 'is_true', undefined, 'Du ska vara mellan 18 och 28 år', 'Är du mellan 18 och 28 år?'),
+      c('fk-bbu-m1', 'mandatory', 'person.age18to28', 'is_true', undefined, 'Du ska vara mellan 18 och 28 år', 'Är du mellan 18 och 28 år?'),
       c('fk-bbu-m2', 'mandatory', 'person.lowHouseholdIncome', 'is_true', undefined, 'Din inkomst ska vara låg', 'Är din inkomst lägre än ungefär 25 000 kr i månaden före skatt?'),
       c('fk-bbu-m3', 'mandatory', 'person.paysHousingCost', 'is_true', undefined, 'Du ska betala för ditt boende', 'Betalar du hyra eller andra boendekostnader?'),
     ],
@@ -1424,7 +1424,7 @@ export const opportunities: SeedOpportunity[] = [
     criteria: [
       c('fk-ae-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Ersättningen söks av privatpersoner'),
       c('fk-ae-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Du ska vara försäkrad i Sverige'),
-      c('fk-ae-m1', 'mandatory', 'person.ageUnder29', 'is_true', undefined, 'Du ska vara 19–29 år', 'Är du mellan 19 och 29 år?'),
+      c('fk-ae-m1', 'mandatory', 'person.age19to29', 'is_true', undefined, 'Du ska vara 19–29 år', 'Är du mellan 19 och 29 år?'),
       c('fk-ae-m2', 'mandatory', 'person.reducedWorkCapacityLongTerm', 'is_true', undefined, 'Arbetsförmågan ska vara nedsatt i minst ett år', 'Bedömer du att din arbetsförmåga är nedsatt under minst ett år på grund av sjukdom eller funktionsnedsättning?'),
     ],
     evidenceRequirements: [

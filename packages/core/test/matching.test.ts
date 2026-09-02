@@ -94,3 +94,25 @@ describe('match engine', () => {
     expect(a).toEqual(b);
   });
 });
+
+describe('deadlineModel — återkommande omgång som stängt (motorsimuleringen 2026-09-01)', () => {
+  const base = { criteria: [], facts: {}, evidenceRequirements: [], availableEvidenceKinds: [], referenceDate: '2026-09-01' };
+  it('one_time med passerat datum utesluts som förut', () => {
+    const r = computeMatch({ ...base, deadline: '2026-08-25', deadlineModel: 'one_time' });
+    expect(r.eligibilityStatus).toBe('excluded');
+    expect(r.excludedBy.some((e) => e.criterionId === '_deadline')).toBe(true);
+  });
+  it('recurring med passerat datum är INTE uteslutet — nästa omgång väntas, status unknown med förklaring', () => {
+    const r = computeMatch({ ...base, deadline: '2026-08-25', deadlineModel: 'recurring' });
+    expect(r.eligibilityStatus).toBe('unknown');
+    expect(r.excludedBy).toHaveLength(0);
+    expect(r.explanation.some((e) => e.criterionId === '_deadline' && e.outcome === 'unknown')).toBe(true);
+  });
+  it('recurring med framtida datum påverkas inte', () => {
+    const r = computeMatch({ ...base, deadline: '2027-02-25', deadlineModel: 'recurring' });
+    expect(r.eligibilityStatus).toBe('eligible');
+  });
+  it('utan modell (gamla anropare) behålls det gamla beteendet', () => {
+    expect(computeMatch({ ...base, deadline: '2026-08-25' }).eligibilityStatus).toBe('excluded');
+  });
+});

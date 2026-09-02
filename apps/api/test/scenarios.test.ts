@@ -7,7 +7,7 @@
  * regler, intagshärledningar och frågekontext.
  */
 import { describe, expect, it } from 'vitest';
-import { computeMatch, type CriterionDef, type EvidenceRequirement, type Facts } from '@bidrag/core';
+import { computeMatch, deriveAgeFacts, type CriterionDef, type EvidenceRequirement, type Facts } from '@bidrag/core';
 import { opportunities } from '../src/seed/data.ts';
 
 type Answers = Partial<{
@@ -44,12 +44,7 @@ function personalFacts(a: Answers): Facts {
     const repAge = a.age === 'under20' ? 18 : a.age === '20-28' ? 24 : a.age === '29-65' ? 45 : 68;
     f['person.ageYears'] = repAge;
     f['person.ageBand'] = a.age;
-    f['person.ageUnder29'] = repAge <= 28;
-    f['person.age40OrYounger'] = repAge <= 40;
-    f['person.age60Plus'] = repAge >= 60;
-    f['person.age62Plus'] = repAge >= 62;
-    f['person.age66Plus'] = repAge >= 66;
-    f['person.age67Plus'] = repAge >= 67;
+    Object.assign(f, deriveAgeFacts(repAge)); // EN källa (core/facts.ts, M15)
   }
   if (a.childSchool) {
     f['person.childInCompulsorySchool'] = a.childSchool === 'grundskola' || a.childSchool === 'both';

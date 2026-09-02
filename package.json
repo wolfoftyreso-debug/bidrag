@@ -36,6 +36,8 @@
     "gate:ux": "node tools/gate0-ux.mjs",
     "gate:keywords": "node --experimental-strip-types tools/gatekeywords.mjs",
     "gate:links": "node tools/linkhealth.mjs",
+    "sim:engine": "node --experimental-strip-types tools/simulate-engine.mjs --n=4000",
+    "sim:engine:intake": "node --experimental-strip-types tools/simulate-engine.mjs --n=4000 --intake",
     "seed:integrity": "node --experimental-strip-types tools/seedintegrity.mjs --strict",
     "i18n:cov": "node --experimental-strip-types tools/i18ncov.mjs"
   },

@@ -5,6 +5,7 @@
  * överlånga ord, citattecken, tankstreck) → text + PDF laddas ner.
  */
 import { artifactsDir } from './lib/browser.mjs';
+import { deriveAgeFacts } from '../packages/core/dist/index.js';
 const API = 'http://localhost:3100';
 const S = artifactsDir;
 import { writeFileSync } from 'node:fs';
@@ -41,14 +42,7 @@ const { profile } = await call('POST', '/v1/profiles', {
   facts: {
     'person.householdType': 'alone',
     'person.hasChildrenAtHome': true,
-    'person.ageYears': 45,
-    'person.ageBand': '29-65',
-    'person.ageUnder29': false,
-    'person.age40OrYounger': false,
-    'person.age60Plus': false,
-    'person.age62Plus': false,
-    'person.age66Plus': false,
-    'person.age67Plus': false,
+    ...deriveAgeFacts(45), // EN källa (core/facts.ts, M15) — ålder 45 → band 29-65
     'person.employmentStatus': 'unemployed',
     'person.monthlyIncomeBand': '15-25',
     'person.lowHouseholdIncome': true,

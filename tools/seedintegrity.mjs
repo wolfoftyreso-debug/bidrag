@@ -106,6 +106,14 @@ for (const a of authorities) if (!used.has(a.key)) F('G-aktör-tom', `${a.key} (
 const perKat = {};
 for (const f of fynd) (perKat[f.kat] ??= []).push(f.msg);
 for (const [k, v] of Object.entries(perKat)) { console.log(`\n## ${k} (${v.length})`); for (const m of v) console.log('  -', m); }
+// ── H: återkommande omgång som stängt utan nytt datum ─────────────────────
+// Motorn utesluter inte längre (deadlineModel), men stödet visas som
+// "nästa omgång ej publicerad" tills datumet kurerats — det är en signal.
+for (const o of opportunities) {
+  if ((o.deadlineModel === 'recurring' || o.deadlineModel === 'upcoming_round') && o.closesAt && new Date(o.closesAt) < new Date('2026-09-01')) {
+    fynd.push({ kat: 'H-omgång-stängd', text: `${o.slug}: ${o.deadlineModel} med closesAt ${o.closesAt.slice(0, 10)} i förfluten tid — kurera nästa omgångs datum` });
+  }
+}
 console.log(`\nTOTALT ${fynd.length} fynd · ${opportunities.length} stöd · ${grupp.size} distinkta (faktaväg,op,expected)`);
 const kodfel = fynd.filter((f) => f.kat.startsWith('C-') || f.kat.startsWith('G-'));
 if (STRICT && kodfel.length) { console.error(`--strict: ${kodfel.length} fynd i klass C/G är kodfel, inte kureringsläge`); process.exit(1); }

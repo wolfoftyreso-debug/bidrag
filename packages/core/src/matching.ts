@@ -30,6 +30,15 @@ export interface MatchInput {
   /** ISO date of evaluation — makes results reproducible. */
   referenceDate: string;
   deadline?: string | null;
+  /**
+   * Deadline-modellen (revision 2026-09-01, motorsimuleringen): ett
+   * `recurring`/`upcoming_round`-stöd vars senaste omgång stängt är INTE
+   * uteslutet — nästa omgång väntas. Utan modellen behandlades LOK-stödet
+   * (closesAt 2026-08-25, recurring) som stängt för alla, för alltid, tills
+   * någon manuellt satte ett nytt datum. Ett passerat datum ger då
+   * 'unknown' med förklaringen att nästa omgång inte är publicerad.
+   */
+  deadlineModel?: 'one_time' | 'recurring' | 'rolling' | 'upcoming_round';
   /** Rough preparation effort in working days, from the opportunity metadata. */
   estimatedEffortDays?: number;
   /** How fresh the underlying rule data is. */
@@ -100,7 +109,9 @@ export function computeMatch(input: MatchInput): MatchResultComputed {
 
   // Layer 1 — hard exclusions. A failed hard criterion or a closed deadline excludes.
   const excludedBy = hard.filter((r) => r.outcome === 'fail').map(toExplanation);
-  const deadlineClosed = daysToDeadline !== null && daysToDeadline < 0;
+  const pastDeadline = daysToDeadline !== null && daysToDeadline < 0;
+  const roundPending = pastDeadline && (input.deadlineModel === 'recurring' || input.deadlineModel === 'upcoming_round');
+  const deadlineClosed = pastDeadline && !roundPending;
 
   const missingFacts: MissingFact[] = results
     .filter((r) => r.outcome === 'unknown')
@@ -164,10 +175,19 @@ export function computeMatch(input: MatchInput): MatchResultComputed {
   if (mandatoryFailed.length > 0) {
     // A failed mandatory criterion is an exclusion in practice.
     eligibilityStatus = 'excluded';
-  } else if (mandatoryUnknown.length > 0 || hardUnknown.length > 0) {
+  } else if (mandatoryUnknown.length > 0 || hardUnknown.length > 0 || roundPending) {
     eligibilityStatus = 'unknown';
   } else {
     eligibilityStatus = 'eligible';
+  }
+  if (roundPending) {
+    explanation.push({
+      criterionId: '_deadline',
+      description: 'Senaste ansökningsomgången har stängt — nästa omgång är inte publicerad ännu',
+      outcome: 'unknown',
+      kind: 'hard',
+      weight: 1,
+    });
   }
 
   if (eligibilityStatus === 'excluded') {

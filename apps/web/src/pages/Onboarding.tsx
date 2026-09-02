@@ -5,6 +5,7 @@
  * vilka frågor som behöver ställas, och systemet gör första utgrävningen.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { ageFromBirthYear, deriveAgeFacts } from '@bidrag/core';
 import { useNavigate } from 'react-router-dom';
 import { ApiError, post } from '../api';
 import { useSession } from '../App';
@@ -184,17 +185,10 @@ function personalFacts(a: Answers): Record<string, unknown> {
   if (a.children) facts['person.hasChildrenAtHome'] = a.children !== 'no';
   if (a.separatedParent !== undefined) facts['person.separatedParent'] = a.separatedParent;
   if (a.birthYear) {
-    // Exakt ålder (det år personen fyller X) mot varje gräns — ingen grov proxy.
-    const age = new Date().getFullYear() - a.birthYear;
-    facts['person.ageYears'] = age;
-    facts['person.ageUnder29'] = age <= 28;
-    facts['person.age24Plus'] = age >= 24;
-    facts['person.age40OrYounger'] = age <= 40;
-    facts['person.age60Plus'] = age >= 60;
-    facts['person.age62Plus'] = age >= 62;
-    facts['person.age66Plus'] = age >= 66;
-    facts['person.age67Plus'] = age >= 67;
-    facts['person.ageBand'] = age < 20 ? 'under20' : age <= 28 ? '20-28' : age <= 65 ? '29-65' : '66plus';
+    // Exakt ålder (det år personen fyller X) mot varje gräns — EN källa för
+    // härledningen (packages/core/src/facts.ts, M15): 18–28 och 19–29 är två
+    // olika fakta, och kopian som låg här (och i demon, sim30, gendocs) är borta.
+    Object.assign(facts, deriveAgeFacts(ageFromBirthYear(a.birthYear)));
   }
   // Barnspåret: upptäcktsfrågorna sätter fakta som öppnar stöd användaren
   // sällan känner till (Majblomman, glasögonbidrag, skolskjuts, elevresor).

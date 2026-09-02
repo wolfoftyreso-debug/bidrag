@@ -82,7 +82,7 @@ Historik: `git log` är detaljerad och ärlig; revisionsrapporter i
 ```
 packages/core   ← ren TypeScript-domän, inga beroenden på api/web
 apps/api        ← importerar core; äger databasen; REST under /v1
-apps/web        ← importerar core för typer; pratar bara /v1
+apps/web        ← importerar core (deriveAgeFacts m.m.); pratar bara /v1
 api/index.ts    ← Vercel-serverless-wrapper runt exakt samma Fastify-app
 demo/           ← bundlar core + kunskapsbas-export till EN html-fil
 ```
@@ -149,6 +149,9 @@ npm run openapi -w apps/api   # regenererar docs/openapi.json efter API-ändring
 npm run manual                # regenererar systemhandboken docs/MANUAL.md (se nedan)
 npm run seo:check             # genererar publika SEO-ytan + kör QA-crawlen
 npm run seo:keywords          # bygger seo/keywords.json ur seeden + roots-manual
+npm run sim:engine            # ~11 000 personor × alla stöd mot core (1,4 s); --strict i verify
+npm run sim:engine:intake     # samma med bara intagets fakta — mäter frågebördan
+npm run seed:integrity        # överlastade faktavägar, döda fakta, delade källor, stängda omgångar
 ```
 
 Webbläsare för kontrollerna: `npx playwright install chromium` eller sätt

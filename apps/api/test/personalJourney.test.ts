@@ -6,6 +6,7 @@
  * needing investigation — never phrased as a decision.
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { deriveAgeFacts } from '@bidrag/core';
 import type { FastifyInstance } from 'fastify';
 import { api, registerUser, testServer, unlockProject, type TestUser } from './helpers.ts';
 
@@ -38,14 +39,7 @@ beforeAll(async () => {
       'person.hasChildrenAtHome': true,
       'person.separatedParent': true,
       'person.otherParentNotPaying': true,
-      'person.ageYears': 45,
-      'person.ageBand': '29-65',
-      'person.ageUnder29': false,
-      'person.age40OrYounger': false,
-      'person.age60Plus': false,
-      'person.age62Plus': false,
-      'person.age66Plus': false,
-      'person.age67Plus': false,
+      ...deriveAgeFacts(45), // EN källa (core/facts.ts, M15) — 45 år, band 29-65
       'person.employmentStatus': 'unemployed',
       'person.receivesPension': false,
       'person.monthlyIncomeBand': '15-25',
@@ -147,14 +141,7 @@ describe('företagarspåret (F-EGEN): löftet om genomlysning av företagandet i
       facts: {
         'person.householdType': 'alone',
         'person.hasChildrenAtHome': true,
-        'person.ageYears': 45,
-        'person.ageBand': '29-65',
-        'person.ageUnder29': false,
-        'person.age40OrYounger': false,
-        'person.age60Plus': false,
-        'person.age62Plus': false,
-        'person.age66Plus': false,
-        'person.age67Plus': false,
+        ...deriveAgeFacts(45), // EN källa (core/facts.ts, M15) — 45 år, band 29-65
         'person.employmentStatus': 'self_employed',
         'person.selfEmployed': true,
         'person.businessForm': 'sole_trader',
