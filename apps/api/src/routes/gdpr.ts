@@ -27,6 +27,8 @@ import {
   submissions,
   tenants,
   users,
+  productEvents,
+  feedback,
 } from '../db/schema.ts';
 import { audit } from '../audit.ts';
 import { getStorage } from '../services/storage.ts';
@@ -146,6 +148,10 @@ export async function gdprRoutes(app: FastifyInstance) {
       // 17.3 b) — men e-postadressen är en personuppgift och skrubbas här.
       await db.update(receipts).set({ email: null }).where(eq(receipts.tenantId, tenantId));
 
+      // Beta-instrumentering och feedback har inga FK (raderingen ska aldrig
+      // radera aggregerad historik) — koppla loss identiteten i stället.
+      await db.update(productEvents).set({ tenantId: null, userId: null }).where(eq(productEvents.tenantId, tenantId));
+      await db.update(feedback).set({ tenantId: null, userId: null }).where(eq(feedback.tenantId, tenantId));
       await db.delete(memberships).where(eq(memberships.tenantId, tenantId));
       await db.delete(tenants).where(eq(tenants.id, tenantId));
 
@@ -162,6 +168,8 @@ export async function gdprRoutes(app: FastifyInstance) {
         .from(memberships)
         .where(eq(memberships.userId, request.auth!.userId));
       if (remaining.length === 0) {
+        await db.update(productEvents).set({ userId: null }).where(eq(productEvents.userId, request.auth!.userId));
+        await db.update(feedback).set({ userId: null }).where(eq(feedback.userId, request.auth!.userId));
         await db.delete(users).where(eq(users.id, request.auth!.userId));
       }
 

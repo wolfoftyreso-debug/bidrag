@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+import { trackEvent } from '../services/events.ts';
 import { and, eq } from 'drizzle-orm';
 import { detectTrack, proposeStack, relevantForTrack, type StackableOpportunity } from '@bidrag/core';
 import { db } from '../db/client.ts';
@@ -192,6 +193,12 @@ export async function projectRoutes(app: FastifyInstance) {
           after: { count },
         });
         const { rows, facts } = await trackRelevantMatches(request.auth!.tenantId, id);
+        // Trattmått (BETA_READINESS B2): genomgången är slutförd när matchningen räknats.
+        await trackEvent('genomgang_slutford', {
+          tenantId: request.auth!.tenantId,
+          userId: request.auth!.userId,
+          props: { count, eligible: rows.filter((r) => r.eligibilityStatus === 'eligible').length, unknown: rows.filter((r) => r.eligibilityStatus === 'unknown').length },
+        });
         // I18N fas B: intakefrågorna på användarens språk (Accept-Language);
         // villkorstexter och officiella namn förblir svenska med ärlig notis.
         const tr = await kbTranslator(resolveKbLocale(request.headers['accept-language']));

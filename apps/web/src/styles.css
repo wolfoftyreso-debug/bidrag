@@ -55,7 +55,9 @@ body {
 h1 { font-family: var(--font-serif); font-size: 1.75rem; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 0.5rem; line-height: 1.25; }
 h2 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; letter-spacing: -0.01em; margin: 1.5rem 0 0.75rem; }
 h3 { font-size: 1rem; font-weight: 700; margin: 1rem 0 0.5rem; } /* h3 förblir sans */
-a { color: var(--primary); text-decoration: none; }
+/* Textlänkar i mörkare blå (a11ycheck 2026-09-03: --primary på ljus bakgrund gav < 4.5:1). Knappar/sidomeny behåller --primary. */
+a { color: var(--primary-dark); text-decoration: none; }
+.alert a, .card a:not(.btn), .meta-line a, .source-line a, .guidance a { text-decoration: underline; }
 a:hover { text-decoration: underline; text-underline-offset: 2px; }
 p { margin: 0.4rem 0; }
 ::selection { background: var(--primary-soft); }
@@ -215,6 +217,10 @@ table.data tr:hover td { background: var(--bg); }
 .progress-text { display: flex; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin: -0.75rem 0 1rem; font-size: 0.85rem; color: var(--text-muted); }
 .progress-text .progress-autosave { text-align: end; }
 
+.feedback { margin-top: 1rem; border: 1px dashed var(--border); border-radius: 8px; padding: 0.5rem 0.8rem; font-size: 0.92rem; }
+.feedback summary { cursor: pointer; color: var(--text-muted); }
+.feedback-form { display: grid; gap: 0.4rem; margin-top: 0.6rem; }
+.beta-badge { display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; background: var(--warning-bg, #fff3cd); color: #7a5200; border-radius: 4px; padding: 0.1rem 0.4rem; margin-inline-start: 0.4rem; vertical-align: middle; }
 .source-line { border-top: 1px solid var(--border); margin-top: 1rem; padding-top: 0.8rem; font-size: 0.85rem; color: var(--text-muted); }
 
 /* Illustrationer (design/README.md): max 3 färger ur paletten, kontur 2.5px i

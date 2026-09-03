@@ -45,11 +45,27 @@ interface OppRow {
   closesAt: string | null;
 }
 
+interface FeedbackRow {
+  id: string;
+  category: string;
+  page: string;
+  opportunitySlug: string | null;
+  message: string;
+  locale: string | null;
+  status: string;
+  createdAt: string;
+}
+
+const FEEDBACK_LABEL: Record<string, string> = {
+  facts: 'Faktafel', language: 'Språk', navigation: 'Navigering', missing: 'Saknat stöd', technical: 'Tekniskt', other: 'Annat',
+};
+
 export default function AdminPage() {
   const [sources, setSources] = useState<SourceRow[]>([]);
   const [review, setReview] = useState<ReviewItem[]>([]);
   const [opportunities, setOpportunities] = useState<OppRow[]>([]);
   const [staleMatches, setStaleMatches] = useState(0);
+  const [feedbackItems, setFeedbackItems] = useState<FeedbackRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
 
@@ -58,6 +74,7 @@ export default function AdminPage() {
     get<{ items: ReviewItem[] }>('/v1/admin/review-queue').then(({ items }) => setReview(items)).catch(() => {});
     get<{ opportunities: OppRow[] }>('/v1/admin/opportunities').then(({ opportunities }) => setOpportunities(opportunities)).catch(() => {});
     get<{ staleMatches: number }>('/v1/admin/stale-matches').then((d) => setStaleMatches(d.staleMatches)).catch(() => {});
+    get<{ items: FeedbackRow[] }>('/v1/admin/feedback').then(({ items }) => setFeedbackItems(items)).catch(() => {});
   }, []);
   useEffect(load, [load]);
 
@@ -88,6 +105,27 @@ export default function AdminPage() {
         <div className="card"><h3>Aktiva källor</h3><div className="score-ring">{sources.filter((s) => s.active).length}</div></div>
         <div className="card"><h3>Väntar på granskning</h3><div className="score-ring">{review.length}</div></div>
         <div className="card"><h3>Inaktuella matchningar</h3><div className="score-ring">{staleMatches}</div><p className="meta-line">Räknas om automatiskt var 15:e minut.</p></div>
+      </div>
+
+      <div className="card">
+        <h2>Feedback från betan ({feedbackItems.length})</h2>
+        <p className="guidance">Nyast först. Faktafel ska till kuratorn: kontrollera källan och rätta seeden eller regelversionen.</p>
+        {feedbackItems.length === 0 ? <p className="meta-line">Inga rapporter ännu.</p> : (
+          <table className="data">
+            <thead><tr><th>När</th><th>Typ</th><th>Sida</th><th>Stöd</th><th>Meddelande</th></tr></thead>
+            <tbody>
+              {feedbackItems.map((f) => (
+                <tr key={f.id}>
+                  <td>{new Date(f.createdAt).toLocaleString('sv-SE')}</td>
+                  <td><span className={`badge ${f.category === 'facts' ? 'danger' : f.category === 'technical' ? 'warning' : ''}`}>{FEEDBACK_LABEL[f.category] ?? f.category}</span></td>
+                  <td>{f.page}</td>
+                  <td>{f.opportunitySlug ?? '—'}</td>
+                  <td style={{ whiteSpace: 'pre-wrap' }}>{f.message}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       <div className="card">

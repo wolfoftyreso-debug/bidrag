@@ -1190,8 +1190,8 @@ export const opportunities: SeedOpportunity[] = [
     sectors: [],
     deadlineModel: 'rolling',
     applicationMethod: 'Ansökan görs på Mina sidor hos Försäkringskassan (kräver e-legitimation).',
-    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
-    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer',
     amountNote:
       'Beror på inkomst, boendekostnad och antal barn. Bostadskostnad räknas upp till 6 800 kr/mån vid 1 barn, 7 900 kr vid 2 barn och 8 600 kr vid 3 eller fler.',
     amountSourceUrl:
@@ -1260,8 +1260,8 @@ export const opportunities: SeedOpportunity[] = [
     sectors: [],
     deadlineModel: 'rolling',
     applicationMethod: 'Ansökan till din lokala majblommeförening via majblomman.se.',
-    applicationUrl: 'https://majblomman.se/',
-    sourceUrl: 'https://majblomman.se/',
+    applicationUrl: 'https://majblomman.se/sok-stod/sok-har/',
+    sourceUrl: 'https://majblomman.se/sok-stod/sok-har/',
     authenticationMethod: 'none',
     estimatedEffortDays: 1,
     criteria: [
@@ -1350,8 +1350,8 @@ export const opportunities: SeedOpportunity[] = [
     sectors: [],
     deadlineModel: 'rolling',
     applicationMethod: 'Ansökan görs på Mina sidor hos Försäkringskassan (kräver e-legitimation).',
-    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
-    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar',
     amountNote:
       'Högst 1 300 kr/mån. Kräver att årsinkomsten är högst 86 720 kr (103 720 kr tillsammans med make eller sambo) och att boendet kostar mer än 1 800 kr/mån.',
     amountSourceUrl:
@@ -1386,8 +1386,8 @@ export const opportunities: SeedOpportunity[] = [
     sectors: [],
     deadlineModel: 'rolling',
     applicationMethod: 'Ansökan görs hos socialtjänsten i din kommun — ofta via kommunens e-tjänst eller ett bokat besök.',
-    applicationUrl: 'https://www.socialstyrelsen.se/',
-    sourceUrl: 'https://www.socialstyrelsen.se/',
+    applicationUrl: 'https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/ekonomiskt-bistand-for-privatpersoner/',
+    sourceUrl: 'https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/ekonomiskt-bistand-for-privatpersoner/',
     estimatedEffortDays: 2,
     criteria: [
       c('kfs-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Stödet söks av privatpersoner'),
@@ -1412,8 +1412,8 @@ export const opportunities: SeedOpportunity[] = [
     sectors: ['education'],
     deadlineModel: 'rolling',
     applicationMethod: 'Ansökan görs i Mina sidor hos CSN (kräver e-legitimation).',
-    applicationUrl: 'https://www.csn.se/',
-    sourceUrl: 'https://www.csn.se/',
+    applicationUrl: 'https://www.csn.se/bidrag-och-lan/studiemedel/sa-ansoker-du-om-studiemedel.html',
+    sourceUrl: 'https://www.csn.se/bidrag-och-lan/studiemedel.html',
     authenticationMethod: 'eid',
     estimatedEffortDays: 1,
     criteria: [
@@ -1473,8 +1473,8 @@ export const opportunities: SeedOpportunity[] = [
     sectors: [],
     deadlineModel: 'rolling',
     applicationMethod: 'Ansökan görs på Mina sidor hos Försäkringskassan.',
-    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
-    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala',
     amountNote:
       '1 673 kr/mån till och med månaden barnet fyller 7 år, 1 823 kr till och med 15 år, därefter 2 223 kr/mån. Avser fullt underhållsstöd.',
     amountSourceUrl:
@@ -1507,8 +1507,8 @@ export const opportunities: SeedOpportunity[] = [
     sectors: [],
     deadlineModel: 'rolling',
     applicationMethod: 'Ansökan görs på Pensionsmyndighetens webbplats (kräver e-legitimation).',
-    applicationUrl: 'https://www.pensionsmyndigheten.se/',
-    sourceUrl: 'https://www.pensionsmyndigheten.se/',
+    applicationUrl: 'https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/ansok-om-bostadstillagg',
+    sourceUrl: 'https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/ansok-om-bostadstillagg',
     authenticationMethod: 'eid',
     estimatedEffortDays: 1,
     criteria: [
@@ -1535,8 +1535,8 @@ export const opportunities: SeedOpportunity[] = [
     sectors: [],
     deadlineModel: 'rolling',
     applicationMethod: 'Ansökan görs hos Pensionsmyndigheten (kräver e-legitimation).',
-    applicationUrl: 'https://www.pensionsmyndigheten.se/',
-    sourceUrl: 'https://www.pensionsmyndigheten.se/',
+    applicationUrl: 'https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/ansok-om-aldreforsorjningsstod',
+    sourceUrl: 'https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/ansok-om-aldreforsorjningsstod',
     authenticationMethod: 'eid',
     estimatedEffortDays: 1,
     criteria: [
@@ -1591,8 +1591,8 @@ export const opportunities: SeedOpportunity[] = [
     sectors: ['education'],
     deadlineModel: 'recurring',
     applicationMethod: 'Ansökan görs hos CSN; omställningsorganisationen kan komplettera med kollektivavtalat stöd.',
-    applicationUrl: 'https://www.csn.se/',
-    sourceUrl: 'https://www.csn.se/',
+    applicationUrl: 'https://www.csn.se/bidrag-och-lan/omstallningsstudiestod-for-dig-mitt-i-arbetslivet/sa-ansoker-du.html',
+    sourceUrl: 'https://www.csn.se/bidrag-och-lan/omstallningsstudiestod-for-dig-mitt-i-arbetslivet/sa-ansoker-du.html',
     authenticationMethod: 'eid',
     estimatedEffortDays: 3,
     criteria: [
@@ -1682,8 +1682,8 @@ export const opportunities: SeedOpportunity[] = [
     applicantTypes: ['association', 'foundation'],
     sectors: ['culture'],
     deadlineModel: 'recurring',
-    applicationUrl: 'https://www.raa.se/',
-    sourceUrl: 'https://www.raa.se/',
+    applicationUrl: 'https://www.raa.se/lagar-och-stod/bidrag-anslag-och-fonder/bidrag-till-kulturarvsarbete/',
+    sourceUrl: 'https://www.raa.se/lagar-och-stod/bidrag-anslag-och-fonder/bidrag-till-kulturarvsarbete/',
     criteria: [
       c('raa-ka-h1', 'hard', 'applicant.type', 'in', ['association', 'foundation'], 'Söks av ideella organisationer'),
       c('raa-ka-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Verksamheten ska bedrivas i Sverige'),
@@ -1957,8 +1957,8 @@ export const opportunities: SeedOpportunity[] = [
     sectors: ['civil_society'],
     deadlineModel: 'recurring',
     applicationMethod: 'Ansökan görs hos länsstyrelsen i ditt län, ofta via e-tjänst.',
-    applicationUrl: 'https://www.lansstyrelsen.se/',
-    sourceUrl: 'https://www.lansstyrelsen.se/',
+    applicationUrl: 'https://www.lansstyrelsen.se/e-portal/sok-e-tjanster/ansok-om-bygdemedel.html',
+    sourceUrl: 'https://www.lansstyrelsen.se/e-portal/sok-e-tjanster/ansok-om-bygdemedel.html',
     authenticationMethod: 'eid',
     criteria: [
       c('ls-bm-h1', 'hard', 'applicant.type', 'in', ['association', 'municipality'], 'Söks av föreningar och kommuner'),
@@ -1987,8 +1987,8 @@ export const opportunities: SeedOpportunity[] = [
     applicantTypes: ['individual'],
     deadlineModel: 'rolling',
     applicationMethod: 'Ansökan görs hos Migrationsverket före utresan.',
-    applicationUrl: 'https://www.migrationsverket.se/',
-    sourceUrl: 'https://www.migrationsverket.se/',
+    applicationUrl: 'https://www.migrationsverket.se/du-har-tillstand-i-sverige/internationellt-skydd-asyl/atervandringsbidrag.html',
+    sourceUrl: 'https://www.migrationsverket.se/du-har-tillstand-i-sverige/internationellt-skydd-asyl/atervandringsbidrag.html',
     estimatedEffortDays: 3,
     criteria: [
       c('mv-av-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Stödet söks av privatpersoner'),
@@ -2108,8 +2108,8 @@ export const opportunities: SeedOpportunity[] = [
     applicantTypes: ['individual'],
     deadlineModel: 'rolling',
     applicationMethod: 'Ansökan görs på Mina sidor hos Försäkringskassan (kräver e-legitimation); merkostnaderna specificeras.',
-    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
-    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/merkostnadsersattning-for-vuxna',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/merkostnadsersattning-for-vuxna',
     authenticationMethod: 'eid',
     estimatedEffortDays: 2,
     criteria: [
@@ -2169,8 +2169,8 @@ export const opportunities: SeedOpportunity[] = [
     applicantTypes: ['individual'],
     deadlineModel: 'rolling',
     applicationMethod: 'Ansökan görs på Mina sidor hos Försäkringskassan; läkarutlåtande och den sjukes samtycke bifogas.',
-    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
-    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/stodja-en-svart-sjuk-narstaende',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/stodja-en-svart-sjuk-narstaende',
     authenticationMethod: 'eid',
     estimatedEffortDays: 1,
     criteria: [
@@ -2202,8 +2202,8 @@ export const opportunities: SeedOpportunity[] = [
     applicantTypes: ['individual'],
     deadlineModel: 'rolling',
     applicationMethod: 'Skriv in dig hos Arbetsförmedlingen; ersättningen ansöks sedan hos Försäkringskassan.',
-    applicationUrl: 'https://arbetsformedlingen.se/',
-    sourceUrl: 'https://arbetsformedlingen.se/',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson/arbetssokande/ersattning-for-dig-som-deltar-i-etableringsprogrammet-hos-arbetsformedlingen',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson/arbetssokande/ersattning-for-dig-som-deltar-i-etableringsprogrammet-hos-arbetsformedlingen',
     estimatedEffortDays: 2,
     criteria: [
       c('af-ee-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Ersättningen söks av privatpersoner'),
@@ -2263,8 +2263,8 @@ export const opportunities: SeedOpportunity[] = [
     sectors: ['education'],
     deadlineModel: 'recurring',
     applicationMethod: 'Ansökan hos CSN (fristående skola/folkhögskola) eller hos hemkommunen (kommunal skola), inför varje läsår.',
-    applicationUrl: 'https://www.csn.se/',
-    sourceUrl: 'https://www.csn.se/',
+    applicationUrl: 'https://www.csn.se/bidrag-och-lan/bidrag-for-gymnasiestudier-i-sverige.html',
+    sourceUrl: 'https://www.csn.se/bidrag-och-lan/bidrag-for-gymnasiestudier-i-sverige.html',
     estimatedEffortDays: 1,
     criteria: [
       c('csn-it-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Söks av eleven eller vårdnadshavare'),
@@ -2371,8 +2371,8 @@ export const opportunities: SeedOpportunity[] = [
     sectors: ['rural', 'civil_society'],
     deadlineModel: 'rolling',
     applicationMethod: 'Kontakta ditt leaderområdes kansli; ansökan lämnas i Jordbruksverkets e-tjänst.',
-    applicationUrl: 'https://jordbruksverket.se/',
-    sourceUrl: 'https://jordbruksverket.se/',
+    applicationUrl: 'https://jordbruksverket.se/stod/lokalt-ledd-utveckling-genom-leader/stod-for-projekt-och-samarbeten-genom-leader',
+    sourceUrl: 'https://jordbruksverket.se/stod/lokalt-ledd-utveckling-genom-leader/stod-for-projekt-och-samarbeten-genom-leader',
     estimatedEffortDays: 8,
     criteria: [
       c('leader-h1', 'hard', 'applicant.country', 'eq', 'SE', 'Projektet ska genomföras i Sverige'),
@@ -2397,8 +2397,8 @@ export const opportunities: SeedOpportunity[] = [
     sectors: ['research'],
     deadlineModel: 'recurring',
     applicationMethod: 'Ansökan i Fortes ansökningssystem Prisma, via medelsförvaltaren.',
-    applicationUrl: 'https://forte.se/',
-    sourceUrl: 'https://forte.se/',
+    applicationUrl: 'https://forte.se/sok-finansiering/sa-soker-du-bidrag',
+    sourceUrl: 'https://forte.se/sok-finansiering/sa-soker-du-bidrag',
     estimatedEffortDays: 15,
     criteria: [
       c('forte-pb-h1', 'hard', 'applicant.type', 'eq', 'university', 'Medlen förvaltas av ett svenskt lärosäte eller godkänd medelsförvaltare'),
@@ -2456,8 +2456,8 @@ export const opportunities: SeedOpportunity[] = [
     applicantTypes: ['individual'],
     deadlineModel: 'rolling',
     applicationMethod: 'Betalas normalt ut automatiskt; ansökan i särskilda fall på Mina sidor hos Försäkringskassan.',
-    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
-    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson/familj-och-barn/barnbidrag-och-flerbarnstillagg/barnbidrag-och-flerbarnstillagg-sa-funkar-det',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson/familj-och-barn/barnbidrag-och-flerbarnstillagg/barnbidrag-och-flerbarnstillagg-sa-funkar-det',
     amountNote:
       '1 250 kr per barn och månad, delat mellan vårdnadshavarna.',
     amountSourceUrl:
@@ -2485,8 +2485,8 @@ export const opportunities: SeedOpportunity[] = [
     applicantTypes: ['individual'],
     deadlineModel: 'rolling',
     applicationMethod: 'Betalas normalt ut automatiskt tillsammans med barnbidraget.',
-    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
-    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson/familj-och-barn/barnbidrag-och-flerbarnstillagg/barnbidrag-och-flerbarnstillagg-sa-funkar-det',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson/familj-och-barn/barnbidrag-och-flerbarnstillagg/barnbidrag-och-flerbarnstillagg-sa-funkar-det',
     amountNote:
       'Utöver barnbidraget: 150 kr/mån vid 2 barn, 730 kr vid 3 barn, 1 740 kr vid 4 barn. Från femte barnet ytterligare 1 250 kr per barn och månad.',
     amountSourceUrl:
@@ -2547,8 +2547,8 @@ export const opportunities: SeedOpportunity[] = [
     applicantTypes: ['individual'],
     deadlineModel: 'rolling',
     applicationMethod: 'Anmäl och ansök på Mina sidor hos Försäkringskassan.',
-    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
-    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-under-12-ar',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-under-12-ar',
     authenticationMethod: 'eid',
     estimatedEffortDays: 1,
     criteria: [
@@ -2574,8 +2574,8 @@ export const opportunities: SeedOpportunity[] = [
     applicantTypes: ['individual'],
     deadlineModel: 'rolling',
     applicationMethod: 'Ansökan görs på Mina sidor hos Försäkringskassan; läkarintyg bifogas.',
-    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
-    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld',
     authenticationMethod: 'eid',
     estimatedEffortDays: 1,
     criteria: [
@@ -2601,8 +2601,8 @@ export const opportunities: SeedOpportunity[] = [
     applicantTypes: ['individual'],
     deadlineModel: 'rolling',
     applicationMethod: 'Ansökan görs hos Försäkringskassan; läkarutlåtande krävs.',
-    applicationUrl: 'https://www.forsakringskassan.se/privatperson',
-    sourceUrl: 'https://www.forsakringskassan.se/privatperson',
+    applicationUrl: 'https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukersattning-resten-av-arbetslivet-sjukpension',
+    sourceUrl: 'https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukersattning-resten-av-arbetslivet-sjukpension',
     authenticationMethod: 'eid',
     estimatedEffortDays: 3,
     criteria: [
@@ -2728,8 +2728,8 @@ export const opportunities: SeedOpportunity[] = [
     applicantTypes: ['individual'],
     deadlineModel: 'rolling',
     applicationMethod: 'Skriv in dig hos Arbetsförmedlingen första arbetslösa dagen; ansök sedan hos din a-kassa (Mina sidor).',
-    applicationUrl: 'https://www.sverigesakassor.se/',
-    sourceUrl: 'https://www.sverigesakassor.se/',
+    applicationUrl: 'https://www.sverigesakassor.se/sv/sok-ersattning/checklista-for-arbetslosa',
+    sourceUrl: 'https://www.sverigesakassor.se/sv/sok-ersattning/checklista-for-arbetslosa',
     authenticationMethod: 'eid',
     estimatedEffortDays: 1,
     criteria: [
@@ -2753,8 +2753,8 @@ export const opportunities: SeedOpportunity[] = [
     applicantTypes: ['company', 'sole_trader', 'association'],
     deadlineModel: 'rolling',
     applicationMethod: 'Arbetsgivaren ansöker hos Arbetsförmedlingen innan anställningen börjar.',
-    applicationUrl: 'https://arbetsformedlingen.se/',
-    sourceUrl: 'https://arbetsformedlingen.se/',
+    applicationUrl: 'https://arbetsformedlingen.se/for-arbetsgivare/kom-igang-med-din-rekrytering/fa-stod-i-rekryteringen/nystartsjobb',
+    sourceUrl: 'https://arbetsformedlingen.se/for-arbetsgivare/kom-igang-med-din-rekrytering/fa-stod-i-rekryteringen/nystartsjobb',
     estimatedEffortDays: 2,
     criteria: [
       c('af-nj-m1', 'mandatory', 'project.plansToHire', 'is_true', undefined, 'Stödet förutsätter att ni planerar att anställa', 'Planerar ni att anställa?'),
@@ -2776,8 +2776,8 @@ export const opportunities: SeedOpportunity[] = [
     applicantTypes: ['company', 'sole_trader', 'association'],
     deadlineModel: 'rolling',
     applicationMethod: 'Arbetsgivaren ansöker hos Arbetsförmedlingen innan anställningen börjar.',
-    applicationUrl: 'https://arbetsformedlingen.se/',
-    sourceUrl: 'https://arbetsformedlingen.se/',
+    applicationUrl: 'https://arbetsformedlingen.se/for-arbetsgivare/kom-igang-med-din-rekrytering/fa-stod-i-rekryteringen/lonebidrag',
+    sourceUrl: 'https://arbetsformedlingen.se/for-arbetsgivare/kom-igang-med-din-rekrytering/fa-stod-i-rekryteringen/lonebidrag',
     estimatedEffortDays: 2,
     criteria: [
       c('af-lb-m1', 'mandatory', 'project.plansToHire', 'is_true', undefined, 'Stödet förutsätter att ni planerar att anställa eller behålla en medarbetare', 'Planerar ni att anställa?'),

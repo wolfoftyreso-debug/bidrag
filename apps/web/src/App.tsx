@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useRegisterPolicy } from './components/useRegisterPolicy';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { get, getActiveTenant, post, setActiveTenant } from './api';
 import { LanguagePicker, TranslationNotice, useT } from './i18n';
@@ -68,14 +69,14 @@ export default function App() {
       {session ? (
         <Shell />
       ) : (
-        <>
+        <main>
           <ScrollToTop />
           <Routes>
             <Route path="/aterstall/:token" element={<ResetPasswordPage />} />
             <Route path="/villkor" element={<div className="auth-page"><TermsPage /></div>} />
             <Route path="*" element={<LoginPage onLogin={reload} />} />
           </Routes>
-        </>
+        </main>
       )}
     </SessionContext.Provider>
   );
@@ -86,6 +87,7 @@ function Shell() {
   const { session, reload } = useSession();
   const navigate = useNavigate();
   const isCurator = session?.activeTenant.role === 'administrator' || session?.activeTenant.role === 'data_curator';
+  const policy = useRegisterPolicy();
 
   const logout = async () => {
     setActiveTenant(null);
@@ -116,6 +118,7 @@ function Shell() {
             ))}
           </select>
         )}
+        {policy.beta && <span className="beta-badge" title={t('nav.betaHint')}>{t('nav.beta')}</span>}
         <NavLink to="/" end>{t('nav.overview')}</NavLink>
         <NavLink to="/projekt">{t('nav.projects')}</NavLink>
         <NavLink to="/ansokningar">{t('nav.applications')}</NavLink>

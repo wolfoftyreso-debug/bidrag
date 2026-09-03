@@ -16,7 +16,6 @@ kvalitetsfel av samma sort som stora.
 
 | Id | Fynd | Väg |
 |---|---|---|
-| H1 | Användarfeedback saknas (§45: "Var detta begripligt?" / "Något som verkar fel?") | Diskret komponent på entity-/guide-sidor + API-yta + kategorisering (fakta/språk/navigering/saknas/tekniskt) → skapar arbetsuppgifter; byggs med F0 |
 | H2 | Publikt Trust Center saknas (§43) + rättelsepolicy (§44) | TRUST_CENTER_SPEC.md är byggritningen; sidorna genereras i genseo (utanför /bidrag/, kräver seocheck-utökning) |
 | H3 | Innehållsmodulgapet: 12/20 gold standard-moduler saknas; 8/13 ETTA-MÖJLIG-kluster utan sida | Redan planlagt: F0 (behörighetskontroll + ändringshistorik) → B1–B10 (docs/SEO_BLUEPRINTS_SPRINT01.md) |
 | H4 | §33–35-kedjan inte sluten: source-diff → berörda publika sidor → review-task → publicerad ändringshistorik | source-fetch + snapshot/diff finns; bygg kopplingen källa→sidor via kunskapsgrafen + kuratorsuppgift + modul 16-rendering |
@@ -63,6 +62,11 @@ kvalitetsfel av samma sort som stora.
 
 | Datum | Id | Åtgärd |
 |---|---|---|
+| 2026-09-03 | H1 | Användarfeedback (§45): komponenten "Verkar något fel? Var detta begripligt?" på analysen, stödsidan och arbetsytan — kategoriserad (faktafel/språk/navigering/saknat stöd/tekniskt/annat), inloggad, rate-limitad, i11 språk; kuratorn läser i /admin (GET /v1/admin/feedback). Vakthunden larmar på obehandlade faktafel > 48 h. Test: apps/api/test/beta.test.ts |
+| 2026-09-03 | B7 | Sluten beta: BETA_INVITE_CODES kräver inbjudningskod vid registrering (403 invite_required, konstant-tids-jämförelse, före dubblettkollen), BETA_MODE visar beta-märket; publik policy GET /v1/auth/register-policy. Utan koder är registreringen öppen som förut |
+| 2026-09-03 | B2 | Instrumentering utan tredjepart: tabellen product_events, serverside trattsteg (konto_skapat, genomgang_slutford, ansokan_skapad, betalning_bekraftad) + allow-listade klienthändelser (genomgang_startad, nasta_steg_visad, ansok_sjalv_klick, forbered_klick); GET /v1/internal/metrics/product ger QSDR/ARR per LAUNCH_DEMAND_INTELLIGENCE §5. Identitet nollas vid radering |
+| 2026-09-03 | A9 | Vakthund: cron /v1/internal/cron/watchdog var timme — databas, källor > 12 h, bekräftad betalning utan kvitto, > 10 väntande betalningar > 24 h, granskning > 7 dagar, obehandlat faktafel > 48 h; mejlar ALERT_EMAIL via befintlig e-postkanal, annars logg |
+| 2026-09-03 | B4 | Riktad tillgänglighetsgenomgång (npm run verify:a11y, axe-core 4.10 genom 12 vyer): 9 serious/critical lagade — textlänkars kontrast (--primary → --primary-dark), understrukna länkar i alerts, etiketter kopplade till budget- och inbjudningsformulärens fält, main-landmark på utloggade vyn. Full WCAG 2.2-genomgång med hjälpmedel kvarstår som M7 |
 | 2026-09-03 | F-AVSKAFFAT | Kunskapsbasen listade CSN:s hemutrustningslån som aktivt stöd (med schema, situationsnod och SEO-intent) — men lånet avskaffades 1 januari 2022 efter riksdagsbeslut 24 november 2021 (csn.se). Stödet, schemat, testet, kanalraden, personan och intenten borttagna; kunskapsbasen 85→84, scheman 71→70; SEO-derivaten regenererade. Lärdom: ett stöd med källa på myndighetens startsida (csn.se/) i stället för stödets egen sida fångas inte av källbevakningen — se M25. Rapport: docs/reports/KURERING_2026-09-03.md |
 | 2026-09-03 | F-UPPHÖRT | Etableringsersättningens beskrivning lovade etableringstillägg och bostadsersättning — båda upphörde 1 september 2026 (forsakringskassan.se "Nytt för dig i etableringsprogrammet från 1 september"); ersatta av barntillägg för barn under 20. Texten rättad |
 | 2026-09-03 | — | Kureringspass 7: 20 källbelagda underlagslistor (Försäkringskassan ×11, Pensionsmyndigheten, CSN, a-kassan, Migrationsverket, försörjningsstöd, glasögonbidrag, Majblomman, Riksantikvarieämbetet, Leader) — 37→57 av 84 stöd; 25 nya texter översatta till tio språk. Stöd där källan inte listar underlag lämnas medvetet utan lista (aldrig påhitt) |

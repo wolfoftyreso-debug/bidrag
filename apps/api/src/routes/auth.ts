@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+import { timingSafeEqual } from 'node:crypto';
 import { and, eq, isNull } from 'drizzle-orm';
 import { db } from '../db/client.ts';
 import { memberships, passwordResetTokens, recoveryCodes, refreshTokens, tenants, users } from '../db/schema.ts';
@@ -11,6 +12,7 @@ import {
   signAccessToken,
 } from '../auth/tokens.ts';
 import { audit } from '../audit.ts';
+import { trackEvent } from '../services/events.ts';
 import { config } from '../config.ts';
 import { emailConfigured, sendEmail } from '../services/email.ts';
 
@@ -35,6 +37,12 @@ async function issueSession(reply: import('fastify').FastifyReply, userId: strin
 }
 
 export async function authRoutes(app: FastifyInstance) {
+  /** Publik: säger om registreringen kräver inbjudningskod och om betan är på. */
+  app.get('/v1/auth/register-policy', { schema: { tags: ['auth'] } }, async () => ({
+    inviteRequired: config.betaInviteCodes.length > 0,
+    beta: config.betaMode || config.betaInviteCodes.length > 0,
+  }));
+
   app.post(
     '/v1/auth/register',
     {
@@ -48,18 +56,34 @@ export async function authRoutes(app: FastifyInstance) {
             email: { type: 'string', format: 'email', maxLength: 320 },
             password: { type: 'string', minLength: 10, maxLength: 200 },
             displayName: { type: 'string', minLength: 1, maxLength: 120 },
+            inviteCode: { type: 'string', maxLength: 80 },
           },
           additionalProperties: false,
         },
       },
     },
     async (request, reply) => {
-      const { email, password, displayName } = request.body as {
+      const { email, password, displayName, inviteCode } = request.body as {
         email: string;
         password: string;
         displayName: string;
+        inviteCode?: string;
       };
       const normalizedEmail = email.trim().toLowerCase();
+
+      // Sluten beta (BETA_READINESS B7): med BETA_INVITE_CODES satt krävs en
+      // giltig kod. Kontrollen ligger FÖRE dubblettkollen så att en stängd
+      // registrering inte läcker vilka e-postadresser som finns.
+      if (config.betaInviteCodes.length > 0) {
+        const given = Buffer.from((inviteCode ?? '').trim());
+        const ok = config.betaInviteCodes.some((c) => {
+          const b = Buffer.from(c);
+          return b.length === given.length && timingSafeEqual(b, given);
+        });
+        if (!ok) {
+          return reply.code(403).send({ error: 'invite_required', message: 'Registreringen är stängd under betan — du behöver en inbjudningskod.' });
+        }
+      }
 
       const existing = await db.select({ id: users.id }).from(users).where(eq(users.email, normalizedEmail)).limit(1);
       if (existing.length > 0) {
@@ -80,6 +104,7 @@ export async function authRoutes(app: FastifyInstance) {
         entityId: user!.id,
       });
 
+      await trackEvent('konto_skapat', { tenantId: tenant!.id, userId: user!.id, props: { beta: config.betaInviteCodes.length > 0 } });
       await issueSession(reply, user!.id, normalizedEmail);
       return reply.code(201).send({
         user: { id: user!.id, email: normalizedEmail, displayName },

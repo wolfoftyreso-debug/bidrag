@@ -783,3 +783,41 @@ export const storageObjects = pgTable(
   },
   (t) => [index('storage_objects_tenant_idx').on(t.tenantId)],
 );
+
+// ── Beta-instrumentering (docs/reports/BETA_READINESS_2026-09-03.md B1–B2) ──
+// Produkthändelser: serverside-emitterade trattsteg (QSDR/ARR-måtten i
+// docs/LAUNCH_DEMAND_INTELLIGENCE.md §5) + en liten allow-listad klientyta.
+// Inga tredjepartscookies, ingen extern analytics; tenant/user är valfria så
+// att raderad användare inte bryter historiken (raderingen nollar dem).
+export const productEvents = pgTable(
+  'product_events',
+  {
+    id: id(),
+    tenantId: uuid('tenant_id'),
+    userId: uuid('user_id'),
+    name: text('name').notNull(),
+    props: jsonb('props').notNull().default({}),
+    createdAt: createdAt(),
+  },
+  (t) => [index('product_events_name_idx').on(t.name, t.createdAt), index('product_events_tenant_idx').on(t.tenantId, t.createdAt)],
+);
+
+// Användarfeedback (§45 "Var detta begripligt? / Något som verkar fel?"):
+// kategoriserad så att faktafel kan gå rakt in i kuratorsflödet.
+export const feedback = pgTable(
+  'feedback',
+  {
+    id: id(),
+    tenantId: uuid('tenant_id'),
+    userId: uuid('user_id'),
+    category: text('category', { enum: ['facts', 'language', 'navigation', 'missing', 'technical', 'other'] }).notNull(),
+    page: text('page').notNull(),
+    opportunitySlug: text('opportunity_slug'),
+    message: text('message').notNull(),
+    locale: text('locale'),
+    userAgent: text('user_agent'),
+    status: text('status', { enum: ['new', 'triaged', 'resolved'] }).notNull().default('new'),
+    createdAt: createdAt(),
+  },
+  (t) => [index('feedback_status_idx').on(t.status, t.createdAt), index('feedback_opportunity_idx').on(t.opportunitySlug)],
+);

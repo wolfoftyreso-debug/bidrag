@@ -356,12 +356,12 @@ function TeamCard() {
             }}
           >
             <div style={{ flex: 2, minWidth: 220 }}>
-              <label>{t('login.email')}</label>
-              <input name="email" type="email" required maxLength={320} />
+              <label htmlFor="f-email">{t('login.email')}</label>
+              <input id="f-email" name="email" type="email" required maxLength={320} />
             </div>
             <div style={{ minWidth: 160 }}>
-              <label>{t('acc.role')}</label>
-              <select name="role" defaultValue="contributor">
+              <label htmlFor="f-role">{t('acc.role')}</label>
+              <select id="f-role" name="role" defaultValue="contributor">
                 {INVITABLE_ROLES.map((r) => <option key={r} value={r}>{labels.role(r)}</option>)}
               </select>
             </div>

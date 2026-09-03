@@ -26,6 +26,7 @@ import { documentRoutes } from './routes/documents.ts';
 import { correspondenceRoutes } from './routes/correspondence.ts';
 import { notificationRoutes } from './routes/notifications.ts';
 import { adminRoutes } from './routes/admin.ts';
+import { feedbackRoutes } from './routes/feedback.ts';
 import { internalRoutes } from './routes/internal.ts';
 import { documentStudioRoutes } from './routes/documentStudio.ts';
 
@@ -124,6 +125,7 @@ export async function buildServer(): Promise<FastifyInstance> {
   await app.register(documentStudioRoutes);
   await app.register(internalRoutes);
   await app.register(adminRoutes);
+  await app.register(feedbackRoutes);
 
   // Serve the built SPA when co-deployed (WEB_DIST) with an SPA fallback.
   const webDist = process.env.WEB_DIST ? path.resolve(process.env.WEB_DIST) : null;

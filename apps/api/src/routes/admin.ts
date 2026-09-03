@@ -9,6 +9,7 @@ import {
   ruleVersions,
   sources,
   sourceSnapshots,
+  feedback,
 } from '../db/schema.ts';
 import { audit } from '../audit.ts';
 import { CURATOR_ROLES } from '../plugins/auth.ts';
@@ -458,6 +459,25 @@ export async function adminRoutes(app: FastifyInstance) {
   );
 
   /** Stale-match overview for operations. */
+  /** Betans feedbacklåda (BETA_READINESS B1): senaste 200, nyast först. */
+  app.get('/v1/admin/feedback', { schema: { tags: ['admin'] } }, async () => {
+    const rows = await db
+      .select({
+        id: feedback.id,
+        category: feedback.category,
+        page: feedback.page,
+        opportunitySlug: feedback.opportunitySlug,
+        message: feedback.message,
+        locale: feedback.locale,
+        status: feedback.status,
+        createdAt: feedback.createdAt,
+      })
+      .from(feedback)
+      .orderBy(desc(feedback.createdAt))
+      .limit(200);
+    return { items: rows };
+  });
+
   app.get('/v1/admin/stale-matches', { schema: { tags: ['admin'] } }, async () => {
     const [row] = await db
       .select({ count: sql<number>`count(*)::int` })

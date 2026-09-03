@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { requiresApplication } from '../services/applicationNeed.ts';
+import { trackEvent } from '../services/events.ts';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { InvalidTransitionError, generationGuards, type ApplicationState } from '@bidrag/core';
 import { db } from '../db/client.ts';
@@ -149,6 +150,7 @@ export async function applicationRoutes(app: FastifyInstance) {
           currency: 'SEK',
         });
       }
+      await trackEvent('ansokan_skapad', { tenantId, userId: request.auth!.userId, props: { opportunityId, caseId: outcome.row.id } });
       return reply.code(201).send({ application: outcome.row });
     },
   );

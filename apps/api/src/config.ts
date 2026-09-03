@@ -100,6 +100,16 @@ export const config = {
    */
   cronSecret: env.CRON_SECRET ?? null,
   /**
+   * Sluten beta (BETA_READINESS B7): kommaseparerade inbjudningskoder. När
+   * listan är tom är registreringen öppen; annars kräver /v1/auth/register en
+   * giltig kod. BETA_MODE=true visar beta-märkningen i gränssnittet.
+   */
+  // Getters: testerna slår på/av gaten utan omstart (samma mönster som swish).
+  get betaInviteCodes(): string[] { return (process.env.BETA_INVITE_CODES ?? '').split(',').map((c) => c.trim()).filter(Boolean); },
+  get betaMode(): boolean { return process.env.BETA_MODE === 'true'; },
+  /** Vakthundsjobbets larmadress (A9). Utan adress loggas larmen bara. */
+  alertEmail: env.ALERT_EMAIL ?? null,
+  /**
    * Swish Handel (Commerce API, mTLS). Klientcertifikat + nyckel som
    * base64-PEM i miljövariabler — serverless har inget filsystem för
    * certifikatfiler. SWISH_API_BASE byts till MSS-simulatorn i test/preview

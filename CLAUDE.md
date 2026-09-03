@@ -142,6 +142,7 @@ npm run lint                  # = tsc --noEmit (ingen separat linter är konfigu
 npm run typecheck             # kräver att core är byggt
 npm run demo:build            # bygger demon → artifacts/demo/demo.html (ingen databas)
 npm run demo:check            # 10 webbläsarkontroller av demon (kräver Chromium + byggd demo)
+npm run verify:a11y           # axe-core genom 12 vyer — kräver körande api + web (som verify:ui)
 npm run verify:ui             # 6 genomklickningar — kräver KÖRANDE api (PORT=3100,
                               # PAYMENTS_MOCK_ENABLED=true) + dev:web + Chromium
 npm run verify:sim30          # 30 simulerade användare — kräver körande api som ovan
@@ -182,6 +183,10 @@ i produktion kastar config vid start om `DATABASE_URL`, `AUTH_SECRET` eller
 `FIELD_ENCRYPTION_KEY` saknas). Produktion kräver därtill: `AUTH_SECRET`,
 `FIELD_ENCRYPTION_KEY`, `CRON_SECRET`, `STORAGE_DRIVER=postgres` (Neon in-house;
 `supabase` finns kvar som alternativ), `PUBLIC_BASE_URL`, `CORS_ORIGIN`.
+Sluten beta: `BETA_INVITE_CODES` (kommaseparerade koder — registreringen
+kräver kod när satt), `BETA_MODE=true` (beta-märke), `ALERT_EMAIL`
+(vakthundens larmadress). Betaöverlämningen till operatören: `docs/BETA_HANDOVER.md`;
+vad som återstår: `docs/reports/BETA_READINESS_2026-09-03.md`.
 Integrationer som aktiveras med nycklar: Stripe (betalningar, lanseringsrälsen —
 `STRIPE_SECRET_KEY`+`STRIPE_WEBHOOK_SECRET`), Swish Handel (betalningar, när
 avtalet är klart), Resend (e-post), `ANTHROPIC_API_KEY` (språkförslag). Utan nyckel svarar

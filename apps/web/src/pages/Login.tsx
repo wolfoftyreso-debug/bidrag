@@ -1,10 +1,13 @@
 import { useState } from 'react';
+import { useRegisterPolicy } from '../components/useRegisterPolicy';
 import { ApiError, post } from '../api';
 import { LanguagePicker, TranslationNotice, useT } from '../i18n';
 
 export default function LoginPage({ onLogin }: { onLogin: () => Promise<void> }) {
   const t = useT();
   const [mode, setMode] = useState<'login' | 'register' | 'forgot' | 'code'>('login');
+  const policy = useRegisterPolicy();
+  const [inviteCode, setInviteCode] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -33,7 +36,7 @@ export default function LoginPage({ onLogin }: { onLogin: () => Promise<void> })
         return;
       }
       if (mode === 'register') {
-        await post('/v1/auth/register', { email, password, displayName });
+        await post('/v1/auth/register', { email, password, displayName, ...(policy.inviteRequired ? { inviteCode: inviteCode.trim() } : {}) });
       } else {
         await post('/v1/auth/login', { email, password });
       }
@@ -60,6 +63,13 @@ export default function LoginPage({ onLogin }: { onLogin: () => Promise<void> })
         <form onSubmit={submit}>
           {mode === 'register' && (
             <>
+              {policy.inviteRequired && (
+                <>
+                  <p className="guidance">{t('login.inviteGuidance')}</p>
+                  <label htmlFor="invite-code">{t('login.inviteCode')}</label>
+                  <input id="invite-code" value={inviteCode} onChange={(e) => setInviteCode(e.target.value)} required maxLength={80} autoComplete="off" />
+                </>
+              )}
               <label htmlFor="name">{t('login.name')}</label>
               <input id="name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required maxLength={120} />
             </>

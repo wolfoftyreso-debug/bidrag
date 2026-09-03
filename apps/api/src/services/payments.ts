@@ -13,6 +13,7 @@
  * jämför belopp/valuta innan något bekräftas.
  */
 import { and, eq } from 'drizzle-orm';
+import { trackEvent } from './events.ts';
 import { db } from '../db/client.ts';
 import { payments } from '../db/schema.ts';
 import { audit } from '../audit.ts';
@@ -33,7 +34,7 @@ export async function confirmPendingPayment(
   paymentId: string,
   scope: { provider?: string; tenantId?: string } = {},
 ): Promise<ConfirmOutcome | null> {
-  return db.transaction(async (tx) => {
+  const outcome = await db.transaction(async (tx) => {
     const conditions = [eq(payments.id, paymentId), eq(payments.state, 'pending')];
     if (scope.provider) conditions.push(eq(payments.provider, scope.provider));
     if (scope.tenantId) conditions.push(eq(payments.tenantId, scope.tenantId));
@@ -46,6 +47,14 @@ export async function confirmPendingPayment(
     const receipt = await issueReceipt(tx, rows[0]!);
     return { payment: rows[0]!, receipt };
   });
+  if (outcome) {
+    // Trattmått (BETA_READINESS B2) — utanför transaktionen, best effort.
+    await trackEvent('betalning_bekraftad', {
+      tenantId: outcome.payment.tenantId,
+      props: { provider: outcome.payment.provider, amountMinor: outcome.payment.amountMinor, receipt: outcome.receipt.receiptNumber },
+    });
+  }
+  return outcome;
 }
 
 export async function failPendingPayment(paymentId: string, reason: string): Promise<void> {

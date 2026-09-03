@@ -12,6 +12,7 @@ import { sql } from 'drizzle-orm';
 import { config } from '../config.ts';
 import { db } from '../db/client.ts';
 import { CRON_TASKS } from '../jobs/tasks.ts';
+import { eventSummary } from '../services/events.ts';
 import { emailConfigured } from '../services/email.ts';
 import { swishConfigured } from '../services/integrations/swish.ts';
 import { stripeConfigured } from '../services/integrations/stripe.ts';
@@ -51,6 +52,24 @@ export async function internalRoutes(app: FastifyInstance) {
       }
     },
   });
+
+  /** Kontrollrummets trattsammanställning (BETA_READINESS B2). CRON_SECRET-skyddad. */
+  app.get(
+    '/v1/internal/metrics/product',
+    {
+      config: { rateLimit: { max: 30, timeWindow: '1 minute' } },
+      schema: {
+        tags: ['internal'],
+        querystring: { type: 'object', properties: { days: { type: 'integer', minimum: 1, maximum: 90 } }, additionalProperties: false },
+      },
+    },
+    async (request, reply) => {
+      if (!config.cronSecret) return reply.code(404).send({ error: 'not_found' });
+      if (!authorized(request.headers.authorization)) return reply.code(401).send({ error: 'unauthorized' });
+      const days = (request.query as { days?: number }).days ?? 7;
+      return eventSummary(days);
+    },
+  );
 
   /**
    * Aktiveringsberedskap: en endpoint som gör varje driftsättning verifierbar.

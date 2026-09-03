@@ -7,7 +7,9 @@
  */
 import { and, eq, gt, inArray, lt, sql } from 'drizzle-orm';
 import { db } from '../db/client.ts';
-import { fundingOpportunities, matches, memberships, notifications, projects, reviewItems, sources } from '../db/schema.ts';
+import { feedback, fundingOpportunities, matches, memberships, notifications, payments, projects, receipts, reviewItems, sources } from '../db/schema.ts';
+import { config } from '../config.ts';
+import { sendEmail } from '../services/email.ts';
 import { fetchSource } from '../services/ingestion.ts';
 import { recomputeMatchesForProject } from '../services/matching.ts';
 import { notify } from '../services/notifications.ts';
@@ -121,7 +123,64 @@ export async function runCuratorReminders(): Promise<{ overdue: number; pendingR
   return { overdue, pendingReview, notified };
 }
 
+/**
+ * Vakthund (BETA_READINESS A9): minsta larmkedja utan extern monitoring.
+ * Kontrollerar invarianter som inte får brytas tyst och mejlar ALERT_EMAIL
+ * (via samma e-postkanal som kvittona) när något bryter — annars bara logg.
+ * Varje kontroll är en egen try/catch: en trasig kontroll får inte dölja de
+ * andra. Trösklarna är OPERATIONS.md §Monitoring & alerting.
+ */
+export async function runWatchdog(): Promise<{ ok: boolean; alarms: string[]; notified: 'sent' | 'skipped' | 'failed' | 'none' }> {
+  const alarms: string[] = [];
+  const check = async (name: string, fn: () => Promise<string | null>) => {
+    try {
+      const a = await fn();
+      if (a) alarms.push(`${name}: ${a}`);
+    } catch (err) {
+      alarms.push(`${name}: kontrollen kraschade (${(err as Error).message})`);
+    }
+  };
+  await check('databas', async () => { await db.execute(sql`select 1`); return null; });
+  await check('källor', async () => {
+    const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(sources).where(sql`${sources.lastError} is not null and (${sources.lastSuccessAt} is null or ${sources.lastSuccessAt} < now() - interval '12 hours')`);
+    return r && r.n > 0 ? `${r.n} källa/källor har misslyckats i över 12 timmar` : null;
+  });
+  await check('betalningar', async () => {
+    // Bekräftad betalning utan kvitto är ett brott mot kvittoinvarianten (LIMITATIONS §10).
+    const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(payments)
+      .where(sql`${payments.state} = 'confirmed' and not exists (select 1 from ${receipts} where ${receipts.paymentId} = ${payments.id})`);
+    if (r && r.n > 0) return `${r.n} bekräftad(e) betalning(ar) saknar kvitto`;
+    const [p] = await db.select({ n: sql<number>`count(*)::int` }).from(payments)
+      .where(sql`${payments.state} = 'pending' and ${payments.createdAt} < now() - interval '24 hours'`);
+    return p && p.n > 10 ? `${p.n} betalningar har stått som väntande i över 24 timmar` : null;
+  });
+  await check('granskning', async () => {
+    const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(reviewItems)
+      .where(sql`${reviewItems.status} = 'pending' and ${reviewItems.createdAt} < now() - interval '7 days'`);
+    return r && r.n > 5 ? `${r.n} granskningsärenden är äldre än 7 dagar` : null;
+  });
+  await check('feedback', async () => {
+    const [r] = await db.select({ n: sql<number>`count(*)::int` }).from(feedback)
+      .where(sql`${feedback.status} = 'new' and ${feedback.category} = 'facts' and ${feedback.createdAt} < now() - interval '48 hours'`);
+    return r && r.n > 0 ? `${r.n} faktafelsrapport(er) obehandlade i över 48 timmar` : null;
+  });
+
+  let notified: 'sent' | 'skipped' | 'failed' | 'none' = 'none';
+  if (alarms.length > 0) {
+    console.error('[watchdog] LARM', alarms);
+    if (config.alertEmail) {
+      notified = await sendEmail({
+        to: config.alertEmail,
+        subject: `[Bidragskoll] Vakthunden larmar: ${alarms.length} avvikelse(r)`,
+        text: `Vakthunden (${new Date().toISOString()}) hittade:\n\n- ${alarms.join('\n- ')}\n\nKörbok: docs/OPERATIONS.md §Incident basics.`,
+      });
+    }
+  }
+  return { ok: alarms.length === 0, alarms, notified };
+}
+
 export const CRON_TASKS: Record<string, () => Promise<unknown>> = {
+  watchdog: runWatchdog,
   'source-fetch': runSourceFetchAll,
   'deadline-scan': runDeadlineScan,
   'stale-match-recalc': runStaleMatchRecalc,

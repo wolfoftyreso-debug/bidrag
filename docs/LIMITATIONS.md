@@ -137,8 +137,12 @@ offers one-click re-verification). No schema changes required.
 
 Structured logs, probes, admin health views and a Prometheus `/metrics`
 endpoint (HTTP, process, pool and domain gauges) now exist, with recommended
-alert rules in OPERATIONS.md. Remaining: dashboards and alert wiring in the
-cluster's monitoring stack, plus a rehearsed on-call path.
+alert rules in OPERATIONS.md. Since 2026-09-03 a `watchdog` cron job (hourly on
+Vercel) checks the invariants that must never break silently (database,
+failing sources, confirmed payment without receipt, stale pending payments,
+starved review queue, unhandled factual-error feedback) and emails
+`ALERT_EMAIL` through the existing email channel. Remaining: dashboards and
+a rehearsed on-call path.
 
 ## 10. Payments — generic layer built, Swish awaits merchant agreement
 
@@ -259,10 +263,14 @@ actually review all 84 opportunities against live sources before launch;
 until then every rule value (amounts, thresholds, dates) is AI-knowledge,
 not verified fact.
 
-Also from the counter-audit, still open: full WCAG review (targeted fixes
-shipped: focus management in the one-question intake, progressbar semantics,
-aria-live on payment status — the rest of the app is unreviewed); external
-user testing beyond one session; commercial validation with real customers.
+Also from the counter-audit, still open: full WCAG review with assistive
+technology (an automated axe-core pass through the 12 core views is now part
+of the toolchain, `npm run verify:a11y`, and its serious/critical findings are
+fixed; the earlier targeted fixes — focus management in the one-question
+intake, progressbar semantics, aria-live on payment status — stand); external
+user testing beyond one session (the closed beta with its in-product feedback
+channel is the vehicle, docs/BETA_HANDOVER.md); commercial validation with
+real customers.
 
 ## 13. Rate limiting is per-instance in the serverless model (red team RT03)
 

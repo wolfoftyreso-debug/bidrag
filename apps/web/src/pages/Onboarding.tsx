@@ -272,6 +272,11 @@ export default function OnboardingPage() {
   const [history, setHistory] = useState<StepId[]>(draft?.history ?? []);
   const [a, setA] = useState<Answers>(draft?.a ?? initial);
   const [resumed, setResumed] = useState(Boolean(draft && draft.history.length > 0));
+  // Trattmått (QSDR-nämnare): en ny genomgång påbörjad — inte vid återupptagning.
+  useEffect(() => {
+    if (!resumed) void post('/v1/events', { name: 'genomgang_startad', props: {} }).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 

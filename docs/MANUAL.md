@@ -70,7 +70,7 @@ om. Inget regelinnehåll autopubliceras någonsin.
 
 ## 4. Funktionskatalog — hela API-ytan
 
-Samtliga 90 operationer, grupperade. Webbappen använder exakt dessa ytor —
+Samtliga 95 operationer, grupperade. Webbappen använder exakt dessa ytor —
 katalogen är därmed också webbens funktionskarta.
 
 ### Konto & inloggning
@@ -79,6 +79,7 @@ katalogen är därmed också webbens funktionskarta.
 |---|---|
 | `GET /v1/auth/me` | Vem är jag: användare + medlemskap. Webben anropar den vid varje sidladdning. |
 | `GET /v1/auth/recovery-codes` | Status för koderna: hur många oanvända som finns kvar. |
+| `GET /v1/auth/register-policy` | Publik: om registreringen kräver inbjudningskod (sluten beta) och om beta-märket ska visas. |
 | `POST /v1/auth/login` | Logga in; sätter access-cookien och returnerar användaren. |
 | `POST /v1/auth/logout` | Logga ut och ogiltigförklara refresh-tokenen. |
 | `POST /v1/auth/recover-with-code` | Återställ lösenordet med en oanvänd engångskod. |
@@ -199,6 +200,7 @@ katalogen är därmed också webbens funktionskarta.
 
 | Operation | Instruktion |
 |---|---|
+| `GET /v1/admin/feedback` | Betans feedbacklåda: kategoriserade rapporter ("verkar fel", "obegripligt") att triagera; faktafel går till kuratorn. |
 | `GET /v1/admin/opportunities` | Stödlistan ur kuratorsperspektiv (kureringsstatus). |
 | `GET /v1/admin/review-queue` | Granskningskön: upptäckta källändringar som väntar på människa. |
 | `GET /v1/admin/sources` | Kuratorskonsolen: källregistret med färskhet. |
@@ -216,6 +218,7 @@ katalogen är därmed också webbens funktionskarta.
 | Operation | Instruktion |
 |---|---|
 | `GET /v1/internal/cron/:job` | Kör bakgrundsjobb (source-fetch, deadline-scan, stale-match-recalc, curator-reminders, retention). Vercel Cron anropar med Bearer CRON_SECRET; utan hemligheten är ytan 404. |
+| `GET /v1/internal/metrics/product` | Kontrollrummets trattsammanställning: händelser per namn senaste N dagarna + QSDR/ARR (CRON_SECRET). |
 | `GET /v1/internal/readiness` | Aktiveringsberedskap: databas/Swish/Resend/Anthropic som ready/mock/not_configured + blockerare. Bearer CRON_SECRET; `?probe=true` gör ofarliga verifieringsanrop. |
 | `POST /v1/internal/cron/:job` | Samma som GET — båda metoderna accepteras av Vercel Cron. |
 
@@ -227,6 +230,13 @@ katalogen är därmed också webbens funktionskarta.
 | `GET /metrics` | Prometheus-mått (bidrag_*-prefix). Exponeras inte i Vercel-driften — läs funktionsloggarna där. |
 | `GET /readyz` | Riktig beredskap — kör `select 1` mot databasen, 503 om den inte svarar. Vänta på 200 efter deploy. |
 | `GET /v1/openapi.json` | Maskinläsbart API-kontrakt (OpenAPI 3.1) för de schema-registrerade ytorna. |
+
+### Övrigt
+
+| Operation | Instruktion |
+|---|---|
+| `POST /v1/events` | Allow-listade klienthändelser för trattmåtten QSDR/ARR (genomgang_startad, nasta_steg_visad, ansok_sjalv_klick …). |
+| `POST /v1/feedback` | Skicka feedback från analysen, stödsidan eller arbetsytan (kategori + fri text; inloggad, rate-limitad). |
 
 ## 5. Dokumentmallarna
 
@@ -343,6 +353,9 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | Variabel | Beskrivning |
 |---|---|
 | `CRON_SECRET` | Container: ENABLE_WORKER=true (pg-boss). Vercel: ENABLE_WORKER är irrelevant; Vercel Cron anropar /v1/internal/cron/:job med Bearer CRON_SECRET. |
+| `BETA_INVITE_CODES` | Sluten beta (docs/reports/BETA_READINESS_2026-09-03.md B7). Kommaseparerade inbjudningskoder; tom = öppen registrering. BETA_MODE=true visar beta-märket. |
+| `BETA_MODE` | — |
+| `ALERT_EMAIL` | Vakthundsjobbet (/v1/internal/cron/watchdog, A9): dit larm mejlas när databasen, källorna, betalningskedjan eller granskningskön bryter tröskeln. Kräver RESEND_API_KEY eller SMTP_URL; utan adress loggas larmen bara. |
 
 ### E-post (Resend är den påkopplade kanalen)
 
@@ -403,6 +416,7 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | `npm run demo:build` | Bygger den fristående demon → artifacts/demo/demo.html (ingen databas). |
 | `npm run demo:check` | Demons 10 webbläsarkontroller (kräver Chromium + byggd demo). |
 | `npm run verify:sim30` | 30 simulerade användare genom hela flödet — kräver körande API (:3100, mock på). |
+| `npm run verify:a11y` | Riktad tillgänglighetsgenomgång med axe-core (WCAG 2.x A/AA) genom inloggning, intag, analys, köp, arbetsyta och konto — fäller på serious/critical. Kräver körande api + web. |
 | `npm run verify:ui` | 5 UI-genomklickningar (uicheck2/8/9/12/13) — kräver körande API + dev:web + Chromium. Föräldralösa skript ligger i tools/uicheck/foraldralosa/ med orsak per skript. |
 | `npm run verify:schemas` | Ansökningsschemanas täckning mot stöden — kräver körande API. |
 | `npm run verify:relevans` | Relevansrevisionen: 10 personor mot alla stöd — inga sektorsgrindade stöd utanför personens situation, inga överexkluderingar (F-RELEVANS). Ingen server krävs. |

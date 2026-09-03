@@ -4,6 +4,7 @@
  * flow — the case is only SUBMITTED once a receipt is recorded.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Feedback } from '../components/Feedback';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { ApiError, formatDate, formatSek, get, patch, post } from '../api';
 import { useLabels, useT } from '../i18n';
@@ -513,13 +514,13 @@ export default function ApplicationPage() {
             }}
           >
             <div>
-              <label>{t('aw.thCategory')}</label>
-              <select name="category">{BUDGET_CATEGORIES.map((c) => <option key={c} value={c}>{labels.budget(c)}</option>)}</select>
+              <label htmlFor="f-category">{t('aw.thCategory')}</label>
+              <select id="f-category" name="category">{BUDGET_CATEGORIES.map((c) => <option key={c} value={c}>{labels.budget(c)}</option>)}</select>
             </div>
-            <div><label>{t('aw.thDescription')}</label><input name="description" required maxLength={200} /></div>
-            <div><label>{t('aw.activityLabel')}</label><input name="activity" maxLength={200} placeholder={t('aw.activityPlaceholder')} /></div>
-            <div><label>{t('aw.thQty')}</label><input name="quantity" type="number" min={1} defaultValue={1} required /></div>
-            <div><label>{t('aw.unitKr')}</label><input name="unitCost" type="number" min={0} step="0.01" required /></div>
+            <div><label htmlFor="f-description">{t('aw.thDescription')}</label><input id="f-description" name="description" required maxLength={200} /></div>
+            <div><label htmlFor="f-activity">{t('aw.activityLabel')}</label><input id="f-activity" name="activity" maxLength={200} placeholder={t('aw.activityPlaceholder')} /></div>
+            <div><label htmlFor="f-quantity">{t('aw.thQty')}</label><input id="f-quantity" name="quantity" type="number" min={1} defaultValue={1} required /></div>
+            <div><label htmlFor="f-unitCost">{t('aw.unitKr')}</label><input id="f-unitCost" name="unitCost" type="number" min={0} step="0.01" required /></div>
             <button type="submit">{t('aw.add')}</button>
           </form>
         )}
@@ -570,10 +571,10 @@ export default function ApplicationPage() {
               }}
             >
               <div style={{ flex: 2, minWidth: 200 }}>
-                <label>{t('aw.addReporting')}</label>
-                <input name="title" required maxLength={300} placeholder={t('aw.repPlaceholder')} />
+                <label htmlFor="f-title">{t('aw.addReporting')}</label>
+                <input id="f-title" name="title" required maxLength={300} placeholder={t('aw.repPlaceholder')} />
               </div>
-              <div><label>{t('aw.dueLabel')}</label><input name="dueAt" type="date" /></div>
+              <div><label htmlFor="f-dueAt">{t('aw.dueLabel')}</label><input id="f-dueAt" name="dueAt" type="date" /></div>
               <button type="submit" className="secondary">{t('aw.add')}</button>
             </form>
           )}
@@ -583,6 +584,7 @@ export default function ApplicationPage() {
       {/* Documents */}
       <AttachmentsCard caseId={app.id} documents={data.documents} editable={editable} onChanged={load} t={t} />
 
+      <Feedback page="arbetsyta" />
       <div className="source-line">
         <strong>{t('o.source')}</strong> <a href={opp.sourceUrl} target="_blank" rel="noreferrer">{opp.sourceUrl}</a> {t('aw.sourceNote')}
       </div>
@@ -718,9 +720,9 @@ function FinancingEditor({
     <div style={{ marginTop: '1.2rem' }}>
       <h3>{t('aw.financing')}</h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.6rem' }}>
-        <div><label>{t('aw.requested')}</label><input type="number" disabled={!editable} value={requested} onChange={(e) => setRequested(e.target.value)} /></div>
-        <div><label>{t('m.ownContribution')}</label><input type="number" disabled={!editable} value={own} onChange={(e) => setOwn(e.target.value)} /></div>
-        <div><label>{t('aw.otherFunding')}</label><input type="number" disabled={!editable} value={other} onChange={(e) => setOther(e.target.value)} /></div>
+        <div><label htmlFor="f-requested">{t('aw.requested')}</label><input id="f-requested" type="number" disabled={!editable} value={requested} onChange={(e) => setRequested(e.target.value)} /></div>
+        <div><label htmlFor="f-own">{t('m.ownContribution')}</label><input id="f-own" type="number" disabled={!editable} value={own} onChange={(e) => setOwn(e.target.value)} /></div>
+        <div><label htmlFor="f-other">{t('aw.otherFunding')}</label><input id="f-other" type="number" disabled={!editable} value={other} onChange={(e) => setOther(e.target.value)} /></div>
       </div>
       <p className="meta-line" style={{ marginTop: '0.4rem' }}>
         {t('aw.finTotals', { fin: formatSek(finTotal), budget: formatSek(budgetTotal) })}
@@ -783,7 +785,7 @@ function AttachmentsCard({
       ))}
       {editable && (
         <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.8rem', alignItems: 'center' }}>
-          <select value={selected} onChange={(e) => setSelected(e.target.value)} style={{ maxWidth: 340 }}>
+          <select aria-label={t('aw.chooseFromVault')} value={selected} onChange={(e) => setSelected(e.target.value)} style={{ maxWidth: 340 }}>
             <option value="">{t('aw.chooseFromVault')}</option>
             {attachable.map((d) => <option key={d.id} value={d.id}>{d.filename} ({d.kind})</option>)}
           </select>

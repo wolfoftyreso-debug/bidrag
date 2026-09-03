@@ -4,6 +4,7 @@
  * "start application" from a project.
  */
 import { useEffect, useState } from 'react';
+import { Feedback } from '../components/Feedback';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { PurchaseConsent } from '../components/PurchaseConsent';
 import { ApiError, formatDate, formatSek, get, post } from '../api';
@@ -69,6 +70,8 @@ export default function OpportunityPage() {
 
   useEffect(() => {
     if (id) get<OpportunityDetail>(`/v1/funding-opportunities/${id}`).then(setData).catch(() => setError(t('o.loadError')));
+    // Trattmått (QSDR-täljare): stödsidan öppnad i projektkontext = "nästa steg-vy visad".
+    if (id && projectId) void post('/v1/events', { name: 'nasta_steg_visad', props: { stod: id } }).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -195,6 +198,7 @@ export default function OpportunityPage() {
         </div>
       )}
 
+      <Feedback page="stod" opportunitySlug={opp.slug} />
       <div className="source-line">
         <strong>{t('o.source')}</strong> <a href={opp.sourceUrl} target="_blank" rel="noreferrer">{opp.sourceUrl}</a>
         <br />

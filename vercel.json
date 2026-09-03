@@ -65,6 +65,10 @@
     {
       "path": "/v1/internal/cron/retention",
       "schedule": "30 4 * * *"
+    },
+    {
+      "path": "/v1/internal/cron/watchdog",
+      "schedule": "15 * * * *"
     }
   ]
 }

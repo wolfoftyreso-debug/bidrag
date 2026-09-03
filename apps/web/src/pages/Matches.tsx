@@ -4,6 +4,7 @@
  * source always visible.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Feedback } from '../components/Feedback';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ApiError, formatDate, formatSek, get, patch, post } from '../api';
 import { useLabels, useT } from '../i18n';
@@ -405,14 +406,14 @@ export default function MatchesPage() {
                     <div className="meta-line">{t('m.eligibleNote')}</div>
                     <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.3rem', flexWrap: 'wrap' }}>
                       {m.applicationUrl && (
-                        <a className="btn secondary" style={{ fontSize: '0.85rem', padding: '0.25rem 0.7rem' }} href={m.applicationUrl} target="_blank" rel="noreferrer">
+                        <a className="btn secondary" style={{ fontSize: '0.85rem', padding: '0.25rem 0.7rem' }} href={m.applicationUrl} target="_blank" rel="noreferrer" onClick={() => void post('/v1/events', { name: 'ansok_sjalv_klick', props: { stod: m.slug } }).catch(() => {})}>
                           {t('m.applyYourself')}
                         </a>
                       )}
                       {m.requiresApplication === false ? (
                         <span className="meta-line">{t('m.noApplicationNeeded')}</span>
                       ) : (
-                        <Link className="btn secondary" style={{ fontSize: '0.85rem', padding: '0.25rem 0.7rem' }} to={`/dokument/${projectId}?stod=${m.slug}`}>
+                        <Link className="btn secondary" style={{ fontSize: '0.85rem', padding: '0.25rem 0.7rem' }} to={`/dokument/${projectId}?stod=${m.slug}`} onClick={() => void post('/v1/events', { name: 'forbered_klick', props: { stod: m.slug } }).catch(() => {})}>
                           {t('m.prepareApplication')}
                         </Link>
                       )}
@@ -678,6 +679,7 @@ function StackPlanner({ projectId, t }: { projectId: string; t: T }) {
           ))}
         </div>
       )}
+      <Feedback page="analys" />
     </div>
   );
 }
