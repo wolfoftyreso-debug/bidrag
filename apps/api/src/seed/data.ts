@@ -1171,6 +1171,12 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'fk-bostadsbidrag-barnfamiljer',
+    evidenceRequirements: [
+      { id: 'fk-bbf-e1', kind: 'other', description: 'Senaste hyresspecifikationen (hyr du i första hand)', mandatory: false },
+      { id: 'fk-bbf-e2', kind: 'other', description: 'Andrahandskontrakt och hyresvärdens eller föreningens godkännande (hyr du i andra hand)', mandatory: false },
+      { id: 'fk-bbf-e3', kind: 'other', description: 'Upplåtelse- eller överlåtelseavtal för bostadsrätten (första gången du ansöker)', mandatory: false },
+      { id: 'fk-bbf-e4', kind: 'other', description: 'Bolåneavi och skuldebrev (eget hus)', mandatory: false },
+    ],
     authorityKey: 'forsakringskassan',
     sourceKey: 'fk-privatperson',
     programmeName: 'Bostadsbidrag',
@@ -1207,6 +1213,10 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'region-glasogonbidrag-barn',
+    evidenceRequirements: [
+      { id: 'reg-glas-e1', kind: 'medical_certificate', description: 'Synintyg eller ordination från optiker eller ögonläkare', mandatory: true },
+      { id: 'reg-glas-e2', kind: 'receipt', description: 'Kvitto på glasögonen eller linserna, med kostnaden uppdelad på glas, bågar och behandling', mandatory: true },
+    ],
     authorityKey: 'region',
     sourceKey: '1177-glasogon',
     programmeName: 'Glasögonbidrag',
@@ -1234,6 +1244,9 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'majblomman-bidrag-barn',
+    evidenceRequirements: [
+      { id: 'maj-e1', kind: 'other', description: 'Intyg från någon som känner barnets situation i sin yrkesroll (högst 3 månader gammalt, inte använt i en tidigare ansökan)', mandatory: true },
+    ],
     authorityKey: 'majblomman',
     sourceKey: 'majblomman-ansok',
     programmeName: 'Majblommans bidrag',
@@ -1318,6 +1331,12 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'fk-bostadsbidrag-unga',
+    evidenceRequirements: [
+      { id: 'fk-bbu-e1', kind: 'other', description: 'Senaste hyresspecifikationen (hyr du i första hand)', mandatory: false },
+      { id: 'fk-bbu-e2', kind: 'other', description: 'Andrahandskontrakt och hyresvärdens eller föreningens godkännande (hyr du i andra hand)', mandatory: false },
+      { id: 'fk-bbu-e3', kind: 'other', description: 'Upplåtelse- eller överlåtelseavtal för bostadsrätten (första gången du ansöker)', mandatory: false },
+      { id: 'fk-bbu-e4', kind: 'other', description: 'Bolåneavi och skuldebrev (eget hus)', mandatory: false },
+    ],
     authorityKey: 'forsakringskassan',
     sourceKey: 'fk-privatperson',
     programmeName: 'Bostadsbidrag',
@@ -1350,6 +1369,10 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'kommun-forsorjningsstod',
+    evidenceRequirements: [
+      { id: 'kfs-e1', kind: 'other', description: 'Hyreskontrakt eller hyresavi', mandatory: false },
+      { id: 'kfs-e2', kind: 'other', description: 'Kontoutdrag', mandatory: false },
+    ],
     authorityKey: 'socialtjansten',
     sourceKey: 'socialstyrelsen-bistand',
     programmeName: 'Ekonomiskt bistånd',
@@ -1434,6 +1457,9 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'fk-underhallsstod',
+    evidenceRequirements: [
+      { id: 'fk-us-e1', kind: 'decision_letter', description: 'Kopia av dom eller annat beslut om underhållsbidrag, om det finns', mandatory: false },
+    ],
     authorityKey: 'forsakringskassan',
     sourceKey: 'fk-privatperson',
     programmeName: 'Stöd till barnfamiljer',
@@ -1465,6 +1491,9 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'pm-bostadstillagg',
+    evidenceRequirements: [
+      { id: 'pm-bt-e1', kind: 'other', description: 'Uppgifter om tillgångar den 31 december förra året (om de överstiger 100 000 kr)', mandatory: false },
+    ],
     authorityKey: 'pensionsmyndigheten',
     sourceKey: 'pm-bostadstillagg',
     programmeName: 'Bostadstillägg',
@@ -1637,6 +1666,10 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'raa-kulturarvsbidrag',
+    evidenceRequirements: [
+      { id: 'raa-ka-e1', kind: 'project_description', description: 'Projektbeskrivning med tidplan', mandatory: true },
+      { id: 'raa-ka-e2', kind: 'budget', description: 'Projektbudget', mandatory: true },
+    ],
     authorityKey: 'raa',
     sourceKey: 'raa-bidrag',
     programmeName: 'Bidrag till kulturarvsarbete',
@@ -1939,6 +1972,9 @@ export const opportunities: SeedOpportunity[] = [
   // basen ärligt genom skarpa behörighetskrav i stället för att låtsas.
   def({
     slug: 'migrationsverket-atervandringsbidrag',
+    evidenceRequirements: [
+      { id: 'mv-av-e1', kind: 'other', description: 'Kopior på samtliga sidor i familjemedlemmarnas pass (om familjen ansöker tillsammans)', mandatory: false },
+    ],
     authorityKey: 'migrationsverket',
     sourceKey: 'migrationsverket-atervandring',
     programmeName: 'Frivillig återvandring',
@@ -2022,6 +2058,9 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'fk-omvardnadsbidrag',
+    evidenceRequirements: [
+      { id: 'fk-ov-e1', kind: 'medical_certificate', description: 'Läkarutlåtande som beskriver barnets funktionsnedsättning', mandatory: true },
+    ],
     authorityKey: 'forsakringskassan',
     sourceKey: 'fk-privatperson',
     programmeName: 'Omvårdnadsbidrag',
@@ -2053,6 +2092,10 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'fk-merkostnadsersattning',
+    evidenceRequirements: [
+      { id: 'fk-mk-e1', kind: 'medical_certificate', description: 'Läkarutlåtande om funktionsnedsättningen', mandatory: true },
+      { id: 'fk-mk-e2', kind: 'budget', description: 'Beräkning av dina merkostnader per år', mandatory: false },
+    ],
     authorityKey: 'forsakringskassan',
     sourceKey: 'fk-privatperson',
     programmeName: 'Merkostnadsersättning',
@@ -2080,6 +2123,9 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'fk-bilstod',
+    evidenceRequirements: [
+      { id: 'fk-bs-e1', kind: 'medical_certificate', description: 'Läkarutlåtande om funktionsnedsättningen', mandatory: true },
+    ],
     authorityKey: 'forsakringskassan',
     sourceKey: 'fk-privatperson',
     programmeName: 'Bilstöd',
@@ -2107,6 +2153,10 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'fk-narstaendepenning',
+    evidenceRequirements: [
+      { id: 'fk-np-e1', kind: 'medical_certificate', description: 'Läkarutlåtande från den närståendes läkare', mandatory: true },
+      { id: 'fk-np-e2', kind: 'other', description: 'Samtycke från den närstående (Försäkringskassans blankett 7468)', mandatory: true },
+    ],
     authorityKey: 'forsakringskassan',
     sourceKey: 'fk-privatperson',
     programmeName: 'Närståendepenning',
@@ -2146,7 +2196,7 @@ export const opportunities: SeedOpportunity[] = [
     title: 'Arbetsförmedlingen — Etableringsersättning för nyanlända',
     summary: 'Ersättning för den som är ny i Sverige och deltar i etableringsprogrammet hos Arbetsförmedlingen; betalas ut av Försäkringskassan.',
     description:
-      'Den som nyligen fått uppehållstillstånd (som skyddsbehövande eller vissa anhöriga) och är 20–66 år kan delta i Arbetsförmedlingens etableringsprogram och få etableringsersättning under tiden. Den som har barn eller bor ensam i egen bostad kan även få etableringstillägg respektive bostadsersättning. Arbetsförmedlingen beslutar om programmet; Försäkringskassan beslutar om och betalar ut ersättningen.',
+      'Den som nyligen fått uppehållstillstånd (som skyddsbehövande eller vissa anhöriga) och är 20–66 år kan delta i Arbetsförmedlingens etableringsprogram och få etableringsersättning under tiden. Från den 1 september 2026 finns även ett barntillägg för den som har barn under 20 år; etableringstillägget och bostadsersättningen har upphört och kan inte längre sökas. Arbetsförmedlingen beslutar om programmet; Försäkringskassan beslutar om och betalar ut ersättningen.',
     objective: 'Försörjning under de första årens etablering i arbets- och samhällslivet.',
     instrumentType: 'social_benefit',
     applicantTypes: ['individual'],
@@ -2161,31 +2211,6 @@ export const opportunities: SeedOpportunity[] = [
       c('af-ee-h3', 'hard', 'person.age66Plus', 'is_false', undefined, 'Programmet gäller till och med 66 års ålder'),
       c('af-ee-m0', 'mandatory', 'person.newlyArrivedWithResidencePermit', 'is_true', undefined, 'Du ska nyligen ha fått uppehållstillstånd som skyddsbehövande eller anhörig', 'Har du under de senaste åren fått uppehållstillstånd i Sverige, t.ex. som skyddsbehövande eller som anhörig?'),
       c('af-ee-m1', 'mandatory', 'person.registeredUnemployed', 'is_true', undefined, 'Du ska vara inskriven hos Arbetsförmedlingen och delta i etableringsprogrammet', 'Är du inskriven som arbetssökande hos Arbetsförmedlingen?'),
-    ],
-  }),
-
-  def({
-    slug: 'csn-hemutrustningslan',
-    authorityKey: 'csn',
-    sourceKey: 'csn-studiemedel',
-    programmeName: 'Hemutrustningslån',
-    title: 'CSN — Hemutrustningslån för nyanlända',
-    summary: 'Lån för att köpa det mest nödvändiga till ett första hem i Sverige — möbler, husgeråd och annan grundutrustning.',
-    description:
-      'Hemutrustningslån kan lämnas till flyktingar och vissa anhöriga som tagits emot i en kommun och behöver utrusta ett första hem i Sverige. Lånet söks hos CSN inom två år från det första kommunmottagandet, har låg ränta och betalas tillbaka enligt en plan som tar hänsyn till inkomst. Det är ett lån — inte ett bidrag — och ska betalas tillbaka.',
-    objective: 'Ett fungerande hem från start, utan att behöva vända sig till dyra krediter.',
-    instrumentType: 'loan',
-    applicantTypes: ['individual'],
-    deadlineModel: 'rolling',
-    applicationMethod: 'Ansökan görs hos CSN; kommunmottagandet styr vilka som kan söka.',
-    applicationUrl: 'https://www.csn.se/',
-    sourceUrl: 'https://www.csn.se/',
-    estimatedEffortDays: 1,
-    criteria: [
-      c('csn-hl-h1', 'hard', 'applicant.type', 'eq', 'individual', 'Lånet söks av privatpersoner'),
-      c('csn-hl-h2', 'hard', 'applicant.country', 'eq', 'SE', 'Du ska vara mottagen i en svensk kommun'),
-      c('csn-hl-m0', 'mandatory', 'person.newlyArrivedWithResidencePermit', 'is_true', undefined, 'Lånet gäller flyktingar och vissa anhöriga under de första åren i Sverige', 'Har du under de senaste åren fått uppehållstillstånd i Sverige, t.ex. som skyddsbehövande eller som anhörig?'),
-      c('csn-hl-m1', 'mandatory', 'person.settlingFirstHomeInSweden', 'is_true', undefined, 'Du ska hålla på att skaffa och utrusta ett första hem i Sverige', 'Håller du på att skaffa eller utrusta ditt första egna hem i Sverige?'),
     ],
   }),
 
@@ -2222,6 +2247,9 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'csn-inackorderingstillagg',
+    evidenceRequirements: [
+      { id: 'csn-it-e1', kind: 'other', description: 'Intyg från hyresvärden (CSN:s blankett för läsåret)', mandatory: false },
+    ],
     authorityKey: 'csn',
     sourceKey: 'csn-studiemedel',
     programmeName: 'Inackorderingstillägg',
@@ -2327,6 +2355,9 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'leader-lokalt-ledd-utveckling',
+    evidenceRequirements: [
+      { id: 'leader-e1', kind: 'project_description', description: 'Projektbeskrivning med mål och förväntade resultat', mandatory: true },
+    ],
     authorityKey: 'jordbruksverket',
     sourceKey: 'jordbruksverket-stod',
     programmeName: 'Leader — lokalt ledd utveckling',
@@ -2470,6 +2501,9 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'fk-foraldrapenning',
+    evidenceRequirements: [
+      { id: 'fk-fp-e1', kind: 'medical_certificate', description: 'Intyg om graviditet — bara om du ansöker före barnets födelse', mandatory: false },
+    ],
     authorityKey: 'forsakringskassan',
     sourceKey: 'fk-privatperson',
     programmeName: 'Stöd till barnfamiljer',
@@ -2498,6 +2532,9 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'fk-tillfallig-foraldrapenning',
+    evidenceRequirements: [
+      { id: 'fk-tfp-e1', kind: 'medical_certificate', description: 'Intyg från läkare eller sjuksköterska om barnet är sjukt längre än 7 dagar', mandatory: false },
+    ],
     authorityKey: 'forsakringskassan',
     sourceKey: 'fk-privatperson',
     programmeName: 'Stöd till barnfamiljer',
@@ -2522,6 +2559,9 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'fk-sjukpenning',
+    evidenceRequirements: [
+      { id: 'fk-sp-e1', kind: 'medical_certificate', description: 'Läkarintyg (läkaren skickar det oftast digitalt)', mandatory: true },
+    ],
     authorityKey: 'forsakringskassan',
     sourceKey: 'fk-privatperson',
     programmeName: 'Vid sjukdom',
@@ -2546,6 +2586,9 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'fk-sjukersattning',
+    evidenceRequirements: [
+      { id: 'fk-se-e1', kind: 'medical_certificate', description: 'Läkarutlåtande om sjukdom, skada eller funktionsnedsättning', mandatory: true },
+    ],
     authorityKey: 'forsakringskassan',
     sourceKey: 'fk-privatperson',
     programmeName: 'Vid sjukdom',
@@ -2670,6 +2713,9 @@ export const opportunities: SeedOpportunity[] = [
 
   def({
     slug: 'akassa-arbetsloshetsersattning',
+    evidenceRequirements: [
+      { id: 'ak-ae-e1', kind: 'other', description: 'Arbetsgivarintyg från din senaste arbetsgivare', mandatory: true },
+    ],
     authorityKey: 'akassa',
     sourceKey: 'akassa-ersattning',
     programmeName: 'Arbetslöshetsförsäkringen',
@@ -4244,30 +4290,6 @@ export const applicationSchemaDefs: { opportunitySlug: string; def: unknown }[] 
         { key: 'inskriven_af', type: 'boolean', label: 'Är du inskriven hos Arbetsförmedlingen?', guidance: 'Etableringsprogrammet förutsätter inskrivning — börja där om du inte redan är inskriven.', required: true, section: 'etablering' },
         { key: 'har_barn_hemma', type: 'boolean', label: 'Har du barn som bor hos dig?', guidance: 'Med barn hemma kan etableringstillägg bli aktuellt hos Försäkringskassan.', required: true, section: 'etablering' },
         { key: 'bor_ensam', type: 'boolean', label: 'Bor du ensam i egen bostad?', guidance: 'Den som bor ensam kan ha rätt till bostadsersättning.', required: true, section: 'etablering' },
-        { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
-      ],
-    },
-  },
-  {
-    opportunitySlug: 'csn-hemutrustningslan',
-    def: {
-      id: 'csn-hemutrustningslan-v1',
-      version: 1,
-      title: 'Ansökan — Hemutrustningslån (förberedelse)',
-      sections: [
-        { key: 'sokande', title: 'Om dig' },
-        { key: 'hemmet', title: 'Hemmet och behovet' },
-        { key: 'intyg', title: 'Intyg' },
-      ],
-      fields: [
-        { key: 'sokande_namn', canonicalKey: 'applicant.displayName', type: 'text', label: 'Namn', required: true, maxLength: 200, section: 'sokande' },
-        { key: 'kommunmottagande_ar', type: 'number', label: 'Vilket år togs du emot i en kommun?', guidance: 'Lånet söks inom två år från det första kommunmottagandet.', required: true, min: 2000, max: 2100, section: 'sokande' },
-        { key: 'hushall_antal', type: 'number', label: 'Antal personer i hushållet', required: true, min: 1, max: 20, section: 'hemmet' },
-        { key: 'bostad_typ', type: 'select', label: 'Är bostaden möblerad eller omöblerad?', guidance: 'Lånebeloppet skiljer sig — omöblerad bostad ger högre lån.', required: true, section: 'hemmet', options: [
-          { value: 'unfurnished', label: 'Omöblerad' },
-          { value: 'furnished', label: 'Möblerad' },
-        ] },
-        { key: 'aterbetalning_medveten', type: 'boolean', label: 'Jag är medveten om att detta är ett lån som ska betalas tillbaka', required: true, section: 'hemmet' },
         { key: 'intygande', type: 'declaration', label: 'Jag intygar att lämnade uppgifter är riktiga', required: true, section: 'intyg' },
       ],
     },

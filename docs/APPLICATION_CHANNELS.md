@@ -105,7 +105,6 @@ mottagningsvägen är ännu inte kurerad i klartext. Prioriterad kureringskö:
 
 | Stöd | Ingångar (alternativ) | Mottagning | Metod (kurerad) | URL |
 |---|---|---|---|---|
-| CSN — Hemutrustningslån för nyanlända (`csn-hemutrustningslan`) | Myndighetsspecifik väg (se metodtext) | Ingen inloggning krävs (öppen tjänst/blankett/mellanhand) | Ansökan görs hos CSN; kommunmottagandet styr vilka som kan söka. | https://www.csn.se/ |
 | CSN — Inackorderingstillägg för gymnasieelever som bor på studieorten (`csn-inackorderingstillagg`) | Myndighetsspecifik väg (se metodtext) | Ingen inloggning krävs (öppen tjänst/blankett/mellanhand) | Ansökan hos CSN (fristående skola/folkhögskola) eller hos hemkommunen (kommunal skola), inför varje läsår. | https://www.csn.se/ |
 | CSN — Omställningsstudiestöd (`csn-omstallningsstudiestod`) | Via mellanhand (optiker/handläggare/kansli/förvaltare) | e-legitimation (BankID e.dyl.) | Ansökan görs hos CSN; omställningsorganisationen kan komplettera med kollektivavtalat stöd. | https://www.csn.se/ |
 | CSN — Studiemedel (bidrag och studielån) (`csn-studiemedel`) | Mina sidor hos myndigheten | e-legitimation (BankID e.dyl.) | Ansökan görs i Mina sidor hos CSN (kräver e-legitimation). | https://www.csn.se/ |

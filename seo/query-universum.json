@@ -1,9 +1,9 @@
 {
  "_kontrakt": "Sprint 01: query-universum genererat av tools/genqueries.mjs — redigera ALDRIG för hand. Volymer: DATA_UNAVAILABLE genomgående (fabriceras inte; GSC efter deploy är första verkliga källan). source-fältet skiljer verkliga strängar (SERP-DERIVED/INFERRED ur questions-tier1) från syntetiska (GENERATED(<mönsterkälla>)). En genererad variant är en HYPOTES om sökspråk tills GSC bekräftar den. Felstavningar/särskrivningar/röstfrågor genereras inte syntetiskt. Regenerera efter ändring i intents/grammatik/tier1; verify kör --check.",
- "antal": 3488,
+ "antal": 3448,
  "varav_verkliga": 343,
- "varav_genererade": 3145,
- "dubbletter_bortrensade": 417,
+ "varav_genererade": 3105,
+ "dubbletter_bortrensade": 413,
  "queries": [
   {
    "q": "a-kassa eller försörjningsstöd",
@@ -449,13 +449,6 @@
   {
    "q": "ansöka glasögonbidrag utan bankid",
    "intent_id": "INT-014",
-   "pattern_id": "QP-055",
-   "family": "ansökan",
-   "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
-  },
-  {
-   "q": "ansöka hemutrustningslån för nyanlända utan bankid",
-   "intent_id": "INT-092",
    "pattern_id": "QP-055",
    "family": "ansökan",
    "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
@@ -2071,13 +2064,6 @@
    "source": "INFERRED"
   },
   {
-   "q": "csn hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-002",
-   "family": "officiellt-namn",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "csn inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-002",
@@ -2897,13 +2883,6 @@
    "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
   },
   {
-   "q": "fyllde i fel inkomst hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-070",
-   "family": "avslag",
-   "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
-  },
-  {
    "q": "fyllde i fel inkomst inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-070",
@@ -3702,13 +3681,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "har jag rätt till hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-032",
-   "family": "eligibility",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "har jag rätt till inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-032",
@@ -4059,55 +4031,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-001",
-   "family": "officiellt-namn",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
-   "q": "hemutrustningslån för nyanlända 2026",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-095",
-   "family": "aktualitet",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
-   "q": "hemutrustningslån för nyanlända ansökan stängd vad göra",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-071",
-   "family": "avslag",
-   "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
-  },
-  {
-   "q": "hemutrustningslån för nyanlända blankett",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-058",
-   "family": "ansökan",
-   "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
-  },
-  {
-   "q": "hemutrustningslån för nyanlända höjs 2026",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-097",
-   "family": "aktualitet",
-   "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
-  },
-  {
-   "q": "hemutrustningslån för nyanlända inkomstgräns",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-041",
-   "family": "eligibility",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
-   "q": "hemutrustningslån för nyanlända pengarna kommer inte",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-068",
-   "family": "avslag",
-   "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
-  },
-  {
    "q": "hjälp att anställa",
    "intent_id": null,
    "pattern_id": "QP-005",
@@ -4320,13 +4243,6 @@
   {
    "q": "hur ansöker arbetsgivare om glasögonbidrag",
    "intent_id": "INT-014",
-   "pattern_id": "QP-056",
-   "family": "ansökan",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
-   "q": "hur ansöker arbetsgivare om hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
    "pattern_id": "QP-056",
    "family": "ansökan",
    "source": "GENERATED(SERP_OBSERVED)"
@@ -4920,13 +4836,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "hur lång tid tar hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-054",
-   "family": "ansökan",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "hur lång tid tar inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-054",
@@ -5515,13 +5424,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "hur mycket hemutrustningslån för nyanlända kan man få",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-042",
-   "family": "belopp",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "hur mycket inackorderingstillägg för gymnasieelever som bor på studieorten kan man få",
    "intent_id": "INT-094",
    "pattern_id": "QP-042",
@@ -6103,13 +6005,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "hur mycket är hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-043",
-   "family": "belopp",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "hur mycket är inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-043",
@@ -6663,13 +6558,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "hur påverkar inkomsten hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-046",
-   "family": "belopp",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "hur påverkar inkomsten inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-046",
@@ -7190,13 +7078,6 @@
   {
    "q": "hur räknas glasögonbidrag",
    "intent_id": "INT-014",
-   "pattern_id": "QP-044",
-   "family": "belopp",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
-   "q": "hur räknas hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
    "pattern_id": "QP-044",
    "family": "belopp",
    "source": "GENERATED(SERP_OBSERVED)"
@@ -7741,13 +7622,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "hur söker man hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-051",
-   "family": "ansökan",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "hur söker man inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-051",
@@ -8275,13 +8149,6 @@
   {
    "q": "högsta belopp glasögonbidrag",
    "intent_id": "INT-014",
-   "pattern_id": "QP-045",
-   "family": "belopp",
-   "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
-  },
-  {
-   "q": "högsta belopp hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
    "pattern_id": "QP-045",
    "family": "belopp",
    "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
@@ -9225,13 +9092,6 @@
    "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
   },
   {
-   "q": "kan företag utan anställda söka hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-037",
-   "family": "eligibility",
-   "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
-  },
-  {
    "q": "kan företag utan anställda söka inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-037",
@@ -9759,13 +9619,6 @@
   {
    "q": "kan jag få glasögonbidrag",
    "intent_id": "INT-014",
-   "pattern_id": "QP-031",
-   "family": "eligibility",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
-   "q": "kan jag få hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
    "pattern_id": "QP-031",
    "family": "eligibility",
    "source": "GENERATED(SERP_OBSERVED)"
@@ -10359,13 +10212,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "kan man söka hemutrustningslån för nyanlända retroaktivt",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-062",
-   "family": "deadline",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "kan man söka inackorderingstillägg för gymnasieelever som bor på studieorten retroaktivt",
    "intent_id": "INT-094",
    "pattern_id": "QP-062",
@@ -10949,13 +10795,6 @@
   {
    "q": "kommunalt eller statligt glasögonbidrag",
    "intent_id": "INT-014",
-   "pattern_id": "QP-083",
-   "family": "jämförelse",
-   "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
-  },
-  {
-   "q": "kommunalt eller statligt hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
    "pattern_id": "QP-083",
    "family": "jämförelse",
    "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
@@ -12081,13 +11920,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "måste jag betala tillbaka hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-069",
-   "family": "avslag",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "måste jag betala tillbaka inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-069",
@@ -12725,13 +12557,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "nya regler hemutrustningslån för nyanlända 2026",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-096",
-   "family": "aktualitet",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "nya regler inackorderingstillägg för gymnasieelever som bor på studieorten 2026",
    "intent_id": "INT-094",
    "pattern_id": "QP-096",
@@ -13341,13 +13166,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "när betalas hemutrustningslån för nyanlända ut",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-061",
-   "family": "deadline",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "när betalas inackorderingstillägg för gymnasieelever som bor på studieorten ut",
    "intent_id": "INT-094",
    "pattern_id": "QP-061",
@@ -13887,13 +13705,6 @@
    "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
   },
   {
-   "q": "när kan man söka hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-059",
-   "family": "deadline",
-   "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
-  },
-  {
    "q": "när kan man söka inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-059",
@@ -14428,13 +14239,6 @@
   {
    "q": "när öppnar ansökan glasögonbidrag",
    "intent_id": "INT-014",
-   "pattern_id": "QP-063",
-   "family": "deadline",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
-   "q": "när öppnar ansökan hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
    "pattern_id": "QP-063",
    "family": "deadline",
    "source": "GENERATED(SERP_OBSERVED)"
@@ -15742,13 +15546,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "påverkar lön hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-075",
-   "family": "kombination",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "påverkar lön inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-075",
@@ -16512,13 +16309,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "räkna ut hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-049",
-   "family": "belopp",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "räkna ut inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-049",
@@ -17060,13 +16850,6 @@
   {
    "q": "sista ansökningsdag glasögonbidrag",
    "intent_id": "INT-014",
-   "pattern_id": "QP-060",
-   "family": "deadline",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
-   "q": "sista ansökningsdag hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
    "pattern_id": "QP-060",
    "family": "deadline",
    "source": "GENERATED(SERP_OBSERVED)"
@@ -18899,13 +18682,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "utbetalningsdagar hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-065",
-   "family": "deadline",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "utbetalningsdagar inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-065",
@@ -19634,13 +19410,6 @@
    "source": "GENERATED(SERP_OBSERVED)"
   },
   {
-   "q": "var ansöker jag om hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-052",
-   "family": "ansökan",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
    "q": "var ansöker jag om inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-052",
@@ -20154,13 +19923,6 @@
   {
    "q": "varför fick jag avslag på glasögonbidrag",
    "intent_id": "INT-014",
-   "pattern_id": "QP-066",
-   "family": "avslag",
-   "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
-  },
-  {
-   "q": "varför fick jag avslag på hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
    "pattern_id": "QP-066",
    "family": "avslag",
    "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
@@ -20686,13 +20448,6 @@
   {
    "q": "vem får glasögonbidrag",
    "intent_id": "INT-014",
-   "pattern_id": "QP-033",
-   "family": "eligibility",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
-   "q": "vem får hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
    "pattern_id": "QP-033",
    "family": "eligibility",
    "source": "GENERATED(SERP_OBSERVED)"
@@ -21232,13 +20987,6 @@
   {
    "q": "vem kan ansöka om glasögonbidrag",
    "intent_id": "INT-014",
-   "pattern_id": "QP-034",
-   "family": "eligibility",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
-   "q": "vem kan ansöka om hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
    "pattern_id": "QP-034",
    "family": "eligibility",
    "source": "GENERATED(SERP_OBSERVED)"
@@ -21986,13 +21734,6 @@
    "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
   },
   {
-   "q": "vilka dokument behövs för hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
-   "pattern_id": "QP-053",
-   "family": "ansökan",
-   "source": "GENERATED(SYNTHETIC_HYPOTHESIS)"
-  },
-  {
    "q": "vilka dokument behövs för inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent_id": "INT-094",
    "pattern_id": "QP-053",
@@ -22520,13 +22261,6 @@
   {
    "q": "vilka krav gäller för glasögonbidrag",
    "intent_id": "INT-014",
-   "pattern_id": "QP-035",
-   "family": "eligibility",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
-   "q": "vilka krav gäller för hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
    "pattern_id": "QP-035",
    "family": "eligibility",
    "source": "GENERATED(SERP_OBSERVED)"
@@ -23143,13 +22877,6 @@
   {
    "q": "åldersgräns glasögonbidrag",
    "intent_id": "INT-014",
-   "pattern_id": "QP-040",
-   "family": "eligibility",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
-   "q": "åldersgräns hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
    "pattern_id": "QP-040",
    "family": "eligibility",
    "source": "GENERATED(SERP_OBSERVED)"
@@ -24060,13 +23787,6 @@
   {
    "q": "överklaga glasögonbidrag",
    "intent_id": "INT-014",
-   "pattern_id": "QP-067",
-   "family": "avslag",
-   "source": "GENERATED(SERP_OBSERVED)"
-  },
-  {
-   "q": "överklaga hemutrustningslån för nyanlända",
-   "intent_id": "INT-092",
    "pattern_id": "QP-067",
    "family": "avslag",
    "source": "GENERATED(SERP_OBSERVED)"

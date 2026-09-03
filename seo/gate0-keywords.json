@@ -1,12 +1,12 @@
 {
  "_kontrakt": "GATE 0 block A (docs/ZERO_COMPROMISE_GATE.md): statusregister för alla keyword-rötter. GREEN kan aldrig sättas maskinellt — kräver mänsklig SERP-jämförelse sida-mot-sida (gatens manuella del). SERP-ägare endast där observation finns (seo/serp-gate0.json / serp-sprint01.json); rader med verifikation NONE har medvetet tom ägare. Genereras av tools/gatekeywords.mjs — redigeras aldrig för hand.",
  "datum_serp": "2026-08-22",
- "antal_rotter": 352,
+ "antal_rotter": 350,
  "status": {
   "GREEN": 0,
-  "YELLOW": 136,
-  "RED": 121,
-  "GREY": 95
+  "YELLOW": 134,
+  "RED": 122,
+  "GREY": 94
  },
  "rotter": [
   {
@@ -1055,17 +1055,6 @@
    "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
-   "keyword": "csn — centrala studiestödsnämnden hemutrustningslån för nyanlända",
-   "root": "hemutrustningslån för nyanlända",
-   "intent": "navigational",
-   "query_familj": "entity:csn-hemutrustningslan",
-   "serp_agare": null,
-   "var_url": "/bidrag/csn-hemutrustningslan/",
-   "content_gap": "myndigheten ska äga sin egen ansökningsterm; vår sida är komplementär (pre-check + helhet)",
-   "status": "GREY",
-   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
-  },
-  {
    "keyword": "csn — centrala studiestödsnämnden inackorderingstillägg för gymnasieelever som bor på studieorten",
    "root": "inackorderingstillägg för gymnasieelever som bor på studieorten",
    "intent": "navigational",
@@ -1984,21 +1973,10 @@
    "intent": "informational",
    "query_familj": "s29-ny-i-sverige",
    "serp_agare": "fragmenterat över tre myndigheter",
-   "var_url": "/bidrag/csn-hemutrustningslan/",
-   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
-   "status": "YELLOW",
+   "var_url": null,
+   "content_gap": "sidan/verktyget är inte byggt (blueprint-kön B1–B10 / 25-klusterfasen)",
+   "status": "RED",
    "verifikation": "FRESH 2026-08-22"
-  },
-  {
-   "keyword": "hemutrustningslån för nyanlända",
-   "root": "hemutrustningslån för nyanlända",
-   "intent": "informational",
-   "query_familj": "entity:csn-hemutrustningslan",
-   "serp_agare": null,
-   "var_url": "/bidrag/csn-hemutrustningslan/",
-   "content_gap": "entity-sidan finns men saknar gold standard-moduler (FAQ, exempel, ändringshistorik, interaktiv behörighetskontroll)",
-   "status": "YELLOW",
-   "verifikation": "MÖNSTER (6 entity-stickprov 2026-08-22 + Sprint 01)"
   },
   {
    "keyword": "hjälp med ekonomin",

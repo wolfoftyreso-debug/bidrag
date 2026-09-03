@@ -1,14 +1,14 @@
 {
  "_kontrakt": "Kunskapsgrafen v1 — genererad av tools/genkgraf.mjs ur seeden + seo/intents-100.json; redigera ALDRIG för hand. Grafen är lager 6 i docs/CONTENT_ENGINE.md: internlänkning, relaterade stöd och situationsnoder hämtar härifrån. 'relaterad'-kanter = delar ≥2 kriteriefält och minst en målgruppshubb (deterministisk heuristik v1 — redaktionell kurering kan skärpa den senare, i generatorn, inte i filen). Regenerera vid seed-/intentändring; verify kör --check.",
  "genererad_ur_seed": "2026-08-13T00:00:00Z",
- "antal_noder": 274,
- "antal_kanter": 1422,
+ "antal_noder": 272,
+ "antal_kanter": 1390,
  "noder_per_typ": {
   "intent": 42,
-  "kriterium": 107,
+  "kriterium": 106,
   "malgrupp": 4,
   "myndighet": 36,
-  "stod": 85
+  "stod": 84
  },
  "nodes": [
   {
@@ -715,11 +715,6 @@
    "label": "person.separatedParent"
   },
   {
-   "id": "kriterium:person.settlingFirstHomeInSweden",
-   "type": "kriterium",
-   "label": "person.settlingFirstHomeInSweden"
-  },
-  {
    "id": "kriterium:person.shortPriorEducation",
    "type": "kriterium",
    "label": "person.shortPriorEducation"
@@ -1227,14 +1222,6 @@
    "url": "/bidrag/boverket-allmanna-samlingslokaler/",
    "instrument": "public_grant",
    "deadlineModel": "recurring"
-  },
-  {
-   "id": "stod:csn-hemutrustningslan",
-   "type": "stod",
-   "label": "CSN — Hemutrustningslån för nyanlända",
-   "url": "/bidrag/csn-hemutrustningslan/",
-   "instrument": "loan",
-   "deadlineModel": "rolling"
   },
   {
    "id": "stod:csn-inackorderingstillagg",
@@ -1974,11 +1961,6 @@
   {
    "from": "stod:af-etableringsersattning",
    "rel": "relaterad",
-   "to": "stod:csn-hemutrustningslan"
-  },
-  {
-   "from": "stod:af-etableringsersattning",
-   "rel": "relaterad",
    "to": "stod:csn-inackorderingstillagg"
   },
   {
@@ -2130,11 +2112,6 @@
    "from": "stod:af-eures-targeted-mobility",
    "rel": "relaterad",
    "to": "stod:af-stod-start-naringsverksamhet"
-  },
-  {
-   "from": "stod:af-eures-targeted-mobility",
-   "rel": "relaterad",
-   "to": "stod:csn-hemutrustningslan"
   },
   {
    "from": "stod:af-eures-targeted-mobility",
@@ -2345,11 +2322,6 @@
    "from": "stod:af-stod-start-naringsverksamhet",
    "rel": "relaterad",
    "to": "stod:akassa-arbetsloshetsersattning"
-  },
-  {
-   "from": "stod:af-stod-start-naringsverksamhet",
-   "rel": "relaterad",
-   "to": "stod:csn-hemutrustningslan"
   },
   {
    "from": "stod:af-stod-start-naringsverksamhet",
@@ -2785,151 +2757,6 @@
    "from": "stod:boverket-allmanna-samlingslokaler",
    "rel": "vager_in",
    "to": "kriterium:project.targetGroups"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "ges_av",
-   "to": "myndighet:csn"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "kraver",
-   "to": "kriterium:applicant.country"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "kraver",
-   "to": "kriterium:applicant.type"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "kraver",
-   "to": "kriterium:person.newlyArrivedWithResidencePermit"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "kraver",
-   "to": "kriterium:person.settlingFirstHomeInSweden"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:csn-inackorderingstillagg"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:csn-studiestartsstod"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:fk-aktivitetsersattning"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:fk-barnbidrag"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:fk-bilstod"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:fk-bostadsbidrag-barnfamiljer"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:fk-bostadsbidrag-unga"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:fk-merkostnadsersattning"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:fk-narstaendepenning"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:fk-omvardnadsbidrag"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:jordbruksverket-startstod-unga"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:kommun-bostadsanpassningsbidrag"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:kommun-elevresor-gymnasiet"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:kommun-forsorjningsstod"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:kommun-skolskjuts"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:konstnarsnamnden-arbetsstipendium"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:konstnarsnamnden-internationellt-kulturutbyte"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:kulturradet-internationellt-resebidrag-musik"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:majblomman-bidrag-barn"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:pm-aldreforsorjningsstod"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:pm-bostadstillagg"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:region-glasogonbidrag-barn"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "relaterad",
-   "to": "stod:region-hogkostnadsskydd-vard"
-  },
-  {
-   "from": "stod:csn-hemutrustningslan",
-   "rel": "riktar_sig_till",
-   "to": "malgrupp:privatpersoner"
   },
   {
    "from": "stod:csn-inackorderingstillagg",

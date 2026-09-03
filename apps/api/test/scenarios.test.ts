@@ -278,14 +278,13 @@ describe('scenariomatris — personliga situationer', () => {
     expect(qs.some((q) => q.includes('buss och tåg'))).toBe(true);
   });
 
-  it('15. Nyanländspåret: en gemensam upptäcktsfråga avgör etableringsersättning och hemutrustningslån', () => {
+  it('15. Nyanländspåret: upptäcktsfrågan om uppehållstillstånd avgör etableringsersättningen', () => {
     const r = run(personalFacts({ household: 'alone', children: 'no', age: '29-65', employment: 'unemployed', income: 'under15', savings: true, paysHousing: true }));
-    // Båda stöden väntar på samma gate-fråga — en fråga, två stöd avgjorda.
+    // Stödet väntar på gate-frågan om uppehållstillstånd. (Hemutrustningslånet
+    // avskaffades 2022-01-01 och togs bort ur kunskapsbasen 2026-09-03.)
     expect(r.get('af-etableringsersattning')!.eligibilityStatus).toBe('unknown');
-    expect(r.get('csn-hemutrustningslan')!.eligibilityStatus).toBe('unknown');
     const gateQ = 'Har du under de senaste åren fått uppehållstillstånd i Sverige, t.ex. som skyddsbehövande eller som anhörig?';
     expect(r.get('af-etableringsersattning')!.missingFacts.some((f) => f.question === gateQ)).toBe(true);
-    expect(r.get('csn-hemutrustningslan')!.missingFacts.some((f) => f.question === gateQ)).toBe(true);
 
     // Studiestartsstödet är också en arbetslöshetsfråga — öppet med följdfrågor.
     expect(r.get('csn-studiestartsstod')!.eligibilityStatus).toBe('unknown');

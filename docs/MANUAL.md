@@ -113,7 +113,7 @@ katalogen är därmed också webbens funktionskarta.
 | `POST /v1/projects/:id/document-pack` | Köp dokumentpaket i dokumentstudion (samtyckeskrav + 503-ärlighet som övriga köp). |
 | `POST /v1/projects/:id/funding-stack` | Bygg finansieringsplan av valda stöd; kontrollerar kombinerbarhet och dubbelfinansiering. |
 | `POST /v1/projects/:id/generated-documents` | Generera ett dokument ur en mall: svar valideras, förifylls ur projektet och renderas deterministiskt. |
-| `POST /v1/projects/:id/matches` | Räkna om matchningarna mot alla 85 stöd (idempotent, deterministisk). |
+| `POST /v1/projects/:id/matches` | Räkna om matchningarna mot alla 84 stöd (idempotent, deterministisk). |
 
 ### Stödkatalogen
 
@@ -257,7 +257,7 @@ Vaktade övergångar (kan aldrig forceras via API:t):
 
 ## 7. Kunskapsbasen i siffror
 
-85 stöd från 36 finansiärer, 71 ansökningsscheman, 38 källor (kurerade 2026-08-13).
+84 stöd från 36 finansiärer, 70 ansökningsscheman, 38 källor (kurerade 2026-08-13).
 Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 
 | Finansiär | Stöd |
@@ -265,7 +265,7 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | Allmänna arvsfonden | 1 |
 | Arbetsförmedlingen | 5 |
 | Boverket | 1 |
-| CSN — Centrala studiestödsnämnden | 6 |
+| CSN — Centrala studiestödsnämnden | 5 |
 | Din a-kassa | 1 |
 | Din kommun | 4 |
 | Din region | 3 |
@@ -399,7 +399,7 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | `npm run dev:api` | API:t i utvecklingsläge (läser .env i roten; sätt PORT=3100). |
 | `npm run dev:web` | Vite-devservern på :5173, proxar /v1 till API_URL (default :3100). |
 | `npm run db:migrate` | Applicerar migreringarna i apps/api/drizzle/ (idempotent). |
-| `npm run db:seed` | Seedar kunskapsbasen (85 stöd; idempotent, append-only regelversioner). |
+| `npm run db:seed` | Seedar kunskapsbasen (84 stöd; idempotent, append-only regelversioner). |
 | `npm run demo:build` | Bygger den fristående demon → artifacts/demo/demo.html (ingen databas). |
 | `npm run demo:check` | Demons 10 webbläsarkontroller (kräver Chromium + byggd demo). |
 | `npm run verify:sim30` | 30 simulerade användare genom hela flödet — kräver körande API (:3100, mock på). |

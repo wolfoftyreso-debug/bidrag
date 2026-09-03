@@ -434,7 +434,7 @@
    "household_or_organization_context": "familj eller ensamhushåll",
    "financial_context": "mycket stram ekonomi",
    "known_information": "att Arbetsförmedlingen är ingången",
-   "unknown_information": "etableringsersättning + tillägg, hemutrustningslån, CSN för sfi-vidare",
+   "unknown_information": "etableringsersättning + tillägg, CSN för sfi-vidare",
    "system_knowledge": "mycket låg — nytt system",
    "digital_ability": "varierande",
    "language_needs": "lätt svenska eller engelska; ordlista",
@@ -444,18 +444,15 @@
    "trust_barriers": "rädsla att fel påverkar tillstånd",
    "typical_search_language": [
     "etableringsersättning hur mycket",
-    "bidrag ny i sverige",
-    "hemutrustningslån"
+    "bidrag ny i sverige"
    ],
    "first_query": "vilka bidrag kan man få som ny i sverige",
    "follow_up_queries": [
     "hur ansöker man om etableringsersättning",
-    "vad är hemutrustningslån",
     "får man studera med ersättning"
    ],
    "likely_answer_entities": [
     "af-etableringsersattning",
-    "csn-hemutrustningslan",
     "kommun-forsorjningsstod"
    ],
    "highest_value_content": "hela etableringskedjan i EN vy på lätt svenska",

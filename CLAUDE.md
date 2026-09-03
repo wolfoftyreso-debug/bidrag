@@ -28,7 +28,7 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
   dokumentmallar + rendering, deterministisk ansökningsgranskning
   (`docs/APPLICATION-INTELLIGENCE.md`). 100 enhetstester.
 - **`apps/api`** — Fastify 5 + Drizzle + PostgreSQL 16, modulär monolit:
-  auth/tenancy, kunskapsgraf (85 stöd, 36 finansiärer, 71 ansökningsscheman,
+  auth/tenancy, kunskapsgraf (84 stöd, 36 finansiärer, 70 ansökningsscheman,
   38 källor), matchning, ansökningar, dokumentvalv, betalningar (Stripe Checkout
   + Swish Handel-adaptrar + mock), kvitton med moms, GDPR-självservice, kurators-API,
   bakgrundsjobb. 225 integrationstester.
@@ -40,7 +40,7 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
 - **Deploy-beredskap** — Vercel serverless-ingång (`api/index.ts`),
   `vercel.json` (bygge, SPA-routning, 5 cron-jobb), `deploy/bootstrap.sql`,
   Dockerfile + `deploy/k8s/` som alternativ väg, CI grön.
-- **Publik SEO-yta** — `tools/genseo.mjs` genererar 170 statiska sidor ur seeden
+- **Publik SEO-yta** — `tools/genseo.mjs` genererar 169 statiska sidor ur seeden
   vid varje Vercel-bygge: `/bidrag/` + 4 målgruppshubbar + 4 klusterhubbar + en
   entity-sida per stöd + `/finansiarer/` + Query Pages + 11 språklandningssidor +
   **situationslagret** (`/situationer/`) + sitemap + robots. QA-crawlas av
@@ -263,11 +263,16 @@ miljön och handboken fördjupas då skärm för skärm.
    webbläsaren med mallar filtrerade per stödtyp, förifyllnad ur utredningen,
    validering och dokumentet som text + kopiera-knapp. Vakt:
    `demo/checks/forberedcheck.mjs`. **F-SPECIFIK 2026-08-28**: förberedelsen
-   drivs av stödets EGET kurerade ansökningsschema (71/85 stöd, 473 fält) med
+   drivs av stödets EGET kurerade ansökningsschema (70/84 stöd, 467 fält) med
    myndighetens sektioner, gränser och vägledning, plus ansökningssätt och
-   kurerad underlagslista (37/85). Stöd utan schema faller tillbaka på de
-   generiska mallarna och säger att de är generella. Kvar: kurera schema för
-   de 14 återstående stöden och underlagslistor för de 48 som saknar.
+   kurerad underlagslista (57/84). Stöd utan schema faller tillbaka på de
+   generiska mallarna och säger att de är generella. **Kureringspass 7
+   (2026-09-03, `docs/reports/KURERING_2026-09-03.md`)**: underlagslistor
+   37→57/84 ur myndigheternas egna "så ansöker du"-sidor; hemutrustningslånet
+   (avskaffat 2022) borttaget. De 13 stöd som saknar schema gör det medvetet:
+   4 kräver ingen ansökan, 1 prövas inom pensionsansökan, 8 är inloggade
+   e-tjänster/arbetsgivarvägar vars fält inte publiceras — inget hittas på.
+   Kvar: de 27 stöd vars källa inte listar underlag (kräver kuratorskontakt).
 3. **De 25 bidragsklustren färdiga sökfråga→myndighetsöverlämning +
    belastningstest** — produktbeviset (`docs/LAUNCH_DEMAND_INTELLIGENCE.md`
    §8) och det som stänger GATE 0:s CONTENT-RED (`docs/GATE0_REPORT.md` —

@@ -15,7 +15,7 @@ Google själv sätter för structured data: markup som beskriver osynligt eller
 påhittat innehåll är ett policybrott, inte en finess.
 
 Vakten `tools/schemacheck-seo.mjs` (i verify och `npm run seo:check`) kontrollerar
-båda leden på 85 stödsidor, 36 aktörssidor och 12 situationssidor. Per stödsida: att provider-noden finns och heter det seeden säger,
+båda leden på 84 stödsidor, 36 aktörssidor och 12 situationssidor. Per stödsida: att provider-noden finns och heter det seeden säger,
 att `description` ÄR seedens `summary`, att `sameAs` pekar på seedens `sourceUrl`,
 att myndighetens namn faktiskt förekommer i sidans text — och att en
 ansökningsperiod finns i markupen **om och endast om** seeden har kurerade datum.
@@ -33,7 +33,7 @@ ställer står ordagrant både i seeden och i sidans synliga text.
 Och för varje `ItemList`, oavsett sida: att `numberOfItems`
 stämmer och att **varje post faktiskt länkas i sidans HTML**.
 
-## Vad som emitteras (uppmätt 2026-08-30, 170 sidor)
+## Vad som emitteras (uppmätt 2026-08-30, 169 sidor)
 
 | @type | Antal | Var |
 |---|---|---|
@@ -41,8 +41,8 @@ stämmer och att **varje post faktiskt länkas i sidans HTML**.
 | `GovernmentOrganization` | 103 | myndighet/kommun/region/EU-organ som utgivare |
 | `GovernmentService` | 76 | stödet, när utgivaren är offentlig |
 | `Service` | 9 | stödet, när utgivaren är stiftelse eller förening |
-| `WebSite` / `WebApplication` / `BreadcrumbList` | 170 vardera | hela ytan |
-| `WebPage` | 170 | varav 19 multi-typade `['WebPage','CollectionPage']` |
+| `WebSite` / `WebApplication` / `BreadcrumbList` | 169 vardera | hela ytan |
+| `WebPage` | 169 | varav 19 multi-typade `['WebPage','CollectionPage']` |
 | `FAQPage` | 102 | sidor med synliga frågor och svar |
 | `ItemList` | 59 | varje synlig lista av stöd, aktörer eller situationer |
 | `Dataset` | 1 | företagsbidragsindexet |
@@ -71,7 +71,7 @@ Bidragskoll (Organization)
           │                      ├── audience   = applicantTypes ur seeden
           │                      ├── sameAs     = officiell källa (sourceUrl)
           │                      ├── serviceUrl = ansökningssidan
-          │                      └── hoursAvailable = ENDAST kurerade datum (3 av 85)
+          │                      └── hoursAvailable = ENDAST kurerade datum (3 av 84)
           │                                           │
           └── /finansiarer/<aktör>/  (WebPage)        │
                  ├── about ──► Aktören ◄──────────────┘  SAMMA @id
@@ -82,7 +82,7 @@ Bidragskoll (Organization)
 ```
 
 Det är delningen av `@id` (`#aktor-<key>`) som gör det till en graf i stället
-för 85 lösta påståenden: `provider` på en stödsida och entiteten på
+för 84 lösta påståenden: `provider` på en stödsida och entiteten på
 finansiärssidan är **samma nod**, och den noden har en egen sida på sajten.
 
 ## Medvetna avgränsningar
@@ -100,7 +100,7 @@ finansiärssidan är **samma nod**, och den noden har en egen sida på sajten.
 - **Ingen `Article`/`NewsArticle`/`BlogPosting`.** Sidorna är referens- och
   entitetssidor, inte artiklar. Att stämpla dem som artiklar vore samma sorts
   osanning som en påhittad författare. Vakten fäller det aktivt.
-- **Ansökningsperiod på 3 av 85 stöd.** Resten har `deadlineModel`
+- **Ansökningsperiod på 3 av 84 stöd.** Resten har `deadlineModel`
   (`rolling`, `recurring`, `one_time`, `upcoming_round`) men inga kurerade
   datum. Hellre tyst än ett uppdiktat ansökningsfönster.
 - **`datePublished` saknas.** Sätts när sidorna faktiskt publicerats, alltså

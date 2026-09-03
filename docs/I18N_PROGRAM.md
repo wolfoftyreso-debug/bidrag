@@ -113,17 +113,17 @@ språken, inte bara att minnet är internt komplett:
 
 | Innehållstyp | Översatt | Andel |
 |---|---|---|
-| `summary` — stödets sammanfattning | 85/85 | **100 %** |
-| `criteria.intakeQuestion` — intagsfråga | 179/179 | **100 %** |
-| `criteria.description` — villkorstext | 348/348 | **100 %** |
-| `applicationMethod` — så ansöker du | 85/85 | **100 %** |
-| `evidence.description` — underlag | 74/74 | **100 %** |
+| `summary` — stödets sammanfattning | 84/84 | **100 %** |
+| `criteria.intakeQuestion` — intagsfråga | 177/177 | **100 %** |
+| `criteria.description` — villkorstext | 344/344 | **100 %** |
+| `applicationMethod` — så ansöker du | 84/84 | **100 %** |
+| `evidence.description` — underlag | 105/105 | **100 %** |
 | `amountNote` — belopp | 7/7 | **100 %** |
-| `schema.title` — formulärets titel | 71/71 | **100 %** |
-| `schema.sectionTitle` — formulärsektion | 246/246 | **100 %** |
-| `schema.fieldLabel` — fältetikett | 473/473 | **100 %** |
-| `schema.fieldGuidance` — fältvägledning | 157/157 | **100 %** |
-| **Totalt** | **1725/1725** | **100 %** |
+| `schema.title` — formulärets titel | 70/70 | **100 %** |
+| `schema.sectionTitle` — formulärsektion | 243/243 | **100 %** |
+| `schema.fieldLabel` — fältetikett | 467/467 | **100 %** |
+| `schema.fieldGuidance` — fältvägledning | 155/155 | **100 %** |
+| **Totalt** | **1736/1736** | **100 %** |
 
 Före fas D var siffran 15 % (266/1725): fas B levererade upptäckten, medan
 allt som kurerats in efteråt — F-SPECIFIKs ansökningsscheman, underlags-

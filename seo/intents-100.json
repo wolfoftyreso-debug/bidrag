@@ -1277,20 +1277,6 @@
    "grund": "Entity i kunskapsbasen (seed); kanonisk sida finns — kvalificeras mot gold standard i F1/F4"
   },
   {
-   "id": "INT-092",
-   "amne": "CSN — Hemutrustningslån för nyanlända",
-   "typ": "entity",
-   "cluster_id": null,
-   "leader": "A",
-   "node": "/bidrag/csn-hemutrustningslan/",
-   "term": "hemutrustningslån för nyanlända",
-   "myndighet": "csn",
-   "folkterm": null,
-   "problemfras": null,
-   "prio": 3,
-   "grund": "Entity i kunskapsbasen (seed); kanonisk sida finns — kvalificeras mot gold standard i F1/F4"
-  },
-  {
    "id": "INT-093",
    "amne": "CSN — Studiestartsstöd för arbetslösa med kort utbildning",
    "typ": "entity",

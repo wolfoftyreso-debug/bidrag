@@ -69,7 +69,7 @@ openssl rand -hex 24   # → CRON_SECRET
 git clone https://github.com/wolfoftyreso-debug/bidragskoll.git && cd bidragskoll
 npm ci
 DATABASE_URL="<DIRECT_DATABASE_URL>" npm run db:migrate   # ALLTID direktanslutningen (5432)
-DATABASE_URL="<DIRECT_DATABASE_URL>" npm run db:seed      # 85 stöd, 36 finansiärer, 71 scheman, 38 källor
+DATABASE_URL="<DIRECT_DATABASE_URL>" npm run db:seed      # 84 stöd, 36 finansiärer, 70 scheman, 38 källor
 ```
 
 Alternativ utan Node på din dator: kör `deploy/bootstrap.sql` mot den tomma

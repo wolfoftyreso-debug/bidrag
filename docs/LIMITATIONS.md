@@ -118,7 +118,7 @@ PRIVACY.md).
 
 ## 8. Coverage is wave-1 (expanded)
 
-85 curated opportunities across 36 financiers — state agencies, foundations,
+84 curated opportunities across 36 financiers — state agencies, foundations,
 the sports federation, EU programmes, and personal entitlements
 (Försäkringskassan, CSN, Pensionsmyndigheten, municipal social services) —
 exercise the data patterns: recurring and rolling deadlines, upcoming rounds,
@@ -255,7 +255,7 @@ now understood as mandatory (Art. 9 at scale), is a launch condition.
 människa") — the previous blanket `human_curated` stamp was untrue and has
 been removed. The curator flow in admin is the only path to `human_curated`/
 `human_verified`. The demo says the same thing. **Remaining**: a human must
-actually review all 85 opportunities against live sources before launch;
+actually review all 84 opportunities against live sources before launch;
 until then every rule value (amounts, thresholds, dates) is AI-knowledge,
 not verified fact.
 

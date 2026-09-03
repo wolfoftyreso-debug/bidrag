@@ -78,11 +78,11 @@ exakt vad steg 1 och 3 åtgärdar.
    efter laddningen:
 
    ```sql
-   select (select count(*) from public.funding_opportunities)  -- 85
+   select (select count(*) from public.funding_opportunities)  -- 84
         , (select count(*) from public.funding_authorities)    -- 36
-        , (select count(*) from public.application_schemas)    -- 71
+        , (select count(*) from public.application_schemas)    -- 70
         , (select count(*) from public.sources)                -- 37
-        , (select count(*) from public.kb_translations)        -- 11410
+        , (select count(*) from public.kb_translations)        -- 11510
         , (select count(*) from drizzle.__drizzle_migrations); -- 15
    ```
 
@@ -118,7 +118,7 @@ roll:
 ```sql
 select current_user,
        (select count(*) from public.funding_opportunities) as syns;
--- syns måste vara 85. Är den 0 är rollen inte ägare — ladda om bootstrap
+-- syns måste vara 84. Är den 0 är rollen inte ägare — ladda om bootstrap
 -- med rätt roll, eller kör: alter table <tabell> owner to <körtidsroll>;
 ```
 
