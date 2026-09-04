@@ -835,6 +835,10 @@ const PAA_BY_SLUG = {
   'pm-bostadstillagg': ['bostadstillägg'],
   'fk-underhallsstod': ['underhållsstöd'],
   'fk-aktivitetsstod': ['aktivitetsstöd'],
+  // 2026-09-03: tre set till — termerna ägs entydigt av en entity-sida vardera.
+  'fk-barnbidrag': ['barnbidrag'],
+  'fk-sjukersattning': ['sjukersättning'],
+  'csn-studiemedel': ['studiemedel'],
 };
 // Kurerade extra-frågor (sanna, allmänt kända förhållanden — inte statistik).
 const PAA_EXTRA = {};

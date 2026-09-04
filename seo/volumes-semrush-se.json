@@ -1,12 +1,18 @@
 {
-  "_kontrakt": "Källmärkt volymsnapshot från Semrush (regional databas 'se'). Detta är den VERKLIGA källa som seo/keywords.json:s ärlighetskontrakt pekar ut ('null tills verklig källa finns … Semrush …'). tools/seokeywords.mjs joinar volume/cpc/difficulty härifrån på normaliserad nyckel och stämplar volume_source/difficulty_source = 'semrush:se:<hämtad>'. Curerad intent i keywords.json rörs INTE — Semrush intent_code lagras här enbart som referens. Uppdatera genom att köra om Semrush-rapporterna phrase_these/phrase_questions och ersätta 'hamtad' + raderna; hitta aldrig på en volym för hand. intent_code: 0=kommersiell, 1=informationell, 2=navigerande, 3=transaktionell, null=ej klassad.",
+  "_kontrakt": "Källmärkt volymsnapshot från Semrush (regional databas 'se'). Detta är den VERKLIGA källa som seo/keywords.json:s ärlighetskontrakt pekar ut ('null tills verklig källa finns … Semrush …'). tools/seokeywords.mjs joinar volume/cpc/difficulty härifrån på normaliserad nyckel och stämplar volume_source/difficulty_source = 'semrush:se:<hämtad>'. Curerad intent i keywords.json rörs INTE — Semrush intent_code lagras här enbart som referens. Uppdatera genom att köra om Semrush-rapporterna phrase_these/phrase_questions och ersätta 'hamtad' + raderna; hitta aldrig på en volym för hand. intent_code: 0=kommersiell, 1=informationell, 2=navigerande, 3=transaktionell, null=ej klassad. Rader hämtade efter första snapshotet bär eget fält hamtad; övriga rader är från 2026-08-28. Sektionen konkurrenter (domänmetrik, historik, keyword gap) är referens för docs/SEO_COMPETITORS.md — inget verktyg läser den.",
   "source": "Semrush",
   "reports": [
     "phrase_these",
-    "phrase_questions"
+    "phrase_questions",
+    "phrase_organic",
+    "domain_rank",
+    "domain_rank_history",
+    "backlinks_overview",
+    "domain_organic_organic",
+    "domain_domains"
   ],
   "database": "se",
-  "hamtad": "2026-08-28",
+  "hamtad": "2026-09-03",
   "volumes": [
     {
       "keyword": "a-kassa",
@@ -25,6 +31,16 @@
       "competition": 0.05,
       "difficulty": 0,
       "intent_code": null
+    },
+    {
+      "keyword": "aktivitetsersättning vid nedsatt arbetsförmåga",
+      "normalized_keyword": "aktivitetsersättning vid nedsatt arbetsförmåga",
+      "volume": 210,
+      "cpc": 0.0,
+      "competition": 0.0,
+      "difficulty": 28,
+      "intent_code": 1,
+      "hamtad": "2026-09-03"
     },
     {
       "keyword": "aktivitetsstöd",
@@ -63,6 +79,16 @@
       "intent_code": 2
     },
     {
+      "keyword": "allmänt tandvårdsbidrag (atb)",
+      "normalized_keyword": "allmänt tandvårdsbidrag atb",
+      "volume": 20,
+      "cpc": 0.0,
+      "competition": 0.14,
+      "difficulty": 0,
+      "intent_code": null,
+      "hamtad": "2026-09-03"
+    },
+    {
       "keyword": "anställningsstöd",
       "normalized_keyword": "anställningsstöd",
       "volume": 480,
@@ -70,6 +96,36 @@
       "competition": 0.02,
       "difficulty": 23,
       "intent_code": 2
+    },
+    {
+      "keyword": "arbetsförmedlingen nystartsjobb",
+      "normalized_keyword": "arbetsförmedlingen nystartsjobb",
+      "volume": 880,
+      "cpc": 6.31,
+      "competition": 0.02,
+      "difficulty": 26,
+      "intent_code": 2,
+      "hamtad": "2026-09-03"
+    },
+    {
+      "keyword": "arbetsförmedlingen stöd till start av näringsverksamhet",
+      "normalized_keyword": "arbetsförmedlingen stöd till start av näringsverksamhet",
+      "volume": 0,
+      "cpc": 0.0,
+      "competition": 0.0,
+      "difficulty": 0,
+      "intent_code": null,
+      "hamtad": "2026-09-03"
+    },
+    {
+      "keyword": "arbetslöshetsersättning (a-kassa)",
+      "normalized_keyword": "arbetslöshetsersättning a kassa",
+      "volume": 20,
+      "cpc": 0.97,
+      "competition": 0.42,
+      "difficulty": 0,
+      "intent_code": null,
+      "hamtad": "2026-09-03"
     },
     {
       "keyword": "arbetsstipendium",
@@ -648,6 +704,16 @@
       "intent_code": 1
     },
     {
+      "keyword": "etableringsersättning för nyanlända",
+      "normalized_keyword": "etableringsersättning för nyanlända",
+      "volume": 30,
+      "cpc": 0.0,
+      "competition": 0.33,
+      "difficulty": 21,
+      "intent_code": 1,
+      "hamtad": "2026-09-03"
+    },
+    {
       "keyword": "eu bidrag",
       "normalized_keyword": "eu bidrag",
       "volume": 260,
@@ -774,6 +840,107 @@
       "intent_code": 1
     },
     {
+      "keyword": "försäkringskassan aktivitetsersättning vid nedsatt arbetsförmåga",
+      "normalized_keyword": "försäkringskassan aktivitetsersättning vid nedsatt arbetsförmåga",
+      "volume": 0,
+      "cpc": 0.0,
+      "competition": 0.0,
+      "difficulty": 0,
+      "intent_code": null,
+      "hamtad": "2026-09-03"
+    },
+    {
+      "keyword": "försäkringskassan aktivitetsstöd",
+      "normalized_keyword": "försäkringskassan aktivitetsstöd",
+      "volume": 210,
+      "cpc": 0.0,
+      "competition": 0.33,
+      "difficulty": 47,
+      "intent_code": 1,
+      "hamtad": "2026-09-03"
+    },
+    {
+      "keyword": "försäkringskassan barnbidrag",
+      "normalized_keyword": "försäkringskassan barnbidrag",
+      "volume": 720,
+      "cpc": 0.0,
+      "competition": 0.33,
+      "difficulty": 29,
+      "intent_code": 2,
+      "hamtad": "2026-09-03"
+    },
+    {
+      "keyword": "försäkringskassan bostadsbidrag till barnfamiljer",
+      "normalized_keyword": "försäkringskassan bostadsbidrag till barnfamiljer",
+      "volume": 10,
+      "cpc": 0.0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null,
+      "hamtad": "2026-09-03"
+    },
+    {
+      "keyword": "försäkringskassan flerbarnstillägg",
+      "normalized_keyword": "försäkringskassan flerbarnstillägg",
+      "volume": 30,
+      "cpc": 0.0,
+      "competition": 0.33,
+      "difficulty": 33,
+      "intent_code": 2,
+      "hamtad": "2026-09-03"
+    },
+    {
+      "keyword": "försäkringskassan föräldrapenning",
+      "normalized_keyword": "försäkringskassan föräldrapenning",
+      "volume": 2900,
+      "cpc": 0.83,
+      "competition": 0.02,
+      "difficulty": 36,
+      "intent_code": 2,
+      "hamtad": "2026-09-03"
+    },
+    {
+      "keyword": "försäkringskassan närståendepenning",
+      "normalized_keyword": "försäkringskassan närståendepenning",
+      "volume": 390,
+      "cpc": 0.0,
+      "competition": 0.33,
+      "difficulty": 36,
+      "intent_code": 2,
+      "hamtad": "2026-09-03"
+    },
+    {
+      "keyword": "försäkringskassan sjukersättning",
+      "normalized_keyword": "försäkringskassan sjukersättning",
+      "volume": 1000,
+      "cpc": 0.67,
+      "competition": 0.01,
+      "difficulty": 49,
+      "intent_code": 1,
+      "intent_codes_raw": "1,2",
+      "hamtad": "2026-09-03"
+    },
+    {
+      "keyword": "försäkringskassan sjukpenning",
+      "normalized_keyword": "försäkringskassan sjukpenning",
+      "volume": 720,
+      "cpc": 0.45,
+      "competition": 0.33,
+      "difficulty": 45,
+      "intent_code": 2,
+      "hamtad": "2026-09-03"
+    },
+    {
+      "keyword": "försäkringskassan underhållsstöd",
+      "normalized_keyword": "försäkringskassan underhållsstöd",
+      "volume": 1900,
+      "cpc": 0.0,
+      "competition": 0.33,
+      "difficulty": 27,
+      "intent_code": 1,
+      "hamtad": "2026-09-03"
+    },
+    {
       "keyword": "försörjningsstöd",
       "normalized_keyword": "försörjningsstöd",
       "volume": 18100,
@@ -882,6 +1049,16 @@
       "intent_code": 1
     },
     {
+      "keyword": "högkostnadsskydd för sjukvård",
+      "normalized_keyword": "högkostnadsskydd för sjukvård",
+      "volume": 10,
+      "cpc": 0.0,
+      "competition": 0.0,
+      "difficulty": 0,
+      "intent_code": null,
+      "hamtad": "2026-09-03"
+    },
+    {
       "keyword": "inackorderingstillägg",
       "normalized_keyword": "inackorderingstillägg",
       "volume": 1600,
@@ -925,6 +1102,16 @@
       "competition": 0.01,
       "difficulty": 13,
       "intent_code": 1
+    },
+    {
+      "keyword": "investeringsbidrag till allmänna samlingslokaler",
+      "normalized_keyword": "investeringsbidrag till allmänna samlingslokaler",
+      "volume": 0,
+      "cpc": 0.0,
+      "competition": 0.0,
+      "difficulty": 0,
+      "intent_code": null,
+      "hamtad": "2026-09-03"
     },
     {
       "keyword": "investeringsstöd",
@@ -997,6 +1184,16 @@
       "competition": 0.02,
       "difficulty": 0,
       "intent_code": null
+    },
+    {
+      "keyword": "konstnärsnämnden arbetsstipendium",
+      "normalized_keyword": "konstnärsnämnden arbetsstipendium",
+      "volume": 320,
+      "cpc": 0.0,
+      "competition": 0.33,
+      "difficulty": 33,
+      "intent_code": 2,
+      "hamtad": "2026-09-03"
     },
     {
       "keyword": "konstnärsnämnden kulturbryggan",
@@ -1107,6 +1304,16 @@
       "intent_code": 2
     },
     {
+      "keyword": "lokala naturvårdssatsningen (lona)",
+      "normalized_keyword": "lokala naturvårdssatsningen lona",
+      "volume": 0,
+      "cpc": 0.0,
+      "competition": 0.0,
+      "difficulty": 0,
+      "intent_code": null,
+      "hamtad": "2026-09-03"
+    },
+    {
       "keyword": "lönebidrag",
       "normalized_keyword": "lönebidrag",
       "volume": 2400,
@@ -1204,6 +1411,36 @@
       "competition": 0.08,
       "difficulty": 0,
       "intent_code": null
+    },
+    {
+      "keyword": "pensionsmyndigheten bostadstillägg för pensionärer",
+      "normalized_keyword": "pensionsmyndigheten bostadstillägg för pensionärer",
+      "volume": 20,
+      "cpc": 0.0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null,
+      "hamtad": "2026-09-03"
+    },
+    {
+      "keyword": "pensionsmyndigheten garantipension",
+      "normalized_keyword": "pensionsmyndigheten garantipension",
+      "volume": 20,
+      "cpc": 0.0,
+      "competition": 0.33,
+      "difficulty": 0,
+      "intent_code": null,
+      "hamtad": "2026-09-03"
+    },
+    {
+      "keyword": "pensionsmyndigheten äldreförsörjningsstöd",
+      "normalized_keyword": "pensionsmyndigheten äldreförsörjningsstöd",
+      "volume": 20,
+      "cpc": 0.0,
+      "competition": 0.02,
+      "difficulty": 0,
+      "intent_code": null,
+      "hamtad": "2026-09-03"
     },
     {
       "keyword": "projektbidrag",
@@ -1467,6 +1704,16 @@
       "intent_code": null
     },
     {
+      "keyword": "stöd till start av näringsverksamhet",
+      "normalized_keyword": "stöd till start av näringsverksamhet",
+      "volume": 110,
+      "cpc": 0.89,
+      "competition": 0.34,
+      "difficulty": 25,
+      "intent_code": 1,
+      "hamtad": "2026-09-03"
+    },
+    {
       "keyword": "svenska bidrag",
       "normalized_keyword": "svenska bidrag",
       "volume": 30,
@@ -1474,6 +1721,16 @@
       "competition": 0.33,
       "difficulty": 0,
       "intent_code": null
+    },
+    {
+      "keyword": "svenska institutet creative force",
+      "normalized_keyword": "svenska institutet creative force",
+      "volume": 0,
+      "cpc": 0.0,
+      "competition": 0.0,
+      "difficulty": 0,
+      "intent_code": null,
+      "hamtad": "2026-09-03"
     },
     {
       "keyword": "sök bidrag",
@@ -1519,6 +1776,16 @@
       "competition": 0.14,
       "difficulty": 30,
       "intent_code": 1
+    },
+    {
+      "keyword": "tillfällig föräldrapenning (vab)",
+      "normalized_keyword": "tillfällig föräldrapenning vab",
+      "volume": 170,
+      "cpc": 0.0,
+      "competition": 0.33,
+      "difficulty": 21,
+      "intent_code": 1,
+      "hamtad": "2026-09-03"
     },
     {
       "keyword": "underhållsbidrag",
@@ -1630,7 +1897,7 @@
     }
   ],
   "questions": {
-    "_beskrivning": "Verkliga frågeformuleringar (People-Also-Ask-typ) från Semrush phrase_questions, database=se, sorterade på volym. Underlag för svarsobjekten/FAQPage på entity-sidorna — använd de faktiska formuleringarna, hitta aldrig på en fråga eller dess volym.",
+    "_beskrivning": "Verkliga frågeformuleringar (People-Also-Ask-typ) från Semrush phrase_questions, database=se, sorterade på volym. Underlag för svarsobjekten/FAQPage på entity-sidorna — använd de faktiska formuleringarna, hitta aldrig på en fråga eller dess volym. Frågeset hämtade 2026-09-03 (barnbidrag, bidrag, sjukersättning, studiemedel + komplettering av försörjningsstöd) bär hamtad per rad och intent_code null — intent begärdes inte i den körningen. \"bidrag\"-setet är filtrerat: Eurovision-frågorna (annan betydelse av ordet) är bortsorterade och listas inte.",
     "bostadsbidrag": [
       {
         "question": "vem kan få bostadsbidrag",
@@ -1783,6 +2050,13 @@
         "volume": 20,
         "difficulty": 0,
         "intent_code": null
+      },
+      {
+        "question": "vem har rätt till försörjningsstöd",
+        "volume": 10,
+        "difficulty": 0,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
       }
     ],
     "ekonomiskt bistånd": [
@@ -2050,25 +2324,680 @@
         "difficulty": 0,
         "intent_code": null
       }
+    ],
+    "barnbidrag": [
+      {
+        "question": "hur länge får man barnbidrag",
+        "volume": 1000,
+        "difficulty": 18,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur mycket barnbidrag får man",
+        "volume": 880,
+        "difficulty": 23,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur mycket får man i barnbidrag",
+        "volume": 880,
+        "difficulty": 23,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "när får man barnbidrag",
+        "volume": 880,
+        "difficulty": 18,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "vad är barnbidrag",
+        "volume": 390,
+        "difficulty": 25,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur mycket barnbidrag för 2 barn",
+        "volume": 210,
+        "difficulty": 20,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "när slutar man få barnbidrag",
+        "volume": 210,
+        "difficulty": 21,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur mycket barnbidrag för 3 barn",
+        "volume": 140,
+        "difficulty": 18,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "vilket datum får man barnbidrag",
+        "volume": 110,
+        "difficulty": 21,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "vem betalar ut barnbidrag",
+        "volume": 90,
+        "difficulty": 18,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "när får man barnbidrag nyfödd",
+        "volume": 70,
+        "difficulty": 19,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      }
+    ],
+    "bidrag": [
+      {
+        "question": "vad är bidrag",
+        "volume": 210,
+        "difficulty": 28,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur många lever på bidrag i sverige",
+        "volume": 170,
+        "difficulty": 22,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur mycket bidrag får en invandrare",
+        "volume": 140,
+        "difficulty": 17,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "vilka bidrag kan man få",
+        "volume": 140,
+        "difficulty": 23,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur mycket bidrag kan man få",
+        "volume": 70,
+        "difficulty": 32,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur mycket kan man få i bidrag",
+        "volume": 40,
+        "difficulty": 31,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      }
+    ],
+    "sjukersättning": [
+      {
+        "question": "vad krävs för att få permanent sjukersättning",
+        "volume": 880,
+        "difficulty": 28,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "vilka diagnoser ger rätt till sjukersättning",
+        "volume": 590,
+        "difficulty": 40,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "vad är sjukersättning",
+        "volume": 260,
+        "difficulty": 25,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur länge kan man få sjukersättning",
+        "volume": 140,
+        "difficulty": 20,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur mycket får man i sjukersättning",
+        "volume": 140,
+        "difficulty": 30,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur räkna ut sjukersättning",
+        "volume": 110,
+        "difficulty": 22,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur räknas sjukersättning ut",
+        "volume": 110,
+        "difficulty": 24,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur mycket är sjukersättning",
+        "volume": 90,
+        "difficulty": 38,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur beräknas sjukersättning",
+        "volume": 70,
+        "difficulty": 30,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      }
+    ],
+    "studiemedel": [
+      {
+        "question": "vad är studiemedel",
+        "volume": 170,
+        "difficulty": 34,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur mycket studiemedel får man",
+        "volume": 110,
+        "difficulty": 28,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur mycket studiemedel",
+        "volume": 40,
+        "difficulty": 28,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur länge får man studiemedel",
+        "volume": 30,
+        "difficulty": 0,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur mycket studiemedel kan man få",
+        "volume": 30,
+        "difficulty": 21,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      },
+      {
+        "question": "hur mycket är studiemedel",
+        "volume": 30,
+        "difficulty": 27,
+        "intent_code": null,
+        "hamtad": "2026-09-03"
+      }
     ]
   },
   "serp": {
     "bostadsbidrag": {
-      "hamtad": "2026-08-28",
+      "hamtad": "2026-09-03",
       "toppdomaner": [
-        "forsakringskassan.se (3 URL:er, inkl. räkna-pa-bostadsbidrag — kalkylatorn rankar)",
-        "norden.org",
-        "pensionsmyndigheten.se",
-        "hyresgastforeningen.se",
-        "dorotea.se (kommun)",
-        "lendo.se (kommersiell guide — icke-myndighet rankar topp-10)",
-        "riksdagen.se"
+        "forsakringskassan.se ×4 (inkl. räkna-på-bostadsbidrag #2, bostadsbidrag unga #5, ansök barnfamiljer #9)",
+        "norden.org #3",
+        "pensionsmyndigheten.se #4",
+        "hyresgastforeningen.se #6",
+        "dorotea.se #7 (kommun)",
+        "lendo.se #8 (kommersiell guide)",
+        "riksdagen.se #10"
       ],
-      "notering": "Lendos guide topp-10 = beviset att oberoende aktörer kan ranka; ANGRIP-RUNT-strategin är realistisk. FK:s kalkylator topp-3 + räkna ut bostadsbidrag (1300/mån, KD43) = free-tool-SEO-belägg."
+      "notering": "Oförändrad bild mot 2026-08-28: FK:s kalkylator topp-3, en kommersiell guide (Lendo) topp-10. ANGRIP-RUNT + verktygs-SEO står kvar som belagd strategi."
     },
     "vilka bidrag kan jag få": {
-      "hamtad": "2026-08-28",
-      "resultat": "NOTHING FOUND — ingen SERP-data; tredje oberoende belägget för §29 (mall-frasen är inget självständigt sökresultat)."
+      "hamtad": "2026-09-03",
+      "resultat": "NOTHING FOUND — ingen SERP-data (samma som 2026-08-28). Fjärde oberoende belägget för §29: mallfrasen är inget självständigt sökresultat. Frågeformen \"vilka bidrag kan man få\" har däremot 140/mån (KD 23) — se questions.bidrag."
+    },
+    "försörjningsstöd": {
+      "hamtad": "2026-09-03",
+      "toppdomaner": [
+        "vasteras.se",
+        "gavle.se",
+        "ostersund.se",
+        "orebro.se",
+        "kunskapsguiden.se #5",
+        "skovde.se",
+        "stockholm.se",
+        "enkoping.se",
+        "socialstyrelsen.se provberäkning #9",
+        "pitea.se"
+      ],
+      "notering": "8 av 10 är KOMMUNER. Ingen nationell konsumentguide alls i topp-10 — SERP:en är fragmenterad på lokal intent. Den nationella översikten (vem kan få, hur mycket, provberäkning) är öppen; klusterhubben /bidrag/ekonomiskt-bistand/ är rätt vapen."
+    },
+    "underhållsstöd": {
+      "hamtad": "2026-09-03",
+      "toppdomaner": [
+        "forsakringskassan.se #1/#5",
+        "norden.org #2",
+        "riksdagen.se #3",
+        "verahill.se #4 (juristbyrå)",
+        "juristjouren.se #6",
+        "lagen.nu #7",
+        "familjensjurist.se #8",
+        "socfamratt.se #9",
+        "kronofogden.se #10"
+      ],
+      "notering": "Fyra juristsajter topp-10 → privata aktörer rankar; intent blandar stöd (FK) och underhållsbidrag (civilrätt). Skiljesidan underhållsstöd↔underhållsbidrag (5 400/mån, KD 19) är uppmätt lucka."
+    },
+    "bostadstillägg": {
+      "hamtad": "2026-09-03",
+      "toppdomaner": [
+        "forsakringskassan.se #1/#4",
+        "pensionsmyndigheten.se #2/#3/#9",
+        "hyresgastforeningen.se #5",
+        "anhoriga.se #6",
+        "eda.se #7 (kommun)",
+        "norden.org #8",
+        "jurio.com #10"
+      ],
+      "notering": "Två myndigheter delar termen (FK för sjuk-/aktivitetsersättning, PM för pensionärer) — sökaren måste veta vilken som gäller. Bidragskolls situationsingång (pensionär/sjuk) löser exakt den förkunskapsbördan."
+    },
+    "bidrag ensamstående mamma": {
+      "hamtad": "2026-09-03",
+      "toppdomaner": [
+        "forsakringskassan.se #1",
+        "fralsningsarmen.se #2",
+        "varannanvecka.app #3",
+        "detthowsfond.se #4",
+        "funktionshindersguiden.se fonder #5",
+        "vardnadsvalet.se #6",
+        "riksdagen.se #7",
+        "makalosa.org #8",
+        "stipendielistan.se #9",
+        "evanordbergsstiftelse.se #10"
+      ],
+      "notering": "8 av 10 är icke-myndigheter (ideella, fonder, appar, listor). Situationssökningen är PRIVATE-DOMAIN-PROVEN med låg tröskel — situationsnoden för ensamstående förälder är rätt destination."
+    },
+    "föreningsbidrag": {
+      "hamtad": "2026-09-03",
+      "toppdomaner": [
+        "stockholm.se föreningsservice",
+        "goteborg.se",
+        "kungalv.se",
+        "skovde.se",
+        "enkoping.se",
+        "partille.se",
+        "are.se",
+        "skr.se #5",
+        "svenskbidragsformedling.se #9/#10"
+      ],
+      "notering": "Kommunerna tar lokal intent; svenskbidragsformedling.se är enda privata aggregatorn. Den nationella föreningsöversikten är fortsatt öppen (jfr War Room §4)."
+    },
+    "starta eget bidrag": {
+      "hamtad": "2026-09-03",
+      "toppdomaner": [
+        "arbetsformedlingen.se #1",
+        "verksamt.se #2",
+        "foretagarna.se #3",
+        "sparbankentanum.se #4",
+        "lansforsakringar.se #5",
+        "trs.se #6",
+        "spiris.se #7",
+        "smaforetagarna.se #8",
+        "driva-eget.se #9",
+        "fortnox.se #10"
+      ],
+      "notering": "#3–#10 privata (banker, bokföringsbolag, organisationer). Namnförhållande-case: officiellt \"stöd till start av näringsverksamhet\" (110/mån) ≠ sökterm \"starta eget bidrag\" (4 400/mån). Klusterhubb byggd."
+    },
+    "merkostnadsersättning": {
+      "hamtad": "2026-09-03",
+      "toppdomaner": [
+        "forsakringskassan.se #1/#2",
+        "funktionshindersguiden.se #3",
+        "hejaolika.se #4",
+        "neuro.se #5",
+        "csdsamverkan.se #6",
+        "rjl.se #7",
+        "obesitassverige.se #8",
+        "1177.se #9",
+        "riksdagen.se #10"
+      ],
+      "notering": "Patientorganisationer och funktionshindersguiden.se (privat, #3) rankar direkt under FK. Bevis: förklarande sida med målgruppsröst slår generisk auktoritet."
+    },
+    "bidrag": {
+      "hamtad": "2026-09-03",
+      "toppdomaner": [
+        "forsakringskassan.se ersättningar a–ö #1",
+        "synonymer.se #2",
+        "nyheter24.se #3",
+        "boverket.se #4",
+        "csn.se #5",
+        "informationsverige.se #6",
+        "statsbidrag.socialstyrelsen.se #7",
+        "bidragsstiftelsen.se #8",
+        "hittabidrag.se #9",
+        "marcusoscarsson.se #10"
+      ],
+      "notering": "Huvudtermen (14 800 i denna mätning; 12 100 2026-08-28 — Semrush uppdaterar volymer) är fortsatt blandad; hittabidrag.se (11 sökord totalt) rankar #9. Inte myndighetslåst."
+    },
+    "glasögonbidrag": {
+      "hamtad": "2026-09-03",
+      "toppdomaner": [
+        "1177.se ×3 (VGR, Skåne, Jönköping)",
+        "vgregion.se",
+        "regionuppsala.se",
+        "skane.se",
+        "vardgivarguiden.se",
+        "regionvarmland.se",
+        "synsam.se #8",
+        "smarteyes.se #9"
+      ],
+      "notering": "Helt regionalt: 1177 + regionerna äger allt utom två optikerkedjor. Nationell \"vilken region ger vad\"-översikt saknas i SERP:en — stödet är kurerat (region-glasogonbidrag-barn) men sidan måste bära regionvariationen för att vara destination."
+    },
+    "omställningsstudiestöd": {
+      "hamtad": "2026-09-03",
+      "toppdomaner": [
+        "csn.se ×3",
+        "omstallningsfonden.se #2",
+        "studera.nu #4",
+        "sverigesingenjorer.se #6",
+        "forsakringskassan.se #7",
+        "kommunal.se #8",
+        "trs.se #9",
+        "akademssr.se #10"
+      ],
+      "notering": "CSN + fackförbund/omställningsorganisationer. Ingen privat generalist. Destination kräver \"är du berättigad\"-kontroll (arbetsvillkor, ålder) — cores kriteriemotor, inte en text."
+    }
+  },
+  "konkurrenter": {
+    "_beskrivning": "Semrush domain_rank + backlinks_overview + domain_rank_history (db se, hämtad 2026-09-03). Verkliga tal, inte estimat. rank = Semrush-rank i se; kw = organiska sökord; trafik = uppskattad organisk trafik/mån; kostnad = trafikvärde (USD/mån); ascore/backlinks/refdomains ur backlinks_overview där den kördes (null = ej hämtad, inte 0). Historik = (månad: kw/trafik).",
+    "hamtad": "2026-09-03",
+    "domaner": [
+      {
+        "domain": "bidragskoll.se",
+        "rank": null,
+        "kw": 0,
+        "trafik": 0,
+        "kostnad": 0,
+        "ascore": null,
+        "backlinks": null,
+        "refdomains": null,
+        "notering": "NOTHING FOUND — domänen är inte indexerad (parkerad DNS, noindex)"
+      },
+      {
+        "domain": "driva-eget.se",
+        "rank": 3542,
+        "kw": 16174,
+        "trafik": 31468,
+        "kostnad": 19027,
+        "ascore": null,
+        "backlinks": null,
+        "refdomains": null,
+        "notering": "företagarmagasin; \"starta eget bidrag\" #8 (4 400), \"bidrag\" #25, \"lönebidrag\" #10"
+      },
+      {
+        "domain": "funktionshindersguiden.se",
+        "rank": 9106,
+        "kw": 5930,
+        "trafik": 10149,
+        "kostnad": 5004,
+        "ascore": null,
+        "backlinks": null,
+        "refdomains": null,
+        "notering": "lss #4 (14 800), aktivitetsersättning #5 (6 600), sjukersättning #8 (8 100), merkostnadsersättning #3 (3 600), lönebidrag #4, \"söka fonder psykisk ohälsa\" #1 — starkaste privata sajt i funktionsnedsättningsklustret"
+      },
+      {
+        "domain": "ekosnurra.com",
+        "rank": 19858,
+        "kw": 765,
+        "trafik": 3839,
+        "kostnad": 412,
+        "ascore": null,
+        "backlinks": null,
+        "refdomains": null,
+        "notering": "privatekonomi-kalkylatorer; konkurrent till foraldrakalkylatorn"
+      },
+      {
+        "domain": "foraldrakalkylatorn.se",
+        "rank": 26353,
+        "kw": 1147,
+        "trafik": 2660,
+        "kostnad": 764,
+        "ascore": 11,
+        "backlinks": 50,
+        "refdomains": 47,
+        "historik": "2026-02 21/0 → 03 399/117 → 04 537/65 → 05 677/302 → 06 751/496 → 07 828/1632 → 08 1131/2662",
+        "notering": "NOLL före feb 2026. barnbidrag 2024 #2 (8 100), barnbidrag 2026 #4 (4 400), räkna ut föräldrapenning #5 (3 600), flerbarnstillägg #5 (3 600). Med 47 refererande domäner — beviset att verktygssidor rankar utan länkmuskler."
+      },
+      {
+        "domain": "stipendielistan.se",
+        "rank": 45749,
+        "kw": 1102,
+        "trafik": 1259,
+        "kostnad": 732,
+        "ascore": null,
+        "backlinks": null,
+        "refdomains": null,
+        "historik": "2025 ~20/≈0 → 2026-03 36/14 → 04 109/11 → 05 264/26 → 06 508/205 → 07 718/578 → 08 1063/1094",
+        "notering": "stipendium #6 (2 400), söka fonder privatperson #8 (1 900), fonder att söka #3 (880). Samma explosion våren 2026 — listsidor ur register rankar."
+      },
+      {
+        "domain": "arbetsloshetskassa.nu",
+        "rank": 52832,
+        "kw": 2091,
+        "trafik": 1024,
+        "kostnad": 1012,
+        "ascore": null,
+        "backlinks": null,
+        "refdomains": null,
+        "notering": "innehållssajt, \"Bidragsguiden\"-artikelserie"
+      },
+      {
+        "domain": "svenskbidragsformedling.se",
+        "rank": 68473,
+        "kw": 311,
+        "trafik": 697,
+        "kostnad": 571,
+        "ascore": 22,
+        "backlinks": 228,
+        "refdomains": 106,
+        "notering": "~all trafik från EN sida (/soka-bidrag-till-forening/), #1 på \"bidrag till förening\" (210) m.fl.; högst ascore bland de privata"
+      },
+      {
+        "domain": "foraldrakalkylen.se",
+        "rank": 71680,
+        "kw": 1194,
+        "trafik": 648,
+        "kostnad": 53,
+        "ascore": null,
+        "backlinks": null,
+        "refdomains": null,
+        "notering": "kalkylator-kopia av foraldrakalkylatorn"
+      },
+      {
+        "domain": "bidragsportalen.se",
+        "rank": 77868,
+        "kw": 968,
+        "trafik": 570,
+        "kostnad": 506,
+        "ascore": null,
+        "backlinks": null,
+        "refdomains": null,
+        "notering": "B2B/B2G-databas bakom licens"
+      },
+      {
+        "domain": "bidraget.se",
+        "rank": 108507,
+        "kw": 962,
+        "trafik": 332,
+        "kostnad": 187,
+        "ascore": null,
+        "backlinks": null,
+        "refdomains": null,
+        "notering": "csn #22 (368 000), bostadsbidrag #41, bidrag #46, studiemedel #51, tillväxtverket #21 — bred men svag"
+      },
+      {
+        "domain": "allabidrag.se",
+        "rank": 433530,
+        "kw": 18,
+        "trafik": 22,
+        "kostnad": 61,
+        "ascore": null,
+        "backlinks": null,
+        "refdomains": null,
+        "notering": "minimal yta"
+      },
+      {
+        "domain": "grantigo.com",
+        "rank": 439090,
+        "kw": 45,
+        "trafik": 21,
+        "kostnad": 5,
+        "ascore": 10,
+        "backlinks": 1108,
+        "refdomains": 57,
+        "notering": "B2B; 1 108 backlinks från bara 57 domäner (sitewide-länkar) — ingen organisk synlighet trots länkarna"
+      },
+      {
+        "domain": "hittabidrag.se",
+        "rank": 598297,
+        "kw": 11,
+        "trafik": 10,
+        "kostnad": 28,
+        "ascore": null,
+        "backlinks": null,
+        "refdomains": null,
+        "notering": "#9 på \"bidrag\" trots 11 sökord"
+      },
+      {
+        "domain": "bidragskollen.app",
+        "rank": 731571,
+        "kw": 129,
+        "trafik": 5,
+        "kostnad": 3,
+        "ascore": 7,
+        "backlinks": 102,
+        "refdomains": 66,
+        "notering": "namngrannen: 129 sökord, ~5 besök/mån — trafikmässigt försumbar"
+      }
+    ],
+    "gap": {
+      "_beskrivning": "domain_domains (keyword gap) över funktionshindersguiden.se, foraldrakalkylatorn.se, bidraget.se, stipendielistan.se, svenskbidragsformedling.se — topp efter volym med bästa privata position. Volymer är Semrush se 2026-09-03.",
+      "rader": [
+        {
+          "keyword": "csn",
+          "volume": 368000,
+          "basta_privata": "bidraget.se #22"
+        },
+        {
+          "keyword": "bostadsbidrag",
+          "volume": 22200,
+          "basta_privata": "foraldrakalkylatorn.se #39, bidraget.se #41"
+        },
+        {
+          "keyword": "försörjningsstöd",
+          "volume": 18100,
+          "basta_privata": "funktionshindersguiden.se #37"
+        },
+        {
+          "keyword": "bidrag",
+          "volume": 14800,
+          "basta_privata": "bidraget.se #46"
+        },
+        {
+          "keyword": "lss",
+          "volume": 14800,
+          "basta_privata": "funktionshindersguiden.se #4"
+        },
+        {
+          "keyword": "aktivitetsstöd",
+          "volume": 12100,
+          "basta_privata": "funktionshindersguiden.se #59"
+        },
+        {
+          "keyword": "barnbidrag 2022",
+          "volume": 12100,
+          "basta_privata": "foraldrakalkylatorn.se #12"
+        },
+        {
+          "keyword": "föräldrapenning",
+          "volume": 12100,
+          "basta_privata": "foraldrakalkylatorn.se #14"
+        },
+        {
+          "keyword": "bostadstillägg",
+          "volume": 8100,
+          "basta_privata": "funktionshindersguiden.se #21"
+        },
+        {
+          "keyword": "sjukersättning",
+          "volume": 8100,
+          "basta_privata": "funktionshindersguiden.se #8"
+        },
+        {
+          "keyword": "aktivitetsersättning",
+          "volume": 6600,
+          "basta_privata": "funktionshindersguiden.se #5"
+        },
+        {
+          "keyword": "omvårdnadsbidrag",
+          "volume": 6600,
+          "basta_privata": "funktionshindersguiden.se #10"
+        },
+        {
+          "keyword": "studiemedel",
+          "volume": 6600,
+          "basta_privata": "bidraget.se #51"
+        },
+        {
+          "keyword": "allmänna arvsfonden",
+          "volume": 5400,
+          "basta_privata": "svenskbidragsformedling.se #16"
+        },
+        {
+          "keyword": "närståendepenning",
+          "volume": 5400,
+          "basta_privata": "funktionshindersguiden.se #51"
+        },
+        {
+          "keyword": "csn bidrag",
+          "volume": 4400,
+          "basta_privata": "stipendielistan.se #26"
+        },
+        {
+          "keyword": "tillväxtverket",
+          "volume": 4400,
+          "basta_privata": "bidraget.se #21"
+        },
+        {
+          "keyword": "vab",
+          "volume": 4400,
+          "basta_privata": "foraldrakalkylatorn.se #39"
+        },
+        {
+          "keyword": "flerbarnstillägg",
+          "volume": 3600,
+          "basta_privata": "foraldrakalkylatorn.se #5"
+        }
+      ]
     }
   }
 }

@@ -1,11 +1,32 @@
 # SEO Opportunity-backlog — ur uppmätt data
 
-Källa: Semrush (databas `se`, hämtad 2026-08-28, snapshot `seo/volumes-semrush-se.json`).
-**157 av 332 rötter i keyword-universumet bär nu verklig volym/KD** (join i
-`seo/keywords.json`, stämplat `semrush:se:2026-08-28`); 137 med volym > 0.
-Inget nedan är gissat — varje siffra är en mätning; varje "SAKNAS" är kontrollerad
-mot entity-sidorna. Prioritering: volym × låg KD × produktrelevans × sidtyp som
-SERP:en faktiskt belönar.
+Källa: Semrush (databas `se`, snapshot `seo/volumes-semrush-se.json`; första
+körningen 2026-08-28, full genomgång av hela universumet 2026-09-03 —
+`docs/reports/SEMRUSH_2026-09-03.md`).
+**185 av 350 rötter i keyword-universumet bär verklig volym/KD** (join i
+`seo/keywords.json`, stämplat `semrush:se:2026-09-03`); 160 med volym > 0.
+De 165 utan rad är `DATA_UNAVAILABLE` — Semrush saknar termen, vilket inte
+är noll sökningar. Inget nedan är gissat — varje siffra är en mätning; varje
+"SAKNAS" är kontrollerad mot entity-sidorna. Prioritering: volym × låg KD ×
+produktrelevans × sidtyp som SERP:en faktiskt belönar.
+
+## Uppdatering 2026-09-03 — vad hela genomgången ändrade
+
+- **P1-luckorna är stängda i kunskapsbasen** (kureringspass 2026-08-28,
+  72→84 stöd); tabellen nedan står kvar som historik över den uppmätta
+  efterfrågan som drev kureringen.
+- **Ny största lucka: försörjningsstöd nationellt.** SERP:en (18 100/mån) är
+  8 kommuner + kunskapsguiden + Socialstyrelsens provberäkning — ingen
+  nationell konsumentguide. Hubben `/bidrag/ekonomiskt-bistand/` finns;
+  behörighetskontroll + kommunväljare saknas (rapportens §8.1).
+- **Frågeset fästa** på fk-barnbidrag (4 500 frågesök/mån, KD 18–25),
+  fk-sjukersattning (880 + 590 om villkoren) och csn-studiemedel.
+- **Bevis för verktygs-SEO (P3) blev empiriskt:** foraldrakalkylatorn.se
+  0 → 2 660 besök/mån på sex månader med 47 ref-domäner.
+- **Myndighetsprefixade termer är navigational** (försäkringskassan
+  föräldrapenning 2 900, intent 2) — GREY, jagas inte. Undantag:
+  `försäkringskassan underhållsstöd` 1 900 med informationsintent.
+- Fullständig prioriteringslista: rapportens §8.
 
 ## Strategiska bevis ur SERP-datan (phrase_organic, 2026-08-28)
 

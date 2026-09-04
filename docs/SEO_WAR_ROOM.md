@@ -92,6 +92,10 @@ social-service-sida). Det territoriet är öppet.
 
 ## 5. Konkurrentlandskap (uppmätt)
 
+> Ögonblicksbild 2026-08-28. Full genomgång med 15 domäner, backlinks och
+> tillväxthistorik: `docs/reports/SEMRUSH_2026-09-03.md` §4 och
+> `docs/SEO_COMPETITORS.md` §B2 (aktuell tabell).
+
 | Domän | Organiska sökord | Organisk trafik/mån | Läge |
 |---|---|---|---|
 | svenskbidragsformedling.se | 315 | ~705 | starkast privat; ~all trafik från EN sida (/soka-bidrag-till-forening/) — beviset att en aggregeringssida kan äga ett helt kluster |

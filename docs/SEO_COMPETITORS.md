@@ -58,20 +58,37 @@ konkurrenter kunde inte verifieras: DATA_UNAVAILABLE.
 ansökningsförberedelse för PRIVATPERSONER. De kommersiella specialisterna
 sitter på företagssidan eller i stipendienischen. Konsumentluckan är öppen.
 
-## B2. Uppmätt styrka (Semrush se, 2026-08-28 — verkliga tal, inte estimat)
+## B2. Uppmätt styrka (Semrush se, 2026-09-03 — verkliga tal, inte estimat)
 
-| Domän | Organiska sökord | Organisk trafik/mån | Belägg |
-|---|---|---|---|
-| svenskbidragsformedling.se | 315 | ~705 | ~all trafik från EN sida (/soka-bidrag-till-forening/) som är #1 på 12+ förenings-varianter ("bidrag till förening" 210, "söka bidrag ideell förening" 170, "bidrag ideell förening" 140 …) |
-| allabidrag.se | 14 | ~44 | #13 på "bidrag" (12 100) trots minimal yta |
-| hittabidrag.se | 12 | ~22 | #9 på "bidrag" trots 12 sökord totalt |
-| bidragskollen.app | 135 | ~10 | namngrannen är trafikmässigt försumbar |
-| bidragskoll.se | 0 | 0 | nolläge: domänen ännu inte kopplad/indexerbar (se docs/SEO_WAR_ROOM.md §2) |
+Full genomgång: `docs/reports/SEMRUSH_2026-09-03.md` (rådata i
+`seo/volumes-semrush-se.json` → `konkurrenter`). Sorterat på organisk trafik.
+
+| Domän | Organiska sökord | Organisk trafik/mån | Ascore / backlinks / ref-domäner | Belägg |
+|---|---|---|---|---|
+| driva-eget.se | 16 174 | ~31 500 | — | företagarmagasin; "starta eget bidrag" #8, "bidrag" #25, "lönebidrag" #10 |
+| funktionshindersguiden.se | 5 930 | ~10 100 | — | lss #4, aktivitetsersättning #5, sjukersättning #8, merkostnadsersättning #3, lönebidrag #4 — enda privata aktör topp-10 på stora stödtermer; målgruppsröst + klusterbredd |
+| ekosnurra.com | 765 | ~3 800 | — | privatekonomi-kalkylatorer |
+| foraldrakalkylatorn.se | 1 147 | ~2 660 | 11 / 50 / 47 | NOLL före feb 2026 → 2 660 besök/mån i aug; barnbidrag 2024 #2, flerbarnstillägg #5 — verktygssidor rankar utan länkmuskler |
+| stipendielistan.se | 1 102 | ~1 260 | — | ~0 hela 2025 → 1 094 besök i aug 2026; stipendium #6, söka fonder privatperson #8 — listsidor ur register rankar |
+| arbetsloshetskassa.nu | 2 091 | ~1 020 | — | artikelserie |
+| svenskbidragsformedling.se | 311 | ~700 | 22 / 228 / 106 | ~all trafik från EN sida (/soka-bidrag-till-forening/) som är #1 på föreningsvarianterna; högst ascore bland de privata |
+| foraldrakalkylen.se | 1 194 | ~650 | — | kalkylator-kopia |
+| bidragsportalen.se | 968 | ~570 | — | B2B/B2G bakom licens |
+| bidraget.se | 962 | ~330 | — | bred men svag: csn #22, bostadsbidrag #41, bidrag #46 |
+| allabidrag.se | 18 | ~22 | — | minimal yta |
+| grantigo.com | 45 | ~21 | 10 / 1 108 / 57 | 1 108 backlinks från 57 domäner, ingen organisk synlighet — länkar köper inte rankning här |
+| hittabidrag.se | 11 | ~10 | — | #9 på "bidrag" trots 11 sökord |
+| bidragskollen.app | 129 | ~5 | 7 / 102 / 66 | namngrannen är trafikmässigt försumbar |
+| bidragskoll.se | 0 | 0 | — | nolläge: domänen inte indexerad (parkerad DNS, noindex — se docs/SEO_WAR_ROOM.md §2) |
 
 Slutsatsen skärps av mätningen: Google belönar redan små privata aggregatorer
-i bidrags-SERP:arna — de sökordskluster där en privat sida rankar topp-10 är
-**PRIVATE-DOMAIN-PROVEN** och prioriteras (fullständig lista i
-`docs/SEO_WAR_ROOM.md` §4).
+i bidrags-SERP:arna, och två sajter (foraldrakalkylatorn, stipendielistan)
+gick från noll till tusentals besök på sex månader utan länkprofil. De
+sökordskluster där en privat sida rankar topp-10 är **PRIVATE-DOMAIN-PROVEN**
+och prioriteras (lista i `docs/SEO_WAR_ROOM.md` §4 + rapportens §3).
+Den enda privata aktören med topp-10 på stora stödtermer är
+funktionshindersguiden.se — inom funktionsnedsättningsklustret; på ekonomisk
+utsatthet (försörjningsstöd 18 100, bostadsbidrag 22 200) finns ingen.
 
 ## C. Implikationer — att äga namnet (entity-SEO)
 

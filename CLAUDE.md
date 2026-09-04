@@ -46,7 +46,8 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
   **situationslagret** (`/situationer/`) + sitemap + robots. QA-crawlas av
   `tools/seocheck.mjs` och `tools/schemacheck-seo.mjs` i verify.
   Strategi/research i `docs/SEO_*.md`; keyword-databas i `seo/`
-  (332 rötter, inga påhittade volymer — allt källmärkt).
+  (350 rötter, 185 med verklig Semrush-volym per `docs/reports/SEMRUSH_2026-09-03.md`;
+  inga påhittade volymer — allt källmärkt).
 - **Situationslagret** — `/situationer/<slug>/` (12 noder + katalogsida). En nod
   skriver aldrig sin egen stödlista: den deklarerar en **faktaprofil** i
   `seo/situationer.json` och **motorn** (`packages/core`, samma kriterie-DSL som
@@ -69,7 +70,7 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
   ALDRIG PBN/utgångna domäner, satellittestet) + `docs/GATE0_REPORT.md`
   (senaste dom). Verktyg i verify: `tools/gate0.mjs` (totalcrawl, media,
   länkgraf/PageRank, innehållsmatris), `tools/gatekeywords.mjs`
-  (332-rotregistret GREEN/YELLOW/RED/GREY mot `seo/serp-gate0.json`);
+  (350-rotregistret GREEN/YELLOW/RED/GREY mot `seo/serp-gate0.json`);
   utanför verify: `npm run gate:ux` (320px+desktop, kräver Chromium),
   `npm run gate:links` (extern länkhälsa, kräver nät — efter deploy).
   **OFFSITE ÄR FRYST tills gaten är grön.**
