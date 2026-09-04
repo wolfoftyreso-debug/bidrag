@@ -328,8 +328,8 @@ function QFramhavd({ title, guidance, ill, children }: { title: string; guidance
 
 function Likelihood({ m }: { m: ReturnType<typeof runEngine>[number]['m'] }) {
   const level = likelihoodOf(m);
-  if (level === 'high') return <span className="badge success">hög sannolikhet</span>;
-  if (level === 'possible') return <span className="badge success">möjlig</span>;
+  if (level === 'high') return <span className="badge success">stämmer väl med kraven</span>;
+  if (level === 'possible') return <span className="badge success">kan stämma</span>;
   return <span className="badge warning">behöver utredas</span>;
 }
 

@@ -15,6 +15,7 @@
  *    som ai_curated-stämpeln i kunskapsbasen).
  */
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { setDateLocale } from '../api';
 import { sv } from './locales/sv';
 import { en } from './locales/en';
 import { so } from './locales/so';
@@ -99,6 +100,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     const def = LOCALES.find((l) => l.code === locale)!;
     document.documentElement.lang = locale === 'prs' ? 'fa-AF' : locale;
     document.documentElement.dir = def.dir;
+    setDateLocale(toDateLocale(locale));
   }, [locale]);
 
   const value = useMemo(() => ({ locale, setLocale }), [locale]);
@@ -170,9 +172,12 @@ const MSG_TONES: Record<string, string> = {
 };
 
 /** BCP 47-tagg för datumformatering i valt språk (Intl/toLocaleDateString). */
+export function toDateLocale(locale: Locale): string {
+  return locale === 'sv' ? 'sv-SE' : locale === 'prs' ? 'fa-AF' : locale;
+}
 export function useDateLocale(): string {
   const { locale } = useI18n();
-  return locale === 'sv' ? 'sv-SE' : locale === 'prs' ? 'fa-AF' : locale;
+  return toDateLocale(locale);
 }
 
 /** Språkväljare — används på inloggningssidan och i sidomenyn. */

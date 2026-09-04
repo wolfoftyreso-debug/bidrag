@@ -52,7 +52,7 @@ console.log('OK: simulerad Swish-betalning tydligt märkt');
 await page.waitForSelector('text=Det här ser du ut att kunna ha rätt till');
 let body = await page.textContent('body');
 if (!body.includes('Bostadsbidrag till barnfamiljer')) throw new Error('bostadsbidrag saknas');
-if (!body.includes('hög sannolikhet')) throw new Error('sannolikhet saknas');
+if (!body.includes('stämmer väl med kraven')) throw new Error('sannolikhet saknas');
 if (!body.includes('Uppfyller inte kraven')) throw new Error('uteslutningar saknas');
 console.log('OK: personligt spår');
 
@@ -84,13 +84,13 @@ console.log('OK: personligt spår');
 }
 
 // Följdfråga: svara Ja på underhållsfrågan → underhållsstöd uppgraderas live
-const before = (body.match(/hög sannolikhet/g) || []).length;
+const before = (body.match(/stämmer väl med kraven/g) || []).length;
 await page.locator('.q-row', { hasText: 'Betalar den andra föräldern' }).locator('button:has-text("Ja")').click();
 await page.waitForTimeout(300);
 body = await page.textContent('body');
-const after = (body.match(/hög sannolikhet/g) || []).length;
+const after = (body.match(/stämmer väl med kraven/g) || []).length;
 if (after <= before) throw new Error(`live-omräkning misslyckades (${before} → ${after})`);
-console.log(`OK: följdfråga uppgraderade bedömningen live (${before} → ${after} hög sannolikhet)`);
+console.log(`OK: följdfråga uppgraderade bedömningen live (${before} → ${after} stämmer väl med kraven)`);
 await page.screenshot({ path: `${S}/11-demo-personligt.png`, fullPage: true });
 
 // Börja om → projektspår: Jamaica-fallet

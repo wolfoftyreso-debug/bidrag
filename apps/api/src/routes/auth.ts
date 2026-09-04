@@ -220,7 +220,7 @@ export async function authRoutes(app: FastifyInstance) {
             `Du (eller någon annan) har begärt att återställa lösenordet för det här kontot på Bidragskoll.se.\n\n` +
             `Återställ här (länken gäller i 60 minuter och kan bara användas en gång):\n\n` +
             `${config.publicBaseUrl}/aterstall/${token}\n\n` +
-            `Om du inte begärde detta kan du bortse från mailet — lösenordet är oförändrat.`,
+            `Om du inte begärde detta kan du bortse från det här mejlet — lösenordet är oförändrat.`,
         });
         await audit({
           tenantId: null,

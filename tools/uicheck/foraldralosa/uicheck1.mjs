@@ -62,7 +62,7 @@ const browser = await launchChromium();
   await page.waitForSelector('text=Det här ser du ut att kunna ha rätt till', { timeout: 15000 });
   const bodyText = await page.textContent('body');
   if (!bodyText.includes('Bostadsbidrag till barnfamiljer')) throw new Error('bostadsbidrag saknas i resultatet');
-  if (!bodyText.includes('hög sannolikhet')) throw new Error('sannolikhetsspråk saknas');
+  if (!bodyText.includes('stämmer väl med kraven')) throw new Error('sannolikhetsspråk saknas');
   if (!bodyText.includes('slutligt beslut fattas alltid av myndigheten')) throw new Error('disclaimer saknas');
   await page.screenshot({ path: `${SHOT_DIR}/6-rattigheter.png`, fullPage: true });
   console.log('OK: personligt spår → rättighetslista med sannolikhetsspråk');

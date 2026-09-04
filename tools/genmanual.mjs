@@ -164,6 +164,7 @@ const SCRIPTS = {
   'sim:engine': 'Motorsimulering: ~11 000 genererade personor × alla stöd direkt mot packages/core — döda/universella stöd, nollresultat, sektorsläckor, åldersgränser, datumsvep. Rapporterar; --strict fäller på DÖD/LÄCKA.',
   'sim:engine:intake': 'Samma simulering med bara intagets fakta kända — mäter frågebördan (öppna frågor per persona) och vilka frågor som avgör flest stöd.',
   'seed:integrity': 'Seedens integritet: överlastade faktavägar, döda fakta, motsägelser, delade källor, schemafel (rapporterar; --strict fäller på klass C/G).',
+  'lang:check': 'Språkvakten (docs/LANGUAGE_GUIDE.md §7, backlog M5): all användarvänd text — webbens 11 språk, kunskapsbasen, demon, publika ytan — mot guidens hårda regler (förbjudna löftesord, kr/datumformat, beslutsraden, stavningskonsekvens) och terminologiregistret. Körs i verify och CI.',
   'i18n:cov': 'Mäter hur stor del av kunskapsbasens användarvända text som finns i översättningsminnet, per innehållstyp (docs/I18N_PROGRAM.md §Täckningen i siffror). Fäller inget bygge — otolkad text är ett kureringsläge, inte ett fel.',
   'gate:links': 'Extern länkhälsa för myndighetslänkarna på publika ytan — körs från nätansluten maskin (t.ex. efter deploy); sandlådan saknar utgående nät.',
 };
@@ -284,14 +285,14 @@ p('   sjukdom i familjen är frivillig på riktigt: "Vill inte svara" respektera
 p('   faktumet lämnas osatt och frågan återkommer aldrig (art. 9-samtycke');
 p('   tidsstämplas när den besvaras).');
 p('3. **Analysen (gratis, Open Discovery)** — räknas mot alla stöd och visas');
-p('   direkt: varje stöd med namn, sannolikhet och förklaring. Ingen betalvägg,');
+p('   direkt: varje stöd med namn, bedömning och förklaring. Ingen betalvägg,');
 p('   inga låsta matchningar — resultaten är fria att se.');
 p('4. **Förberedd ansökan (19 kr/ansökan)** — det enda köpet: köpet kräver');
 p('   ikryssat samtycke till omedelbar leverans (ångerrätten upphör —');
 p('   distansavtalslagen); utan kryss vägrar servern (400). Betala med Swish (QR');
 p('   på desktop, app-länk i mobil). Kvittot med löpnummer och 25 % moms hamnar');
 p('   under Mina köp direkt.');
-p('5. **Analysen** — varje stöd visas med sannolikhet, förklaring per kriterium,');
+p('5. **Analysen** — varje stöd visas med bedömning, förklaring per kriterium,');
 p('   källa med färskhet och kureringsstämpel ("AI-sammanställd från officiell');
 p('   källa — ej granskad av människa" tills en kurator höjt den). Obesvarade');
 p('   följdfrågor sorteras efter hur många stöd de avgör; svar går att ändra i');

@@ -154,6 +154,7 @@ npm run seo:keywords          # bygger seo/keywords.json ur seeden + roots-manua
 npm run sim:engine            # ~11 000 personor × alla stöd mot core (1,4 s); --strict i verify
 npm run sim:engine:intake     # samma med bara intagets fakta — mäter frågebördan
 npm run seed:integrity        # överlastade faktavägar, döda fakta, delade källor, stängda omgångar
+npm run lang:check            # språkvakten: all användarvänd text i 11 språk mot LANGUAGE_GUIDE + terminologin
 ```
 
 Webbläsare för kontrollerna: `npx playwright install chromium` eller sätt

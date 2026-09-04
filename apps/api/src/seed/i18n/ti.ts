@@ -138,7 +138,7 @@ export const ti: Record<string, string> = {
   "Ansökan ska avse investering (bygga, köpa eller rusta upp)": "እቲ መመልከቲ ንወፍሪ ክምልከት ኣለዎ (ምህናጽ፡ ምዕዳግ ወይ ምሕዳስ)",
   "Ansökan ska avse jordbruks-, trädgårds- eller rennäringsföretag": "እቲ መመልከቲ ንናይ ሕርሻ፡ ጀርዲን ወይ ራንዲር ምርባሕ ትካል ክምልከት ኣለዎ",
   "Ansökan till din lokala majblommeförening via majblomman.se.": "መመልከቲ ናብ ናይ ከባቢኻ ማሕበር Majblomman ብ majblomman.se ይግበር።",
-  "Ansökan/redovisning görs i IdrottOnline. Ansökningsperioderna stänger 25 februari och 25 augusti.": "መመልከቲን ጸብጻብን ኣብ IdrottOnline ይግበር። እዋናት መመልከቲ ኣብ 25 ለካቲት ከምኡ'ውን 25 ነሓሰ ይዕጸዉ።",
+  "Ansökan och redovisning görs i IdrottOnline. Ansökningsperioderna stänger 25 februari och 25 augusti.": "መመልከቲን ጸብጻብን ኣብ IdrottOnline ይግበር። እዋናት መመልከቲ ኣብ 25 ለካቲት ከምኡ'ውን 25 ነሓሰ ይዕጸዉ።",
   "Antal anställda": "ቁጽሪ ሰራሕተኛታት",
   "Antal barn som bor hemma": "ቁጽሪ ኣብ ገዛ ዝቕመጡ ቆልዑ",
   "Antal barn som bor hemma (helt eller växelvis)": "ቁጽሪ ኣብ ገዛ ዝቕመጡ ቆልዑ (ምሉእ ግዜ ወይ ብተራ)",

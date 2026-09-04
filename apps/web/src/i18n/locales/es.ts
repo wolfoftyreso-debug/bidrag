@@ -367,8 +367,8 @@ export const es: Record<keyof typeof sv, string> = {
   'm.myPurchases': 'Mis compras',
   'm.showReceipt': 'Mostrar recibo',
   'm.badge.investigate': 'necesita estudio',
-  'm.badge.high': 'alta probabilidad',
-  'm.badge.possible': 'posible',
+  'm.badge.high': 'cumple bien los requisitos',
+  'm.badge.possible': 'puede cumplir',
   'm.stackTitle': 'Plan de financiación',
   'm.stackGuidance':
     '¿Cómo combinar varias ayudas para cubrir todo el presupuesto? Nunca asumimos que dos ayudas sean combinables — todo lo que necesita confirmación se señala.',
@@ -397,7 +397,7 @@ export const es: Record<keyof typeof sv, string> = {
   'o.effortDays': 'unos {n} días de trabajo',
   'o.howToApply': 'Cómo solicitar',
   'o.submissionNote':
-    'La presentación final se hace en el servicio oficial de la autoridad. Bidragskoll.se prepara toda la solicitud, organiza la documentación y los plazos, y te acompaña todo el camino — pero nunca afirmamos que algo se ha presentado sin un justificante.',
+    'La presentación final se hace en el servicio oficial de la autoridad. Bidragskoll prepara toda la solicitud, organiza la documentación y los plazos, y te acompaña todo el camino — pero nunca afirmamos que algo se ha presentado sin un justificante.',
   'o.criteriaTitle': 'Requisitos y evaluación',
   'o.criteriaGuidance':
     'Así evalúa el sistema tu coincidencia. Es una evaluación según criterios publicados — no la decisión de la autoridad.',
@@ -463,7 +463,7 @@ export const es: Record<keyof typeof sv, string> = {
   'ap.nonePost': 'y empieza una solicitud desde una coincidencia.',
   'ap.thUpdated': 'Actualizada',
 
-  's.guidancePre': 'Búsqueda de texto libre en la base de conocimiento. Para una evaluación personal de lo que puedes solicitar, usa',
+  's.guidancePre': 'Búsqueda de texto libre entre todas las ayudas. Para una evaluación personal de lo que puedes solicitar, usa',
   's.guidanceLink': 'las coincidencias',
   's.search': 'Buscar',
   's.searchPlaceholder': 'p. ej. ayuda de viaje, energía, intercambio juvenil',
@@ -487,7 +487,7 @@ export const es: Record<keyof typeof sv, string> = {
   'cal.subCloses': '{myndighet} · la solicitud cierra',
 
   'in.guidance':
-    'Reúne las respuestas de autoridades y fundaciones en un solo lugar. Registra cartas y correos recibidos: el sistema los vincula a la solicitud correcta e interpreta qué significan. Bidragskoll.se nunca inicia sesión en los portales de las autoridades por ti.',
+    'Reúne las respuestas de autoridades y fundaciones en un solo lugar. Registra cartas y correos recibidos: el sistema los vincula a la solicitud correcta e interpreta qué significan. Bidragskoll nunca inicia sesión en los portales de las autoridades por ti.',
   'in.registerToggle': '+ Registrar mensaje',
   'in.cancel': 'Cancelar',
   'in.sender': 'Remitente',
@@ -527,7 +527,7 @@ export const es: Record<keyof typeof sv, string> = {
     'Esperamos la confirmación del sistema de pago. Suele tardar solo un segundo — no cierres la página.',
   'pay.waiting': 'Esperando…',
   'pay.doneTitle': 'El pago está completo',
-  'pay.doneBody': 'Tu solicitud está desbloqueada. Te llevamos de vuelta…',
+  'pay.doneBody': 'Tu solicitud está preparada — todos los documentos están incluidos. Te llevamos de vuelta…',
   'pay.failedTitle': 'El pago no se realizó',
   'pay.failedBody': 'No se creó ninguna solicitud y no se cobró nada. Puedes intentarlo de nuevo.',
   'pay.back': 'Volver',
@@ -649,7 +649,7 @@ export const es: Record<keyof typeof sv, string> = {
   'ds.remaining': 'Te quedan {antal} documentos en tu paquete.',
   'ds.create': 'Crear',
   'ds.footer':
-    'Los documentos se basan en tus propios datos. La evaluación final la hace siempre la autoridad u organización receptora.',
+    'Los documentos se basan en tus propios datos. La decisión final la toma siempre la autoridad u organización receptora.',
   'ds.backToAnalysis': '← Volver al análisis',
   'ds.helpTitle': '¿Quieres ayuda con los documentos?',
   'ds.helpGuidance':
@@ -730,7 +730,7 @@ export const es: Record<keyof typeof sv, string> = {
   'aw.prepareSubmission': 'Preparar la presentación',
   'aw.finishTitle': 'Completa la presentación ante la autoridad',
   'aw.finishBody':
-    'Tu solicitud está completamente preparada aquí. La presentación final la haces en el servicio oficial — ten a mano tus respuestas y anexos de Bidragskoll.se.',
+    'Tu solicitud está completamente preparada aquí. La presentación final la haces en el servicio oficial — ten a mano tus respuestas y anexos de Bidragskoll.',
   'aw.openOfficial': 'Abrir el servicio oficial de solicitud ↗',
   'aw.pasteRef': 'Cuando termines: pega la referencia/número de registro del justificante',
   'aw.refPlaceholder': 'p. ej. KUR-2026-12345',

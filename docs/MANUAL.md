@@ -28,14 +28,14 @@ inlämnat utan verifierbart kvitto, och hittar aldrig på data.
    faktumet lämnas osatt och frågan återkommer aldrig (art. 9-samtycke
    tidsstämplas när den besvaras).
 3. **Analysen (gratis, Open Discovery)** — räknas mot alla stöd och visas
-   direkt: varje stöd med namn, sannolikhet och förklaring. Ingen betalvägg,
+   direkt: varje stöd med namn, bedömning och förklaring. Ingen betalvägg,
    inga låsta matchningar — resultaten är fria att se.
 4. **Förberedd ansökan (19 kr/ansökan)** — det enda köpet: köpet kräver
    ikryssat samtycke till omedelbar leverans (ångerrätten upphör —
    distansavtalslagen); utan kryss vägrar servern (400). Betala med Swish (QR
    på desktop, app-länk i mobil). Kvittot med löpnummer och 25 % moms hamnar
    under Mina köp direkt.
-5. **Analysen** — varje stöd visas med sannolikhet, förklaring per kriterium,
+5. **Analysen** — varje stöd visas med bedömning, förklaring per kriterium,
    källa med färskhet och kureringsstämpel ("AI-sammanställd från officiell
    källa — ej granskad av människa" tills en kurator höjt den). Obesvarade
    följdfrågor sorteras efter hur många stöd de avgör; svar går att ändra i
@@ -433,6 +433,7 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | `npm run sim:engine` | Motorsimulering: ~11 000 genererade personor × alla stöd direkt mot packages/core — döda/universella stöd, nollresultat, sektorsläckor, åldersgränser, datumsvep. Rapporterar; --strict fäller på DÖD/LÄCKA. |
 | `npm run sim:engine:intake` | Samma simulering med bara intagets fakta kända — mäter frågebördan (öppna frågor per persona) och vilka frågor som avgör flest stöd. |
 | `npm run seed:integrity` | Seedens integritet: överlastade faktavägar, döda fakta, motsägelser, delade källor, schemafel (rapporterar; --strict fäller på klass C/G). |
+| `npm run lang:check` | Språkvakten (docs/LANGUAGE_GUIDE.md §7, backlog M5): all användarvänd text — webbens 11 språk, kunskapsbasen, demon, publika ytan — mot guidens hårda regler (förbjudna löftesord, kr/datumformat, beslutsraden, stavningskonsekvens) och terminologiregistret. Körs i verify och CI. |
 | `npm run i18n:cov` | Mäter hur stor del av kunskapsbasens användarvända text som finns i översättningsminnet, per innehållstyp (docs/I18N_PROGRAM.md §Täckningen i siffror). Fäller inget bygge — otolkad text är ett kureringsläge, inte ett fel. |
 | `npm run gate:links` | Extern länkhälsa för myndighetslänkarna på publika ytan — körs från nätansluten maskin (t.ex. efter deploy); sandlådan saknar utgående nät. |
 

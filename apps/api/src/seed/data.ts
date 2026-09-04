@@ -639,7 +639,7 @@ export const opportunities: SeedOpportunity[] = [
     sectors: ['sports', 'youth'],
     deadlineModel: 'recurring',
     closesAt: '2026-08-25T21:59:59Z',
-    applicationMethod: 'Ansökan/redovisning görs i IdrottOnline. Ansökningsperioderna stänger 25 februari och 25 augusti.',
+    applicationMethod: 'Ansökan och redovisning görs i IdrottOnline. Ansökningsperioderna stänger 25 februari och 25 augusti.',
     applicationUrl: 'https://www.rf.se/bidrag-och-stod',
     sourceUrl: 'https://www.rf.se/bidrag-och-stod',
     estimatedEffortDays: 2,
@@ -842,7 +842,7 @@ export const opportunities: SeedOpportunity[] = [
       c('jv-is-m2', 'mandatory', 'project.activityTypes', 'includes', 'investment', 'Ansökan ska avse en investering', 'Avser ansökan en fysisk investering?'),
     ],
     budgetRules: [
-      { id: 'jv-is-b1', type: 'max_funding_share', percent: 40, description: 'Stödandelen är typiskt upp till 40 % av godkänd kostnad — se aktuellt stöd.' },
+      { id: 'jv-is-b1', type: 'max_funding_share', percent: 40, description: 'Stödandelen är vanligen upp till 40 % av godkänd kostnad — se aktuellt stöd.' },
     ],
     evidenceRequirements: [
       { id: 'jv-is-e1', kind: 'budget', description: 'Investeringskalkyl med offerter', mandatory: true },

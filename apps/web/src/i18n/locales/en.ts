@@ -366,8 +366,8 @@ export const en: Record<keyof typeof sv, string> = {
   'm.myPurchases': 'My purchases',
   'm.showReceipt': 'Show receipt',
   'm.badge.investigate': 'needs investigation',
-  'm.badge.high': 'high likelihood',
-  'm.badge.possible': 'possible',
+  'm.badge.high': 'matches the requirements well',
+  'm.badge.possible': 'may match',
   'm.stackTitle': 'Funding plan',
   'm.stackGuidance':
     'How can several grants be combined to cover the whole budget? We never assume two grants can be combined — everything that needs confirmation is flagged.',
@@ -396,7 +396,7 @@ export const en: Record<keyof typeof sv, string> = {
   'o.effortDays': 'about {n} working days',
   'o.howToApply': 'How to apply',
   'o.submissionNote':
-    'The final submission is made in the authority’s official service. Bidragskoll.se prepares the whole application, keeps track of documentation and deadlines, and helps you all the way — but we never claim something has been submitted without a receipt.',
+    'The final submission is made in the authority’s official service. Bidragskoll prepares the whole application, keeps track of documentation and deadlines, and helps you all the way — but we never claim something has been submitted without a receipt.',
   'o.criteriaTitle': 'Requirements and assessment',
   'o.criteriaGuidance':
     'This is how the system assesses your match. It is an assessment based on published criteria — not the authority’s decision.',
@@ -462,7 +462,7 @@ export const en: Record<keyof typeof sv, string> = {
   'ap.nonePost': 'and start an application from a match.',
   'ap.thUpdated': 'Updated',
 
-  's.guidancePre': 'Free-text search in the knowledge base. For a personal assessment of what you can apply for — use',
+  's.guidancePre': 'Free-text search across all supports. For a personal assessment of what you can apply for — use',
   's.guidanceLink': 'the matches',
   's.search': 'Search',
   's.searchPlaceholder': 'e.g. travel grant, energy, youth exchange',
@@ -486,7 +486,7 @@ export const en: Record<keyof typeof sv, string> = {
   'cal.subCloses': '{myndighet} · application closes',
 
   'in.guidance':
-    'Collect replies from authorities and foundations in one place. Register letters and emails you have received — the system links them to the right application and interprets what they mean. Bidragskoll.se never logs in to authority portals on your behalf.',
+    'Collect replies from authorities and foundations in one place. Register letters and emails you have received — the system links them to the right application and interprets what they mean. Bidragskoll never logs in to authority portals on your behalf.',
   'in.registerToggle': '+ Register a message',
   'in.cancel': 'Cancel',
   'in.sender': 'Sender',
@@ -526,7 +526,7 @@ export const en: Record<keyof typeof sv, string> = {
     'We are waiting for the confirmation from the payment system. It usually takes only a second — do not close the page.',
   'pay.waiting': 'Waiting…',
   'pay.doneTitle': 'The payment is complete',
-  'pay.doneBody': 'Your application is unlocked. Taking you back…',
+  'pay.doneBody': 'Your application is prepared — all documents are included. Taking you back…',
   'pay.failedTitle': 'The payment did not go through',
   'pay.failedBody': 'No application was created and nothing was charged. You can try again.',
   'pay.back': 'Back',
@@ -573,7 +573,7 @@ export const en: Record<keyof typeof sv, string> = {
   'label.budget.overhead': 'Overhead',
   'label.budget.other': 'Other',
 
-  'acc.title': 'Account and data',
+  'acc.title': 'Account & data',
   'acc.eraseError': 'The deletion failed.',
   'acc.exportTitle': 'Export your data',
   'acc.exportBody':
@@ -648,7 +648,7 @@ export const en: Record<keyof typeof sv, string> = {
   'ds.remaining': 'You have {antal} documents left in your package.',
   'ds.create': 'Create',
   'ds.footer':
-    'The documents are based on your own information. The final assessment is always made by the receiving authority or organisation.',
+    'The documents are based on your own information. The final decision is always made by the receiving authority or organisation.',
   'ds.backToAnalysis': '← Back to the analysis',
   'ds.helpTitle': 'Would you like help with the documents?',
   'ds.helpGuidance':
@@ -729,7 +729,7 @@ export const en: Record<keyof typeof sv, string> = {
   'aw.prepareSubmission': 'Prepare submission',
   'aw.finishTitle': 'Complete the submission with the authority',
   'aw.finishBody':
-    'Your application is fully prepared here. You make the final submission in the official service — have your answers and attachments from Bidragskoll.se at hand.',
+    'Your application is fully prepared here. You make the final submission in the official service — have your answers and attachments from Bidragskoll at hand.',
   'aw.openOfficial': 'Open the official application service ↗',
   'aw.pasteRef': 'When you are done: paste the reference/registration number from the receipt',
   'aw.refPlaceholder': 'e.g. KUR-2026-12345',

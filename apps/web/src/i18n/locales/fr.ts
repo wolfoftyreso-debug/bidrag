@@ -370,8 +370,8 @@ export const fr: Record<keyof typeof sv, string> = {
   'm.myPurchases': 'Mes achats',
   'm.showReceipt': 'Afficher le reçu',
   'm.badge.investigate': 'à examiner',
-  'm.badge.high': 'forte probabilité',
-  'm.badge.possible': 'possible',
+  'm.badge.high': 'correspond bien aux critères',
+  'm.badge.possible': 'peut correspondre',
   'm.stackTitle': 'Plan de financement',
   'm.stackGuidance':
     'Comment combiner plusieurs aides pour couvrir tout le budget ? Nous ne supposons jamais que deux aides sont cumulables — tout ce qui doit être confirmé est signalé.',
@@ -400,7 +400,7 @@ export const fr: Record<keyof typeof sv, string> = {
   'o.effortDays': 'environ {n} jours de travail',
   'o.howToApply': 'Comment demander',
   'o.submissionNote':
-    'Le dépôt final se fait dans le service officiel de l’autorité. Bidragskoll.se prépare toute la demande, tient à jour justificatifs et échéances, et vous accompagne jusqu’au bout — mais nous n’affirmons jamais qu’un dossier est déposé sans accusé de réception.',
+    'Le dépôt final se fait dans le service officiel de l’autorité. Bidragskoll prépare toute la demande, tient à jour justificatifs et échéances, et vous accompagne jusqu’au bout — mais nous n’affirmons jamais qu’un dossier est déposé sans accusé de réception.',
   'o.criteriaTitle': 'Exigences et évaluation',
   'o.criteriaGuidance':
     'Voici comment le système évalue votre correspondance. C’est une évaluation d’après des critères publiés — pas la décision de l’autorité.',
@@ -466,7 +466,7 @@ export const fr: Record<keyof typeof sv, string> = {
   'ap.nonePost': 'et démarrez une demande depuis une correspondance.',
   'ap.thUpdated': 'Mise à jour',
 
-  's.guidancePre': 'Recherche libre dans la base de connaissances. Pour une évaluation personnelle de ce que vous pouvez demander, utilisez',
+  's.guidancePre': 'Recherche libre parmi toutes les aides. Pour une évaluation personnelle de ce que vous pouvez demander, utilisez',
   's.guidanceLink': 'les correspondances',
   's.search': 'Rechercher',
   's.searchPlaceholder': 'p. ex. bourse de voyage, énergie, échange de jeunes',
@@ -490,7 +490,7 @@ export const fr: Record<keyof typeof sv, string> = {
   'cal.subCloses': '{myndighet} · la demande ferme',
 
   'in.guidance':
-    'Rassemblez les réponses des autorités et fondations en un seul endroit. Enregistrez lettres et e-mails reçus — le système les relie à la bonne demande et interprète leur signification. Bidragskoll.se ne se connecte jamais aux portails des autorités à votre place.',
+    'Rassemblez les réponses des autorités et fondations en un seul endroit. Enregistrez lettres et e-mails reçus — le système les relie à la bonne demande et interprète leur signification. Bidragskoll ne se connecte jamais aux portails des autorités à votre place.',
   'in.registerToggle': '+ Enregistrer un message',
   'in.cancel': 'Annuler',
   'in.sender': 'Expéditeur',
@@ -530,7 +530,7 @@ export const fr: Record<keyof typeof sv, string> = {
     'Nous attendons la confirmation du système de paiement. Cela ne prend généralement qu’une seconde — ne fermez pas la page.',
   'pay.waiting': 'En attente…',
   'pay.doneTitle': 'Le paiement est effectué',
-  'pay.doneBody': 'Votre demande est débloquée. Nous vous ramenons…',
+  'pay.doneBody': 'Votre demande est préparée — tous les documents sont inclus. Nous vous ramenons…',
   'pay.failedTitle': 'Le paiement n’a pas abouti',
   'pay.failedBody': 'Aucune demande n’a été créée et rien n’a été débité. Vous pouvez réessayer.',
   'pay.back': 'Retour',
@@ -652,7 +652,7 @@ export const fr: Record<keyof typeof sv, string> = {
   'ds.remaining': 'Il vous reste {antal} documents dans votre forfait.',
   'ds.create': 'Créer',
   'ds.footer':
-    'Les documents reposent sur vos propres informations. L’évaluation finale est toujours faite par l’autorité ou l’organisation destinataire.',
+    'Les documents reposent sur vos propres informations. La décision finale est toujours prise par l’autorité ou l’organisation destinataire.',
   'ds.backToAnalysis': '← Retour à l’analyse',
   'ds.helpTitle': 'Voulez-vous de l’aide avec les documents ?',
   'ds.helpGuidance':
@@ -733,7 +733,7 @@ export const fr: Record<keyof typeof sv, string> = {
   'aw.prepareSubmission': 'Préparer le dépôt',
   'aw.finishTitle': 'Finalisez le dépôt auprès de l’autorité',
   'aw.finishBody':
-    'Votre demande est entièrement préparée ici. Vous faites le dépôt final dans le service officiel — gardez sous la main vos réponses et pièces jointes de Bidragskoll.se.',
+    'Votre demande est entièrement préparée ici. Vous faites le dépôt final dans le service officiel — gardez sous la main vos réponses et pièces jointes de Bidragskoll.',
   'aw.openOfficial': 'Ouvrir le service officiel de demande ↗',
   'aw.pasteRef': 'Quand vous avez terminé : collez la référence/le numéro d’enregistrement de l’accusé',
   'aw.refPlaceholder': 'p. ex. KUR-2026-12345',

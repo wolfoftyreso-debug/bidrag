@@ -138,7 +138,7 @@ export const ar: Record<string, string> = {
   "Ansökan ska avse investering (bygga, köpa eller rusta upp)": "يجب أن يخص الطلب استثمارًا (بناء أو شراء أو تجديد)",
   "Ansökan ska avse jordbruks-, trädgårds- eller rennäringsföretag": "يجب أن يخص الطلب منشأة زراعية أو بستانية أو لرعي الرنة",
   "Ansökan till din lokala majblommeförening via majblomman.se.": "يُقدَّم الطلب إلى جمعية Majblomman المحلية لديك عبر majblomman.se.",
-  "Ansökan/redovisning görs i IdrottOnline. Ansökningsperioderna stänger 25 februari och 25 augusti.": "يتم التقديم والإبلاغ عبر IdrottOnline. وتُغلق فترتا التقديم في 25 فبراير و25 أغسطس.",
+  "Ansökan och redovisning görs i IdrottOnline. Ansökningsperioderna stänger 25 februari och 25 augusti.": "يتم التقديم والإبلاغ عبر IdrottOnline. وتُغلق فترتا التقديم في 25 فبراير و25 أغسطس.",
   "Antal anställda": "عدد الموظفين",
   "Antal barn som bor hemma": "عدد الأطفال المقيمين في المنزل",
   "Antal barn som bor hemma (helt eller växelvis)": "عدد الأطفال المقيمين في المنزل (بشكل دائم أو بالتناوب)",

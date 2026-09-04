@@ -101,9 +101,16 @@ export function formatSek(minor: number | null | undefined): string {
   return `${(minor / 100).toLocaleString('sv-SE')} kr`;
 }
 
+/** Datumlokal för löptext — sätts av I18nProvider när användaren byter språk. */
+let dateLocale = 'sv-SE';
+export function setDateLocale(locale: string) {
+  dateLocale = locale;
+}
+
+/** Datum i löptext enligt LANGUAGE_GUIDE §3: "12 mars 2026" (månaden utskriven, aldrig "12/3"). */
 export function formatDate(iso: string | null | undefined): string {
   if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('sv-SE', { year: 'numeric', month: 'short', day: 'numeric' });
+  return new Date(iso).toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 export const INSTRUMENT_LABELS: Record<string, string> = {

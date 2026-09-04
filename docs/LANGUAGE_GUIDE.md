@@ -73,7 +73,22 @@ vi lånar det inte.
 
 ## 7. Kvalitetskontroll
 
-Stavning/grammatik/dubbla mellanslag/citattecken/datumformat/kronorformat/
-myndighetsnamn kontrolleras redaktionellt idag; automatisk kontroll mot
-terminologi.json byggs i seocheck (backlog M5). Små språkfel är förtroendefel
-(§37).
+**Språkvakten är kod:** `npm run lang:check` (`tools/langcheck.mjs`, i verify
+och CI sedan 2026-09-04, backlog M5 stängd) kontrollerar all användarvänd
+text — webbens svenska källsträngar och tio översättningar, kunskapsbasen,
+demon, den genererade publika ytan och `seo/publik-i18n.json` — mot §3–§4
+och terminologiregistret: förbjudna löftesord (med tillåten negation och
+villkorsform), kr-/datumformat, "Klicka här"/"Läs mer", utropstecken, dubbla
+mellanslag, stavningskonsekvens (i dag, i stället, mejl), beslutsraden och
+gratisvägen på varje yta som visar en bedömning, deprecated-termer som
+huvudterm, "SEK" i engelska texter, blandade siffersystem i fa/prs/ar, och
+att sidrubrik = navigationsetikett i varje språk. Stavning och grammatik i
+löptext kontrolleras fortfarande redaktionellt — senaste fullständiga
+genomgång: `docs/reports/SPRAK_2026-09-04.md`. Små språkfel är
+förtroendefel (§37).
+
+Tre ordval som revisionen låste (2026-09-04): matchningens märken är
+**"stämmer väl med kraven" / "kan stämma" / "behöver utredas"** — aldrig
+"hög sannolikhet" (läses som sannolikhet att beviljas); kontosidan heter
+**"Konto & data"** överallt; varumärket i löptext är **Bidragskoll**
+("Bidragskoll.se" bara som adress).

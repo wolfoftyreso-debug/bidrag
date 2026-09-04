@@ -374,8 +374,8 @@ export const sv = {
   'm.myPurchases': 'Mina köp',
   'm.showReceipt': 'Visa kvitto',
   'm.badge.investigate': 'behöver utredas',
-  'm.badge.high': 'hög sannolikhet',
-  'm.badge.possible': 'möjlig',
+  'm.badge.high': 'stämmer väl med kraven',
+  'm.badge.possible': 'kan stämma',
   'm.stackTitle': 'Finansieringsplan',
   'm.stackGuidance':
     'Hur kan flera stöd kombineras för att täcka hela budgeten? Vi antar aldrig att två stöd kan kombineras — allt som behöver bekräftas flaggas.',
@@ -405,7 +405,7 @@ export const sv = {
   'o.effortDays': 'cirka {n} arbetsdagar',
   'o.howToApply': 'Så ansöker du',
   'o.submissionNote':
-    'Den slutliga inlämningen görs i myndighetens officiella tjänst. Bidragskoll.se förbereder hela ansökan, håller ordning på underlag och deadlines, och hjälper dig hela vägen — men vi påstår aldrig att något är inlämnat utan kvitto.',
+    'Den slutliga inlämningen görs i myndighetens officiella tjänst. Bidragskoll förbereder hela ansökan, håller ordning på underlag och deadlines, och hjälper dig hela vägen — men vi påstår aldrig att något är inlämnat utan kvitto.',
   'o.criteriaTitle': 'Krav och bedömning',
   'o.criteriaGuidance':
     'Så här bedömer systemet din matchning. Det är en bedömning utifrån publicerade kriterier — inte myndighetens beslut.',
@@ -474,7 +474,7 @@ export const sv = {
   'ap.thUpdated': 'Uppdaterad',
 
   // ── FAS A2b: Sök stöd ────────────────────────────────────────────────────
-  's.guidancePre': 'Fritextsökning i kunskapsbasen. För en personlig bedömning av vad just du kan söka — använd',
+  's.guidancePre': 'Sök fritt bland alla stöd. För en personlig bedömning av vad just du kan söka — använd',
   's.guidanceLink': 'matchningarna',
   's.search': 'Sök',
   's.searchPlaceholder': 't.ex. resebidrag, energi, ungdomsutbyte',
@@ -493,14 +493,14 @@ export const sv = {
   'cal.yourApplication': 'din ansökan',
   'cal.openSupport': 'öppet stöd',
   'cal.subApplication': 'Din ansökan · {status} · {kvar}',
-  'cal.lastDayToday': 'sista dagen idag',
+  'cal.lastDayToday': 'sista dagen i dag',
   'cal.dayLeft': '1 dag kvar',
   'cal.daysLeft': '{n} dagar kvar',
   'cal.subCloses': '{myndighet} · ansökan stänger',
 
   // ── FAS A2b: Inkorg ──────────────────────────────────────────────────────
   'in.guidance':
-    'Samla svar från myndigheter och stiftelser på ett ställe. Registrera brev och e-post du fått — systemet kopplar dem till rätt ansökan och tolkar vad de betyder. Bidragskoll.se loggar aldrig in på myndigheters portaler åt dig.',
+    'Samla svar från myndigheter och stiftelser på ett ställe. Registrera brev och e-post du fått — systemet kopplar dem till rätt ansökan och tolkar vad de betyder. Bidragskoll loggar aldrig in på myndigheters portaler åt dig.',
   'in.registerToggle': '+ Registrera meddelande',
   'in.cancel': 'Avbryt',
   'in.sender': 'Avsändare',
@@ -543,7 +543,7 @@ export const sv = {
     'Vi väntar på bekräftelsen från betalsystemet. Det tar oftast bara någon sekund — stäng inte sidan.',
   'pay.waiting': 'Väntar…',
   'pay.doneTitle': 'Betalningen är klar',
-  'pay.doneBody': 'Din ansökan är upplåst. Vi tar dig tillbaka…',
+  'pay.doneBody': 'Ansökan är förberedd — alla dokument ingår. Vi tar dig tillbaka…',
   'pay.failedTitle': 'Betalningen gick inte igenom',
   'pay.failedBody': 'Ingen ansökan skapades och inget drogs. Du kan försöka igen.',
   'pay.back': 'Tillbaka',
@@ -593,7 +593,7 @@ export const sv = {
   'label.budget.other': 'Övrigt',
 
   // ── FAS A2b: Konto och data ──────────────────────────────────────────────
-  'acc.title': 'Konto och data',
+  'acc.title': 'Konto & data',
   'acc.eraseError': 'Raderingen misslyckades.',
   'acc.exportTitle': 'Hämta ut din data',
   'acc.exportBody':
@@ -669,7 +669,7 @@ export const sv = {
   'ds.remaining': 'Du har {antal} dokument kvar i ditt paket.',
   'ds.create': 'Skapa',
   'ds.footer':
-    'Dokumenten bygger på dina egna uppgifter. Slutlig bedömning görs alltid av mottagande myndighet eller organisation.',
+    'Dokumenten bygger på dina egna uppgifter. Slutligt beslut fattas alltid av mottagande myndighet eller organisation.',
   'ds.backToAnalysis': '← Tillbaka till analysen',
   'ds.helpTitle': 'Vill du ha hjälp med dokumenten?',
   'ds.helpGuidance':
@@ -735,7 +735,7 @@ export const sv = {
   'aw.complementTitle': 'Det här kan handläggaren vilja kontrollera ({n})',
   'aw.criteriaTitle': 'Bedömning per kriterium ({n})',
   'aw.criteriaGuidance':
-    'Kriterierna ur regelverket din ansökan skapades under. "Kan inte vägas upp" betyder att en brist där aldrig kompenseras av styrkor någon annanstans. E2 = styrkt av bifogat dokument, E1 = bygger på ditt eget svar, E0 = obesvarat.',
+    'Kriterierna ur regelverket din ansökan skapades under. ”Kan inte vägas upp” betyder att en brist där aldrig kompenseras av styrkor någon annanstans. E2 = styrkt av bifogat dokument, E1 = bygger på ditt eget svar, E0 = obesvarat.',
   'aw.nonComp': 'kan inte vägas upp',
   'aw.internalEstimate': 'Intern styrkeindikator: {poang}/100',
   'aw.doubleHigh': 'Dubbelfinansiering — hög risk.',
@@ -751,7 +751,7 @@ export const sv = {
   'aw.prepareSubmission': 'Förbered inlämning',
   'aw.finishTitle': 'Slutför inlämningen hos myndigheten',
   'aw.finishBody':
-    'Din ansökan är komplett förberedd här. Den slutliga inlämningen gör du i den officiella tjänsten — ha dina svar och bilagor från Bidragskoll.se till hands.',
+    'Din ansökan är komplett förberedd här. Den slutliga inlämningen gör du i den officiella tjänsten — ha dina svar och bilagor från Bidragskoll till hands.',
   'aw.openOfficial': 'Öppna den officiella ansökningstjänsten ↗',
   'aw.pasteRef': 'När du är klar: klistra in referens/diarienummer från kvittot',
   'aw.refPlaceholder': 't.ex. KUR-2026-12345',

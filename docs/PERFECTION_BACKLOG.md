@@ -28,7 +28,7 @@ kvalitetsfel av samma sort som stora.
 - M2 Dynamiska per-sida-OG-bilder (§11) — designsystemstyrd generator; standardbilden duger tills sidmängden motiverar det.
 - M3 Typad schemagenerator som egen modul (§17) — när situationssidor/fler sidtyper landar.
 - M4 Fullt source object publikt (§34): effective date, sektion, versionshistorik.
-- M5 Automatisk term-/stavningskonsekvens för publika ytan (§37) — terminologi.json är källan; bygg kontrollen i seocheck.
+- ~~M5 Automatisk term-/stavningskonsekvens för publika ytan (§37)~~ → **STÄNGD 2026-09-04.** `tools/langcheck.mjs` (`npm run lang:check`) i verify + CI: alla användarvända ytor och 11 språk mot LANGUAGE_GUIDE §3–§4 + terminologi.json. Rapport: docs/reports/SPRAK_2026-09-04.md
 - M6 Automatisk visuell QA med skärmbilder i flera vyportar (§38) + cross-browser (§39) — uicheck-infran finns, utöka.
 - M7 Full WCAG 2.2 AA-genomgång med hjälpmedel (§31; docs/LIMITATIONS.md).
 - M8 Länkhälsomotor för externa myndighetslänkar (§33) — körs i deployad miljö/CI (sandlådans proxy blockerar myndighetsdomäner; falska negativa lokalt).
@@ -62,6 +62,7 @@ kvalitetsfel av samma sort som stora.
 
 | Datum | Id | Åtgärd |
 |---|---|---|
+| 2026-09-04 | M5 | Full språkrevision (docs/reports/SPRAK_2026-09-04.md): 2 500+ användarvända strängar i 11 språk lästa och maskinskannade mot LANGUAGE_GUIDE. Lagat: dokumentstudions "Slutlig bedömning görs" (myndigheten beslutar, vi bedömer), betalväggsordet "upplåst", märket "hög sannolikhet" → "stämmer väl med kraven" (läses som chans att beviljas), "Konto och data" ≠ "Konto & data", "idag"/"mailet", datum "4 sep. 2026" → "4 september 2026" och alltid i användarens språk, "SEK 25,000" i engelska seeden, blandade persiska/latinska siffror i fa/prs, internjargongen "kunskapsbasen" i användartext (även oöversatt i somaliska), varumärket i löptext. Språkvakten tools/langcheck.mjs i verify + CI |
 | 2026-09-03 | H1 | Användarfeedback (§45): komponenten "Verkar något fel? Var detta begripligt?" på analysen, stödsidan och arbetsytan — kategoriserad (faktafel/språk/navigering/saknat stöd/tekniskt/annat), inloggad, rate-limitad, i11 språk; kuratorn läser i /admin (GET /v1/admin/feedback). Vakthunden larmar på obehandlade faktafel > 48 h. Test: apps/api/test/beta.test.ts |
 | 2026-09-03 | B7 | Sluten beta: BETA_INVITE_CODES kräver inbjudningskod vid registrering (403 invite_required, konstant-tids-jämförelse, före dubblettkollen), BETA_MODE visar beta-märket; publik policy GET /v1/auth/register-policy. Utan koder är registreringen öppen som förut |
 | 2026-09-03 | B2 | Instrumentering utan tredjepart: tabellen product_events, serverside trattsteg (konto_skapat, genomgang_slutford, ansokan_skapad, betalning_bekraftad) + allow-listade klienthändelser (genomgang_startad, nasta_steg_visad, ansok_sjalv_klick, forbered_klick); GET /v1/internal/metrics/product ger QSDR/ARR per LAUNCH_DEMAND_INTELLIGENCE §5. Identitet nollas vid radering |

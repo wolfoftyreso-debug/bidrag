@@ -138,7 +138,7 @@ export const so: Record<string, string> = {
   "Ansökan ska avse investering (bygga, köpa eller rusta upp)": "Codsigu waa inuu khusaa maalgashi (dhisid, iibsi ama cusboonaysiin)",
   "Ansökan ska avse jordbruks-, trädgårds- eller rennäringsföretag": "Codsigu waa inuu khusaa ganacsi beeraley, beero qudaar ama dhaqasho deero ah",
   "Ansökan till din lokala majblommeförening via majblomman.se.": "Codsiga waxaa loo gudbiyaa ururka deegaanka ee Majblomman iyadoo la marayo majblomman.se.",
-  "Ansökan/redovisning görs i IdrottOnline. Ansökningsperioderna stänger 25 februari och 25 augusti.": "Codsiga iyo warbixinta waxaa lagu sameeyaa IdrottOnline. Muddooyinka codsiga waxay xidhmaan 25 Febraayo iyo 25 Ogosto.",
+  "Ansökan och redovisning görs i IdrottOnline. Ansökningsperioderna stänger 25 februari och 25 augusti.": "Codsiga iyo warbixinta waxaa lagu sameeyaa IdrottOnline. Muddooyinka codsiga waxay xidhmaan 25 Febraayo iyo 25 Ogosto.",
   "Antal anställda": "Tirada shaqaalaha",
   "Antal barn som bor hemma": "Tirada carruurta guriga ku nool",
   "Antal barn som bor hemma (helt eller växelvis)": "Tirada carruurta guriga ku nool (waqti buuxa ama isu-beddelasho)",

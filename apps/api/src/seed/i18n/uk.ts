@@ -138,7 +138,7 @@ export const uk: Record<string, string> = {
   "Ansökan ska avse investering (bygga, köpa eller rusta upp)": "Заявка має стосуватися інвестиції (будівництво, купівля або ремонт)",
   "Ansökan ska avse jordbruks-, trädgårds- eller rennäringsföretag": "Заявка має стосуватися сільськогосподарського, садівничого або оленярського підприємства",
   "Ansökan till din lokala majblommeförening via majblomman.se.": "Заявка подається до місцевого осередку Majblomman через majblomman.se.",
-  "Ansökan/redovisning görs i IdrottOnline. Ansökningsperioderna stänger 25 februari och 25 augusti.": "Заявка та звітність подаються в IdrottOnline. Періоди подання закриваються 25 лютого та 25 серпня.",
+  "Ansökan och redovisning görs i IdrottOnline. Ansökningsperioderna stänger 25 februari och 25 augusti.": "Заявка та звітність подаються в IdrottOnline. Періоди подання закриваються 25 лютого та 25 серпня.",
   "Antal anställda": "Кількість працівників",
   "Antal barn som bor hemma": "Кількість дітей, які живуть удома",
   "Antal barn som bor hemma (helt eller växelvis)": "Кількість дітей, які живуть удома (постійно або по черзі)",

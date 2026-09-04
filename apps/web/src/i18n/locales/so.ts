@@ -366,8 +366,8 @@ export const so: Record<keyof typeof sv, string> = {
   'm.myPurchases': 'Iibsashooyinkayga',
   'm.showReceipt': 'Muuji rasiidka',
   'm.badge.investigate': 'baaritaan ayuu u baahan yahay',
-  'm.badge.high': 'suurtagalnimo sare',
-  'm.badge.possible': 'suurtagal',
+  'm.badge.high': 'si fiican ugu habboon shuruudaha',
+  'm.badge.possible': 'waxaa laga yaabaa inay ku habboonto',
   'm.stackTitle': 'Qorshe maalgelin',
   'm.stackGuidance':
     'Sidee kaalmooyin badan loo isku dari karaa si miisaaniyadda oo dhan loo daboolo? Marnaba uma qaadanno in laba kaalmo la isku dari karo — wax kasta oo xaqiijin u baahan waa la calaamadeeyaa.',
@@ -396,7 +396,7 @@ export const so: Record<keyof typeof sv, string> = {
   'o.effortDays': 'qiyaastii {n} maalmood oo shaqo',
   'o.howToApply': 'Sida loo codsado',
   'o.submissionNote':
-    'Gudbinta kama dambaysta ah waxaa lagu sameeyaa adeegga rasmiga ah ee hayʼadda. Bidragskoll.se wuxuu diyaariyaa codsiga oo dhan, wuxuu habeeyaa dukumentiyada iyo waqtiyada kama dambaysta ah, wuxuuna kula socdaa ilaa dhammaadka — laakiin marnaba ma sheeganno in wax la gudbiyay rasiid la’aan.',
+    'Gudbinta kama dambaysta ah waxaa lagu sameeyaa adeegga rasmiga ah ee hayʼadda. Bidragskoll wuxuu diyaariyaa codsiga oo dhan, wuxuu habeeyaa dukumentiyada iyo waqtiyada kama dambaysta ah, wuxuuna kula socdaa ilaa dhammaadka — laakiin marnaba ma sheeganno in wax la gudbiyay rasiid la’aan.',
   'o.criteriaTitle': 'Shuruudaha iyo qiimaynta',
   'o.criteriaGuidance':
     'Sidan ayuu nidaamku u qiimeeyaa iswaafajintaada. Waa qiimayn ku salaysan shuruudo la daabacay — ma aha go’aanka hayʼadda.',
@@ -462,7 +462,7 @@ export const so: Record<keyof typeof sv, string> = {
   'ap.nonePost': 'oo codsi ka bilow iswaafajin.',
   'ap.thUpdated': 'La cusboonaysiiyay',
 
-  's.guidancePre': 'Raadin xor ah oo kunskapsbasen ah. Qiimayn shakhsi ah oo ku saabsan waxa adigu codsan karto — isticmaal',
+  's.guidancePre': 'Raadin xor ah oo dhammaan taageerooyinka ah. Qiimayn shakhsi ah oo ku saabsan waxa adigu codsan karto — isticmaal',
   's.guidanceLink': 'iswaafajinnada',
   's.search': 'Raadi',
   's.searchPlaceholder': 'tusaale kaalmo safar, tamar, isweydaarsi dhallinyaro',
@@ -486,7 +486,7 @@ export const so: Record<keyof typeof sv, string> = {
   'cal.subCloses': '{myndighet} · codsigu wuxuu xirmayaa',
 
   'in.guidance':
-    'Hal meel ku ururi jawaabaha hayʼadaha iyo mu’asasadaha. Diiwaangeli warqadaha iyo iimaylada aad heshay — nidaamku wuxuu ku xiraa codsiga saxda ah wuxuuna fasiraa waxa ay ka dhigan yihiin. Bidragskoll.se marnaba adiga daraaddaa uma galo bogagga hayʼadaha.',
+    'Hal meel ku ururi jawaabaha hayʼadaha iyo mu’asasadaha. Diiwaangeli warqadaha iyo iimaylada aad heshay — nidaamku wuxuu ku xiraa codsiga saxda ah wuxuuna fasiraa waxa ay ka dhigan yihiin. Bidragskoll marnaba adiga daraaddaa uma galo bogagga hayʼadaha.',
   'in.registerToggle': '+ Diiwaangeli fariin',
   'in.cancel': 'Jooji',
   'in.sender': 'Diraha',
@@ -526,7 +526,7 @@ export const so: Record<keyof typeof sv, string> = {
     'Waxaanu sugaynaa xaqiijinta nidaamka lacag-bixinta. Badanaa hal ilbiriqsi ayay qaadataa — ha xirin bogga.',
   'pay.waiting': 'Sugitaan…',
   'pay.doneTitle': 'Lacag-bixintu waa dhammaatay',
-  'pay.doneBody': 'Codsigaagu wuu furan yahay. Waanu ku celinaynaa…',
+  'pay.doneBody': 'Codsigaagu waa diyaar — dhammaan dukumentiyada way ku jiraan. Waanu ku celinaynaa…',
   'pay.failedTitle': 'Lacag-bixintu ma dhicin',
   'pay.failedBody': 'Codsi lama abuurin, waxna lagama jarin. Waad isku dayi kartaa mar kale.',
   'pay.back': 'Dib u noqo',
@@ -573,7 +573,7 @@ export const so: Record<keyof typeof sv, string> = {
   'label.budget.overhead': 'Kharashyada guud',
   'label.budget.other': 'Kale',
 
-  'acc.title': 'Akoonka iyo xogta',
+  'acc.title': 'Akoon iyo xog',
   'acc.eraseError': 'Tirtiristii way fashilantay.',
   'acc.exportTitle': 'Soo qaado xogtaada',
   'acc.exportBody':
@@ -648,7 +648,7 @@ export const so: Record<keyof typeof sv, string> = {
   'ds.remaining': 'Waxaa kuugu haray {antal} dukumenti xirmadaada.',
   'ds.create': 'Samee',
   'ds.footer':
-    'Dukumentiyadu waxay ku salaysan yihiin xogtaada. Qiimaynta kama dambaysta ah waxaa had iyo jeer sameeya hay’adda ama ururka qaata.',
+    'Dukumentiyadu waxay ku salaysan yihiin xogtaada. Go’aanka kama dambaysta ah waxaa had iyo jeer gaara hay’adda ama ururka qaata.',
   'ds.backToAnalysis': '← Ku noqo falanqaynta',
   'ds.helpTitle': 'Ma rabtaa caawimo dukumentiyada?',
   'ds.helpGuidance':
@@ -729,7 +729,7 @@ export const so: Record<keyof typeof sv, string> = {
   'aw.prepareSubmission': 'Diyaari gudbinta',
   'aw.finishTitle': 'Ku dhammaystir gudbinta hay’adda dawladda',
   'aw.finishBody':
-    'Codsigaagu halkan si buuxda ayaa loogu diyaariyay. Gudbinta kama dambaysta ah waxaad ku samaynaysaa adeegga rasmiga ah — hayso jawaabahaaga iyo lifaaqyadaada Bidragskoll.se.',
+    'Codsigaagu halkan si buuxda ayaa loogu diyaariyay. Gudbinta kama dambaysta ah waxaad ku samaynaysaa adeegga rasmiga ah — hayso jawaabahaaga iyo lifaaqyadaada Bidragskoll.',
   'aw.openOfficial': 'Fur adeegga codsiga rasmiga ah ↗',
   'aw.pasteRef': 'Markaad dhammayso: geli lambarka tixraaca/diiwaanka ee rasiidka',
   'aw.refPlaceholder': 'tus. KUR-2026-12345',

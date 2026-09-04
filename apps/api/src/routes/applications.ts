@@ -602,7 +602,7 @@ export async function applicationRoutes(app: FastifyInstance) {
       if (caseRow.state !== 'READY_TO_SUBMIT') {
         return reply.code(409).send({
           error: 'wrong_state',
-          message: 'Ansökan måste vara i läget "Klar att skicka in" innan den kan lämnas in.',
+          message: 'Ansökan måste vara i läget ”Klar att skicka in” innan den kan lämnas in.',
         });
       }
       const validation = await validateCase(caseRow);
@@ -680,7 +680,7 @@ export async function applicationRoutes(app: FastifyInstance) {
         });
         return reply.code(502).send({
           error: 'submission_failed',
-          message: 'Inlämningen misslyckades hos mottagaren. Ansökan är kvar i "Klar att skicka in" och inga uppgifter gick förlorade.',
+          message: 'Inlämningen misslyckades hos mottagaren. Ansökan är kvar i ”Klar att skicka in” och inga uppgifter gick förlorade.',
           application: reverted,
         });
       }

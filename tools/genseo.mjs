@@ -709,7 +709,7 @@ function queryPage(intent, supports, verdict) {
 
   const dataView = sorted.length
     ? `<ul class="stodlista">${sorted.map((o) => `<li><a href="/bidrag/${o.slug}/">${esc(anchorTitle(o))}</a><span class="sum">${esc(o.summary)} <em>· ${esc(deadlineText(o))}</em></span></li>`).join('')}</ul>`
-    : '<p>Inga aktuella stöd för den här kombinationen i kunskapsbasen just nu.</p>';
+    : '<p>Inga aktuella stöd för den här kombinationen just nu.</p>';
 
   const body = `
 <p class="eyebrow">${esc(intent.audience_label)}</p>
@@ -718,7 +718,7 @@ function queryPage(intent, supports, verdict) {
 <a class="bigcta" href="/">Kontrollera vilka som passar dig — gratis</a>
 
 <h2>Stöd som kan vara aktuella (${sorted.length})</h2>
-<p>Listan bygger på Bidragskolls kunskapsbas och uppdateras när stöden ändras — varje stöd har officiell källa och senast kontrollerad-datum.</p>
+<p>Listan bygger på Bidragskolls samlade, källmärkta stöd och uppdateras när de ändras — varje stöd har officiell källa och senast kontrollerad-datum.</p>
 ${dataView}
 
 <div class="snabbsvar"><h2>Vanliga frågor</h2>
@@ -1489,7 +1489,7 @@ const notFound = layout({
 <h1>Vi hittar inte sidan — men vi kan fortfarande hjälpa dig hitta stödet</h1>
 <p class="lead">Sidan kan ha flyttats, eller så blev adressen fel. Ingen fara: allt vårt innehåll når du härifrån.</p>
 <div class="paths">
-<div class="path"><strong>Se alla stöd</strong>Hela kunskapsbasen, grupperad efter vem stödet gäller.<br><a class="knapp" href="/bidrag/">Till översikten</a></div>
+<div class="path"><strong>Se alla stöd</strong>Alla stöd, grupperade efter vem de gäller.<br><a class="knapp" href="/bidrag/">Till översikten</a></div>
 <div class="path"><strong>Berätta din situation</strong>Svara på några frågor så visar vi vilka stöd som ser ut att kunna gälla dig.<br><a class="knapp sekundar" href="/">Starta genomgången</a></div>
 </div>
 <p class="kalla">Verkar en länk vara trasig? Det vill vi veta — mejla oss så rättar vi den.</p>`,

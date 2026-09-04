@@ -65,7 +65,7 @@ await page.click('button:has-text("Förbered ansökan i systemet")'); await page
 await page.locator('input[type=checkbox]').first().check(); await page.click('button:has-text("Förbered ansökan —")');
 await page.waitForSelector('button:has-text("Bekräfta betalning")', { timeout: 30000 }); await audit('kop-mock');
 await page.click('button:has-text("Bekräfta betalning")'); await page.waitForURL(/\/ansokningar\//, { timeout: 30000 }); await page.waitForTimeout(600); await audit('arbetsyta');
-await page.goto(`${BASE}/konto`); await page.waitForSelector('text=Konto och data', { timeout: 30000 }); await audit('konto');
+await page.goto(`${BASE}/konto`); await page.waitForSelector('text=Konto & data', { timeout: 30000 }); await audit('konto');
 
 await browser.close();
 console.log('\n' + (report.length ? report.join('\n') : 'Inga regelbrott.'));

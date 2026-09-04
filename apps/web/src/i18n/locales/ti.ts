@@ -366,8 +366,8 @@ export const ti: Record<keyof typeof sv, string> = {
   'm.myPurchases': 'ዕድጊታተይ',
   'm.showReceipt': 'ቅብሊት ኣርኢ',
   'm.badge.investigate': 'መጽናዕቲ የድልዮ',
-  'm.badge.high': 'ልዑል ተኽእሎ',
-  'm.badge.possible': 'ዝከኣል',
+  'm.badge.high': 'ምስ ረቛሒታት ብጽቡቕ ይሰማማዕ',
+  'm.badge.possible': 'ክሰማማዕ ይኽእል',
   'm.stackTitle': 'ውጥን ምወላ',
   'm.stackGuidance':
     'ብዙሓት ደገፋት ብኸመይ ተጠሚሮም ንኹሉ ባጀት ይሽፍኑ? ክልተ ደገፋት ክጣመሩ ይኽእሉ ኢልና ፈጺምና ኣይንግምትን — ምርግጋጽ ዘድልዮ ኩሉ ይምልከት።',
@@ -396,7 +396,7 @@ export const ti: Record<keyof typeof sv, string> = {
   'o.effortDays': 'ኣስታት {n} ናይ ስራሕ መዓልታት',
   'o.howToApply': 'ከመይ ተመልክት',
   'o.submissionNote':
-    'ናይ መወዳእታ ምቕራብ ኣብቲ ወግዓዊ ኣገልግሎት ናይቲ ቤት-ስልጣን ይግበር። Bidragskoll.se ንኹሉ ምልክታ የዳሉ፣ ሰነዳትን ናይ መወዳእታ ዕለታትን ይከታተል፣ ክሳብ መወዳእታ ድማ ይሕግዘካ — ግን ብዘይ ቅብሊት ገለ ከም ዝቐረበ ፈጺምና ኣይንብልን።',
+    'ናይ መወዳእታ ምቕራብ ኣብቲ ወግዓዊ ኣገልግሎት ናይቲ ቤት-ስልጣን ይግበር። Bidragskoll ንኹሉ ምልክታ የዳሉ፣ ሰነዳትን ናይ መወዳእታ ዕለታትን ይከታተል፣ ክሳብ መወዳእታ ድማ ይሕግዘካ — ግን ብዘይ ቅብሊት ገለ ከም ዝቐረበ ፈጺምና ኣይንብልን።',
   'o.criteriaTitle': 'ረቛሒታትን ገምጋምን',
   'o.criteriaGuidance':
     'እቲ ሲስተም ከምዚ ገይሩ ንምስምማዕካ ይግምግም። ገምጋም ብመሰረት ዝተሓትሙ መዐቀኒታት እዩ — ውሳነ ቤት-ስልጣን ኣይኮነን።',
@@ -462,7 +462,7 @@ export const ti: Record<keyof typeof sv, string> = {
   'ap.nonePost': 'ኪድ እሞ ካብ ምስምማዕ ምልክታ ጀምር።',
   'ap.thUpdated': 'ዝተሓደሰ',
 
-  's.guidancePre': 'ናጻ ምድላይ ኣብ መሰረት ፍልጠት። ንስኻ እንታይ ከተመልክት ከም እትኽእል ውልቃዊ ገምጋም ንምርካብ — ተጠቐም',
+  's.guidancePre': 'ናጻ ምድላይ ኣብ ኩሎም ሓገዛት። ንስኻ እንታይ ከተመልክት ከም እትኽእል ውልቃዊ ገምጋም ንምርካብ — ተጠቐም',
   's.guidanceLink': 'ምስምማዓት',
   's.search': 'ድለ',
   's.searchPlaceholder': 'ንኣብነት ደገፍ መገሻ፣ ጸዓት፣ ልውውጥ መንእሰያት',
@@ -486,7 +486,7 @@ export const ti: Record<keyof typeof sv, string> = {
   'cal.subCloses': '{myndighet} · ምልክታ ይዕጾ',
 
   'in.guidance':
-    'መልስታት ኣብያተ-ስልጣንን ትካላትን ኣብ ሓደ ቦታ ኣክብ። ዝተቐበልካዮም ደብዳበታትን ኢመይላትን መዝግብ — እቲ ሲስተም ናብቲ ቅኑዕ ምልክታ የተኣሳስሮም እንታይ ከም ዘመልክቱ ድማ ይትርጉም። Bidragskoll.se ፈጺሙ ኣብ ክንዳኻ ናብ ፖርታላት ኣብያተ-ስልጣን ኣይኣቱን።',
+    'መልስታት ኣብያተ-ስልጣንን ትካላትን ኣብ ሓደ ቦታ ኣክብ። ዝተቐበልካዮም ደብዳበታትን ኢመይላትን መዝግብ — እቲ ሲስተም ናብቲ ቅኑዕ ምልክታ የተኣሳስሮም እንታይ ከም ዘመልክቱ ድማ ይትርጉም። Bidragskoll ፈጺሙ ኣብ ክንዳኻ ናብ ፖርታላት ኣብያተ-ስልጣን ኣይኣቱን።',
   'in.registerToggle': '+ መልእኽቲ መዝግብ',
   'in.cancel': 'ስረዝ',
   'in.sender': 'ለኣኺ',
@@ -526,7 +526,7 @@ export const ti: Record<keyof typeof sv, string> = {
     'ካብ ስርዓት ክፍሊት መረጋገጺ ንጽበ ኣለና። መብዛሕትኡ ግዜ ሓንቲ ካልኢት ጥራይ ይወስድ — ነቲ ገጽ ኣይትዕጸዎ።',
   'pay.waiting': 'ይጽበ…',
   'pay.doneTitle': 'ክፍሊት ተወዲኡ',
-  'pay.doneBody': 'ምልክታኻ ተኸፊቱ። ንመልሰካ ኣለና…',
+  'pay.doneBody': 'ምልክታኻ ተዳልዩ — ኩሎም ሰነዳት ተኻቲቶም። ንመልሰካ ኣለና…',
   'pay.failedTitle': 'ክፍሊት ኣይሓለፈን',
   'pay.failedBody': 'ምልክታ ኣይተፈጥረን ገንዘብ ድማ ኣይተወስደን። ደጊምካ ክትፍትን ትኽእል።',
   'pay.back': 'ተመለስ',
@@ -648,7 +648,7 @@ export const ti: Record<keyof typeof sv, string> = {
   'ds.remaining': 'ኣብ ጥማርካ {antal} ሰነዳት ተሪፎምኻ ኣለዉ።',
   'ds.create': 'ፍጠር',
   'ds.footer':
-    'እቶም ሰነዳት ኣብ ናትካ ሓበሬታ ዝተመስረቱ እዮም። ናይ መወዳእታ ገምጋም ኩሉ ግዜ በቲ ተቐባሊ መንግስታዊ ቤት-ስልጣን ወይ ማሕበር ይግበር።',
+    'እቶም ሰነዳት ኣብ ናትካ ሓበሬታ ዝተመስረቱ እዮም። ናይ መወዳእታ ውሳነ ኩሉ ግዜ በቲ ተቐባሊ መንግስታዊ ቤት-ስልጣን ወይ ማሕበር ይውሰን።',
   'ds.backToAnalysis': '← ናብቲ ትንተና ተመለስ',
   'ds.helpTitle': 'ብሰነዳት ሓገዝ ትደሊ ዲኻ?',
   'ds.helpGuidance':
@@ -729,7 +729,7 @@ export const ti: Record<keyof typeof sv, string> = {
   'aw.prepareSubmission': 'ምቕራብ ኣዳሉ',
   'aw.finishTitle': 'ነቲ ምቕራብ ኣብቲ መንግስታዊ ቤት-ስልጣን ዛዝሞ',
   'aw.finishBody':
-    'ማመልከቻኻ ኣብዚ ብምሉእ ተዳልዩ ኣሎ። እቲ ናይ መወዳእታ ምቕራብ ኣብቲ ወግዓዊ ኣገልግሎት ትገብሮ — መልስታትካን ተወሰኽትኻን ካብ Bidragskoll.se ኣብ ኢድካ ሓዞም።',
+    'ማመልከቻኻ ኣብዚ ብምሉእ ተዳልዩ ኣሎ። እቲ ናይ መወዳእታ ምቕራብ ኣብቲ ወግዓዊ ኣገልግሎት ትገብሮ — መልስታትካን ተወሰኽትኻን ካብ Bidragskoll ኣብ ኢድካ ሓዞም።',
   'aw.openOfficial': 'ነቲ ወግዓዊ ኣገልግሎት ማመልከቻ ክፈት ↗',
   'aw.pasteRef': 'ምስ ወዳእካ፦ ካብቲ ቅብሊት ቁጽሪ መወከሲ/መዝገብ ለጥፍ',
   'aw.refPlaceholder': 'ንኣብነት KUR-2026-12345',
