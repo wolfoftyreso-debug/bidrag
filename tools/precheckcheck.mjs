@@ -47,7 +47,7 @@ for (const k of KLUSTER) {
   // Scenario C: inga svar ⇒ inget "ja" (obesvarat är aldrig uppfyllt) och saknade frågor listas.
   const rC = evaluatePrecheck(data, {});
   if (rC.some((r) => r.status === 'ja')) fail(`${k.path}: utan svar gav ett "ja"`);
-  if (rC.some((r) => r.status === 'utred' && !r.missing.length)) fail(`${k.path}: "utred" utan listade frågor`);
+  if (rC.some((r) => r.status === 'utred' && !r.missing.length && !r.roundPending)) fail(`${k.path}: "utred" utan listade frågor`);
   console.log(`  ${k.path}: ${data.questions.length} frågor · ${data.children.length} stöd · alla-ja ⇒ ${rA.filter((r) => r.status === 'ja').length} ja · alla-nej ⇒ ${rB.filter((r) => r.status === 'nej').length} nej · tomt ⇒ ${rC.filter((r) => r.status === 'utred').length} utred`);
 
   // Den genererade sidan (om ytan finns).
@@ -65,6 +65,37 @@ for (const k of KLUSTER) {
     for (const q of data.questions) if (!html.includes(q.text.replace(/&/g, '&amp;'))) fail(`${k.path}: frågan syns inte statiskt: "${q.text}"`);
   }
 }
+// Stödsidorna: verktyget finns exakt där seeden har frågor att ställa, bär
+// underlagslistan, och motorn ger rätt utfall per stöd.
+let medVerktyg = 0; let utanVerktyg = 0;
+for (const o of opportunities) {
+  const data = buildPrecheck({ path: `bidrag/${o.slug}`, headTerm: o.title }, [{ ...o, authority: authName.get(o.authorityKey) ?? o.authorityKey }]);
+  const page = join(ROOT, 'artifacts/seo-site/bidrag', o.slug, 'index.html');
+  const html = existsSync(page) ? readFileSync(page, 'utf8') : null;
+  if (!data.questions.length) {
+    utanVerktyg += 1;
+    if (html && html.includes('id="precheck"')) fail(`${o.slug}: verktyg utan frågor`);
+    continue;
+  }
+  medVerktyg += 1;
+  for (const q of data.questions) if (q.type === 'birthYear' ? q.text !== BIRTH_YEAR_QUESTION : !seedQuestions.has(q.text)) fail(`${o.slug}: frågan står inte i seeden: "${q.text}"`);
+  if (data.children[0].evidence.length !== (o.evidenceRequirements ?? []).length) fail(`${o.slug}: underlagslistan i verktyget ≠ seedens`);
+  // Alla ja + det födelseår som passar stödets åldersvillkor (ung, vuxen, pensionär).
+  const allMandatoryAsked = (o.criteria ?? []).filter((c) => c.kind === 'mandatory').every((c) => c.intakeQuestion);
+  const rank = { ja: 2, utred: 1, nej: 0 };
+  const rA = [1955, 1990, 2003].map((y) => evaluatePrecheck(data, Object.fromEntries(data.questions.map((q) => [q.id, q.type === 'birthYear' ? y : true])))[0]).sort((a, b) => rank[b.status] - rank[a.status])[0];
+  if (rA.status === 'nej') fail(`${o.slug}: alla-ja gav "nej" (${rA.reasons.filter((e) => e.outcome === 'fail').map((e) => e.description).join('; ')})`);
+  if (allMandatoryAsked && rA.status !== 'ja' && !rA.roundPending) fail(`${o.slug}: alla-ja gav "${rA.status}" trots att alla obligatoriska villkor har frågor`);
+  if (rA.roundPending && !rA.roundNote) fail(`${o.slug}: stängd omgång utan förklaring`);
+  const [rC] = evaluatePrecheck(data, {});
+  if (rC.status === 'ja') fail(`${o.slug}: utan svar gav "ja"`);
+  if (html) {
+    if (!html.includes('id="precheck"')) fail(`${o.slug}: sidan saknar verktyget trots ${data.questions.length} frågor`);
+    for (const q of data.questions) if (!html.includes(q.text.replace(/&/g, '&amp;'))) fail(`${o.slug}: frågan syns inte statiskt: "${q.text}"`);
+  }
+}
+console.log(`  stödsidor: ${medVerktyg} med verktyg · ${utanVerktyg} utan (seeden har inga intagsfrågor där)`);
+
 const asset = join(ROOT, 'artifacts/seo-site/assets/precheck.js');
 if (existsSync(join(ROOT, 'artifacts/seo-site'))) {
   if (!existsSync(asset)) fail('artifacts/seo-site/assets/precheck.js saknas');
@@ -76,4 +107,4 @@ if (existsSync(join(ROOT, 'artifacts/seo-site'))) {
 }
 
 if (errors) { console.log(`precheckcheck: ${errors} fel`); process.exit(1); }
-console.log(`precheckcheck OK: ${KLUSTER.length} klusterhubbar — frågor ordagrant ur seeden, motorns utfall på tre scenarier, sidorna bär verktyget.`);
+console.log(`precheckcheck OK: ${KLUSTER.length} klusterhubbar + ${medVerktyg} stödsidor — frågor ordagrant ur seeden, underlagslistan före utklick, motorns utfall på scenarierna, sidorna bär verktyget.`);

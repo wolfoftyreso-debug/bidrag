@@ -52,8 +52,12 @@ ${birth
 <div class="precheck-res-head"><strong>${esc(r.title)}</strong><span class="precheck-badge ${cls[r.status]}">${label[r.status]}</span></div>
 ${r.reasons.length ? `<ul class="precheck-skal">${r.reasons.map((e) => `<li class="${e.outcome}">${e.outcome === 'pass' ? '✓' : '✗'} ${esc(e.description)}</li>`).join('')}</ul>` : ''}
 ${r.status === 'utred' && r.missing.length ? `<p class="precheck-note">För att veta säkert: ${r.missing.map(esc).join(' · ')}</p>` : ''}
+${r.roundPending ? `<p class="precheck-note">${esc(r.roundNote)} — se aktuella omgångstider hos ${esc(r.authority)}.</p>` : ''}
 ${r.preconditions.length ? `<p class="precheck-note">Förutsätter: ${r.preconditions.map(esc).join(' · ')}.</p>` : ''}
-<p class="precheck-links"><a href="${esc(r.applicationUrl || r.sourceUrl)}" rel="noopener">Ansök själv hos ${esc(r.authority)} — gratis ↗</a> · <a href="/bidrag/${esc(r.slug)}/">Se stödet</a></p>
+${r.status !== 'nej' && !r.noApplication && r.evidence.length ? `<p class="precheck-underlag"><strong>Underlag att ha framme innan du ansöker:</strong></p><ul class="precheck-underlag">${r.evidence.map((e) => `<li>${esc(e.description)}${e.mandatory ? ' <strong>(obligatoriskt)</strong>' : ''}</li>`).join('')}</ul>` : ''}
+<p class="precheck-links">${r.noApplication
+    ? `<a href="${esc(r.sourceUrl)}" rel="noopener">Ingen ansökan behövs — så fungerar det hos ${esc(r.authority)} ↗</a>`
+    : `<a href="${esc(r.applicationUrl || r.sourceUrl)}" rel="noopener">Ansök själv hos ${esc(r.authority)} — gratis ↗</a>`}${data.single ? '' : ` · <a href="/bidrag/${esc(r.slug)}/">Se stödet</a>`}</p>
 </div>`).join('');
     const svar = data.questions.map((q, i) => {
       const v = answers[q.id];

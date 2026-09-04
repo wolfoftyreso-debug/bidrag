@@ -220,7 +220,7 @@ a{color:var(--blue)}@media(min-width:640px){.paths{grid-template-columns:1fr 1fr
 .precheck-badge.ja{background:#dff2e1;color:#1f5f2a}.precheck-badge.utred{background:var(--warnbg);color:var(--warn)}.precheck-badge.nej{background:#efe9e2;color:var(--soft)}
 .precheck-skal{list-style:none;padding:0;margin:.4rem 0;font-size:.92rem}.precheck-skal li.fail{color:#8a2f2f}.precheck-skal li.pass{color:#1f5f2a}
 .precheck-links{font-size:.92rem;margin:.3rem 0 0}.precheck-svar summary{cursor:pointer;color:var(--blue)}.precheck-svar ol{font-size:.92rem}
-.precheck-static ol{padding-inline-start:1.2rem}.precheck-live .precheck-static{display:none}
+.precheck-static ol{padding-inline-start:1.2rem}ul.precheck-underlag{font-size:.92rem;margin:.2rem 0 .5rem}p.precheck-underlag{margin:.5rem 0 0}.precheck-live .precheck-static{display:none}
 .bigcta{display:inline-block;background:var(--blue);color:#fff;text-decoration:none;font-weight:700;padding:.7rem 1.4rem;border-radius:12px;font-size:1.02rem;box-shadow:0 2px 8px rgba(18,115,212,.30);margin:.6rem 0}
 `;
 
@@ -441,6 +441,21 @@ function entityPage(o) {
   });
 
   const kluster = KLUSTER_BY_CHILD.get(o.slug);
+  // Behörighetskontrollen på stödets egen sida (F0 modul 4/5 + underlagslistan
+  // före utklick): bara när seeden har intagsfrågor att ställa.
+  const precheck = buildPrecheck({ path: `bidrag/${o.slug}`, headTerm: shortTitle(o) }, [{ ...o, title: shortTitle(o), authority: auth?.name ?? 'den ansvariga aktören' }]);
+  const precheckHtml = precheck.questions.length ? `
+<h2 id="kolla">Kolla grundvillkoren direkt</h2>
+<div class="card precheck" id="precheck">
+<p class="lead">${precheck.questions.length === 1 ? 'En fråga' : `${precheck.questions.length} frågor`} — samma ${precheck.questions.length === 1 ? 'fråga' : 'frågor'} som villkoren hos ${esc(auth?.name ?? 'den ansvariga aktören')} bygger på. Svaret räknas direkt i din webbläsare; inget sparas eller skickas. Det är en bedömning, inte ett beslut.</p>
+<div class="precheck-static">
+<p><strong>Frågorna verktyget ställer:</strong></p>
+<ol>${precheck.questions.map((q) => `<li>${esc(q.text)}</li>`).join('')}</ol>
+<p class="precheck-note">Verktyget kräver JavaScript. Utan det: <a href="/">gå igenom din situation i Bidragskoll</a> — gratis, en fråga i taget.</p>
+</div>
+</div>
+<script type="application/json" id="precheck-data">${JSON.stringify(precheck).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')}</script>
+<script src="/assets/precheck.js" defer></script>` : '';
   const body = `
 <p class="eyebrow">${esc(auth?.name ?? '')} · ${esc(INSTRUMENT[o.instrumentType] ?? 'Stöd')}</p>
 <h1>${esc(short)}</h1>
@@ -471,6 +486,7 @@ det slutliga beslutet fattas alltid av ${esc(auth?.name ?? 'den ansvariga myndig
 
 ${styrker.length ? `<h2>Det här stärker ansökan</h2>
 <ul>${styrker.map((c) => `<li>${esc(c.description)}</li>`).join('')}</ul>` : ''}
+${precheckHtml}
 
 ${evidens.length ? `<h2>Underlag som brukar behövas</h2>
 <ul>${evidens.map((e) => `<li>${esc(e.description)}${e.mandatory ? ' <strong>(obligatoriskt)</strong>' : ''}</li>`).join('')}</ul>` : ''}

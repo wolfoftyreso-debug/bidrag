@@ -236,8 +236,10 @@ CLAUDE.md — guiderna ingår i F1.)
   frågelista som fallback), seedens intagsfrågor ordagrant + produktens
   födelseårsfråga, en fråga i taget, resultat per stöd med skäl, "ansök själv
   — gratis"-länk och beslutsraden. Vakt: `tools/precheckcheck.mjs` (verify +
-  CI) + `tools/uicheck/precheckcheck-browser.mjs`. Entity-sidorna får modulen
-  när klustren växer (F1). `/situationer/` levererad 2026-08-30.
+  CI) + `tools/uicheck/precheckcheck-browser.mjs`. **Samma dag även på varje
+  stödsida** där seeden har intagsfrågor, med seedens underlagslista visad
+  före utklicket (prio 3:s pre-check-vy komplett: grundvillkor + underlag).
+  `/situationer/` levererad 2026-08-30.
 - **F1 — Bevispaketet:** 25 gold-standard-kluster (kanonisk sida +
   situationsmanual + frågeguide + relaterade stöd + överlämning + länkkarta +
   ändringsbevakning) · 10 stora situationsmanualer (separation, arbetslöshet,

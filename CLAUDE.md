@@ -44,8 +44,9 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
   vid varje Vercel-bygge: `/bidrag/` + 4 målgruppshubbar + 4 klusterhubbar + en
   entity-sida per stöd + `/finansiarer/` + Query Pages + 11 språklandningssidor +
   **situationslagret** (`/situationer/`) + **behörighetskontrollen** på de fyra
-  klusterhubbarna (`tools/precheck/`: cores motor i webbläsaren, seedens frågor
-  ordagrant, vakt `tools/precheckcheck.mjs`) + sitemap + robots. QA-crawlas av
+  klusterhubbarna och stödsidorna (`tools/precheck/`: cores motor i webbläsaren,
+  seedens frågor ordagrant, underlagslistan före utklick, vakt
+  `tools/precheckcheck.mjs`) + sitemap + robots. QA-crawlas av
   `tools/seocheck.mjs` och `tools/schemacheck-seo.mjs` i verify.
   Strategi/research i `docs/SEO_*.md`; keyword-databas i `seo/`
   (350 rötter, 185 med verklig Semrush-volym per `docs/reports/SEMRUSH_2026-09-03.md`;
@@ -292,8 +293,9 @@ miljön och handboken fördjupas då skärm för skärm.
    (LEVERERAT 2026-08-30 — 12 noder, `docs/SEO_SITUATION_ONTOLOGY.md` §3),
    bevispaketet; `seo/questions-tier1.json` + `docs/SEO_ANSWER_CLUSTERS.md`
    styr) **plus** pre-check-vyn (grundvillkor + underlagslista före utklick —
-   **grundvillkorsdelen LEVERERAD 2026-09-04** som behörighetskontroll på
-   klusterhubbarna; underlagslistan före utklick återstår),
+   **LEVERERAD 2026-09-04** som behörighetskontroll på klusterhubbarna och
+   på varje stödsida med intagsfrågor, med seedens underlagslista visad före
+   utklicket),
    instrumenteringseventen för QSDR/ARR, och belastningstest mot modellens
    topptimmesvolymer (`scripts/loadtest.mjs`). Kluster 10–12
    (lönebidrag/nystartsjobb/anställa med stöd) är stängda: stöden är kurerade

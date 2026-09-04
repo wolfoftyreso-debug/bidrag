@@ -64,6 +64,24 @@ const body2 = await page.textContent('#precheck');
 if (!/barnfamiljer[\s\S]*ser ut att kunna gälla dig/.test(body2)) fail('ändrat svar räknades inte om');
 console.log('3. Ändrat svar ⇒ barnfamiljer räknas om till "ser ut att kunna" ✓');
 
+// Stödets egen sida: en fråga i taget, underlagslistan FÖRE ansök-länken, ingen "Se stödet"-länk till sig själv.
+await page.goto(`${base}/bidrag/fk-bostadsbidrag-unga/`);
+await page.waitForSelector('#precheck.precheck-live', { timeout: 15000 });
+for (let i = 0; i < 6; i++) {
+  if (await page.locator('#precheck .precheck-res').count()) break;
+  const q = (await page.textContent('#precheck .precheck-q')).trim();
+  if (q === 'Vilket år är du född?') { await page.fill('#precheck-year', '2001'); await page.click('#precheck button[type=submit]'); }
+  else await page.click('#precheck [data-act="yes"]');
+  await page.waitForTimeout(80);
+}
+await page.waitForSelector('#precheck .precheck-res', { timeout: 5000 });
+const ent = await page.textContent('#precheck');
+if (!ent.includes('ser ut att kunna gälla dig')) fail('stödsidan: 25-åring med låg inkomst och hyra fick inte "ser ut att kunna"');
+const iU = ent.indexOf('Underlag att ha framme innan du ansöker'); const iA = ent.indexOf('Ansök själv hos Försäkringskassan — gratis');
+if (iU < 0 || iA < 0 || iU > iA) fail('stödsidan: underlagslistan står inte före ansök-länken');
+if (await page.locator('#precheck a:has-text("Se stödet")').count()) fail('stödsidan länkar till sig själv');
+console.log('5. Stödsidan: underlagslistan före utklicket, ingen självlänk ✓');
+
 // 320 px: inget horisontellt overflow.
 await page.setViewportSize({ width: 320, height: 800 });
 const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
