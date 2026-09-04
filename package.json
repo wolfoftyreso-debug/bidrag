@@ -41,7 +41,9 @@
     "sim:engine:intake": "node --experimental-strip-types tools/simulate-engine.mjs --n=4000 --intake",
     "seed:integrity": "node --experimental-strip-types tools/seedintegrity.mjs --strict",
     "i18n:cov": "node --experimental-strip-types tools/i18ncov.mjs",
-    "lang:check": "node --experimental-strip-types tools/langcheck.mjs"
+    "lang:check": "node --experimental-strip-types tools/langcheck.mjs",
+    "seo:precheck": "node --experimental-strip-types tools/precheckcheck.mjs",
+    "seo:precheck:ui": "node tools/uicheck/precheckcheck-browser.mjs"
   },
   "devDependencies": {
     "axe-core": "^4.10.3",

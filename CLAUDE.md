@@ -43,7 +43,9 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
 - **Publik SEO-yta** — `tools/genseo.mjs` genererar 169 statiska sidor ur seeden
   vid varje Vercel-bygge: `/bidrag/` + 4 målgruppshubbar + 4 klusterhubbar + en
   entity-sida per stöd + `/finansiarer/` + Query Pages + 11 språklandningssidor +
-  **situationslagret** (`/situationer/`) + sitemap + robots. QA-crawlas av
+  **situationslagret** (`/situationer/`) + **behörighetskontrollen** på de fyra
+  klusterhubbarna (`tools/precheck/`: cores motor i webbläsaren, seedens frågor
+  ordagrant, vakt `tools/precheckcheck.mjs`) + sitemap + robots. QA-crawlas av
   `tools/seocheck.mjs` och `tools/schemacheck-seo.mjs` i verify.
   Strategi/research i `docs/SEO_*.md`; keyword-databas i `seo/`
   (350 rötter, 185 med verklig Semrush-volym per `docs/reports/SEMRUSH_2026-09-03.md`;
@@ -155,6 +157,8 @@ npm run sim:engine            # ~11 000 personor × alla stöd mot core (1,4 s);
 npm run sim:engine:intake     # samma med bara intagets fakta — mäter frågebördan
 npm run seed:integrity        # överlastade faktavägar, döda fakta, delade källor, stängda omgångar
 npm run lang:check            # språkvakten: all användarvänd text i 11 språk mot LANGUAGE_GUIDE + terminologin
+npm run seo:precheck          # klusterhubbarnas behörighetskontroll: frågor ur seeden, motorns utfall, sidorna bär verktyget
+npm run seo:precheck:ui       # samma i Chromium mot den genererade ytan (kräver seo:build)
 ```
 
 Webbläsare för kontrollerna: `npx playwright install chromium` eller sätt
@@ -287,7 +291,9 @@ miljön och handboken fördjupas då skärm för skärm.
    interaktiv behörighetskontroll, ändringshistorik, ~~`/situationer/`~~
    (LEVERERAT 2026-08-30 — 12 noder, `docs/SEO_SITUATION_ONTOLOGY.md` §3),
    bevispaketet; `seo/questions-tier1.json` + `docs/SEO_ANSWER_CLUSTERS.md`
-   styr) **plus** pre-check-vyn (grundvillkor + underlagslista före utklick),
+   styr) **plus** pre-check-vyn (grundvillkor + underlagslista före utklick —
+   **grundvillkorsdelen LEVERERAD 2026-09-04** som behörighetskontroll på
+   klusterhubbarna; underlagslistan före utklick återstår),
    instrumenteringseventen för QSDR/ARR, och belastningstest mot modellens
    topptimmesvolymer (`scripts/loadtest.mjs`). Kluster 10–12
    (lönebidrag/nystartsjobb/anställa med stöd) är stängda: stöden är kurerade

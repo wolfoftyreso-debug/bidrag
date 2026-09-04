@@ -102,6 +102,12 @@ till klusterhubben (§3 nedan).
 
 ## P3 — Verktyg (produkt-som-SEO, §16)
 
+**Status 2026-09-04: FÖRSTA VERKTYGET LEVERERAT.** Behörighetskontrollen
+(`tools/precheck/`) körs på alla fyra klusterhubbar — cores motor i
+webbläsaren, seedens frågor ordagrant, resultat per stöd. Kvar i P3:
+räknarintenten (`räkna ut bostadsbidrag` 1 300/mån, `csn fribelopp` 2 900)
+som kräver kurerade beräkningsregler i faktalagret, inte bara villkor.
+
 - `räkna ut bostadsbidrag` 1 300/mån (KD 43) + FK-kalkylatorn topp-3 = bygg
   publik förenklad kontroll per storstöd när klustersidorna byggs
   (`CONTENT_ENGINE.md` F1:s interaktiva behörighetskontroll — nu uppmätt).

@@ -13,7 +13,9 @@
  * kureringsstämpel på varje sida, rena statiska HTML-dokument utan JS
  * (triviala Core Web Vitals), schema.org Organization/WebSite/BreadcrumbList/
  * WebPage — ingen påhittad FAQ-/rating-markup. Inga tomma SEO-sektioner:
- * sektioner renderas bara när seeden har data.
+ * sektioner renderas bara när seeden har data. Enda JS på ytan: klusterhubbarnas
+ * behörighetskontroll (/assets/precheck.js, CONTENT_ENGINE F0 modul 4/5) —
+ * progressiv förbättring med statisk fallback, laddas defer, ~60 kB.
  *
  *   node tools/genseo.mjs                      # → artifacts/seo-site/
  *   node tools/genseo.mjs --out apps/web/dist  # Vercel-bygget
@@ -26,6 +28,7 @@ import { fileURLToPath } from 'node:url';
 import { loadIntents, resolveIntent, indexabilityVerdict, parentOverlapVerdict } from './lib/intents.mjs';
 import { loadSituations, resolveSituation, situationVerdict, duplicateSituations, validateSituationQuestions } from './lib/situationer.mjs';
 import { computeFundingIndex } from './lib/foretagsindex.mjs';
+import { buildPrecheck } from './precheck/logic.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outFlag = process.argv.indexOf('--out');
@@ -206,6 +209,18 @@ a{color:var(--blue)}@media(min-width:640px){.paths{grid-template-columns:1fr 1fr
 .steps{counter-reset:s;list-style:none;padding:0}.steps li{position:relative;padding:.2rem 0 .2rem 2.1rem;margin:.5rem 0;max-width:60ch}
 .steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:.15rem;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--blue);color:#fff;font-weight:700;font-size:.85rem;display:grid;place-items:center}
 .steps strong{display:block}
+.precheck{position:relative}.precheck-q{font-family:var(--serif);font-weight:600;font-size:1.15rem;margin:.2rem 0 .7rem;outline:none}
+.precheck-row{display:flex;flex-wrap:wrap;gap:.5rem;margin:.4rem 0}.precheck-btn{font:inherit;font-weight:600;padding:.6rem 1.1rem;border-radius:10px;border:1.5px solid var(--blue);background:var(--card);color:var(--blue);cursor:pointer}
+.precheck-btn.primary{background:var(--blue);color:#fff}.precheck-btn.primary.valt{outline:3px solid var(--deep)}.precheck-btn:hover{filter:brightness(.95)}
+.precheck-input{font:inherit;padding:.55rem .7rem;border:1.5px solid var(--line);border-radius:8px;width:9rem;display:block;margin:.2rem 0 .5rem}.precheck-label{font-size:.9rem;color:var(--soft)}
+.precheck-nav{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-top:.6rem;flex-wrap:wrap}.precheck-note{font-size:.85rem;color:var(--soft);margin:.3rem 0}
+.precheck-link{font:inherit;background:none;border:none;color:var(--blue);text-decoration:underline;cursor:pointer;padding:0}
+.precheck-res{border:1px solid var(--line);border-radius:10px;padding:.7rem .9rem;margin:.6rem 0;background:var(--card)}.precheck-res.ja{border-color:#2f7a3d}.precheck-res.nej{opacity:.85}
+.precheck-res-head{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:baseline}.precheck-badge{font-size:.8rem;font-weight:600;padding:.15rem .55rem;border-radius:999px;background:var(--line)}
+.precheck-badge.ja{background:#dff2e1;color:#1f5f2a}.precheck-badge.utred{background:var(--warnbg);color:var(--warn)}.precheck-badge.nej{background:#efe9e2;color:var(--soft)}
+.precheck-skal{list-style:none;padding:0;margin:.4rem 0;font-size:.92rem}.precheck-skal li.fail{color:#8a2f2f}.precheck-skal li.pass{color:#1f5f2a}
+.precheck-links{font-size:.92rem;margin:.3rem 0 0}.precheck-svar summary{cursor:pointer;color:var(--blue)}.precheck-svar ol{font-size:.92rem}
+.precheck-static ol{padding-inline-start:1.2rem}.precheck-live .precheck-static{display:none}
 .bigcta{display:inline-block;background:var(--blue);color:#fff;text-decoration:none;font-weight:700;padding:.7rem 1.4rem;border-radius:12px;font-size:1.02rem;box-shadow:0 2px 8px rgba(18,115,212,.30);margin:.6rem 0}
 `;
 
@@ -1258,6 +1273,8 @@ function klusterPage(k) {
   });
 
   const avgorareOpp = k.avgorare ? opportunities.find((o) => o.slug === k.avgorare.slug) : null;
+  // Behörighetskontrollen (F0 modul 4/5): cores motor i webbläsaren, seedens frågor ordagrant.
+  const precheck = buildPrecheck(k, children.map((o) => ({ ...o, title: shortTitle(o), authority: authorityByKey.get(o.authorityKey)?.name ?? 'den ansvariga aktören' })));
   const body = `
 <p class="eyebrow">Översikt · ${esc(authName)}</p>
 <h1>${esc(k.h1)}</h1>
@@ -1271,6 +1288,18 @@ ${children.map((o, i) => {
 }).join('\n')}
 </div>
 ${avgorareOpp && k.avgorare ? `<p class="lead">${esc(k.avgorare.text)} <a href="/bidrag/${avgorareOpp.slug}/">${esc(shortTitle(avgorareOpp))}</a>.</p>` : ''}
+
+<h2 id="kolla">Kolla grundvillkoren direkt</h2>
+<div class="card precheck" id="precheck">
+<p class="lead">${precheck.questions.length} frågor — samma frågor som villkoren hos ${esc(authName)} bygger på. Svaren räknas direkt i din webbläsare; inget sparas eller skickas. Det är en bedömning, inte ett beslut.</p>
+<div class="precheck-static">
+<p><strong>Frågorna verktyget ställer:</strong></p>
+<ol>${precheck.questions.map((q) => `<li>${esc(q.text)}</li>`).join('')}</ol>
+<p class="precheck-note">Verktyget kräver JavaScript. Utan det: <a href="/">gå igenom din situation i Bidragskoll</a> — gratis, en fråga i taget.</p>
+</div>
+</div>
+<script type="application/json" id="precheck-data">${JSON.stringify(precheck).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')}</script>
+<script src="/assets/precheck.js" defer></script>
 
 <p><a class="bigcta" href="/">Kontrollera din situation — gratis</a></p>
 
@@ -1495,5 +1524,19 @@ const notFound = layout({
 <p class="kalla">Verkar en länk vara trasig? Det vill vi veta — mejla oss så rättar vi den.</p>`,
 }).replace('</title>', '</title>\n<meta name="robots" content="noindex">');
 writeFileSync(join(OUT, '404.html'), notFound);
+
+// Behörighetskontrollens webbläsarbundle: cores motor + UI, en fil, defer.
+// esbuild är ett rot-devDependency (samma som demo/build.mjs använder).
+{
+  const { build } = await import('esbuild');
+  mkdirSync(join(OUT, 'assets'), { recursive: true });
+  await build({
+    entryPoints: [join(ROOT, 'tools/precheck/browser.mjs')],
+    bundle: true, minify: true, format: 'iife', target: ['es2020'],
+    alias: { '@bidrag/core': join(ROOT, 'packages/core/dist/index.js') },
+    outfile: join(OUT, 'assets/precheck.js'),
+    logLevel: 'silent',
+  });
+}
 
 console.log(`Genererade ${pages.length} publika sidor (query: ${idx} INDEX/${noidx} NOINDEX/${skipped} DO_NOT_GENERATE · finansiärer: ${fIdx} INDEX/${fNo} NOINDEX · situationer: ${sIdx} INDEX/${sNo} NOINDEX) + 404.html + sitemap.xml + robots.txt → ${OUT}`);

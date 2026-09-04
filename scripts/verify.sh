@@ -175,6 +175,7 @@ step "Maskinförståelse: de 10 kärnpåståendena finns i publik text (FAS SEO-
 step "Indexability-domar i synk (Query Pages, SEO-3)" node --experimental-strip-types tools/indexability.mjs --check
 step "SEO data-QA: källa + deadline-accuracy (DoD-invarianter, SEO-120/121)" node --experimental-strip-types tools/seo-dataqa.mjs
 step "Språkvakten: all användarvänd text mot LANGUAGE_GUIDE + terminologin, 11 språk (M5)" node --experimental-strip-types tools/langcheck.mjs
+step "Behörighetskontrollen på klusterhubbarna: frågor ordagrant ur seeden, motorns utfall, sidorna bär verktyget (F0 modul 4/5)" node --experimental-strip-types tools/precheckcheck.mjs
 
 # ── 6. Hemlighetsskanning (versionshanterade filer) ──────────────────────────
 secrets_scan() {

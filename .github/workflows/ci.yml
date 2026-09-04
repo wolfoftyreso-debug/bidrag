@@ -47,7 +47,7 @@ jobs:
       # Små språkfel är förtroendefel (LANGUAGE_GUIDE §7): förbjudna löftesord,
       # belopps-/datumformat, beslutsraden, terminologi och 11 språk.
       - name: Language guard (LANGUAGE_GUIDE + terminology, 11 locales)
-        run: node --experimental-strip-types tools/genseo.mjs && node --experimental-strip-types tools/langcheck.mjs
+        run: node --experimental-strip-types tools/genseo.mjs && node --experimental-strip-types tools/langcheck.mjs && node --experimental-strip-types tools/precheckcheck.mjs
       # Ett belopp utan källa är värre än inget belopp (red team F1).
       - name: Amount guard (curated amounts need a source)
         run: node --experimental-strip-types tools/beloppcheck.mjs

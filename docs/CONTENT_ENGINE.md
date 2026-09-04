@@ -230,6 +230,14 @@ CLAUDE.md — guiderna ingår i F1.)
   behörighetskontroll ur bedömningslagret) och modul 16 (ändringshistorik ur
   source-diffen) på befintliga entity-sidor; `/situationer/`-nodtypen i genseo;
   Content Authority Score som checklista i granskningsflödet.
+  **Modul 4/5 LEVERERAD 2026-09-04 på de fyra klusterhubbarna**
+  (`tools/precheck/`): cores riktiga kriteriemotor bundlad till
+  `/assets/precheck.js` (25 kB, defer, progressiv förbättring med statisk
+  frågelista som fallback), seedens intagsfrågor ordagrant + produktens
+  födelseårsfråga, en fråga i taget, resultat per stöd med skäl, "ansök själv
+  — gratis"-länk och beslutsraden. Vakt: `tools/precheckcheck.mjs` (verify +
+  CI) + `tools/uicheck/precheckcheck-browser.mjs`. Entity-sidorna får modulen
+  när klustren växer (F1). `/situationer/` levererad 2026-08-30.
 - **F1 — Bevispaketet:** 25 gold-standard-kluster (kanonisk sida +
   situationsmanual + frågeguide + relaterade stöd + överlämning + länkkarta +
   ändringsbevakning) · 10 stora situationsmanualer (separation, arbetslöshet,

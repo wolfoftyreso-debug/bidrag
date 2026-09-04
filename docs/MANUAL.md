@@ -434,6 +434,8 @@ Allt seedat innehåll stämplas `ai_curated` tills en människa granskat det.
 | `npm run sim:engine:intake` | Samma simulering med bara intagets fakta kända — mäter frågebördan (öppna frågor per persona) och vilka frågor som avgör flest stöd. |
 | `npm run seed:integrity` | Seedens integritet: överlastade faktavägar, döda fakta, motsägelser, delade källor, schemafel (rapporterar; --strict fäller på klass C/G). |
 | `npm run lang:check` | Språkvakten (docs/LANGUAGE_GUIDE.md §7, backlog M5): all användarvänd text — webbens 11 språk, kunskapsbasen, demon, publika ytan — mot guidens hårda regler (förbjudna löftesord, kr/datumformat, beslutsraden, stavningskonsekvens) och terminologiregistret. Körs i verify och CI. |
+| `npm run seo:precheck` | Vakten för klusterhubbarnas behörighetskontroll (CONTENT_ENGINE F0 modul 4/5): frågorna ordagrant ur seeden, cores utfall på tre scenarier, sidorna bär verktyget och bundlen håller viktbudgeten. Körs i verify och CI. |
+| `npm run seo:precheck:ui` | Behörighetskontrollen i riktig webbläsare: serverar den genererade ytan lokalt och klickar igenom /bidrag/bostadsbidrag/ (kräver seo:build + Chromium). |
 | `npm run i18n:cov` | Mäter hur stor del av kunskapsbasens användarvända text som finns i översättningsminnet, per innehållstyp (docs/I18N_PROGRAM.md §Täckningen i siffror). Fäller inget bygge — otolkad text är ett kureringsläge, inte ett fel. |
 | `npm run gate:links` | Extern länkhälsa för myndighetslänkarna på publika ytan — körs från nätansluten maskin (t.ex. efter deploy); sandlådan saknar utgående nät. |
 
