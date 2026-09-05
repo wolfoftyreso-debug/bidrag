@@ -93,9 +93,16 @@ cluster before launch — the checklist below tracks that):
   published opportunities, all core tables, 2 applied migrations — current
   state is 72 supports and 12 migrations); API booted against the restored DB — `/readyz` 200 and a full
   registration succeeded. The drill also runs in CI on every push.
-- **Load test** (`scripts/loadtest.mjs`, 25 concurrent, 20 s, 4 vCPU dev box):
-  599 req/s sustained, 0 non-2xx. Read paths p95 ≈ 45 ms; match recompute
-  p95 164 ms after batching the upsert (was 504 ms with per-row writes).
+- **Load test** (`scripts/loadtest.mjs`): two modes — capacity (N workers
+  flat out) and `--model` (the demand model's peak hours as fixed-rate
+  scenarios with the funnel mix, results in `artifacts/loadtest.json`).
+  2026-09-05 run (`docs/reports/LOADTEST_2026-09-05.md`, 4 vCPU sandbox, one
+  process): all three modelled peak hours and a ×5 spike (64 req/s) with 0
+  non-2xx and p95 ≤ 56 ms; capacity 202 req/s with match recompute p95 335 ms.
+  `/v1/events` has its own per-IP limit, now `max(60, RATE_LIMIT_MAX/5)` so
+  a single-IP load test measures capacity, not the guard.
+  Historical: 2026-08 capacity run 599 req/s on the read-heavy mix; match
+  recompute p95 164 ms after batching the upsert (was 504 ms with per-row writes).
   First run honestly measured only the rate limiter (49 000 × 429) — the
   script now counts any non-2xx as failure and prints the status
   distribution; use `RATE_LIMIT_MAX` to load-test past the default limit.

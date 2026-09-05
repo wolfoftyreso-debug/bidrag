@@ -296,8 +296,10 @@ miljön och handboken fördjupas då skärm för skärm.
    **LEVERERAD 2026-09-04** som behörighetskontroll på klusterhubbarna och
    på varje stödsida med intagsfrågor, med seedens underlagslista visad före
    utklicket),
-   instrumenteringseventen för QSDR/ARR, och belastningstest mot modellens
-   topptimmesvolymer (`scripts/loadtest.mjs`). Kluster 10–12
+   instrumenteringseventen för QSDR/ARR (levererade 2026-09-03), och
+   belastningstest mot modellens topptimmesvolymer (`scripts/loadtest.mjs
+   --model`, **KÖRT 2026-09-05** — `docs/reports/LOADTEST_2026-09-05.md`:
+   alla scenarier + spik ×5 utan fel; Vercel-/Neon-taken kvar tills deployn). Kluster 10–12
    (lönebidrag/nystartsjobb/anställa med stöd) är stängda: stöden är kurerade
    och klusterhubben /bidrag/lonebidrag/ byggd (SERP War Room 2026-08-28). Därefter **F2**
    erfarenhetslagret (licensgenomgång först; datakontrakt i

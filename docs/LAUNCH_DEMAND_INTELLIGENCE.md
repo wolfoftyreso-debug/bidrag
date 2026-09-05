@@ -143,7 +143,12 @@ inga nya sanningskällor.
 De första **25 bidragsklustren byggs färdiga från sökfråga till
 myndighetsöverlämning** (svarssida → genomgång → pre-check → underlagslista →
 överlämning) och **belastningstestas** (scripts/loadtest.mjs + modellens
-topptimmesvolymer som testfall) — det verkliga produktbeviset. Blockerare
+topptimmesvolymer som testfall) — det verkliga produktbeviset.
+**Belastningstestet KÖRT 2026-09-05** (`docs/reports/LOADTEST_2026-09-05.md`):
+`scripts/loadtest.mjs --model` läser scenarierna ur `artifacts/demand-model.json`
+och kör dem i fast takt med trattmixen. Alla tre topptimmar + spik ×5 (64 req/s)
+utan fel, p95 ≤ 56 ms; en enskild process tar 202 req/s. Kvar tills deployn:
+Vercel-/Neon-taken och kallstart per instans (DATA_UNAVAILABLE). Blockerare
 som modellen redan pekat ut och som ingår i fasen: kunskapsbas-gapet i
 kluster 10–12 (kurera lönebidrag, nystartsjobb och anställningsstöden innan
 sidorna byggs).

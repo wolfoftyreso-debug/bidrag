@@ -7,6 +7,7 @@
  * Båda kräver inloggning (betan är sluten) och är hårt rate-limitade.
  */
 import type { FastifyInstance } from 'fastify';
+import { config } from '../config.ts';
 import { db } from '../db/client.ts';
 import { feedback } from '../db/schema.ts';
 import { CLIENT_EVENTS, trackEvent } from '../services/events.ts';
@@ -59,7 +60,10 @@ export async function feedbackRoutes(app: FastifyInstance) {
   app.post(
     '/v1/events',
     {
-      config: { rateLimit: { max: 60, timeWindow: '1 minute' } },
+      // 60/min per IP i produktion (default RATE_LIMIT_MAX=300). Skalar med
+      // RATE_LIMIT_MAX så att belastningstestet (scripts/loadtest.mjs, all
+      // trafik från EN IP) mäter kapaciteten och inte vakten.
+      config: { rateLimit: { max: Math.max(60, Math.floor(config.rateLimitMax / 5)), timeWindow: '1 minute' } },
       schema: {
         tags: ['feedback'],
         body: {

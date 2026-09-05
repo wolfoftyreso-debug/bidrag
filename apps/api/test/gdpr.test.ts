@@ -82,5 +82,5 @@ describe('metrics endpoint', () => {
     expect(res.body).toContain('bidrag_opportunities_published');
     expect(res.body).toContain('bidrag_matches_stale');
     expect(res.body).toContain('bidrag_pg_pool_total');
-  });
+  }, 60_000); // kall databas + kall modulinläsning under verify (CLAUDE.md §7) — inte en regression
 });
