@@ -92,9 +92,11 @@ säger i dag "kontakta oss" utan adress. Återbetalningar: manuellt i Stripe +
 
 ## 7. Kuratorsminimum (2–3 dagar) — `docs/reports/KURATORSMINIMUM_2026-09-03.md`
 
-Listan över de 25 mest synliga stöden och de 20 med startsida som källa,
-med den specifika källsidan för var och en där den hittades i dag. Görs i
-admin-kuratorsflödet (`/admin`), som lyfter stödet till `human_verified`.
+Listan över de 25 mest synliga stöden och de med startsida som källa. Görs
+i granskningskön i `/admin` (sedan 2026-09-05): förfallna först, sedan efter
+verkliga visningar; ”Granska” öppnar protokollet med fem obligatoriska
+kontrollpunkter, källkontroll mot levande källa och rättning av källadress —
+stämpeln `human_verified` kan inte sättas utan fullständigt protokoll.
 
 ## 8. Bjud in (dag 5–6)
 

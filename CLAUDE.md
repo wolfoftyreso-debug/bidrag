@@ -314,6 +314,13 @@ miljön och handboken fördjupas då skärm för skärm.
    börja med frågan om Sverige/svenska alls stöds. Blockeras av deployn (#1).
 5. **Mänsklig gransknings-kö** — arbetsflöde som lyfter stöd från
    `ai_curated` till `human_verified` mot levande källor (motförhörets A-fynd).
+   **LEVERERAD 2026-09-05**: kön i `/admin` sorterad förfallna först → verkliga
+   visningar 30 d; granskningsprotokoll med fem obligatoriska kontrollpunkter
+   (API:t vägrar 400 utan), källkontroll mot levande källa i granskningsögonblicket
+   (`POST /v1/admin/opportunities/:id/source-check`), rättning av käll-/ansökningsadress
+   i samma steg, protokollet sparat som granskningsärende (vem/när/vad) och i
+   revisionsspåret. Test: `apps/api/test/curation.test.ts`. Kvar: människorna
+   som gör passet (`docs/reports/KURATORSMINIMUM_2026-09-03.md`).
 6. **Full WCAG-genomgång + riktiga användartester** (motförhörets B-fynd).
 7. **Produktkontroller i CI** — kör verify:ui/demo:check i CI med
    tjänstecontainrar (Postgres + Chromium).

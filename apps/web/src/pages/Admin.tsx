@@ -2,7 +2,7 @@
  * Curation console (§43, §64): source registry with health, fetch triggers,
  * snapshots and the human review queue. Curator/administrator roles only.
  */
-import { useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ApiError, formatDate, get, post } from '../api';
 
@@ -42,7 +42,98 @@ interface OppRow {
   lastVerifiedAt: string | null;
   nextReviewAt: string | null;
   sourceUrl: string;
+  applicationUrl: string | null;
   closesAt: string | null;
+  shown30d: number;
+  overdue: boolean;
+  sourceIsStartPage: boolean;
+  lastVerification: { at: string | null; by: string | null; note: string | null } | null;
+}
+interface SourceCheck {
+  checked: boolean;
+  changeStatus: 'new' | 'unchanged' | 'changed' | 'error';
+  httpStatus: number | null;
+  error: string | null;
+  diffSummary: string | null;
+  fetchedAt: string;
+}
+
+/** Granskningsprotokollet (docs/reports/KURATORSMINIMUM_2026-09-03.md §Arbetsgång) — alla fem måste vara ikryssade. */
+const CHECKLIST: { key: 'sourceAlive' | 'criteriaMatch' | 'amountMatch' | 'applicationMatch' | 'sourceSpecific'; label: string }[] = [
+  { key: 'sourceAlive', label: 'Källsidan är öppnad och stödet finns kvar (inte avskaffat eller ersatt).' },
+  { key: 'criteriaMatch', label: 'Villkorstexterna stämmer med sidans ”Vem kan få”.' },
+  { key: 'amountMatch', label: 'Beloppet stämmer exakt med sidan, med datum — eller inget belopp anges.' },
+  { key: 'applicationMatch', label: 'Ansökningssätt och underlag stämmer med ”Så ansöker du”.' },
+  { key: 'sourceSpecific', label: 'Källadressen är stödets egen sida, inte myndighetens startsida.' },
+];
+const CHANGE_LABEL: Record<SourceCheck['changeStatus'], string> = {
+  new: 'första snapshoten sparad', unchanged: 'oförändrad sedan senaste snapshot', changed: 'ÄNDRAD sedan senaste snapshot', error: 'gick inte att hämta',
+};
+
+function VerifyPanel({ opp, onDone }: { opp: OppRow; onDone: () => void }) {
+  const [checks, setChecks] = useState<Record<string, boolean>>({});
+  const [sourceUrl, setSourceUrl] = useState(opp.sourceUrl);
+  const [applicationUrl, setApplicationUrl] = useState(opp.applicationUrl ?? '');
+  const [note, setNote] = useState('');
+  const [check, setCheck] = useState<SourceCheck | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const complete = CHECKLIST.every((c) => checks[c.key]);
+
+  const runCheck = async () => {
+    setChecking(true); setErr(null);
+    try { setCheck(await post<SourceCheck>(`/v1/admin/opportunities/${opp.id}/source-check`)); }
+    catch (e) { setErr(e instanceof ApiError ? e.message : 'Källkontrollen misslyckades.'); }
+    finally { setChecking(false); }
+  };
+  const lift = async () => {
+    setErr(null);
+    try {
+      await post(`/v1/admin/opportunities/${opp.id}/verify`, {
+        checklist: Object.fromEntries(CHECKLIST.map((c) => [c.key, Boolean(checks[c.key])])),
+        note: note.trim() || undefined,
+        sourceUrl: sourceUrl.trim() !== opp.sourceUrl ? sourceUrl.trim() : undefined,
+        applicationUrl: applicationUrl.trim() && applicationUrl.trim() !== (opp.applicationUrl ?? '') ? applicationUrl.trim() : undefined,
+      });
+      onDone();
+    } catch (e) { setErr(e instanceof ApiError ? e.message : 'Kunde inte spara protokollet.'); }
+  };
+
+  return (
+    <div className="card" style={{ marginTop: '0.4rem' }}>
+      <h3>Granska {opp.title}</h3>
+      <p className="guidance">
+        Öppna källan, gå igenom punkterna och kryssa bara det du faktiskt kontrollerat. Stämpeln höjs först när alla fem är ikryssade — protokollet sparas med ditt namn och datum.
+      </p>
+      <p>
+        <a href={opp.sourceUrl} target="_blank" rel="noreferrer">Öppna källsidan ↗</a>{' '}
+        <button className="secondary" onClick={runCheck} disabled={checking}>{checking ? 'Kontrollerar…' : 'Kontrollera källan nu'}</button>
+      </p>
+      {check && (
+        <p className={`meta-line${check.changeStatus === 'error' || check.changeStatus === 'changed' ? ' badge warning' : ''}`}>
+          Källan {check.httpStatus ? `svarade ${check.httpStatus}` : 'svarade inte'} · {CHANGE_LABEL[check.changeStatus]}
+          {check.error ? ` · ${check.error}` : ''}{check.diffSummary && check.changeStatus === 'changed' ? ` · ${check.diffSummary}` : ''}
+        </p>
+      )}
+      {CHECKLIST.map((c) => (
+        <label key={c.key} style={{ display: 'block', margin: '0.3rem 0' }}>
+          <input type="checkbox" checked={Boolean(checks[c.key])} onChange={(e) => setChecks({ ...checks, [c.key]: e.target.checked })} /> {c.label}
+        </label>
+      ))}
+      <label htmlFor={`src-${opp.id}`}>Källadress (stödets egen sida)</label>
+      <input id={`src-${opp.id}`} value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} />
+      {opp.sourceIsStartPage && sourceUrl === opp.sourceUrl && <p className="meta-line">Adressen ser ut som en startsida — leta upp stödets egen sida hos myndigheten (M25).</p>}
+      <label htmlFor={`app-${opp.id}`}>Ansökningsadress</label>
+      <input id={`app-${opp.id}`} value={applicationUrl} onChange={(e) => setApplicationUrl(e.target.value)} />
+      <label htmlFor={`note-${opp.id}`}>Anteckning (vad du jämförde, avvikelser, datum)</label>
+      <textarea id={`note-${opp.id}`} rows={2} value={note} onChange={(e) => setNote(e.target.value)} />
+      {err && <div className="alert error">{err}</div>}
+      <p>
+        <button onClick={lift} disabled={!complete}>Lyft till verifierad mot källa</button>{' '}
+        {!complete && <span className="meta-line">{CHECKLIST.filter((c) => !checks[c.key]).length} punkter kvar</span>}
+      </p>
+    </div>
+  );
 }
 
 interface FeedbackRow {
@@ -68,6 +159,7 @@ export default function AdminPage() {
   const [feedbackItems, setFeedbackItems] = useState<FeedbackRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
 
   const load = useCallback(() => {
     get<{ sources: SourceRow[] }>('/v1/admin/sources').then(({ sources }) => setSources(sources)).catch((e) => setError(e instanceof ApiError ? e.message : 'Kunde inte hämta källor.'));
@@ -210,37 +302,46 @@ export default function AdminPage() {
       </div>
 
       <div className="card">
-        <h2>Stöd efter granskningsbehov ({opportunities.length})</h2>
+        <h2>Granskningskö — stöd efter granskningsbehov ({opportunities.length})</h2>
         <p className="guidance">
-          Sorterat efter nästa granskningsdatum. ”Verifiera” bekräftar att publicerade regler fortfarande stämmer mot källan
-          och flyttar fram granskningsdatumet 30 dagar.
+          Förfallna först, sedan efter hur ofta stödet visats för riktiga användare de senaste 30 dagarna. ”Granska” öppnar protokollet:
+          fem kontrollpunkter mot den levande källan, källadress och anteckning. Stämpeln ”verifierad mot källa” kan bara sättas med alla fem ikryssade.
         </p>
         <table className="data">
           <thead>
-            <tr><th>Stöd</th><th>Status</th><th>Senast verifierad</th><th>Nästa granskning</th><th /></tr>
+            <tr><th>Stöd</th><th>Visningar 30 d</th><th>Status</th><th>Senast granskad</th><th>Nästa granskning</th><th /></tr>
           </thead>
           <tbody>
-            {opportunities.map((o) => {
-              const overdue = !o.nextReviewAt || new Date(o.nextReviewAt) < new Date();
-              return (
-                <tr key={o.id}>
-                  <td><a href={o.sourceUrl} target="_blank" rel="noreferrer">{o.title}</a></td>
+            {opportunities.map((o) => (
+              <Fragment key={o.id}>
+                <tr>
+                  <td>
+                    <a href={o.sourceUrl} target="_blank" rel="noreferrer">{o.title}</a>
+                    {o.sourceIsStartPage && <> <span className="badge warning" title="Källan är en startsida — stödets egen sida saknas (M25)">startsida</span></>}
+                  </td>
+                  <td style={{ fontVariantNumeric: 'tabular-nums' }}>{o.shown30d}</td>
                   <td>
                     <span className={`badge ${o.verificationStatus === 'human_verified' ? 'success' : ''}`}>
-                      {o.verificationStatus === 'human_verified' ? 'verifierad' : o.verificationStatus === 'human_curated' ? 'kurerad' : o.verificationStatus === 'ai_curated' ? 'AI-sammanställd — ogranskad' : o.verificationStatus}
+                      {o.verificationStatus === 'human_verified' ? 'verifierad' : o.verificationStatus === 'human_curated' ? 'kurerad' : o.verificationStatus === 'ai_curated' ? 'AI-sammanställd' : o.verificationStatus}
                     </span>
                   </td>
-                  <td>{formatDate(o.lastVerifiedAt)}</td>
-                  <td>{overdue ? <span className="badge warning">förfallen</span> : formatDate(o.nextReviewAt)}</td>
+                  <td>
+                    {formatDate(o.lastVerifiedAt)}
+                    {o.lastVerification?.by && <div className="meta-line">av {o.lastVerification.by}{o.lastVerification.note ? ` — ${o.lastVerification.note}` : ''}</div>}
+                  </td>
+                  <td>{o.overdue ? <span className="badge warning">förfallen</span> : formatDate(o.nextReviewAt)}</td>
                   <td style={{ whiteSpace: 'nowrap' }}>
-                    <button className="secondary" onClick={() => post(`/v1/admin/opportunities/${o.id}/verify`).then(load)}>
-                      Verifiera
+                    <button className="secondary" onClick={() => setOpenId(openId === o.id ? null : o.id)}>
+                      {openId === o.id ? 'Stäng' : 'Granska'}
                     </button>{' '}
                     <Link to={`/admin/regler/${o.id}`}>Redigera regler</Link>
                   </td>
                 </tr>
-              );
-            })}
+                {openId === o.id && (
+                  <tr><td colSpan={6}><VerifyPanel opp={o} onDone={() => { setOpenId(null); load(); }} /></td></tr>
+                )}
+              </Fragment>
+            ))}
           </tbody>
         </table>
       </div>

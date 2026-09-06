@@ -65,13 +65,25 @@ region-kulturstod · sparbanksstiftelsen-projektstod · radiohjalpen-projektbidr
 fk-foraldrapenning ★ · fk-aktivitetsstod · fk-tandvardsbidrag ★ · pm-garantipension ★ ·
 region-hogkostnadsskydd-vard ★
 
-## Arbetsgång per stöd (10–20 min)
+## Arbetsgång per stöd (10–20 min) — protokollet är kod sedan 2026-09-05
 
-1. Öppna källsidan. Finns stödet kvar? (Hemutrustningslånet fanns inte.)
-2. Jämför villkorstexterna (kriterierna) mot sidans "Vem kan få".
-3. Jämför belopp (`amountNote`) mot sidans belopp — exakt, med datum.
-4. Jämför ansökningssätt och underlag mot "Så ansöker du".
-5. Sätt `sourceUrl`/`applicationUrl` till stödets egen sida.
-6. Lyft till `human_verified` i admin; anteckna datum.
+Granskningskön i `/admin` (”Granskningskö — stöd efter granskningsbehov”)
+ligger i just den här ordningen: förfallna först, sedan efter hur ofta
+stödet visats för riktiga användare de senaste 30 dagarna. ”Granska” öppnar
+protokollet, och stämpeln ”verifierad mot källa” kan bara sättas när alla
+fem punkter är ikryssade (API:t vägrar annars med 400 `checklist_incomplete`):
+
+1. **Källan finns kvar** — ”Kontrollera källan nu” hämtar sidan i samma stund
+   (HTTP-status, ändrad/oförändrad sedan senaste snapshot). Öppna sidan.
+   Finns stödet kvar? (Hemutrustningslånet fanns inte.)
+2. **Villkoren stämmer** — kriterietexterna mot sidans "Vem kan få".
+3. **Beloppet stämmer** — `amountNote` mot sidans belopp, exakt, med datum.
+4. **Ansökningssätt och underlag stämmer** — mot "Så ansöker du".
+5. **Källadressen är stödets egen sida** — rätta `sourceUrl`/`applicationUrl`
+   direkt i protokollet (lista B-flaggan ”startsida” visas i kön).
+
+Anteckningen (vad som jämfördes, avvikelser) sparas med granskarens namn och
+datum som granskningsärende och i revisionsspåret, och visas i kön. Avviker
+seeden: rätta i `apps/api/src/seed/data.ts` (regelversion via kuratorsflödet).
 
 Minimum före första inbjudan: lista A komplett. Före öppen beta: alla 84.

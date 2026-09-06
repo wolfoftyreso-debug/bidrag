@@ -10,6 +10,7 @@ import {
   sources,
   sourceSnapshots,
   feedback,
+  users,
 } from '../db/schema.ts';
 import { audit } from '../audit.ts';
 import { CURATOR_ROLES } from '../plugins/auth.ts';
@@ -185,10 +186,13 @@ export async function adminRoutes(app: FastifyInstance) {
   });
 
   /**
-   * Curator list of published opportunities ordered by review urgency, with a
-   * one-click verification action below.
+   * Granskningskön (prio 5, motförhörets A-fynd): stöden i den ordning en
+   * människa bör granska dem — förfallna först, sedan efter hur ofta stödet
+   * faktiskt visats för riktiga användare (aktiva matchningar senaste 30 d),
+   * med senaste granskningsprotokoll och flaggan "startsida som källa" (M25).
    */
   app.get('/v1/admin/opportunities', { schema: { tags: ['admin'] } }, async () => {
+    const since = new Date(Date.now() - 30 * 86_400_000);
     const rows = await db
       .select({
         id: fundingOpportunities.id,
@@ -199,20 +203,58 @@ export async function adminRoutes(app: FastifyInstance) {
         lastVerifiedAt: fundingOpportunities.lastVerifiedAt,
         nextReviewAt: fundingOpportunities.nextReviewAt,
         sourceUrl: fundingOpportunities.sourceUrl,
+        applicationUrl: fundingOpportunities.applicationUrl,
+        sourceId: fundingOpportunities.sourceId,
         closesAt: fundingOpportunities.closesAt,
       })
       .from(fundingOpportunities)
-      .orderBy(sql`${fundingOpportunities.nextReviewAt} ASC NULLS FIRST`)
       .limit(500);
-    return { opportunities: rows };
+    const shown = await db
+      .select({ opportunityId: matches.opportunityId, n: sql<number>`count(*)::int` })
+      .from(matches)
+      .where(and(inArray(matches.eligibilityStatus, ['eligible', 'unknown']), sql`${matches.createdAt} > ${since}`))
+      .groupBy(matches.opportunityId);
+    const shownBy = new Map(shown.map((r) => [r.opportunityId, Number(r.n)]));
+    const verifications = await db
+      .select({ refId: reviewItems.refId, resolvedAt: reviewItems.resolvedAt, note: reviewItems.note, payload: reviewItems.payload, by: users.displayName })
+      .from(reviewItems)
+      .leftJoin(users, eq(users.id, reviewItems.resolvedBy))
+      .where(eq(reviewItems.kind, 'verification'))
+      .orderBy(desc(reviewItems.resolvedAt));
+    const lastVerification = new Map<string, (typeof verifications)[number]>();
+    for (const v of verifications) if (v.refId && !lastVerification.has(v.refId)) lastVerification.set(v.refId, v);
+    const now = Date.now();
+    // "Startsida som källa" (M25): rotadressen eller en generisk sektionssida
+    // (privatperson/företag/förening …) — inte stödets egen sida.
+    const GENERIC = new Set(['privatperson', 'privatpersoner', 'foretag', 'foretagare', 'forening', 'foreningar', 'organisation', 'organisationer', 'sv', 'en', 'bidrag', 'stod', 'bidrag-och-stod', 'sok-bidrag', 'soka-bidrag', 'utlysningar', 'stipendier', 'om-oss', 'start']);
+    const isStartPage = (url: string) => {
+      try {
+        const segs = new URL(url).pathname.split('/').filter(Boolean);
+        return segs.length === 0 || (segs.length === 1 && GENERIC.has(segs[0]!.toLowerCase()));
+      } catch { return false; }
+    };
+    const enriched = rows.map((o) => {
+      const v = lastVerification.get(o.id);
+      return {
+        ...o,
+        shown30d: shownBy.get(o.id) ?? 0,
+        overdue: !o.nextReviewAt || o.nextReviewAt.getTime() < now,
+        sourceIsStartPage: isStartPage(o.sourceUrl),
+        lastVerification: v ? { at: v.resolvedAt, by: v.by ?? null, note: v.note ?? null, checklist: (v.payload as { checklist?: unknown }).checklist ?? null } : null,
+      };
+    });
+    enriched.sort((a, b) => Number(b.overdue) - Number(a.overdue) || b.shown30d - a.shown30d || (a.nextReviewAt?.getTime() ?? 0) - (b.nextReviewAt?.getTime() ?? 0));
+    return { opportunities: enriched };
   });
 
   /**
-   * One-click "verified against source today": curator confirms the published
-   * rules still match the source; bumps freshness without a new rule version.
+   * Källkontroll i granskningsögonblicket: hämtar stödets källa NU (samma
+   * SSRF-säkra hämtning som källbevakningen) och svarar ärligt med status,
+   * förändring sedan senaste snapshot och sammanfattning — kuratorn ska se
+   * att källan lever innan stämpeln höjs. Ingen källa registrerad ⇒ sägs.
    */
   app.post(
-    '/v1/admin/opportunities/:id/verify',
+    '/v1/admin/opportunities/:id/source-check',
     {
       schema: {
         tags: ['admin'],
@@ -221,26 +263,119 @@ export async function adminRoutes(app: FastifyInstance) {
     },
     async (request, reply) => {
       const { id } = request.params as { id: string };
+      const [opp] = await db
+        .select({ id: fundingOpportunities.id, sourceId: fundingOpportunities.sourceId, sourceUrl: fundingOpportunities.sourceUrl })
+        .from(fundingOpportunities)
+        .where(eq(fundingOpportunities.id, id))
+        .limit(1);
+      if (!opp) return reply.code(404).send({ error: 'not_found' });
+      if (!opp.sourceId) {
+        return { checked: false, changeStatus: 'error', httpStatus: null, error: 'Ingen källa är registrerad för stödet — kontrollera sourceUrl manuellt.', sourceUrl: opp.sourceUrl, fetchedAt: new Date().toISOString(), diffSummary: null };
+      }
+      const outcome = await fetchSource(opp.sourceId);
+      const [snap] = await db
+        .select({ fetchedAt: sourceSnapshots.fetchedAt, diffSummary: sourceSnapshots.diffSummary })
+        .from(sourceSnapshots)
+        .where(eq(sourceSnapshots.id, outcome.snapshotId))
+        .limit(1);
+      return {
+        checked: true,
+        changeStatus: outcome.changeStatus,
+        httpStatus: outcome.httpStatus,
+        error: outcome.error ?? null,
+        sourceUrl: opp.sourceUrl,
+        fetchedAt: snap?.fetchedAt ?? new Date(),
+        diffSummary: snap?.diffSummary ?? null,
+      };
+    },
+  );
+
+  /**
+   * Lyft till "verifierad mot källa" — bara med fullständigt protokoll
+   * (docs/reports/KURATORSMINIMUM_2026-09-03.md §Arbetsgång): källan finns
+   * kvar, villkoren stämmer, beloppet stämmer, ansökningssätt + underlag
+   * stämmer, källadressen är stödets egen sida. Ett ofullständigt protokoll
+   * vägras (400) — enknappen som höjde stämpeln utan kontroll är borta.
+   * Protokollet sparas som granskningsärende (vem, när, vad, anteckning) och
+   * i revisionsspåret; källadress/ansökningsadress kan rättas i samma steg.
+   */
+  app.post(
+    '/v1/admin/opportunities/:id/verify',
+    {
+      schema: {
+        tags: ['admin'],
+        params: { type: 'object', properties: { id: { type: 'string', format: 'uuid' } }, required: ['id'] },
+        body: {
+          type: 'object',
+          required: ['checklist'],
+          properties: {
+            checklist: {
+              type: 'object',
+              required: ['sourceAlive', 'criteriaMatch', 'amountMatch', 'applicationMatch', 'sourceSpecific'],
+              properties: {
+                sourceAlive: { type: 'boolean' },
+                criteriaMatch: { type: 'boolean' },
+                amountMatch: { type: 'boolean' },
+                applicationMatch: { type: 'boolean' },
+                sourceSpecific: { type: 'boolean' },
+              },
+            },
+            note: { type: 'string', maxLength: 2000 },
+            sourceUrl: { type: 'string', format: 'uri', maxLength: 500 },
+            applicationUrl: { type: 'string', format: 'uri', maxLength: 500 },
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      const body = request.body as {
+        checklist: Record<'sourceAlive' | 'criteriaMatch' | 'amountMatch' | 'applicationMatch' | 'sourceSpecific', boolean>;
+        note?: string;
+        sourceUrl?: string;
+        applicationUrl?: string;
+      };
+      const missing = (Object.entries(body.checklist) as [string, boolean][]).filter(([, v]) => v !== true).map(([k]) => k);
+      if (missing.length) return reply.code(400).send({ error: 'checklist_incomplete', missing });
+      const [before] = await db
+        .select({ verificationStatus: fundingOpportunities.verificationStatus, sourceUrl: fundingOpportunities.sourceUrl, applicationUrl: fundingOpportunities.applicationUrl })
+        .from(fundingOpportunities)
+        .where(eq(fundingOpportunities.id, id))
+        .limit(1);
+      if (!before) return reply.code(404).send({ error: 'not_found' });
       const now = new Date();
-      const rows = await db
+      const [row] = await db
         .update(fundingOpportunities)
         .set({
           verificationStatus: 'human_verified',
           lastVerifiedAt: now,
           nextReviewAt: new Date(now.getTime() + 30 * 86_400_000),
+          ...(body.sourceUrl ? { sourceUrl: body.sourceUrl } : {}),
+          ...(body.applicationUrl ? { applicationUrl: body.applicationUrl } : {}),
           updatedAt: now,
         })
         .where(eq(fundingOpportunities.id, id))
-        .returning({ id: fundingOpportunities.id, lastVerifiedAt: fundingOpportunities.lastVerifiedAt });
-      if (rows.length === 0) return reply.code(404).send({ error: 'not_found' });
+        .returning({ id: fundingOpportunities.id, lastVerifiedAt: fundingOpportunities.lastVerifiedAt, verificationStatus: fundingOpportunities.verificationStatus, sourceUrl: fundingOpportunities.sourceUrl, applicationUrl: fundingOpportunities.applicationUrl });
+      await db.insert(reviewItems).values({
+        kind: 'verification',
+        refType: 'funding_opportunity',
+        refId: id,
+        payload: { checklist: body.checklist, sourceUrlBefore: before.sourceUrl, sourceUrlAfter: row!.sourceUrl, applicationUrlBefore: before.applicationUrl, applicationUrlAfter: row!.applicationUrl },
+        status: 'approved',
+        note: body.note ?? null,
+        resolvedBy: request.auth!.userId,
+        resolvedAt: now,
+      });
       await audit({
         actorType: 'user',
         actorUserId: request.auth!.userId,
         action: 'opportunity.verified_against_source',
         entityType: 'funding_opportunity',
         entityId: id,
+        before: { verificationStatus: before.verificationStatus, sourceUrl: before.sourceUrl, applicationUrl: before.applicationUrl },
+        after: { verificationStatus: 'human_verified', sourceUrl: row!.sourceUrl, applicationUrl: row!.applicationUrl, checklist: body.checklist, note: body.note ?? null },
       });
-      return { opportunity: rows[0] };
+      return { opportunity: row };
     },
   );
 

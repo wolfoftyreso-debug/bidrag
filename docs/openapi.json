@@ -2670,11 +2670,90 @@
         }
       }
     },
+    "/v1/admin/opportunities/{id}/source-check": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
     "/v1/admin/opportunities/{id}/verify": {
       "post": {
         "tags": [
           "admin"
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "checklist"
+                ],
+                "properties": {
+                  "checklist": {
+                    "type": "object",
+                    "required": [
+                      "sourceAlive",
+                      "criteriaMatch",
+                      "amountMatch",
+                      "applicationMatch",
+                      "sourceSpecific"
+                    ],
+                    "properties": {
+                      "sourceAlive": {
+                        "type": "boolean"
+                      },
+                      "criteriaMatch": {
+                        "type": "boolean"
+                      },
+                      "amountMatch": {
+                        "type": "boolean"
+                      },
+                      "applicationMatch": {
+                        "type": "boolean"
+                      },
+                      "sourceSpecific": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "note": {
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  "sourceUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "maxLength": 500
+                  },
+                  "applicationUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "maxLength": 500
+                  }
+                }
+              }
+            }
+          }
+        },
         "parameters": [
           {
             "schema": {
@@ -2946,10 +3025,17 @@
                   "props": {
                     "type": "object",
                     "additionalProperties": {
-                      "type": [
-                        "string",
-                        "number",
-                        "boolean"
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 200
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "boolean"
+                        }
                       ]
                     },
                     "maxProperties": 8
