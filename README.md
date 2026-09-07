@@ -10,8 +10,8 @@ Två hårda produktprinciper styr upplevelsen:
 1. **En fråga per skärm.** Ingen blankett, ingen "fyll i din profil". Dialogen
    avgör vilka frågor som behöver ställas härnäst.
 2. **Bedömning, aldrig beslut.** Systemet säger "det här ser du ut att kunna ha
-   rätt till" (hög sannolikhet / möjlig / behöver utredas) — aldrig "du är
-   berättigad". Slutligt beslut fattas alltid av myndigheten.
+   rätt till" (stämmer väl med kraven / kan stämma / behöver utredas) — aldrig
+   "du är berättigad". Slutligt beslut fattas alltid av myndigheten.
 
 Ingen bidragskatalog. Systemet är en sammanhängande pipeline:
 
@@ -19,6 +19,10 @@ Ingen bidragskatalog. Systemet är en sammanhängande pipeline:
 Profil → Intention → Stödutbud → Behörighet → Matchning → Finansieringsplan
       → Ansökningsarbetsyta → Inlämning → Ärende → Svar → Redovisning
 ```
+
+> **Tar du över projektet?** Börja i `docs/OVERLAMNING_2026-09-05.md` — var
+> koden finns, vad som är byggt och bevisat, vad som väntar på operatören,
+> reglerna och hur du kör det lokalt. Sedan `CLAUDE.md`.
 
 ## Status (honest, qualified)
 

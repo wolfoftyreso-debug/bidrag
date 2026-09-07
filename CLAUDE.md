@@ -79,7 +79,7 @@ Allt nedan är byggt, testat och pushat — bygg inte om det:
   **OFFSITE ÄR FRYST tills gaten är grön.**
 
 Historik: `git log` är detaljerad och ärlig; revisionsrapporter i
-`docs/reports/`.
+`docs/reports/`. Överlämning till ny person: `docs/OVERLAMNING_2026-09-05.md`.
 
 ## Arkitektur på en minut
 
